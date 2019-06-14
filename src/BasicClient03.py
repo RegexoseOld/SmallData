@@ -26,6 +26,7 @@ matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
+IMAGE_DIR = '../images'
 DATETIME = datetime(2018, 8, 18, 10, 31, 30, 11111)
 START = time.mktime(DATETIME.timetuple()) + DATETIME.microsecond / 1E6
 NORMAL_CHANNEL= [0.0 for i in range(29)]
@@ -72,14 +73,14 @@ normal_values = category_dict(
     [NORMAL_CHANNEL for v in range(30)]
 )
 
-file1 = Image.open('../../Grafiken/Formen/Ablehnung.gif')
-file2 = Image.open('../../Grafiken/Formen/Belehrung.gif')
-file3 = Image.open('../../Grafiken/Formen/Bemuehung.gif')
-file4 = Image.open('../../Grafiken/Formen/Gaga.gif')
-file5 = Image.open('../../Grafiken/Formen/Lob.gif')
-file6 = Image.open('../../Grafiken/Formen/Nerv.gif')
-file7 = Image.open('../../Grafiken/Formen/Zugestaendnis.gif')
-file8 = Image.open('../../Grafiken/Formen/Zweifel.gif')
+file1 = Image.open(os.path.join(IMAGE_DIR, 'Ablehnung.gif'))
+file2 = Image.open(os.path.join(IMAGE_DIR, 'Belehrung.gif'))
+file3 = Image.open(os.path.join(IMAGE_DIR, 'Bemuehung.gif'))
+file4 = Image.open(os.path.join(IMAGE_DIR, 'Gaga.gif'))
+file5 = Image.open(os.path.join(IMAGE_DIR, 'Lob.gif'))
+file6 = Image.open(os.path.join(IMAGE_DIR, 'Nerv.gif'))
+file7 = Image.open(os.path.join(IMAGE_DIR, 'Zugestaendnis.gif'))
+file8 = Image.open(os.path.join(IMAGE_DIR, 'Zweifel.gif'))
 
 
 WHEEL = [-2000, -250 , 10, 8000, 15, -1100, 0, 850]
