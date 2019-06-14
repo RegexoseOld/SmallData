@@ -1,0 +1,41 @@
+[0.7 - 1.0]
+
+nervend
+nervtoetend
+nervt
+nervig
+nerv
+menno
+manno
+mannomann
+zehrend
+langweilig
+supernervig
+boah
+scheisse
+scheiss
+ey
+och
+nee
+
+(ach|boah|och|oh|mann|ey) (ey|nee|menno|mann|manno|gottchen)
+(du|sie) schon wieder .*
+schon wieder .* mit .*
+nee ne .*schon wieder .*
+was soll .* das
+meine (güte|fresse)
+(kann|darf) .* nicht wahr sein
+was (soll|sollen) .* (das|sowas|so) (ein|eine) .+
+warum (geht|funzt|funktioniert|läuft) .* (das|es|dieses) .* nicht
+(escht|echt|wirklich) jetzt mal ey
+(ich|man|du) .* (wird|werde|wirst) .* noch (verrückt|wahnsinnig)
+fick dich .*
+(wie|warum) (kann|muss) es (sein|angehen), dass .+
+irgendwann muss .* doch
+
+
+
+
+
+
+

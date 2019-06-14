@@ -1,0 +1,16 @@
+bereit
+gewillt
+denkbar
+vorstellen
+grundsätzlich
+prinzipiell
+
+
+wir können uns .* vorstellen
+(können|könnten) wir uns .*
+wir sind bereit .*
+sind wir bereit .*
+wir (errichten|stellen) gern .*
+(zur|für) .* (können|könnte) wir uns .* vorstellen
+
+

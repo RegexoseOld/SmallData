@@ -1,0 +1,42 @@
+[]
+Fortschritt
+Loesung
+helfen
+hilfreich
+dienlich
+nuetzlich
+zielfuehrend
+produktiv
+angebracht
+angemessen
+loesungsorientiert
+dringend
+benoetigen
+vorstellen
+ausmalen
+differenziert
+ohnehin
+nahezu
+Mehrheit
+Rueckendeckung
+beste
+perfekt
+
+
+man könnte .*
+könnte man .*
+das hätte .*
+wäre .* gut
+wäre .* möglich
+ginge .* auch
+auch .* ginge
+würde .* funktionieren
+könnte .* (funktionieren|gehen)
+würde .* gehen
+würde .* funktionieren
+wie wäre es .*
+wäre .* viel besser
+müsste .* auch .*
+so (könnte|dürfte|würde)
+viele schöne rauf und runter auf und sind erfreulich
+vielleicht liegts am Merkur

@@ -1,0 +1,67 @@
+[0.1 - 0.4]
+
+seltsam
+merkwürdig
+komisch
+skurril
+eigenartig
+sonderbar
+bizarr
+irritierend
+befremdlich
+grotesk
+scheinbar
+anscheindend
+fragwürdig
+Bedenken
+dysfunktional
+unnormal
+mutmassen
+argwoehnen
+bezweifelt
+glauben
+naiv
+blauaegig
+selbstgefaellig
+kindisch
+heuchlerisch
+fehlerhaft
+unplausibel
+falsch
+unrichtig
+unzutreffend
+unwahr
+primitiv
+gestrig
+fantasieren
+kompliziert
+beihahe
+faktisch
+obwohl
+zweifeln
+Zweifel
+bezweifeln
+hinhauen
+wieso
+
+bin .* nicht .* sicher
+nicht .* ganz richtig
+nicht .* (plausibel|nachvollziehbar)
+noch nicht einmal
+funktioniert .* nicht
+(aha|achso) und (wo|wie) .+
+zu einfach
+schwierig wird
+kann das .* (sein|angehen|hinhauen)
+(glauben|glaubst) (sie|du) wirklich
+oder was .* verloren
+eher .* nicht
+glaube .* nicht
+wer .* (soll|kann|würde|sollte) .* (verstehen|kapieren|begreifen|anwenden|leben|mögen)
+wie .* (soll|kann|könnte|würde|sollte) .* (funktionieren|verstehen|kapieren|begreifen|anwenden|leben|mögen)
+womit (soll|hätte|sollte|würde|könnte) .* (funktionieren|verdient)
+was .* (soll)
+bin .* (uninformiert|unsicher)
+(war|bin) .* nicht (ganz|hundertprozentig|völlig|absolut) sicher .* (ob|dass|wie)
+ich (bezweifle|zweifle) (das|solche|solcherart|diese|diesen) .*
+(kann|mag) (ja|schon) .* (allerdings|aber)

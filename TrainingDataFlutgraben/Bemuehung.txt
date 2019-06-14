@@ -1,0 +1,57 @@
+[0.4 - 0.65]
+
+immerhin
+dennoch
+einerseits
+andererseits
+Herausforderung
+Aufgabe
+Mammutaufgabe
+komplex
+vielschichtig
+hochkomplex
+nachvollziehbar
+wichtig
+unerlaesslich
+Ursache
+Wirkung
+Aspekt
+Perspektive
+beinhalten
+tangiert
+tragfaehig
+umfassen
+vernuenftig
+serioes
+schleunigst
+schnellstens
+herleiten
+nachvollziehen
+variiert
+schwankt
+differiert
+herausfinden
+letzlich
+schlussendlich
+erstens
+zweitens
+drittens
+variieren
+durcheinander
+
+nicht .* so einfach
+immer noch .*
+darüber hinaus .*
+variiert .* je nach.*
+stark variieren
+zur Klärung .*
+nochmal: .*
+also .* nochmal
+Warum? .* weil .*
+es geht .* um
+geht es .* darum
+darum .* geht es .*
+wir reden hier von .*
+mich wundert .*
+ich bin extra aus der Schweiz gekommen!
+

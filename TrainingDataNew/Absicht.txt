@@ -1,0 +1,19 @@
+planen
+absicht
+beabsichtigen
+organisieren
+planten
+vorsehen
+situation
+ausgangssituation
+Schaffung
+Infrastruktur
+organisation
+
+(wir) (wollen|würden) .* (überführen|entwickeln|fortsetzen)
+innerhalb .* wollen wir .*
+wir sanieren
+wir (streben|sprechen) .* für .* (an|aus)
+(organisation|schaffung|entwicklung|sanierung) .* (von|der|dem)
+
+

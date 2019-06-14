@@ -1,0 +1,44 @@
+[0.7 - 1.0]
+
+gestehe
+zugeben
+zugestehen
+einraeumen
+zugutehalten
+zulassen
+zubilligen
+eingestehen
+gestand
+zugibt
+absolut
+vollkommen
+gut
+richtig
+stimme zu
+allerdings
+Schwierigkeit
+zutreffend
+gerechtfertigt
+legitim
+akzeptabel
+vertretbar
+adaequat
+recht
+
+
+nicht so einfach
+(tu|tue) .* mich .* (schwer|schwerer)
+ich muss .* (sagen|zugeben|gestehen) .+
+muss ich .* (sagen|zugeben|gestehen|einräumen) .+
+stimme .* zu
+ganz genau
+ich habe .* auch .+
+(war|bin) .* auch nicht (ganz|hundertprozentig|völlig|absolut) sicher .* (ob|dass|wie)
+(zugegeben|zugegebenermassen) .* ich auch .+
+ich gebe zu .+
+(möglicherweise|vielleicht|wahrscheinlich|eventuell) (liege|liegen|bin|sind|habe|haben) .* (ich|wir) .* (sogar|auch) .* (unrecht|falsch)
+(kann|könnte) sein, dass ich .* falsch liege
+(kann|könnte) sein, dass ich .* im unrecht bin
+ich finde euch die besten Musiker!! 
+
+

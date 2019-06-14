@@ -1,0 +1,51 @@
+BIM|Leitbild|Wir wollen mit der Entwicklung einen geschichtsträchtigen Ort ins 21. Jahrhundert überführen und wieder mit „Leben“ füllen.
+BIM|Leitbild|Das Besondere ist dabei die gemeinsame & kooperative Entwicklung zu einem zukunftsfähigen, lebendigen, lebenswerten Quartier, in dem Wohnen, Arbeiten, Kultur und Verwaltung eine langfristige Perspektive hat.
+BIM|Leitbild|Als Eigentümerin und Bauherrin des ehemaligen Hauses der Statistik hat die BIM die Aufgabe, das einmalige Gebäudeensemble in exponierter Lage behutsam herzurichten und zu sanieren und damit wieder für die Stadtgesellschaft erlebbar zu machen. 
+BIM|Prozess|Wir sind bereit unsere Unterstützung sowie unser „know-how“ für die Entwicklung und Bewirtschaftung der 20% des Bestandes im Haus A (Nutzung im Sinne des Nutzungskonzeptes der Initiative) langfristig und nachhaltig bereitzustellen.
+BIM|Staedtebau|Die Erdgeschosse und Freiräume sollten die Synergien zwischen allen Nutzungen im Areal herstellen und fördern.
+BIM|Staedtebau|Innerhalb des Areals wollen wir eine Freiraumgestaltung, die allen Nutzergruppen eine hohe Aufenthaltsqualität bietet.
+BIM|Staedtebau|Wir sehen uns vor allem als Entwicklungsträger für den Bestand.
+BIM|Staedtebau|Wir sanieren die Bestandgebäude Haus A-D und richten die Bestandsgebäude A-D insbesondere für eine Büro- Verwaltungsnutzung her. (Bauteil A Rückbau Schadstoffe sowie Sanierung Dach und Fassade)
+WBM|Leitbild|Wir wollen mit der Entwicklung einen geschichtsträchtigen Ort ins 21. Jahrhundert denken und wieder mit „Leben“ füllen.
+WBM|Leitbild|lebendigen, lebenswerten Quartier, in dem Wohnen, Arbeiten, Kultur und Verwaltung eine langfristige Perspektive hat.
+WBM|Prozess|Wir sind bereit eine Entwicklungsvereinbarung abzuschließen, um anfallende Kosten für das Werkstattverfahren und sonstige Entwicklungskosten anteilig im Verhältnis zu den in der KoopV festgelegten Flächen / bzw. nach Anzahl der KoopPartner zu tragen.
+WBM|Prozess|Wir sollen durch Einbringung einen Grundstücksanteil für die spätere Bebauung erhalten.
+WBM|Prozess|Wir sind grundsätzlich bereit – soweit der Einbringungsvertrag das ermöglicht – Grundstücksteile im Erbbaurecht zu vorher definierten Konditionen an Dritte (Nutzungen der Initiative) zu vergeben.
+WBM|Staedtebau|Wir wollen 300 bezahlbare Wohnungen für ganz unterschiedliche Zielgruppen mit einer BGF von 25.000 m2 (Ø 62 m2) bauen und verwalten.
+WBM|Staedtebau|Wir nehmen als städtische Wohnungsbaugesellschaft die Wohnungsbauförderung in Anspruch und können damit eine Einstiegsmiete von 6,50 EUR/m2 im Neubau anbieten.
+WBM|Staedtebau|Wir sind an einem ausgewogenen Wohnungsmix interessiert und grundsätzlich an die Flächenvorgaben der Wohnungsbauförderung für mind. 50% der Fläche gebunden.
+WBM|Nutzungskonzept|Wir können uns folgende Nutzungen und teils entsprechende Zusatzangebote für folgende Zielgruppen vorstellen: Senioren / ältere Menschen, Studierende, betreutes Wohnen, Wohnen & Arbeiten, Geflüchtete, Familien
+WBM|Nutzungskonzept|Wir können uns eine Integration von einzelnen Nutzungen i. S. d. Initiative in unseren Flächen vorstellen; im Ergebnis kommt diese Fläche dann zur WBM Fläche hinzu (25 Tm2 +)
+WBM|Staedtebau|Wir errichten gern auch den kompletten o. Teile des geplanten Wohnanteil (20-30%) des Nutzungskonzepts der Initiativen und geben diesen mit einem langfristigen Generalmietvertrag (z. B. Trägerwohnen o. ä.) weiter (25 Tm2 +).
+WBM|Staedtebau|Wir können uns zusätzlich zum Wohnen für Teile der gewerblichen Nutzung auch die Bauherrenschaft mit Abschluss eines Generalmietvertrages vorstellen.
+WBM|Staedtebau|Selbstverwaltung ist für uns nur in abgrenzbaren Gebäudeteilen denkbar.
+WBM|Staedtebau|Wir sehen uns als Entwicklungsträger im Neubau. Bestandsflächen, z. B. in Haus A werden wenn gewünscht durch die BIM entwickelt.
+WBM|Staedtebau|Wir können uns eine gemeinsame Entwicklung der Erdgeschosszone vorstellen und durch das Bereitstellen multifunktionaler Räume zu einem belebten Quartier beitragen.
+WBM|Staedtebau|Wir können uns eine vielfältige Nutzung der Dachflächen vorstellen.
+ZUsammenKUNFT|Leitbild|Wir wollen die erhaltenswerten Bestandsgebäude und Neubauflächen nach dem Motto des Koalitionsvertrages der Berliner Landesregierung „Berlin gemeinsam gestalten – solidarisch, nachhaltig - weltoffen“ zu einem für die gesamte Stadt relevanten und besonderen Ort entwickeln.
+ZUsammenKUNFT|Leitbild|Wir verstehen uns als Treuhänder der Ende 2015 formulierten Forderungen und Ziele der Initiative Haus der Statistik. 
+ZUsammenKUNFT|Leitbild|Das Besondere ist dabei die gemeinsame & kooperative Entwicklung mit 4 städtischen Partnern zu einem zukunftsfähigen, lebendigen, lebenswerten Quartier, in dem Wohnen, Arbeiten, Kultur und Verwaltung eine langfristige Perspektive haben.
+ZUsammenKUNFT|Prozess|Unsere Rolle als Koop5-Partner / Statthalter für die Initiative im Planungsprozess
+ZUsammenKUNFT |Prozess|Wir wollen einen nennenswerten Standort für Nutzungen und Nutzer.innen mitten in der Stadt sichern, der leistbare und zugängliche Raumangebote bietet.
+ZUsammenKUNFT|Prozess|Wir wollen transparente Verfahren für die Vergabe der Räume des Nutzungskonzeptes der Initiative entwickeln.
+ZUsammenKUNFT |Prozess|In einem zum integrierten Werkstattverfahren parallel verlaufenden und separat finanzierten Prozess werden wir eine Projektentwicklung für das Nutzungskonzept der Initiative erarbeiten, die eine potenzielle Trägerorganisation finden oder hervorbringen soll.
+ZUsammenKUNFT|Prozess|Diese zu gründende Trägerorganisation soll einen Grundstücksanteil (oder andere geeignete Verfügungsrechte) für Haus A und Neubauten im vereinbarten Umfang erhalten.
+ZUsammenKUNFT|Prozess|Wir werden uns weiterhin auf verschiedenen Ebenen um Fördergelder bemühen, um die breite Mitwirkung der Stadtgesellschaft zukünftig besser finanzieren zu können.
+ZUsammenKUNFT|Prozess|die Organisation und Unterstützung der breiten Mitwirkung der Stadtgesellschaft
+ZUsammenKUNFT|Prozess|die Schaffung einer Bauträgerstruktur für das Nutzungsprogramm der Initiative
+ZUsammenKUNFT|Prozess|die Entwicklung transparenter Vergabeverfahren für „unsere“ Flächen
+ZUsammenKUNFT|Staedtebau|Für die Entwicklung des Gesamtareals wollen wir ein städtebauliches Konzept, über das Konsens zwischen den Koop Partnern und der mitwirkenden Stadtgesellschaft besteht.
+ZUsammenKUNFT|Staedtebau|In dem Konzept sollten die Anforderungen bezüglich des Neubaupotentials und der Nutzungsmischung aus der Kooperationsvereinbarung bestmöglich umgesetzt werden.
+ZUsammenKUNFT|Staedtebau|Wir können uns vorstellen, dass Teile der Nutzungen der Initiative in WBM-Neubauten, dem neuen Rathaus oder in Erdgeschossflächen der Häuser B, C und D Platz finden.
+ZUsammenKUNFT|Staedtebau|Wir sehen uns als Entwicklungsträger im Haus A und für Teile des Neubaus.
+ZUsammenKUNFT|Staedtebau|Wir können uns eine gemeinsame Entwicklung der Erdgeschosszone vorstellen und durch das Bereitstellen multifunktionaler Räume zu einem belebten Quartier beitragen.
+ZUsammenKUNFT|Nutzungskonzept|Die Nutzungen im Haus A des Anteils der BIM sollen das Konzept der Initiative durch die Auswahl geeigneter Nutzer unterstützen.ZUsammenKUNFT|Nutzungskonzept|Nutzungen Neubauten - 5.250 qm für integratives Wohnen - 3.000 qm für Bildung
+ZUsammenKUNFT|Nutzungskonzept|nachhaltige Qualitäten der Flächen im Sinne des Nutzungskonzeptes der Initiative 
+ZUsammenKUNFT|Nutzungskonzept|nachhaltige Qualitäten der Flächen - gemeinwohlverpflichtet (überwiegend durch gemeinnützige Träger)
+Bezirk|Staedtebau|Der Gebäudekomplex „Haus der Statistik“ liegt im Südosten des Bezirks Mitte in unmittelbarer Nähe zum Alexanderplatz und be- schreibt die Immobilie in der Otto-Braun-Straße/Karl-Marx-Allee und Mollstraße.
+Bezirk|Leitbild|Daraus resultiert für den Bezirk ein hohes Maß an Verantwortung zum sorgsamen Umgang mit der Bestandsimmobilie und seiner städtebaulichen Potenziale. 
+Bezirk|Nutzungskonzept|An dieser Stelle, als Auftrag über die Koalitionsvereinbarung definiert, soll ein Ort für Verwaltung sowie Kultur, Bildung, Soziales und Wohnen entwickelt werden.
+Bezirk|Leitbild|Die Besonderheit definiert sich dabei über die Sicherstellung einer breiten Mitwirkung der Stadtgesellschaft und der Schaffung von Kooperationen. 
+Bezirk|Prozess|Für den Bezirk ergibt sich die einmalige Gelegenheit an diesem besonderen Ort einen neuen Rathausstandort zu entwickeln.
+Bezirk|Staedtebau|Damit kann für den Bezirk sichergestellt werden, langfristig und zukunftsorientiert ein Teil dieses Projektes mit Modellcharakter zu sein […] als Teilnehmer an einem gelebten Prozess eines modernen und für die Stadtgesellschaft aufgeschlossenen Quartiers.
+Bezirk|Nutzungskonzept|Gleichzeitig soll über den zukünftigen Rathausstandort ein Angebot nach den Nutzungsansprüchen einer modernen Stadtgesellschaft zur Verfügung stehen.

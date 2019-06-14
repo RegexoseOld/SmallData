@@ -1,0 +1,57 @@
+[0.2 - 0.48]
+
+Sie
+Ihr
+Deiner
+empfehlen
+raten
+rat
+empfahl
+empfielt
+abraten
+ratsam
+erklaeren
+übrigens
+Sichtweise
+übersehen
+sollen
+lernen
+gelernt
+ueben
+beibringen
+hinschauen
+hinsehen
+nachdenken
+nachgedacht
+nachdenkt
+haetten
+duerfte
+verstanden
+lesen
+verstehen
+googeln
+gegoogelt
+nachschlagen
+
+Sie (sollten|koennte) .* (mal|informieren|lesen|verstehen|nachdenken|ueberlegen) .*
+Sie sollten .* in Betracht ziehen
+Sie duerften .* (lernen|verstehen|begreifen) .+
+bevor .* (sollten|solltest) (sie|du) .* (lesen|verstehen|begreifen)
+Sie sollten .* mal
+sollten .* mal .*
+sie benutzen .*
+sie sollten .* sich .* fragen
+sie sollten .* überdenken
+darüber sollten sie .* nachdenken
+sie .* zur Kenntnis .* nehmen
+erst .* informieren .* dann .* schreiben
+erst .* informieren .* dann .* kommentieren
+lesen .* dann .* schreiben
+sollte .* vorsichtig .* sein
+vorsichtiger .*
+mein Tipp .*
+solltest mal .*
+denken Sie .* nach
+lesen sie .* durch
+muss .* (bedacht|ueberlegt|beruecksichtigt|geprueft) werden
+
