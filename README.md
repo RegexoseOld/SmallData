@@ -1,3 +1,16 @@
 # SmallData
 
-to stare, run `python3 UserClassifier03.py --ip local --song lemon`
+## Installation
+ - clone git repo
+ - place `german.model` in `model_data`
+
+## Running
+
+To start, run `python3 UserClassifier03.py --ip local --song lemon`
+
+## Dependencies
+ - python 3
+ - python-osc
+ - spacey
+ - gensim
+
