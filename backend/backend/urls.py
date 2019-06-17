@@ -6,6 +6,7 @@ from smalldata import views
 
 router = routers.DefaultRouter()
 router.register(r'utterances', views.UtteranceView, 'utterance')
+router.register(r'categories', views.CategoryView, 'category')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
