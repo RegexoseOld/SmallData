@@ -32,7 +32,7 @@ export default class CustomModal extends Component {
    const { toggle, onSave } = this.props;
    return (
      <Modal isOpen={true} toggle={toggle}>
-       <ModalHeader toggle={toggle}> Utterance Item </ModalHeader>
+       <ModalHeader toggle={toggle}> Create new utterance </ModalHeader>
        <ModalBody>
          <Form>
            <FormGroup>
