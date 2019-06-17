@@ -15,53 +15,26 @@ class App extends Component {
       utteranceList: []
     };
   }
+
   componentDidMount() {
     this.refreshList();
   }
+
   refreshList = () => {
     axios
       .get("http://localhost:8000/api/utterances/")
       .then(res => this.setState({ utteranceList: res.data }))
       .catch(err => console.log(err));
   };
-  displayCompleted = status => {
-    if (status) {
-      return this.setState({ viewCompleted: true });
-    }
-    return this.setState({ viewCompleted: false });
-  };
-  renderTabList = () => {
-    return (
-      <div className="my-5 tab-list">
-        <span
-          onClick={() => this.displayCompleted(true)}
-          className={this.state.viewCompleted ? "active" : ""}
-        >
-          complete
-        </span>
-        <span
-          onClick={() => this.displayCompleted(false)}
-          className={this.state.viewCompleted ? "" : "active"}
-        >
-          Incomplete
-        </span>
-      </div>
-    );
-  };
+
   renderItems = () => {
     const { viewCompleted } = this.state;
     const newItems = this.state.utteranceList;
     return newItems.map(item => (
       <li
         key={item.id}
-        className="list-group-item d-flex justify-content-between align-items-center"
-      >
-        <span
-          className={`utterance-title mr-2 ${
-            this.state.viewCompleted ? "completed-todo" : ""
-          }`}
-          title={item.text}
-        >
+        className="list-group-item d-flex justify-content-between align-items-center">
+        <span className={`utterance-text mr-2`}>
           {item.text}
         </span>
         <span>
@@ -81,9 +54,11 @@ class App extends Component {
       </li>
     ));
   };
+
   toggle = () => {
     this.setState({ modal: !this.state.modal });
   };
+
   handleSubmit = item => {
     this.toggle();
     if (item.id) {
@@ -96,18 +71,22 @@ class App extends Component {
       .post("http://localhost:8000/api/utterances/", item)
       .then(res => this.refreshList());
   };
+
   handleDelete = item => {
     axios
       .delete(`http://localhost:8000/api/utterances/${item.id}`)
       .then(res => this.refreshList());
   };
-  createItem = () => {
+
+  createUtterance = () => {
     const item = { text: ""};
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
+
   editItem = item => {
     this.setState({ activeItem: item, modal: !this.state.modal });
   };
+
   render() {
     return (
       <main className="content">
@@ -116,7 +95,7 @@ class App extends Component {
           <div className="col-md-6 col-sm-10 mx-auto p-0">
             <div className="card p-3">
               <div className="">
-                <button onClick={this.createItem} className="btn btn-primary">
+                <button onClick={this.createUtterance} className="btn btn-primary">
                   Add Utterance
                 </button>
               </div>
