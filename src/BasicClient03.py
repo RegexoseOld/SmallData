@@ -282,7 +282,7 @@ class TextInput(tk.Frame):
         # print('mycanv =', self.mycanv)
 
     def createText(self):
-        self.ref_canvas = tk.Text(self, width=80, font=TextInput.SMALL_FONT)
+        self.ref_canvas = tk.Text(self, width=60, font=TextInput.SMALL_FONT)
         self.ref_canvas.config(background=TextInput.BGC)
         self.scroll1 = tk.Scrollbar(self)
         self.scroll1.config(command=self.ref_canvas.yview)
@@ -291,7 +291,7 @@ class TextInput(tk.Frame):
         self.widgets.append(self.ref_canvas)
 
 
-        self.user_text = tk.Text(self, width=40, wrap=tk.WORD, font=TextInput.SMALL_FONT, bg=TextInput.BGC)
+        self.user_text = tk.Text(self, width=40, height= 300, wrap=tk.WORD, font=TextInput.SMALL_FONT, bg=TextInput.BGC)
         self.scroll2 = tk.Scrollbar(self)
         self.scroll2.config(command=self.user_text.yview)
         self.user_text.config(yscrollcommand=self.scroll2.set)
@@ -301,18 +301,16 @@ class TextInput(tk.Frame):
         self.widgets.append(self.user_text)
 
     def canvas_form(self):
-
         self.init_polygon = (20, 234, 80, 40, 380, 20, 440, 280, 380, 430, 152, 415)
 
-
     def createCanvas(self):
-        self.ref_can = tk.Canvas(self, width=600, height=620, borderwidth= 10)
+        self.ref_can = tk.Canvas(self, width=600, height=420, borderwidth= 2)
         self.ref_can.grid(column=0, row=1, columnspan=3, rowspan=4, padx=5, sticky="W")
         self.widgets.append(self.ref_can)
         self.ref_can.create_polygon(*self.init_polygon, fill='white',
                                     outline='grey', width=10)
 
-        self.user_can = tk.Canvas(self, width= 250)
+        self.user_can = tk.Canvas(self, width= 100, height=200)
         # self.user_can.grid(column=3, row=1, columnspan=4, rowspan=4, sticky="NSEW")
         self.widgets.append(self.user_can)
         # self.user_can.create_polygon(*self.init_polygon, fill=TextInput.BGC,
@@ -482,7 +480,7 @@ class TextOutput(tk.Frame):
         self.createLabels()
         self.createCanvas()
         self.image = None
-        self.song = tk.Canvas(self, width=600, height=50)
+        self.song = tk.Canvas(self, width=600, height=20)
         self.song.grid(column=2, row=4, columnspan=4, pady=10, sticky=tk.W + tk.S)
         self.songparts = {}
         self.songpos = 'slot1'
@@ -503,7 +501,7 @@ class TextOutput(tk.Frame):
         self.clas_can.configure(background=CAT2COLOR[cat])
 
     def createCanvas(self):
-        self.clas_can = tk.Canvas(self, width=600, height=600, borderwidth=10)
+        self.clas_can = tk.Canvas(self, width=400, height=400, borderwidth=10)
         self.scroll = tk.Scrollbar(self, orient='vertical', command=self.clas_can.yview)
         self.clas_can.grid(column=0, row=1, padx=5, sticky="NSWE")
         self.scroll.grid(column=1, row=1, sticky='NS')
