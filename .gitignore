@@ -108,3 +108,6 @@ venv.bak/
 
 # pycharm files
 .idea
+
+# ignore model files
+model_data/german.model
