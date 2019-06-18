@@ -11,6 +11,7 @@ class App extends Component {
       viewCompleted: false,
       activeItem: {
         text: "",
+        category: ""
       },
       utteranceList: []
     };
@@ -37,6 +38,10 @@ class App extends Component {
         <span className={`utterance-text mr-2`}>
           {item.text}
         </span>
+        <span className={`utterance-category mr-2`}>
+          {item.category.name}
+        </span>
+
         <span>
           <button
             onClick={() => this.editItem(item)}
