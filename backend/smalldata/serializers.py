@@ -9,7 +9,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class UtteranceSerializer(serializers.ModelSerializer):
-    category_id = CategorySerializer(many=False, read_only=True)
+    category = CategorySerializer(many=False, read_only=True)
 
     class Meta:
         model = Utterance
