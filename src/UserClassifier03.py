@@ -18,7 +18,9 @@ from pythonosc import dispatcher
 from pythonosc import osc_server
 from itertools import *
 
-from BasicClient03 import Interpreter, CATEGORY_NAMES, TextInput, TextOutput, Statistik1, TextEdit, ClientIO, CAT2VAL, START
+from UDPClient import ClientIO
+
+from BasicClient03 import Interpreter, CATEGORY_NAMES, TextInput, TextOutput, Statistik1, TextEdit, CAT2VAL, START
 from rules import RULES, INTENTS, INTENT_COUNT
 
 from Classifier_max import Classifier
