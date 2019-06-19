@@ -19,8 +19,9 @@ from pythonosc import osc_server
 from itertools import *
 
 from UDPClient import ClientIO
+from Tkinter import TextInput, TextOutput, Statistik1
 
-from BasicClient03 import Interpreter, CATEGORY_NAMES, TextInput, TextOutput, Statistik1, TextEdit, CAT2VAL, START
+from BasicClient03 import Interpreter, CATEGORY_NAMES,  TextEdit, CAT2VAL, START
 from rules import RULES, INTENTS, INTENT_COUNT
 
 from Classifier_max import Classifier
@@ -270,11 +271,13 @@ class Feedback:
         print('count_user = {}  cat = {}'.format(count_user, cat))
         actual = CAT_COUNT(cat, count_user)
         fields = []
+        print('Rules: ', RULES.keys)
         for i in list(RULES.keys()):
             if i[0]== cat:
                 fields.append(i)
+        print('fields: ', fields)
         maxi = max([n.count for n in fields])
-        # print('max: ', maxi)
+
         for i in fields:
             if actual == i:
                 print('SAME! cat: {}  i.name: {}   i.count: {}\n'.format(cat, i.name, i.count))
