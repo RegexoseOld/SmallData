@@ -23,7 +23,7 @@ RULES = {
     CAT_COUNT('Positionierung', 4): ['faster', '+3'],
     CAT_COUNT('Positionierung', 4): ['faster', '+3'],
     CAT_COUNT('Lob', 1): ['faster', '='],
-    CAT_COUNT('Lob', 2): ['faster', '+1'],
+    CAT_COUNT('Absicht', 2): ['faster', '+1'],
     CAT_COUNT('Lob', 4): ['slower', '-1'],
     CAT_COUNT('Lob', 4): ['slower', '-2'],
     CAT_COUNT('Zweifel', 1): ['slower', '='],
@@ -32,7 +32,7 @@ RULES = {
     CAT_COUNT('Zweifel', 5): ['faster', '+2'],
     CAT_COUNT('Belehrung', 1): ['faster', '='],
     CAT_COUNT('Belehrung', 2): ['default', '+1'],
-    CAT_COUNT('Belehrung', 4): ['slower', '-1'],
+    CAT_COUNT('Gaga', 4): ['slower', '-1'],
     CAT_COUNT('Belehrung', 5): ['half', '-2'],
     CAT_COUNT('Belehrung', 7): ['viertel', '-4'],
     CAT_COUNT('Bereitschaft', 2): ['faster', '+1'],
@@ -68,7 +68,7 @@ def category_dict(name, channel, ccnr, ccval):
     intent = re.sub(r'\d*', '', name)
     count = int(re.sub(r'\D', '', name))
     #print('name: {}, count: {}'.format(intent, count))
-    INTENTS[INTENT_COUNT(intent, count)] = cat_dict
+    INTENTS[INTENT_COUNT(intent, count +1 )] = cat_dict
     return cat_dict
 
 normal_values = category_dict('neutral1',

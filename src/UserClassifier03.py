@@ -12,21 +12,18 @@ import os
 from collections import Mapping, namedtuple, Counter, defaultdict
 from pathlib import Path
 from copy import deepcopy
-from pythonosc import osc_message_builder
-from pythonosc.udp_client import SimpleUDPClient
 from pythonosc import dispatcher
 from pythonosc import osc_server
-from itertools import *
 
 from UDPClient import ClientIO
 from Tkinter import TextInput, TextOutput, Statistik1
 from Categories import CATEGORY_NAMES, CAT2VAL
-from BasicClient03 import Interpreter, TextEdit, START
+from BasicClient03 import TextEdit, START
 from rules import RULES, INTENTS, INTENT_COUNT
 from Classifier_max import Classifier
+from Interpreter import Interpreter
 from DiskAdapter2 import DiskAdapter
 import tkinter as tk
-from PIL import Image, ImageTk
 
 from statistics import median
 
@@ -117,7 +114,6 @@ class Feedback:
 
         return stats
 
-
     def get_user_actions_from_file(self, filepath):
         action_dict = defaultdict(list)
         for line in Path(filepath).read_text().split('\n'):
@@ -127,16 +123,14 @@ class Feedback:
                 action_dict[cat].append(intent)
         return action_dict
 
-
     def job_count(self, user, intent, cat):
         if user != self.user:
             self.actions = {k:[] for k in CATEGORY_NAMES}
+            self.user = user
+            self.actions[cat].append(intent)
+            update_stats(self.song, user, cat, intent)
         elif cat == "Gaga":
             pass
-        self.user = user
-        self.actions[cat].append(intent)
-        update_stats(self.song, user, cat, intent)
-        # print('actions: ', self.actions)
 
         stats = self.get_current_stats()
         self.textoutput.plot_stats(stats)
@@ -312,6 +306,7 @@ class Feedback:
             if new_count == 0:
                 new_count = 4
             return INTENTS[INTENT_COUNT(intent, new_count)]
+        print('key intents: ', INTENT_COUNT(intent, int_count[intent]))
         return INTENTS[INTENT_COUNT(intent, int_count[intent])]
 
     def dict_comp(self, user, intent, text, reftext, eigencat):
