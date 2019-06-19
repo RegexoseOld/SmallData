@@ -2,7 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import os
 from itertools import cycle
-from BasicClient03 import CATEGORY_NAMES
+from Categories import CATEGORY_NAMES
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg

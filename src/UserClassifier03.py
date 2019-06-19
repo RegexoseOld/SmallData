@@ -20,10 +20,9 @@ from itertools import *
 
 from UDPClient import ClientIO
 from Tkinter import TextInput, TextOutput, Statistik1
-
-from BasicClient03 import Interpreter, CATEGORY_NAMES,  TextEdit, CAT2VAL, START
+from Categories import CATEGORY_NAMES, CAT2VAL
+from BasicClient03 import Interpreter, TextEdit, START
 from rules import RULES, INTENTS, INTENT_COUNT
-
 from Classifier_max import Classifier
 from DiskAdapter2 import DiskAdapter
 import tkinter as tk
