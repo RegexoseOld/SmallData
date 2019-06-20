@@ -7,14 +7,13 @@ import pickle
 import collections
 
 import copy
-from itertools import *
 from pythonosc.udp_client import SimpleUDPClient
-
 from pythonosc import dispatcher
 from pythonosc import osc_server
 from arp import Arp
+
 from osc_server05 import Noten, Chords, Counter
-from BasicClient03 import START
+from UDPClient import Client_MusicServer, START
 from rules import normal_values
 
 
@@ -422,80 +421,6 @@ class Play_Thread(threading.Thread):
 
         print('alive?: ', self.is_alive())
 
-class ClientIO(SimpleUDPClient):
-
-    def __init__(self, ip, port, cond):
-        super(ClientIO, self).__init__(ip, port)
-        self.port = port
-        self.ip =ip
-        self.cond = cond
-        self.trig = cycle([0.0, 1.0])
-
-    def __repr__(self):
-        return '(Client Port {})'.format(self.port)
-
-    def feedback_for_client(self, slot):
-        self.send_message("/feedback01", slot)
-
-    def msg_send(self, note, velo, trig):
-        self.send_message("/osc_notes", [note, velo, trig])
-
-    def track_send(self, track, val):
-        self.send_message("/arm{}".format(track), val)
-
-    def akk_send(self, note, voice, vel, trig):
-        list = [note, voice, vel, trig]
-        # print('akk send values: {}'.format([type(list[n]) for n in range(len(list))]))
-        # print('akk send values:', list)
-        self.send_message("/chord", list)
-
-    def control_send(self, channel, crtlnr, val):
-        # print('control_send  chan: {}, ccnr: {} val: {}, \ntime: {}'.format(channel, crtlnr, val,  (time.time() - START)))
-        self.send_message("/{}_cc{}".format(channel, crtlnr), val)
-
-    def wheel_send(self, wheel):
-        self.send_message("/wheel", wheel)
-
-    def trigger_send(self, trig):
-        # trig = self.trig.__next__()
-        self.send_message("/trigger", trig)
-
-    def trigger_address(self, address, trig):
-        print('message trigger address: {}, {} time: {}'.format(address, trig, (time.time() - START)))
-        # self.send_message("{}".format(address), trig)
-        self.send_message("{}".format(address), [trig, 1.0])
-        self.send_message("{}".format(address), [trig, 0.0])
-
-    def calibrate(self, address, val):
-        print('client calibrate: {}, {}'.format(address, type(int(val))))
-        self.send_message("{}".format(address), [int(val), 1.0])
-        self.send_message("{}".format(address), [int(val), 0.0])
-
-    def tempo_coarse(self, coarse):
-        print('coarse: {}'.format(int(coarse)))
-        self.send_message("/tempo_coarse", int(coarse))
-
-    def mute_send(self, channel, ccnr, val):
-        print('mute send: {}'.format(ccnr))
-        if val == 0:
-            self.send_message('{}_cc{}'.format(channel, ccnr), 0)
-            self.send_message('{}_{}'.format(channel, ccnr), 0)
-
-        else:
-            self.send_message('{}_cc{}'.format(channel, ccnr), 127)
-
-        #self.send_message('{}_{}'.format(channel, ccnr), val)
-
-    def solo_send(self, channel, ccnr, val):
-        print('solo send: {}'.format(ccnr))
-        self.send_message('{}_{}'.format(channel, ccnr), val)
-        self.send_message('{}_{}'.format(channel, ccnr), val)
-
-
-    def init_send(self, address, val):
-        print('init send address  {}  msg {}'.format(address, val))
-        self.send_message("{}".format(address), val)
-
 class Live:
     def __init__(self, client, edit, message, cond):
         self.client = client
@@ -693,21 +618,23 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--ip",
-                       default="192.168.1.44", help="The ip to listen on")
+                       default=ips['local'], help="The ip to listen on")
 
     parser.add_argument("--port",
-                        type=int, default=5005, help="The port to listen on")
+                        type=int, default=5000, help="The port to listen on")
     args = parser.parse_args()
+    print('ip: {}  port: {}'.format(ips[args.ip], args.port))
     server = osc_server.ThreadingOSCUDPServer((ips[args.ip], args.port), dispatcher)
+    # print('server: ', server.server_address)
 
-    server_instance_client = ClientIO(ips[args.ip], 5010, COND1)
+    server_instance_client = Client_MusicServer(ips[args.ip], 5010, COND1)
     '''
     Diese Instanz dient der Kommunkation zum Text-Client. Momentan nur für
     die Übermittlung der aktuell gespielten Melodie
     '''
 
-    osculator_instance = ClientIO(ips[args.ip], 5015, COND1)
-    oscu_tempo = ClientIO(ips[args.ip], 5020, COND1)
+    osculator_instance = Client_MusicServer(ips[args.ip], 5015, COND1)
+    oscu_tempo = Client_MusicServer(ips[args.ip], 5020, COND1)
 
     '''
     Diese Instanz ist der UDP Server zu Osculator (und LIVE)

@@ -1,5 +1,5 @@
 import tkinter as tk
-from PIL import Image, ImageTk
+
 import os
 from itertools import cycle
 from Categories import CATEGORY_NAMES

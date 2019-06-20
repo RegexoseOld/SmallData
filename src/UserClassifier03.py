@@ -1,8 +1,5 @@
 """
-perspektivisch: 1) pro kategorie ein Track/Synthsizer?
-2) bei neuen Texten: a) in UserOrdner boris/Zustimmung.txt b) alle_user/Zustimmung.txt
-vor allem die b) lösung wäre eine wachsende Datenbank, die zusätzlich zu meiner bisherigen TrainingData
-(die ja letztlich eine Boris-Datenbank ist) hinzugezogen wird.
+
 
 """
 import argparse
@@ -12,8 +9,6 @@ import os
 from collections import Mapping, namedtuple, Counter, defaultdict
 from pathlib import Path
 from copy import deepcopy
-import time
-from datetime import datetime
 from pythonosc import dispatcher
 from pythonosc import osc_server
 
@@ -24,12 +19,11 @@ from rules import RULES, INTENTS, INTENT_COUNT
 from Classifier_max import Classifier
 from Interpreter import Interpreter
 from TextEdit import TextEdit
+from UDPClient import START
 from DiskAdapter2 import DiskAdapter
 
 from statistics import median
 
-DATETIME = datetime(2018, 8, 18, 10, 31, 30, 11111)
-START = time.mktime(DATETIME.timetuple()) + DATETIME.microsecond / 1E6
 ROOTDIR = '../'
 STATSDIR = 'stats'
 USER_NAMES = []
@@ -112,6 +106,11 @@ class Feedback:
         return stats
 
     def get_user_actions_from_file(self, filepath):
+        '''
+
+        :param filepath:
+        :return:
+        '''
         action_dict = defaultdict(list)
         for line in Path(filepath).read_text().split('\n'):
             line = line.strip()
@@ -121,13 +120,13 @@ class Feedback:
         return action_dict
 
     def job_count(self, user, intent, cat):
-        if user != self.user:
-            self.actions = {k:[] for k in CATEGORY_NAMES}
+        if cat == "Gaga":
+            pass
+        elif user != self.user:
+            self.actions = {k: [] for k in CATEGORY_NAMES}
             self.user = user
             self.actions[cat].append(intent)
             update_stats(self.song, user, cat, intent)
-        elif cat == "Gaga":
-            pass
 
         stats = self.get_current_stats()
         self.textoutput.plot_stats(stats)
@@ -326,7 +325,6 @@ class Feedback:
         self.usertext_save(user, intent, text, reftext, cat, eigencat)
         self.textoutput.clastext_update(user, cat, prob, text)
 
-
     def controller_send(self):
         # for k in range(len(self.feedback_note_ids)):
         #     self.map[k] =  [self.velovals[k], self.pitchwheels[k], self.ccnr[k], self.ccvals[k]]
@@ -335,8 +333,6 @@ class Feedback:
         # self.text_tracks_save(username, self.map)
         dict_to_send = pickle.dumps(self.map)
         self.client.send_controlmap(dict_to_send)
-
-
 
     def init_send(self, user):
         #print('simple msg: ', msg)
@@ -359,17 +355,17 @@ class Feedback:
         self.client.calibrate(message)
 
 if __name__ == "__main__":
-    ips = {'local': '127.0.0.1', 'gitsche': "192.168.1.90", 'sv': '192.168.178.189', 'skali': '192.168.178.44',
+    ips = {'local': '127.0.0.1', 'gitsche': "192.168.1.123", 'sv': '192.168.178.189', 'skali': '192.168.178.44',
            'rasp': '192.168.1.91'}
 
     songs = {'lemon': "unruhig.txt", 'casion': "professionell.txt", 'primar': "totem.txt",
              'dub': "Natuerliche_Argumentation.txt", 'track3': 'technologie.txt'}
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", default="192.168.1.44",
+    parser.add_argument("--ip", default=ips['local'],
                         help="The ip of the osc_server06")
     # parser.add_argument("--ip", default="127.0.0.1",
-    #                     help="The ip of the osc_server06")
-    parser.add_argument("--port", type=int, default=5005,
+    #                     help="The ip of the osc_server")
+    parser.add_argument("--port", type=int, default=5000,
                         help="The port the OSC server is listening on")
     parser.add_argument("--reset", default=False,
                         help="reset stats")
@@ -422,7 +418,6 @@ if __name__ == "__main__":
         #feedback_instance.dict_comp('user1', 'neutral', text, reftext, eigencat)
         pass
 
-
     def feedback_obj(uptodate):
         feedback_instance.dispatch(uptodate)
 
@@ -431,7 +426,7 @@ if __name__ == "__main__":
 
     def server():
         server = osc_server.ThreadingOSCUDPServer((ips[args.ip], 5010), dispatcher)
-        print("Serving on {}".format(server.server_address))
+        print("Feedback from MusicServer Serving on {}".format(server.server_address))
         server.serve_forever()
 
     serv = threading.Thread(name='server', target=server, daemon=True)
