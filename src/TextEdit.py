@@ -1,17 +1,6 @@
-
-import argparse
-import threading
-import re
 import os
-import time
-from datetime import datetime
-from pythonosc import dispatcher
-from pythonosc import osc_server
+import re
 
-
-DATETIME = datetime(2018, 8, 18, 10, 31, 30, 11111)
-START = time.mktime(DATETIME.timetuple()) + DATETIME.microsecond / 1E6
-from Categories import CATEGORY_NAMES, CAT2VAL
 
 class TextEdit:
     def __init__(self, feedback):
@@ -69,33 +58,3 @@ class TextEdit:
 
         with open('{}/{}.txt'.format(path1, eigencat), 'a') as t:
             t.write('Ref: {} | Meinung: {} | EigenCat: {} \n'.format(reftext, text, eigencat))
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    # parser.add_argument("--ip", default="127.0.0.1",
-    parser.add_argument("--ip", default="127.0.0.1",
-                        help="The ip of the OSC server")
-    parser.add_argument("--port", type=int, default=5005,
-                        help="The port the OSC server is listening on")
-
-    args = parser.parse_args()
-    client_instance = ClientIO(args.ip, args.port)
-
-
-    def server():
-        parser2 = argparse.ArgumentParser()
-        parser2.add_argument("--ip",
-                             default="127.0.0.1", help="The ip to listen on")
-        parser2.add_argument("--port",
-                             type=int, default=5010, help="The port to listen on")
-        args = parser2.parse_args()
-        server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)
-        print("Serving on {}".format(server.server_address))
-        server.serve_forever()
-
-    serv = threading.Thread(name='server', target=server, daemon=True)
-    #serv.start()
-
-
-

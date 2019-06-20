@@ -12,21 +12,25 @@ import os
 from collections import Mapping, namedtuple, Counter, defaultdict
 from pathlib import Path
 from copy import deepcopy
+import time
+from datetime import datetime
 from pythonosc import dispatcher
 from pythonosc import osc_server
 
 from UDPClient import ClientIO
 from Tkinter import TextInput, TextOutput, Statistik1
 from Categories import CATEGORY_NAMES, CAT2VAL
-from BasicClient03 import TextEdit, START
 from rules import RULES, INTENTS, INTENT_COUNT
 from Classifier_max import Classifier
 from Interpreter import Interpreter
+from TextEdit import TextEdit
 from DiskAdapter2 import DiskAdapter
 import tkinter as tk
 
 from statistics import median
 
+DATETIME = datetime(2018, 8, 18, 10, 31, 30, 11111)
+START = time.mktime(DATETIME.timetuple()) + DATETIME.microsecond / 1E6
 ROOTDIR = '../'
 STATSDIR = 'stats'
 USER_NAMES = []
