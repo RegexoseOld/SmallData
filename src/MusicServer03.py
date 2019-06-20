@@ -12,7 +12,7 @@ from pythonosc import dispatcher
 from pythonosc import osc_server
 from arp import Arp
 
-from osc_server05 import Noten, Chords, Counter
+from MusicObjects import Noten, Chords
 from UDPClient import Client_MusicServer, START
 from rules import normal_values
 
@@ -331,7 +331,6 @@ class To_Client_Thread(threading.Thread):
                 #print('Condition 292 ', self.cond)
                 # print('P_Obj: {}, repeat  {}'.format(self.P_Obj, self.repeat))
                 self.client.feedback_for_client(self.slot)
-
 
 # @ChangeMonitor
 class Play_Thread(threading.Thread):
