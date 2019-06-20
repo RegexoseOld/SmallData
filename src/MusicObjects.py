@@ -1,5 +1,7 @@
 import re
+import collections
 
+noteobject_dict = collections.OrderedDict()
 
 class Noten:
   def __init__(self, name='?', noteId=[], notes=[], vel= [], tm=[], pitchwheel=[], controllernr=[], ccval=[]):
@@ -168,3 +170,15 @@ class Tonarten:
 
         # print('allowed_komplett : ', sex_map)
         return sex_map
+
+
+def make_note_objects(nr, slot):
+    note_object = Noten('slot{}'.format(nr), [i for i in range(len(slot))],
+                           slot,
+                           [110 for i in range(len(slot))],
+                           [1],
+                           [0 for i in range(len(slot))],
+                           [x for x in range(19)],
+                           [0.0 for x in range(19)])
+    noteobject_dict[note_object.name] = note_object
+    return note_object
