@@ -12,6 +12,37 @@ from collections import defaultdict
 CATCOLORS = ['#d9ff05', 'magenta', '#4b62b7', '#51bc56', 'cyan', '#bfff60', '#eab9d7', '#c4ace5', '#a08975']
 CAT2COLOR = {CATEGORY_NAMES[k]:CATCOLORS[k] for k in range(len(CATEGORY_NAMES))}
 
+class Interface(tk.Tk):
+    def __init__(self, name, page,  *kwargs):
+        tk.Tk.__init__(self, name, *kwargs)
+        container = tk.Frame(self)
+        # print('353 self: {}, container: {}'.format(type(self), type(container)))
+        container.pack(side="top", fill="both", expand=True)
+
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+        container.master.title(name)
+
+        self.frames = {}
+        self.windows = {} # auf diese Weise die Elemente (Buttons, Labels) auf einer Seite organisieren
+        self.windows[name] = page
+
+        self.window = page(container, self) # repräsentiert ein "window" Hauptfenster (Input, Output, Statistik1)
+        self.frames[name] = self.window
+        self.window.pack()
+
+        self.show_window(name)
+
+    def show_window(self, cont):
+        # print('291 self.frames: ', self.frames)
+        window = self.frames[cont]
+        # print('294 window: ', window)
+        window.tkraise()
+
+    def update_windows(self, name, window):
+        self.frames[name] = window
+        # print('297 update frames: ', self.frames)
+
 class TextInput(tk.Frame):
 
     LARGE_FONT = ("Verdana", 30)

@@ -18,14 +18,13 @@ from pythonosc import dispatcher
 from pythonosc import osc_server
 
 from UDPClient import ClientIO
-from Tkinter import TextInput, TextOutput, Statistik1
+from Tkinter import Interface, TextInput, TextOutput, Statistik1
 from Categories import CATEGORY_NAMES, CAT2VAL
 from rules import RULES, INTENTS, INTENT_COUNT
 from Classifier_max import Classifier
 from Interpreter import Interpreter
 from TextEdit import TextEdit
 from DiskAdapter2 import DiskAdapter
-import tkinter as tk
 
 from statistics import median
 
@@ -69,12 +68,6 @@ def category_dict(name, channel, ccnr, ccval):
     INTENT2CC[name] = cat_dict
 
     return cat_dict
-
-
-class NoteObject:
-    def __init__(self, noteobject):
-        #print('32 noteobject.notes',noteobject.notes)
-        return
 
 class Feedback:
     def __init__(self, interpreter, client, interface, song):
@@ -364,37 +357,6 @@ class Feedback:
     def direct_send(self, ccnr, ccval):
         message = pickle.dumps([ccnr, ccval])
         self.client.calibrate(message)
-
-class Interface(tk.Tk):
-    def __init__(self, name, page,  *kwargs):
-        tk.Tk.__init__(self, name, *kwargs)
-        container = tk.Frame(self)
-        # print('353 self: {}, container: {}'.format(type(self), type(container)))
-        container.pack(side="top", fill="both", expand=True)
-
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
-        container.master.title(name)
-
-        self.frames = {}
-        self.windows = {} # auf diese Weise die Elemente (Buttons, Labels) auf einer Seite organisieren
-        self.windows[name] = page
-
-        self.window = page(container, self) # repräsentiert ein "window" Hauptfenster (Input, Output, Statistik1)
-        self.frames[name] = self.window
-        self.window.pack()
-
-        self.show_window(name)
-
-    def show_window(self, cont):
-        # print('291 self.frames: ', self.frames)
-        window = self.frames[cont]
-        # print('294 window: ', window)
-        window.tkraise()
-
-    def update_windows(self, name, window):
-        self.frames[name] = window
-        # print('297 update frames: ', self.frames)
 
 if __name__ == "__main__":
     ips = {'local': '127.0.0.1', 'gitsche': "192.168.1.90", 'sv': '192.168.178.189', 'skali': '192.168.178.44',
