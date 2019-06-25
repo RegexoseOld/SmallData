@@ -29,9 +29,7 @@ TRIGGERMAP = {
     'main': [i for i in range(9,17)],
     'special': [i for i in range(17,23)],
     'end': [i for i in range(23,26)]
-
 }
-
 
 def dict_values(tracks, fader):
     addresses = []
@@ -229,23 +227,23 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--ip",
-                       default=ips['local'], help="The ip to listen on")
+                       default='127.0.0.1', help="The ip to listen on")
 
     parser.add_argument("--port",
                         type=int, default=5000, help="The port to listen on")
     args = parser.parse_args()
-    print('ip: {}  port: {}'.format(ips[args.ip], args.port))
-    server = osc_server.ThreadingOSCUDPServer((ips[args.ip], args.port), dispatcher)
+    # print('ip: {}  port: {}'.format(ips[args.ip], args.port))
+    server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)
     # print('server: ', server.server_address)
 
-    server_instance_client = Client_MusicServer(ips[args.ip], 5010, COND1)
+    server_instance_client = Client_MusicServer(args.ip, 5010, COND1)
     '''
     Diese Instanz dient der Kommunkation zum Text-Client. Momentan nur für
     die Übermittlung der aktuell gespielten Melodie
     '''
 
-    osculator_instance = Client_MusicServer(ips[args.ip], 5015, COND1)
-    oscu_tempo = Client_MusicServer(ips[args.ip], 5020, COND1)
+    osculator_instance = Client_MusicServer(args.ip, 5015, COND1)
+    oscu_tempo = Client_MusicServer(args.ip, 5020, COND1)
 
     '''
     Diese Instanz ist der UDP Server zu Osculator (und LIVE)
