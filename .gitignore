@@ -111,3 +111,6 @@ venv.bak/
 
 # ignore model files
 model_data/german.model
+
+#TrainingData Files
+TrainingData.xlsx
