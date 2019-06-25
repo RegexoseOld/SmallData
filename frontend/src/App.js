@@ -31,6 +31,7 @@ class App extends Component {
   renderItems = () => {
     const { viewCompleted } = this.state;
     const newItems = this.state.utteranceList;
+    /* todo: display category name if item.category is not null */
     return newItems.map(item => (
       <li
         key={item.id}
@@ -38,10 +39,6 @@ class App extends Component {
         <span className={`utterance-text mr-2`}>
           {item.text}
         </span>
-        <span className={`utterance-category mr-2`}>
-          {item.category.name}
-        </span>
-
         <span>
           <button
             onClick={() => this.editItem(item)}
