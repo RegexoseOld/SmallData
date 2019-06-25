@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from .serializers import UtteranceSerializer, CategorySerializer
 from .models import Utterance, Category
@@ -9,7 +8,9 @@ class UtteranceView(viewsets.ModelViewSet):
     queryset = Utterance.objects.all()
 
     def perform_create(self, serializer):
+        #  TODO: First detect the correct category,
         serializer.validated_data["category"] = self.__get_category_for_utterance(serializer)
+        #  TODO:  Second, send the category to the music server
         super(UtteranceView, self).perform_create(serializer)
 
     def __get_category_for_utterance(self, serializer):
