@@ -67,8 +67,8 @@ def category_dict(name, channel, ccnr, ccval):
 
     intent = re.sub(r'\d*', '', name)
     count = int(re.sub(r'\D', '', name))
-    #print('name: {}, count: {}'.format(intent, count))
-    INTENTS[INTENT_COUNT(intent, count +1 )] = cat_dict
+    print('name: {}, count: {}'.format(intent, count))
+    INTENTS[INTENT_COUNT(intent, count)] = cat_dict
     return cat_dict
 
 normal_values = category_dict('neutral1',
