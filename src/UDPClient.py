@@ -8,7 +8,6 @@ DATETIME = datetime(2019, 6, 20, 20, 15, 30, 11111)
 START = time.mktime(DATETIME.timetuple()) + DATETIME.microsecond / 1E6
 
 class ClientIO(SimpleUDPClient):
-
     def __init__(self, ip, port):
         super(ClientIO, self).__init__(ip, port)
         self.send_msg('\tClientIO Connection!! ip {}  port {}'.format(ip, port))
@@ -37,7 +36,6 @@ class ClientIO(SimpleUDPClient):
 
 
 class Client_MusicServer(SimpleUDPClient):
-
     def __init__(self, ip, port, cond):
         super(Client_MusicServer, self).__init__(ip, port)
         self.port = port
@@ -94,11 +92,8 @@ class Client_MusicServer(SimpleUDPClient):
         if val == 0:
             self.send_message('{}_cc{}'.format(channel, ccnr), 0)
             self.send_message('{}_{}'.format(channel, ccnr), 0)
-
         else:
             self.send_message('{}_cc{}'.format(channel, ccnr), 127)
-
-        #self.send_message('{}_{}'.format(channel, ccnr), val)
 
     def solo_send(self, channel, ccnr, val):
         print('solo send: {}'.format(ccnr))
