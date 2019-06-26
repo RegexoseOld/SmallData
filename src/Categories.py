@@ -15,7 +15,7 @@ def p_dict(dict):
 for file in os.listdir('../TrainingDataNew'):
     if not file.startswith('.') and not file.endswith('pkl'):
         CATEGORY_NAMES.append(os.path.splitext(file)[0])
-        CATEGORY_NAMES.sort()
+    CATEGORY_NAMES.sort()
 
 CHANNEL = [[i for i in range(16)] for o in range(len(CATEGORY_NAMES))]
 
