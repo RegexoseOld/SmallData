@@ -15,8 +15,8 @@ class Interpreter:
 
     def text2wheel(self, text):
         cat, prob = self.classifier.predict_proba(text, filter_stop_words=False, verbose=True)
+        # print result of last utterance
         print('input {}, cat {}, prob {}: '.format(text, cat, prob))
-        # pitch = category_to_note[classified_category_name]
         wheel = CAT2VAL[cat]['wheel']
         return [wheel, cat, prob]
 
