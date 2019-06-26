@@ -355,13 +355,13 @@ class Feedback:
         self.client.calibrate(message)
 
 if __name__ == "__main__":
-    ips = {'local': '127.0.0.1', 'gitsche': "192.168.1.123", 'sv': '192.168.178.189', 'skali': '192.168.178.44',
+    ips = {'local': '127.0.0.1', 'gitsche': "192.168.1.123", 'sv': '192.168.178.189', 'skali': '192.168.178.20',
            'rasp': '192.168.1.91'}
 
     songs = {'lemon': "unruhig.txt", 'casion': "professionell.txt", 'primar': "totem.txt",
              'dub': "Natuerliche_Argumentation.txt", 'track3': 'technologie.txt'}
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", default=ips['local'],
+    parser.add_argument("--ip", default='127.0.0.1',
                         help="The ip of the osc_server06")
     # parser.add_argument("--ip", default="127.0.0.1",
     #                     help="The ip of the osc_server")
@@ -373,7 +373,7 @@ if __name__ == "__main__":
                         default='lemon', help="songname")
     args = parser.parse_args()
 
-    client_instance = ClientIO(ips[args.ip], args.port)
+    client_instance = ClientIO(args.ip, args.port)
 
     texts, categories, names = DiskAdapter().get_training_data(CATEGORY_NAMES)# trainingsdaten holen
 
@@ -425,7 +425,7 @@ if __name__ == "__main__":
     dispatcher.map("/feedback01", lambda address, uptodate: feedback_obj(uptodate))
 
     def server():
-        server = osc_server.ThreadingOSCUDPServer((ips[args.ip], 5010), dispatcher)
+        server = osc_server.ThreadingOSCUDPServer((args.ip, 5010), dispatcher)
         print("Feedback from MusicServer Serving on {}".format(server.server_address))
         server.serve_forever()
 
