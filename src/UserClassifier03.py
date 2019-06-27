@@ -1,7 +1,3 @@
-"""
-
-
-"""
 import argparse
 import pickle
 import threading
@@ -120,14 +116,10 @@ class Feedback:
         return action_dict
 
     def job_count(self, user, intent, cat):
-        if cat == "Gaga":
-            pass
-        elif user != self.user:
-            self.actions = {k: [] for k in CATEGORY_NAMES}
-            self.user = user
-            self.actions[cat].append(intent)
-            update_stats(self.song, user, cat, intent)
-
+        self.actions = {k: [] for k in CATEGORY_NAMES}
+        self.user = user
+        self.actions[cat].append(intent)
+        update_stats(self.song, user, cat, intent)
         stats = self.get_current_stats()
         self.textoutput.plot_stats(stats)
 
@@ -294,9 +286,10 @@ class Feedback:
         int_count = Counter()
         intent_rules = [i.count for i in INTENTS.keys() if i.intent == intent]
         maxi = max(intent_rules)
-        for vals in self.actions.values():
+        print('actions_ {}'.format(self.actions))
+        for vals in list(self.actions.values()):
             int_count.update(vals)
-        print(' int_count: {}  count: {}, maxi: {}'.format(int_count, int_count[intent], maxi))
+        print(' self.actions.values: {}\ncount_actual: {}\nintent: {}'.format(self.actions.values(), int_count[intent], intent))
         if int_count[intent] > maxi:
             new_count = (int_count[intent] % maxi)
             if new_count == 0:
