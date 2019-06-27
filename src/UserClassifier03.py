@@ -315,7 +315,8 @@ class Feedback:
 
         self.map = {'user': user, 'cc_dict': cc_dict, 'wheel': wheel, 'coarse': coarse,
                     'trigger': trigger}
-        self.usertext_save(user, intent, text, reftext, cat, eigencat)
+        # save all relevant text relations in a text file | should go into Database
+        # self.usertext_save(user, intent, text, reftext, cat, eigencat)
         self.textoutput.clastext_update(user, cat, prob, text)
 
     def controller_send(self):

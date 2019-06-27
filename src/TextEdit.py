@@ -8,14 +8,16 @@ class TextEdit:
         self.linenr = 0
 
     def one_satz(self, user, intent, reftext, satz, eigencat):
-        self.text_cat_save(user, intent, satz, eigencat, reftext)
+        # save utterance to a text file
+        # self.text_cat_save(user, intent, satz, eigencat, reftext)
         self.feedback.dict_comp(user, intent, satz, reftext, eigencat)
         self.feedback.controller_send()
 
     def multi_satz(self, user, intent, reftext, saetze, eigencat):
         print('sätze :', saetze)
         for satz in saetze:
-            self.text_cat_save(user, satz, intent, eigencat, reftext)
+            # save utterance to a text file
+            # self.text_cat_save(user, satz, intent, eigencat, reftext)
             self.feedback.dict_comp(user, intent, satz, reftext, eigencat)
             self.linenr += 1
             if self.linenr == len(self.saetze):
@@ -26,10 +28,8 @@ class TextEdit:
     def new_beitrag(self, user, intent, ref_text, user_text, eigencat):
         self.saetze = re.split(r'[\r\n]+', user_text)  # jede Zeile = Satz
         # self.feedback.init_send(user)  # falls ich per button den Song starten will
-
         if len(self.saetze) <= 1:
             self.one_satz(user, intent, ref_text, self.saetze[0], eigencat)
-
         else:
             self.multi_satz(user, intent, ref_text, self.saetze, eigencat)
         self.feedback.reset()

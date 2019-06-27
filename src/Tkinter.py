@@ -231,14 +231,12 @@ class TextInput(tk.Frame):
             self.category = 'no_cat'
         else:
             self.category = self.eigen_cat.get()
-
         print(' 472 self.cat: {} \t '.format(self.category)) # wie kann man wieder deselektieren?
         self.textedit.new_beitrag(self.username.get(), self.intent, self.reftext, meinung, self.category)
         if self.category == 'no_cat' or user == 'icke:':
             self.user_text.tag_config('name', foreground=TextInput.FG[1])
             self.user_text.insert('end', '\nBitte gib einen Namen ein und wähle eine Kategorie\n', 'name')
         self.after(2000, self.delete_text, self.user_text)
-
         self.lb_cat.selection_clear(0, 'end')
         self.entry03.delete(0, 'end')
 
