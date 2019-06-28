@@ -1,245 +1,47 @@
-
-import argparse
-import pickle
-import threading
-import re
-import os
-import time
-from datetime import datetime
-from collections import defaultdict
-
-
-from itertools import cycle
-from pythonosc.udp_client import SimpleUDPClient
-from pythonosc import dispatcher
-from pythonosc import osc_server
-
-from Classifier_max import Classifier
-from DiskAdapter2 import DiskAdapter
 import tkinter as tk
-from PIL import Image, ImageTk
 
-import collections
-
+import os
+from itertools import cycle
+from Categories import CATEGORY_NAMES
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+from collections import defaultdict
 
-IMAGE_DIR = '../images'
-DATETIME = datetime(2018, 8, 18, 10, 31, 30, 11111)
-START = time.mktime(DATETIME.timetuple()) + DATETIME.microsecond / 1E6
-NORMAL_CHANNEL= [0.0 for i in range(29)]
-NORMAL_CHANNEL.insert(6, 1.0)
-
-CATEGORY_NAMES = []
-CAT2VAL = {}
-
-def p_dict(dict):
-    for i in dict.keys():
-        print('"{}" : {},\n'.format(i, dict[i]))
-
-for file in os.listdir('../TrainingDataNew'):
-    # print('Training Cats: ', os.path.splitext(file)[0])
-    if not file.startswith('.') and not file.endswith('pkl'):
-        CATEGORY_NAMES.append(os.path.splitext(file)[0])
-        CATEGORY_NAMES.sort()
-
-# del CATEGORY_NAMES[3]
 CATCOLORS = ['#d9ff05', 'magenta', '#4b62b7', '#51bc56', 'cyan', '#bfff60', '#eab9d7', '#c4ace5', '#a08975']
 CAT2COLOR = {CATEGORY_NAMES[k]:CATCOLORS[k] for k in range(len(CATEGORY_NAMES))}
-CHANNEL = [[i for i in range(16)] for o in range(len(CATEGORY_NAMES))]
 
-def category_dict(channel, ccnr, ccval):
-    cat_dict = collections.OrderedDict()
-    sub_dicts = []
+class Interface(tk.Tk):
+    def __init__(self, name, page,  *kwargs):
+        tk.Tk.__init__(self, name, *kwargs)
+        container = tk.Frame(self)
+        # print('353 self: {}, container: {}'.format(type(self), type(container)))
+        container.pack(side="top", fill="both", expand=True)
 
-    for k in range(len(channel)):
-        for v in range(len(ccnr[k])):
-            #print('länge von ccnr: ', v)
-            dict = {ccnr[k][v] : ccval[k][v]}
-            sub_dicts.append(dict)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+        container.master.title(name)
 
-        cat_dict['channel_{}'.format(channel[k])] = sub_dicts
-        sub_dicts = []
-            #print('subdicts: ', sub_dicts)
+        self.frames = {}
+        self.windows = {} # auf diese Weise die Elemente (Buttons, Labels) auf einer Seite organisieren
+        self.windows[name] = page
 
+        self.window = page(container, self) # repräsentiert ein "window" Hauptfenster (Input, Output, Statistik1)
+        self.frames[name] = self.window
+        self.window.pack()
 
-    return cat_dict
+        self.show_window(name)
 
-normal_values = category_dict(
-    [i for i in range(16)],
-    [[i for i in range(30)] for x in range(16)],
-    [NORMAL_CHANNEL for v in range(30)]
-)
+    def show_window(self, cont):
+        # print('291 self.frames: ', self.frames)
+        window = self.frames[cont]
+        # print('294 window: ', window)
+        window.tkraise()
 
-file1 = Image.open(os.path.join(IMAGE_DIR, 'Ablehnung.gif'))
-file2 = Image.open(os.path.join(IMAGE_DIR, 'Belehrung.gif'))
-file3 = Image.open(os.path.join(IMAGE_DIR, 'Bemuehung.gif'))
-file4 = Image.open(os.path.join(IMAGE_DIR, 'Gaga.gif'))
-file5 = Image.open(os.path.join(IMAGE_DIR, 'Lob.gif'))
-file6 = Image.open(os.path.join(IMAGE_DIR, 'Nerv.gif'))
-file7 = Image.open(os.path.join(IMAGE_DIR, 'Zugestaendnis.gif'))
-file8 = Image.open(os.path.join(IMAGE_DIR, 'Zweifel.gif'))
-
-
-WHEEL = [-2000, -250 , 10, 8000, 15, -1100, 0, 850]
-
-CCNR = [[i for i in range(19)] for i in range(len(CATEGORY_NAMES))]
-CCVAL = [normal_values for i in range(len(CATEGORY_NAMES))]
-COARSE = [90, 92, 80, 2, 10, 40, 70, 89]
-FINE = [1, 2, 102, 77, 55, 80, 100, 62]
-REPEAT = [6, 4, 4, 5, 1, 2, 3, 1]
-
-IMAGES = [file1, file2, file3, file4, file5, file6, file7, file8]
-
-def dict_values(keys1, wheel, cc_dict, coarse, fine, repeat, images):
-    val_dict = collections.OrderedDict()
-    #cc_dict = {channel[k]: {ccnr[l] : ccval[l] for l in range(len(ccnr))} for k in range(len(channel))}
-    #print('addresses: ', address)
-    # print('ccvals: ', ccvals)
-    for i in range(len(keys1)):
-        val_dict[keys1[i]] = {'wheel': wheel[i],
-                              'cc_dict': cc_dict[i],
-                              'coarse': coarse[i],
-                              'fine': fine[i],
-                              'repeat': repeat[i],
-                              'image': images[i]
-                          }
-    # print('val_dict: ', val_dict)
-    return val_dict
-
-category_values = 'nochmal nachschauen'
-
-if os.path.exists('../model_data/CAT2VAL.pkl'):
-    print('pickle exists? ', os.path.exists('../model_data/CAT2VAL.pkl'))
-
-    with open('../model_data/CAT2VAL.pkl', 'rb') as f:
-        CAT2VAL = pickle.load(f)
-    CAT2VAL['Loesung'] = {'wheel': 2000, 'repeat': 2, 'cc_dict': normal_values, 'coarse': 37, 'fine': 0,
-                          'image': IMAGES[3]}
-
-    #print('CAT2VAL nach pickle load: ', p_dict(CAT2VAL) )
-
-else:
-    CAT2VAL = dict_values(CATEGORY_NAMES, WHEEL, category_values, COARSE, FINE, REPEAT, IMAGES)
-    #p_dict(CAT2VAL)
-    with open('../model_data/CAT2VAL.pkl', 'wb') as f:
-        pickle.dump(CAT2VAL, f, pickle.HIGHEST_PROTOCOL)
-
-
-class Feedback:
-    def __init__(self, interpreter, client, interface):
-        self.interpreter = interpreter
-        self.client = client
-        self.interface = interface
-        self.feedback = {}
-        self.feedback_note_ids = []
-        self.feedbackvals = []
-        self.map = {}
-        self.dynamicvals = []
-        self.actions = {}
-
-class TextEdit:
-    def __init__(self, feedback):
-        self.feedback = feedback
-        self.linenr = 0
-
-    def one_satz(self, user, intent, reftext, satz, eigencat):
-        self.text_cat_save(user, intent, satz, eigencat, reftext)
-        self.feedback.dict_comp(user, intent, satz, reftext, eigencat)
-        self.feedback.controller_send()
-
-    def multi_satz(self, user, intent, reftext, saetze, eigencat):
-        print('sätze :', saetze)
-        for satz in saetze:
-            self.text_cat_save(user, satz, intent, eigencat, reftext)
-            self.feedback.dict_comp(user, intent, satz, reftext, eigencat)
-            self.linenr += 1
-            if self.linenr == len(self.saetze):
-                # print('jetzt schicken, weil: ', self.linenr, '=', len(self.saetze))
-                self.feedback.controller_send()
-                self.linenr = 0
-
-    def new_beitrag(self, user, intent, ref_text, user_text, eigencat):
-        self.saetze = re.split(r'[\r\n]+', user_text)  # jede Zeile = Satz
-        # self.feedback.init_send(user)  # falls ich per button den Song starten will
-
-        if len(self.saetze) <= 1:
-            self.one_satz(user, intent, ref_text, self.saetze[0], eigencat)
-
-        else:
-            self.multi_satz(user, intent, ref_text, self.saetze, eigencat)
-        self.feedback.reset()
-
-    def calibrate(self, user, text):
-        self.feedback.direct_send(user, text)
-
-    def direct_input(self, tw, username):
-        self.saetze = re.split('\s. |\n', tw)
-        if len(self.saetze) > 1:
-            for satz in self.saetze:
-                self.feedback.fader_compile(satz)
-                self.linenr += 1
-                if self.linenr == len(self.saetze):
-                    self.feedback.fader_select(username)
-                    self.linenr = 0
-        else:
-            self.feedback.direct_send(int(tw), username)
-
-    def text_cat_save(self, user, intent, text, eigencat, reftext):
-        path1 = '../UserEingaben/{}'.format(user)
-        path2 = '../TrainingData'
-        # print('eigen_cat: ', eigencat)
-        if not os.path.exists(path1) :
-            os.mkdir(path1)
-
-        with open('{}/{}.txt'.format(path1, eigencat), 'a') as t:
-            t.write('Ref: {} | Meinung: {} | EigenCat: {} \n'.format(reftext, text, eigencat))
-
-
-class Interpreter:
-    def __init__(self, classifier):
-        self.classifier = classifier
-        print('Classifier', self.classifier)
-
-    def text2pitch(self, text):
-        cat, prob = self.classifier.predict_proba(text, verbose=True)
-        print('input {}, cat {}, prob {}: '.format(text, cat, prob))
-        velo = CAT2VAL[cat]['velo']
-        pitch = CAT2VAL[cat]['pitch']
-        return [pitch, velo, cat, prob[0]]
-
-    def text2wheel(self, text):
-        cat, prob = self.classifier.predict_proba(text, filter_stop_words=False, verbose=True)
-        print('input {}, cat {}, prob {}: '.format(text, cat, prob))
-        # pitch = category_to_note[classified_category_name]
-        wheel = CAT2VAL[cat]['wheel']
-        return [wheel, cat, prob]
-
-    def text2repeat(self, text):
-        cat, prob = self.classifier.predict_proba(text, verbose=True)
-        #print('input {}, cat {}, prob {}: '.format(text, CATEGORY_NAMES[cat], prob))
-        repeat = CAT2VAL[cat]['repeat']
-        return repeat
-
-    def text2ccval(self, text):
-        cat, prob = self.classifier.predict_proba(text, verbose=True)
-        print('input {}, cat {}, prob {}: '.format(text, cat, prob))
-        cc_dict = CAT2VAL[cat]['cc_dict']
-        return cc_dict
-
-    def text2coarse(self, text):
-        cat, prob = self.classifier.predict_proba(text, verbose=True)
-        #print('input {}, cat {}, prob {}: '.format(text, CATEGORY_NAMES[cat], prob))
-        coarse = CAT2VAL[cat]['coarse']
-        return coarse
-
-    def text2fine(self, text):
-        cat, prob = self.classifier.predict_proba(text, verbose=True)
-        fine = CAT2VAL[cat]['fine']
-        return fine
-
+    def update_windows(self, name, window):
+        self.frames[name] = window
+        # print('297 update frames: ', self.frames)
 
 class TextInput(tk.Frame):
 
@@ -291,7 +93,7 @@ class TextInput(tk.Frame):
         self.widgets.append(self.ref_canvas)
 
 
-        self.user_text = tk.Text(self, width=40, height= 300, wrap=tk.WORD, font=TextInput.SMALL_FONT, bg=TextInput.BGC)
+        self.user_text = tk.Text(self, width=40, height= 5, wrap=tk.WORD, font=TextInput.SMALL_FONT, bg=TextInput.BGC)
         self.scroll2 = tk.Scrollbar(self)
         self.scroll2.config(command=self.user_text.yview)
         self.user_text.config(yscrollcommand=self.scroll2.set)
@@ -304,11 +106,11 @@ class TextInput(tk.Frame):
         self.init_polygon = (20, 234, 80, 40, 380, 20, 440, 280, 380, 430, 152, 415)
 
     def createCanvas(self):
-        self.ref_can = tk.Canvas(self, width=600, height=420, borderwidth= 2)
+        self.ref_can = tk.Canvas(self, width=300, height=420, borderwidth= 2)
         self.ref_can.grid(column=0, row=1, columnspan=3, rowspan=4, padx=5, sticky="W")
         self.widgets.append(self.ref_can)
         self.ref_can.create_polygon(*self.init_polygon, fill='white',
-                                    outline='grey', width=10)
+                                    outline='grey', width=2)
 
         self.user_can = tk.Canvas(self, width= 100, height=200)
         # self.user_can.grid(column=3, row=1, columnspan=4, rowspan=4, sticky="NSEW")
@@ -320,7 +122,7 @@ class TextInput(tk.Frame):
         line = lines.pop(0)
         time = len(line) * 180
         self.ref_can.delete('furb')
-        self.ref_can.create_text(300, 200, text=line, justify='left', width=500, tag='furb', font=TextInput.LARGE_FONT)
+        self.ref_can.create_text(180, 200, text=line, justify='left', width=200, tag='furb', font=TextInput.SMALL_FONT)
 
         if lines:
             self.after(time, self.read_ref, lines)
@@ -429,14 +231,12 @@ class TextInput(tk.Frame):
             self.category = 'no_cat'
         else:
             self.category = self.eigen_cat.get()
-
         print(' 472 self.cat: {} \t '.format(self.category)) # wie kann man wieder deselektieren?
         self.textedit.new_beitrag(self.username.get(), self.intent, self.reftext, meinung, self.category)
         if self.category == 'no_cat' or user == 'icke:':
             self.user_text.tag_config('name', foreground=TextInput.FG[1])
             self.user_text.insert('end', '\nBitte gib einen Namen ein und wähle eine Kategorie\n', 'name')
         self.after(2000, self.delete_text, self.user_text)
-
         self.lb_cat.selection_clear(0, 'end')
         self.entry03.delete(0, 'end')
 
@@ -454,7 +254,6 @@ class TextInput(tk.Frame):
     def set_statistic(self, statistic):
         self.statistic = statistic
         # print('set statistik, ', self.statistic.songparts)
-
 
 class TextOutput(tk.Frame):
 
@@ -480,7 +279,7 @@ class TextOutput(tk.Frame):
         self.createLabels()
         self.createCanvas()
         self.image = None
-        self.song = tk.Canvas(self, width=600, height=20)
+        self.song = tk.Canvas(self, width=400, height=20)
         self.song.grid(column=2, row=4, columnspan=4, pady=10, sticky=tk.W + tk.S)
         self.songparts = {}
         self.songpos = 'slot1'
@@ -493,15 +292,15 @@ class TextOutput(tk.Frame):
         self.after_id = None
         self.song_position()
 
-    def image_var(self, cat):
-        file = CAT2VAL[cat]['image']
-        self.image = ImageTk.PhotoImage(file, master=self)
-        # print('545 type image: ', type(self.image))
-        # self.clas_can.itemconfigure('form', image=self.image, background=CAT2COLOR[cat])
-        self.clas_can.configure(background=CAT2COLOR[cat])
+    # def image_var(self, cat):
+    #     file = CAT2VAL[cat]['image']
+    #     self.image = ImageTk.PhotoImage(file, master=self)
+    #     # print('545 type image: ', type(self.image))
+    #     # self.clas_can.itemconfigure('form', image=self.image, background=CAT2COLOR[cat])
+    #     self.clas_can.configure(background=CAT2COLOR[cat])
 
     def createCanvas(self):
-        self.clas_can = tk.Canvas(self, width=400, height=400, borderwidth=10)
+        self.clas_can = tk.Canvas(self, width=300, height=300, borderwidth=5)
         self.scroll = tk.Scrollbar(self, orient='vertical', command=self.clas_can.yview)
         self.clas_can.grid(column=0, row=1, padx=5, sticky="NSWE")
         self.scroll.grid(column=1, row=1, sticky='NS')
@@ -510,16 +309,14 @@ class TextOutput(tk.Frame):
         self.widgets.append(self.clas_can)
 
     def clastext_update(self, user, cat, prob, text):
-        #print('clas text update! ')
         insert = "User: {}, Kategorie: {} Proba:{}\n{}\n".format(user, cat, prob, text)
-        self.image_var(cat)
         self.clas_can.insert('clas', tk.END, insert)
         self.clas_can.yview_moveto(1.0)
         self.clas_can.configure(scrollregion = self.clas_can.bbox('all'))
 
     def createLabels(self):
 
-        self.label04 = tk.Label(self, text="Abgebene Meinungen", font=TextOutput.HEADLINE)
+        self.label04 = tk.Label(self, text="Abgebene Meinungen", font=TextOutput.SMALL_FONT)
         self.label04.grid(column=0, row=0, padx=5, pady=15, sticky='W')
 
     def createButtons(self):
@@ -704,62 +501,3 @@ class Statistik1(tk.Frame):
         canvas = FigureCanvasTkAgg(fig, self) # self = tkinter frame
         canvas.show()
         canvas.get_tk_widget().grid(column=0, row=4)
-
-
-class ClientIO(SimpleUDPClient):
-
-    def __init__(self, ip, port):
-        super(ClientIO, self).__init__(ip, port)
-        self.send_msg('ClientIO Connection!! ip {}  port {}'.format(ip, port))
-        print('Client Connection: {} port {}'.format(ip, port))
-
-    def send_msg(self, msg):
-        self.send_message("/message", msg)
-
-    def send_trigger(self, msg):
-        self.send_message("/trigger", msg)
-
-    def calibrate(self, msg):
-        self.send_message("/calibrate", msg)
-
-    def send_buildmap(self, map):
-        self.send_message("/buildmap", map)
-
-    def melo_edit(self, map):
-        self.send_message("/melo_edit", map)
-
-    def send_controlmap(self, map):
-        self.send_message("/controlmap", map)
-
-    def send_start(self, msg):
-        self.send_message("/start", msg)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    # parser.add_argument("--ip", default="127.0.0.1",
-    parser.add_argument("--ip", default="127.0.0.1",
-                        help="The ip of the OSC server")
-    parser.add_argument("--port", type=int, default=5005,
-                        help="The port the OSC server is listening on")
-
-    args = parser.parse_args()
-    client_instance = ClientIO(args.ip, args.port)
-
-
-    def server():
-        parser2 = argparse.ArgumentParser()
-        parser2.add_argument("--ip",
-                             default="127.0.0.1", help="The ip to listen on")
-        parser2.add_argument("--port",
-                             type=int, default=5010, help="The port to listen on")
-        args = parser2.parse_args()
-        server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)
-        print("Serving on {}".format(server.server_address))
-        server.serve_forever()
-
-    serv = threading.Thread(name='server', target=server, daemon=True)
-    #serv.start()
-
-
-

@@ -1,10 +1,3 @@
-"""
-perspektivisch: 1) pro kategorie ein Track/Synthsizer?
-2) bei neuen Texten: a) in UserOrdner boris/Zustimmung.txt b) alle_user/Zustimmung.txt
-vor allem die b) lösung wäre eine wachsende Datenbank, die zusätzlich zu meiner bisherigen TrainingData
-(die ja letztlich eine Boris-Datenbank ist) hinzugezogen wird.
-
-"""
 import argparse
 import pickle
 import threading
@@ -12,19 +5,18 @@ import os
 from collections import Mapping, namedtuple, Counter, defaultdict
 from pathlib import Path
 from copy import deepcopy
-from pythonosc import osc_message_builder
-from pythonosc.udp_client import SimpleUDPClient
 from pythonosc import dispatcher
 from pythonosc import osc_server
-from itertools import *
 
-from BasicClient03 import Interpreter, CATEGORY_NAMES, TextInput, TextOutput, Statistik1, TextEdit, ClientIO, CAT2VAL, START
+from UDPClient import ClientIO
+from Tkinter import Interface, TextInput, TextOutput, Statistik1
+from Categories import CATEGORY_NAMES, CAT2VAL
 from rules import RULES, INTENTS, INTENT_COUNT
-
 from Classifier_max import Classifier
+from Interpreter import Interpreter
+from TextEdit import TextEdit
+from UDPClient import START
 from DiskAdapter2 import DiskAdapter
-import tkinter as tk
-from PIL import Image, ImageTk
 
 from statistics import median
 
@@ -66,12 +58,6 @@ def category_dict(name, channel, ccnr, ccval):
     INTENT2CC[name] = cat_dict
 
     return cat_dict
-
-
-class NoteObject:
-    def __init__(self, noteobject):
-        #print('32 noteobject.notes',noteobject.notes)
-        return
 
 class Feedback:
     def __init__(self, interpreter, client, interface, song):
@@ -115,8 +101,12 @@ class Feedback:
 
         return stats
 
-
     def get_user_actions_from_file(self, filepath):
+        '''
+
+        :param filepath:
+        :return:
+        '''
         action_dict = defaultdict(list)
         for line in Path(filepath).read_text().split('\n'):
             line = line.strip()
@@ -125,17 +115,11 @@ class Feedback:
                 action_dict[cat].append(intent)
         return action_dict
 
-
     def job_count(self, user, intent, cat):
-        if user != self.user:
-            self.actions = {k:[] for k in CATEGORY_NAMES}
-        elif cat == "Gaga":
-            pass
+        self.actions = {k: [] for k in CATEGORY_NAMES}
         self.user = user
         self.actions[cat].append(intent)
         update_stats(self.song, user, cat, intent)
-        # print('actions: ', self.actions)
-
         stats = self.get_current_stats()
         self.textoutput.plot_stats(stats)
 
@@ -268,11 +252,13 @@ class Feedback:
         print('count_user = {}  cat = {}'.format(count_user, cat))
         actual = CAT_COUNT(cat, count_user)
         fields = []
+        print('Rules: ', RULES.keys)
         for i in list(RULES.keys()):
             if i[0]== cat:
                 fields.append(i)
+        print('fields: ', fields)
         maxi = max([n.count for n in fields])
-        # print('max: ', maxi)
+
         for i in fields:
             if actual == i:
                 print('SAME! cat: {}  i.name: {}   i.count: {}\n'.format(cat, i.name, i.count))
@@ -300,14 +286,16 @@ class Feedback:
         int_count = Counter()
         intent_rules = [i.count for i in INTENTS.keys() if i.intent == intent]
         maxi = max(intent_rules)
-        for vals in self.actions.values():
+        print('actions_ {}'.format(self.actions))
+        for vals in list(self.actions.values()):
             int_count.update(vals)
-        print(' int_count: {}  count: {}, maxi: {}'.format(int_count, int_count[intent], maxi))
+        print(' self.actions.values: {}\ncount_actual: {}\nintent: {}'.format(self.actions.values(), int_count[intent], intent))
         if int_count[intent] > maxi:
             new_count = (int_count[intent] % maxi)
             if new_count == 0:
                 new_count = 4
             return INTENTS[INTENT_COUNT(intent, new_count)]
+        print('key intents: ', INTENT_COUNT(intent, int_count[intent]))
         return INTENTS[INTENT_COUNT(intent, int_count[intent])]
 
     def dict_comp(self, user, intent, text, reftext, eigencat):
@@ -327,9 +315,9 @@ class Feedback:
 
         self.map = {'user': user, 'cc_dict': cc_dict, 'wheel': wheel, 'coarse': coarse,
                     'trigger': trigger}
-        self.usertext_save(user, intent, text, reftext, cat, eigencat)
+        # save all relevant text relations in a text file | should go into Database
+        # self.usertext_save(user, intent, text, reftext, cat, eigencat)
         self.textoutput.clastext_update(user, cat, prob, text)
-
 
     def controller_send(self):
         # for k in range(len(self.feedback_note_ids)):
@@ -339,8 +327,6 @@ class Feedback:
         # self.text_tracks_save(username, self.map)
         dict_to_send = pickle.dumps(self.map)
         self.client.send_controlmap(dict_to_send)
-
-
 
     def init_send(self, user):
         #print('simple msg: ', msg)
@@ -362,49 +348,18 @@ class Feedback:
         message = pickle.dumps([ccnr, ccval])
         self.client.calibrate(message)
 
-class Interface(tk.Tk):
-    def __init__(self, name, page,  *kwargs):
-        tk.Tk.__init__(self, name, *kwargs)
-        container = tk.Frame(self)
-        # print('353 self: {}, container: {}'.format(type(self), type(container)))
-        container.pack(side="top", fill="both", expand=True)
-
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
-        container.master.title(name)
-
-        self.frames = {}
-        self.windows = {} # auf diese Weise die Elemente (Buttons, Labels) auf einer Seite organisieren
-        self.windows[name] = page
-
-        self.window = page(container, self) # repräsentiert ein "window" Hauptfenster (Input, Output, Statistik1)
-        self.frames[name] = self.window
-        self.window.pack()
-
-        self.show_window(name)
-
-    def show_window(self, cont):
-        # print('291 self.frames: ', self.frames)
-        window = self.frames[cont]
-        # print('294 window: ', window)
-        window.tkraise()
-
-    def update_windows(self, name, window):
-        self.frames[name] = window
-        # print('297 update frames: ', self.frames)
-
 if __name__ == "__main__":
-    ips = {'local': '127.0.0.1', 'gitsche': "192.168.1.90", 'sv': '192.168.178.189', 'skali': '192.168.178.44',
+    ips = {'local': '127.0.0.1', 'gitsche': "192.168.1.123", 'sv': '192.168.178.189', 'skali': '192.168.178.20',
            'rasp': '192.168.1.91'}
 
     songs = {'lemon': "unruhig.txt", 'casion': "professionell.txt", 'primar': "totem.txt",
              'dub': "Natuerliche_Argumentation.txt", 'track3': 'technologie.txt'}
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", default="192.168.1.44",
+    parser.add_argument("--ip", default='127.0.0.1',
                         help="The ip of the osc_server06")
     # parser.add_argument("--ip", default="127.0.0.1",
-    #                     help="The ip of the osc_server06")
-    parser.add_argument("--port", type=int, default=5005,
+    #                     help="The ip of the osc_server")
+    parser.add_argument("--port", type=int, default=5000,
                         help="The port the OSC server is listening on")
     parser.add_argument("--reset", default=False,
                         help="reset stats")
@@ -412,7 +367,7 @@ if __name__ == "__main__":
                         default='lemon', help="songname")
     args = parser.parse_args()
 
-    client_instance = ClientIO(ips[args.ip], args.port)
+    client_instance = ClientIO(args.ip, args.port)
 
     texts, categories, names = DiskAdapter().get_training_data(CATEGORY_NAMES)# trainingsdaten holen
 
@@ -457,7 +412,6 @@ if __name__ == "__main__":
         #feedback_instance.dict_comp('user1', 'neutral', text, reftext, eigencat)
         pass
 
-
     def feedback_obj(uptodate):
         feedback_instance.dispatch(uptodate)
 
@@ -465,8 +419,8 @@ if __name__ == "__main__":
     dispatcher.map("/feedback01", lambda address, uptodate: feedback_obj(uptodate))
 
     def server():
-        server = osc_server.ThreadingOSCUDPServer((ips[args.ip], 5010), dispatcher)
-        print("Serving on {}".format(server.server_address))
+        server = osc_server.ThreadingOSCUDPServer((args.ip, 5010), dispatcher)
+        print("Feedback from MusicServer Serving on {}".format(server.server_address))
         server.serve_forever()
 
     serv = threading.Thread(name='server', target=server, daemon=True)
