@@ -1,7 +1,10 @@
 from rest_framework import viewsets
 from .serializers import UtteranceSerializer, CategorySerializer
 from .models import Utterance, Category
+sys.path.insert(0,'/Users/borisjoens/Dropbox/Kommentare/SmallData/src')
+from Classifier_max import Classifier
 
+# print('sys path;', sys.path[0])
 
 class UtteranceView(viewsets.ModelViewSet):
     serializer_class = UtteranceSerializer
