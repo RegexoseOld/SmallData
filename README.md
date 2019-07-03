@@ -7,7 +7,7 @@
 
 ## Running
 
-To start, run `python3 UserClassifier03.py --ip local --song lemon`
+To start, run `python3 UserClassifier03.py`
 
 ## Dependencies
  - python 3
