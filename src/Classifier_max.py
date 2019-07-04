@@ -96,7 +96,6 @@ class Classifier:
 
     def predict_proba(self, sentence, filter_stop_words=True, verbose=False):
         self.verbose = verbose
-
         self.filter_stop_words = filter_stop_words
         sentence = self.clean_string(sentence)
         regex_pred = self.check_sent_with_regex(sentence)
