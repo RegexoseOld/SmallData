@@ -24,7 +24,7 @@ class UtteranceView(viewsets.ModelViewSet):
         """
         # cat, prob = clf.predict_proba(text, verbose=True)
         category_name = 'Lob'
-        category = Category.objects.all().filter(name=category_name)
+        category = Category.objects.all().filter(name=category_name)[0]
         serializer.validated_data["category"] = category
         print('serializer: ', serializer)
         #  TODO:  Second, send the category to the music server
