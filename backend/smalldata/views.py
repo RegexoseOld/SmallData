@@ -10,7 +10,6 @@ from MusicServer03 import COND1
 from UDPClient import Client_MusicServer
 from rules import SIMPLE_NOTES
 
-# print('sys path;', sys.path[0])
 clf = Classifier('../model_data')
 # Client for a simple Feedback from Ableton Live
 music_client = Client_MusicServer('127.0.0.1', 5015, COND1)
