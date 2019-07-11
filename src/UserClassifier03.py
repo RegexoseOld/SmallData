@@ -15,7 +15,6 @@ from rules import RULES, INTENTS, INTENT_COUNT
 from Classifier_max import Classifier
 from Interpreter import Interpreter
 from TextEdit import TextEdit
-from UDPClient import START
 from DiskAdapter2 import DiskAdapter
 
 from statistics import median
@@ -25,15 +24,15 @@ STATSDIR = 'stats'
 USER_NAMES = []
 REF_LINES = []
 INTENT2CC = {}
+SIMPLE_NOTES = {CATEGORY_NAMES[k]: (30 + k) for k in range(len(CATEGORY_NAMES)) }
 
 CAT_COUNT = namedtuple('CatCount', 'name, count')
 
+
 def create_folder(song):
     path = os.path.join(ROOTDIR, STATSDIR, song)
-
     if not os.path.exists(path):
         os.makedirs(path)
-
     return path
 
 def update_stats(song, user, cat, intent):
@@ -45,7 +44,6 @@ def update_stats(song, user, cat, intent):
 def category_dict(name, channel, ccnr, ccval):
     cat_dict = {}
     sub_dicts = []
-
     for k in range(len(channel)):
         for v in range(len(ccnr[k])):
             #print('länge von ccnr: ', v)
@@ -56,7 +54,6 @@ def category_dict(name, channel, ccnr, ccval):
         sub_dicts = []
             #print('subdicts: ', sub_dicts)
     INTENT2CC[name] = cat_dict
-
     return cat_dict
 
 class Feedback:
@@ -334,13 +331,6 @@ class Feedback:
         self.client.send_start(map)
 
     def trig_send(self, msg):
-        # address, cat, trig, prob, pitch = self.interpreter.text2trig(text, None)
-        # # address2, cat2, trig2, prob2, pitch2 = self.interpreter.text2trig(text)
-        # self.prob = prob
-        # self.category = cat
-        # self.interface.clastext_update(user, address, self.category, prob, text)
-        # self.job_count(user, 'trig', cat)
-        # self.val_update(user, 'trig', trig)
         message = pickle.dumps(["/trig_master", msg])
         self.client.send_trigger(message)
 
