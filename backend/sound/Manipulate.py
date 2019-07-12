@@ -1,7 +1,7 @@
 import copy
 
-from rules import normal_values
-from PlayObjects import PLAYTHREADS, generate_playmap, Play_Thread
+from .rules import normal_values
+from .PlayObjects import PLAYTHREADS, generate_playmap, Play_Thread
 
 RULES = {
     'half': 0.5,

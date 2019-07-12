@@ -3,9 +3,9 @@ import time
 import logging
 import collections
 
-from arp import Arp
-from MusicObjects import make_note_objects, noteobject_dict
-from rules import normal_values
+from .arp import Arp
+from .MusicObjects import make_note_objects, noteobject_dict
+from .rules import normal_values
 
 logging.basicConfig(level = logging.DEBUG, format = '(%(threadName)-10s) %(message)s',)
 
