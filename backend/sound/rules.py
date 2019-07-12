@@ -1,7 +1,8 @@
 from collections import namedtuple
 import re
 from itertools import chain
-from classification.Categories import CATEGORY_NAMES
+
+from backend.classification.Categories import CATEGORY_NAMES
 
 
 CAT_COUNT = namedtuple('CatCount', 'name, count')

@@ -26,6 +26,7 @@ RULES = {
     'faster': 2
 }
 
+
 class Manipulate:
     def __init__(self, Noten_objekt, Play_object, condition, client):
         self.N_Obj = Noten_objekt

@@ -5,8 +5,7 @@ import logging
 import pickle
 import collections
 
-from pythonosc import dispatcher
-from pythonosc import osc_server
+from pythonosc import dispatcher, osc_server
 
 from .MusicObjects import Noten, Chords
 from .PlayObjects import Play, To_Client_Thread, Play_Thread, play_dict, slotlist, playmap, PLAYTHREADS
@@ -30,6 +29,7 @@ TRIGGERMAP = {
     'end': [i for i in range(23,26)]
 }
 
+
 def dict_values(tracks, fader):
     addresses = []
     LIVE_VALUES2 = collections.OrderedDict()
@@ -40,6 +40,7 @@ def dict_values(tracks, fader):
     return LIVE_VALUES2
 
 LIVE_VALUES = dict_values(TRACKS, FADER)
+
 
 class Live:
     def __init__(self, client, manipulate, message, cond):
@@ -216,6 +217,7 @@ def mainloop(server, osculator, playmap):
     #print('active count: ', threading.active_count(), threading.enumerate(), ' \n')
     server.serve_forever()
 
+
 if __name__ == "__main__":
 
     dispatcher = dispatcher.Dispatcher()
@@ -282,4 +284,3 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         stop()
-
