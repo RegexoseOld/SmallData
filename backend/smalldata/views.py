@@ -1,18 +1,19 @@
-import sys
 import time
 
 from rest_framework import viewsets
 from .serializers import UtteranceSerializer, CategorySerializer
 from .models import Utterance, Category
 
-from backend.classification.Classifier_max import Classifier
-from backend.sound.MusicServer03 import COND1
-from backend.sound.UDPClient import Client_MusicServer
-from backend.sound.rules import SIMPLE_NOTES
+from classification.Classifier_max import Classifier
+from sound.MusicServer03 import COND1
+from sound.UDPClient import Client_MusicServer
+from sound.rules import SIMPLE_NOTES
+
 
 clf = Classifier('../model_data')
 # Client for a simple Feedback from Ableton Live
 music_client = Client_MusicServer('127.0.0.1', 5015, COND1)
+
 
 class UtteranceView(viewsets.ModelViewSet):
     serializer_class = UtteranceSerializer
