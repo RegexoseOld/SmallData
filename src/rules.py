@@ -1,6 +1,7 @@
 from collections import namedtuple
 import re
 from itertools import chain
+from Categories import CATEGORY_NAMES
 
 
 CAT_COUNT = namedtuple('CatCount', 'name, count')
@@ -10,6 +11,9 @@ keylist = []
 INTENTS = {}
 NORMAL_CHANNEL = [0.0 for i in range(29)]
 NORMAL_CHANNEL.insert(6, 1.0)
+
+# simple notes for a simple feedback of the MusicServer
+SIMPLE_NOTES = {CATEGORY_NAMES[k]: (60 + k) for k in range(len(CATEGORY_NAMES)) }
 
 RULES = {
     CAT_COUNT('Nerv', 1): ['slower', '='],

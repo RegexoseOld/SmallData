@@ -146,9 +146,7 @@ class Live:
 
     def calibrate(self, msg):
         message = pickle.loads(msg)
-
         self.client.calibrate(message[0], message[1])
-
 
     def osculator_handler(self, address, pos, value):
         #print('Handler: address: {} pos: {} value: {} '.format(address, pos, value))

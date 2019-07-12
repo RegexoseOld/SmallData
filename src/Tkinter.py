@@ -9,7 +9,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from collections import defaultdict
 
-CATCOLORS = ['#d9ff05', 'magenta', '#4b62b7', '#51bc56', 'cyan', '#bfff60', '#eab9d7', '#c4ace5', '#a08975']
+CATCOLORS = ['#d9ff05', 'magenta', '#4b62b7', '#51bc56', 'cyan', '#bfff60', '#eab9d7', '#c4ace5', '#a08975', 'red', 'grey']
 CAT2COLOR = {CATEGORY_NAMES[k]:CATCOLORS[k] for k in range(len(CATEGORY_NAMES))}
 
 class Interface(tk.Tk):
