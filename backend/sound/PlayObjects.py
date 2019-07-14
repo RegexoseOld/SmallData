@@ -3,9 +3,9 @@ import time
 import logging
 import collections
 
-from arp import Arp
-from MusicObjects import make_note_objects, noteobject_dict
-from rules import normal_values
+from .arp import Arp
+from .MusicObjects import make_note_objects, noteobject_dict
+from .rules import normal_values
 
 logging.basicConfig(level = logging.DEBUG, format = '(%(threadName)-10s) %(message)s',)
 
@@ -14,6 +14,7 @@ PLAYTHREADS = collections.OrderedDict()
 COND1 = threading.Condition()
 COND2 = threading.Condition()
 COND3 = threading.Condition()
+
 
 class Play(object):
     def __init__(self, notenObj):
@@ -68,7 +69,6 @@ class Play(object):
                 self.akkord_play(Oscu_client)
         # self.track_change(Oscu_client, track)
 
-
     def msgplay(self, oscul_client):
         note = self.notenObj.getNote(self.pos)
         # print('self.pos: {}, note:  {}'.format(self.pos, note))
@@ -107,9 +107,9 @@ class Play(object):
 
 
 class To_Client_Thread(threading.Thread):
-    '''
+    """
     To_Client Thread teilt dem client (mit COND2) bei jeder gespielten melo mit, welche melo gerade gespielt wird.
-    '''
+    """
     def __init__(self, name, client, cond):
         threading.Thread.__init__(self)
         self.name = name
@@ -133,11 +133,11 @@ class To_Client_Thread(threading.Thread):
 
 
 class Play_Thread(threading.Thread):
-    '''
-          der Playthread durchläuft die playzuteilung der Playmap - z.B. melo1:3x spielen etc
-          jede melo beinhaltet die Listen für Notenwerte, Velocity etc und diese Werte werden in
-          der Play Instanz (als osc_messages an port 5015) gesendet
-          '''
+    """
+    der Playthread durchläuft die playzuteilung der Playmap - z.B. melo1:3x spielen etc
+    jede melo beinhaltet die Listen für Notenwerte, Velocity etc und diese Werte werden in
+    der Play Instanz (als osc_messages an port 5015) gesendet
+    """
     def __init__(self, name, playmap, pObj, client, cond2, cond3):
         threading.Thread.__init__(self)
         self.name = name
@@ -228,8 +228,10 @@ def make_slots(slotlist):
         name = 'slot{}'.format(slot)
         play_dict[name] = play
 
+
 slotlist = [x for x in range(1, 26)]
 make_slots(slotlist)
+
 
 def generate_playmap(playitems, replist, slots):
     if len(replist) < len(playitems):
@@ -238,5 +240,6 @@ def generate_playmap(playitems, replist, slots):
         replist.extend(append_rest)
     playmap = collections.OrderedDict((playitems[k],[replist[k], slots[k]]) for k in range(len(playitems)))
     return playmap
+
 
 playmap = generate_playmap(list(play_dict.values()),[1 for i in range(len(slotlist))],slotlist)

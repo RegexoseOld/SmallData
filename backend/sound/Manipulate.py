@@ -1,7 +1,7 @@
 import copy
 
-from rules import normal_values
-from PlayObjects import PLAYTHREADS, generate_playmap, Play_Thread
+from .rules import normal_values
+from .PlayObjects import PLAYTHREADS, generate_playmap, Play_Thread
 
 RULES = {
     'half': 0.5,
@@ -25,6 +25,7 @@ RULES = {
     'slower': -2,
     'faster': 2
 }
+
 
 class Manipulate:
     def __init__(self, Noten_objekt, Play_object, condition, client):
