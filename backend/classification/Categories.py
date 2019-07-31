@@ -1,21 +1,29 @@
 import os
 import collections
 import pickle
+import pandas as pd
+from pandas import ExcelWriter
+from pandas import ExcelFile
+
+df = pd.read_excel('TrainingData_de.xlsx')
+
 
 
 NORMAL_CHANNEL= [0.0 for i in range(29)]
 NORMAL_CHANNEL.insert(6, 1.0)
-CATEGORY_NAMES = []
+
 CAT2VAL = {}
 
 def p_dict(dict):
     for i in dict.keys():
         print('"{}" : {},\n'.format(i, dict[i]))
 
-for file in os.listdir('../TrainingDataNew'):
-    if not file.startswith('.') and not file.endswith('pkl'):
-        CATEGORY_NAMES.append(os.path.splitext(file)[0])
-    CATEGORY_NAMES.sort()
+# import CATEGORY_NAMES from Excel Data Sheet
+imported_categories = []
+for cat in df.index:
+    imported_categories.append(df['Effekt'][cat])
+
+CATEGORY_NAMES = set(imported_categories)
 
 CHANNEL = [[i for i in range(16)] for o in range(len(CATEGORY_NAMES))]
 
