@@ -7,6 +7,7 @@ import joblib
 import gensim
 
 import numpy as np
+import pandas as pd
 
 from pathlib import Path
 from collections import defaultdict
@@ -20,6 +21,7 @@ warnings.filterwarnings("ignore")
 
 nlp = spacy.load('de')
 model = gensim.models.KeyedVectors.load_word2vec_format('../model_data/german.model', binary=True)
+df = pd.read_excel('../TrainingData_de.xlsx')
 
 
 def replace_umlaut(text):
@@ -85,6 +87,48 @@ def read_trainingdata_textfiles(trainingdata_path):
 
     return keywords_to_cat, regexes
 
+def read_trainingdata_utterances(trainingdata_path):
+    '''
+    should read all lines of a Excel column. The textfiles can contain single words and regular expressions.
+    Every line containing more than one word ist considered a regular expression
+    lines starting with "[" are ignored.
+    An example trainingdata file could look like this:
+
+    [words]
+    word1
+    word2
+
+    [regexes]
+    word .* another three words
+    ^Begin .* like this
+
+
+    The function returns 2 dictionaries:  One with single words as keys and categories as values
+                                          One with regexes as keys and categories as values
+
+    all umlauts are replaced and words are lowercases.
+    '''
+    keywords_to_cat = defaultdict(list)
+    regexes = {}
+
+    for i in df.index:
+        utt = df['utterance'][i]
+        if not isinstance(df['Effekt'][i], float):
+            effekt = df['Effekt'][i]
+        else:
+            effekt = 'not yet defined'
+        for keywords in utt.split('\n'):
+            keywords = keywords.strip()
+            keywords = keywords.lower()
+            keywords = replace_umlaut(keywords)
+            if keywords and keywords[0] != '[':
+                if len(keywords.split(' ')) == 1:
+                    keywords_to_cat[keywords].append(effekt)
+                else:
+                    regexes[keywords] = effekt
+
+    return keywords_to_cat, regexes
+
 
 def transform_keywords_to_trainingdata(keywords_to_cat):
     '''
@@ -109,6 +153,7 @@ def transform_keywords_to_trainingdata(keywords_to_cat):
 def train_clf(x, y):
     clf = None
     best = 0
+    print('x: {} \ty: {}'.format(x, y))
 
     print('\nTraining SGD Classifier')
     for i in range(200):
@@ -124,9 +169,10 @@ def train_clf(x, y):
 
 
 def load_data_and_train_model(trainingdata_path):
-    keywords_to_cat, regexes = read_trainingdata_textfiles(trainingdata_path)
+    # keywords_to_cat, regexes = read_trainingdata_textfiles(trainingdata_path)
+    keywords_to_cat, regexes = read_trainingdata_utterances(trainingdata_path)
 
-    print('Keywords with multiple categories are ignored\n')
+    # print('Keywords with multiple categories are ignored\n')
     for keyword, cats in list(keywords_to_cat.items()):
         if len(cats) > 1:
             print('{:<20} {}'.format(keyword, cats))
