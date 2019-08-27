@@ -110,7 +110,7 @@ venv.bak/
 .idea
 
 # ignore model files
-model_data/german.model
+backend/model_data/german.model
 
 #TrainingData Files
 TrainingData.xlsx
