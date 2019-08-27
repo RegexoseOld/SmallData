@@ -6,8 +6,8 @@ from pandas import ExcelWriter
 from pandas import ExcelFile
 
 # dir_path = '/Users/borisjoens/Dropbox/Kommentare/SmallData/backend/classification'
-dir_path = os.path.dirname('/Users/borisjoens/Dropbox/Kommentare/SmallData/backend/model_data/')
-df = pd.read_excel(os.path.join(dir_path,'TrainingData_clean_de.xlsx'))
+data_path = os.path.join(os.path.dirname(__file__),'../model_data')
+df = pd.read_excel(os.path.join(data_path, 'TrainingData_clean_de.xlsx'))
 
 NORMAL_CHANNEL= [0.0 for i in range(29)]
 NORMAL_CHANNEL.insert(6, 1.0)
@@ -19,13 +19,10 @@ def p_dict(dict):
         print('"{}" : {},\n'.format(i, dict[i]))
 
 # import CATEGORY_NAMES from Excel Data Sheet
-imported_categories = []
-for cat in df.index:
-    imported_categories.append(df['Effekt'][cat])
-
-CATEGORY_NAMES = list(set(imported_categories))
+CATEGORY_NAMES = list(set(df['Effekt']))
 
 CHANNEL = [[i for i in range(16)] for o in range(len(CATEGORY_NAMES))]
+
 
 def category_dict(channel, ccnr, ccval):
     cat_dict = collections.OrderedDict()
@@ -38,6 +35,7 @@ def category_dict(channel, ccnr, ccval):
         cat_dict['channel_{}'.format(channel[k])] = sub_dicts
         sub_dicts = []
     return cat_dict
+
 
 normal_values = category_dict(
     [i for i in range(16)],
@@ -53,6 +51,7 @@ CCVAL = [normal_values for i in range(len(CATEGORY_NAMES))]
 COARSE = [90, 92, 80, 2, 10, 40, 70, 89]
 FINE = [1, 2, 102, 77, 55, 80, 100, 62]
 REPEAT = [6, 4, 4, 5, 1, 2, 3, 1]
+
 
 def dict_values(keys1, wheel, cc_dict, coarse, fine, repeat):
     val_dict = collections.OrderedDict()
@@ -76,5 +75,5 @@ else:
     CAT2VAL = dict_values(CATEGORY_NAMES, WHEEL, category_values, COARSE, FINE, REPEAT, )
     #p_dict(CAT2VAL)
 
-    with open(os.path.join(dir_path,'../model_data/CAT2VAL.pkl'), 'wb') as f:
+    with open(os.path.join(data_path, 'CAT2VAL.pkl'), 'wb') as f:
         pickle.dump(CAT2VAL, f, pickle.HIGHEST_PROTOCOL)

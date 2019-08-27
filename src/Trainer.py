@@ -198,7 +198,7 @@ def load_data_and_train_model(df):
 
 
 if __name__ == '__main__':
-    data_path = '/Users/borisjoens/Dropbox/Kommentare/SmallData/backend/model_data'
+    data_path = '../backend/model_data'
     data_frame = pd.read_excel(os.path.join(data_path, 'TrainingData_clean_de.xlsx'))
     clf, regexes = load_data_and_train_model(data_frame)
 

@@ -15,3 +15,11 @@ class Utterance(models.Model):
 
     def _str_(self):
         return self.text
+
+
+class TrainingUtterance(models.Model):
+    category = models.CharField(max_length=500)
+    text = models.CharField(max_length=500)
+
+    def _str_(self):
+        return self.text
