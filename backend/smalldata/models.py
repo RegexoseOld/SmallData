@@ -15,3 +15,11 @@ class Utterance(models.Model):
 
     def _str_(self):
         return self.text
+
+
+class TrainingUtterance(models.Model):
+    category = models.ForeignKey('Category', on_delete=models.CASCADE, null=False)
+    text = models.CharField(max_length=500)
+
+    def _str_(self):
+        return self.text

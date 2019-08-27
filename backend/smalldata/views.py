@@ -2,8 +2,8 @@ import time
 import os
 
 from rest_framework import viewsets
-from .serializers import UtteranceSerializer, CategorySerializer
-from .models import Utterance, Category
+from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
+from .models import Utterance, Category, TrainingUtterance
 
 from classification.Classifier_max import Classifier
 from sound.MusicServer03 import COND1
@@ -44,3 +44,8 @@ class UtteranceView(viewsets.ModelViewSet):
 class CategoryView(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
+
+
+class TrainingUtteranceView(viewsets.ModelViewSet):
+    serializer_class = TrainingUtteranceSerializer
+    queryset = TrainingUtterance.objects.all()
