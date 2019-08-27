@@ -5,9 +5,9 @@ import pandas as pd
 from pandas import ExcelWriter
 from pandas import ExcelFile
 
-df = pd.read_excel('TrainingData_de.xlsx')
-
-
+# dir_path = '/Users/borisjoens/Dropbox/Kommentare/SmallData/backend/classification'
+dir_path = os.path.dirname('/Users/borisjoens/Dropbox/Kommentare/SmallData/backend/model_data/')
+df = pd.read_excel(os.path.join(dir_path,'TrainingData_clean_de.xlsx'))
 
 NORMAL_CHANNEL= [0.0 for i in range(29)]
 NORMAL_CHANNEL.insert(6, 1.0)
@@ -23,7 +23,7 @@ imported_categories = []
 for cat in df.index:
     imported_categories.append(df['Effekt'][cat])
 
-CATEGORY_NAMES = set(imported_categories)
+CATEGORY_NAMES = list(set(imported_categories))
 
 CHANNEL = [[i for i in range(16)] for o in range(len(CATEGORY_NAMES))]
 
@@ -47,6 +47,7 @@ normal_values = category_dict(
 
 WHEEL = [-2000, -250 , 10, 8000, 15, -1100, 0, 850]
 
+
 CCNR = [[i for i in range(19)] for i in range(len(CATEGORY_NAMES))]
 CCVAL = [normal_values for i in range(len(CATEGORY_NAMES))]
 COARSE = [90, 92, 80, 2, 10, 40, 70, 89]
@@ -55,16 +56,8 @@ REPEAT = [6, 4, 4, 5, 1, 2, 3, 1]
 
 def dict_values(keys1, wheel, cc_dict, coarse, fine, repeat):
     val_dict = collections.OrderedDict()
-    #cc_dict = {channel[k]: {ccnr[l] : ccval[l] for l in range(len(ccnr))} for k in range(len(channel))}
-    #print('addresses: ', address)
-    # print('ccvals: ', ccvals)
     for i in range(len(keys1)):
-        val_dict[keys1[i]] = {'wheel': wheel[i],
-                              'cc_dict': cc_dict[i],
-                              'coarse': coarse[i],
-                              'fine': fine[i],
-                              'repeat': repeat[i],
-                          }
+        val_dict[keys1[i]] = {'cc_dict': cc_dict}
     # print('val_dict: ', val_dict)
     return val_dict
 
@@ -82,5 +75,6 @@ if os.path.exists('../model_data/CAT2VAL.pkl'):
 else:
     CAT2VAL = dict_values(CATEGORY_NAMES, WHEEL, category_values, COARSE, FINE, REPEAT, )
     #p_dict(CAT2VAL)
-    with open('../model_data/CAT2VAL.pkl', 'wb') as f:
+
+    with open(os.path.join(dir_path,'../model_data/CAT2VAL.pkl'), 'wb') as f:
         pickle.dump(CAT2VAL, f, pickle.HIGHEST_PROTOCOL)
