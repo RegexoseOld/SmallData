@@ -17,7 +17,6 @@ class UtteranceSerializer(serializers.ModelSerializer):
 
 
 class TrainingUtteranceSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=False, read_only=True)
 
     class Meta:
         model = TrainingUtterance

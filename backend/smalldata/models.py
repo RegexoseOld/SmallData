@@ -18,7 +18,7 @@ class Utterance(models.Model):
 
 
 class TrainingUtterance(models.Model):
-    category = models.ForeignKey('Category', on_delete=models.CASCADE, null=False)
+    category = models.CharField(max_length=500)
     text = models.CharField(max_length=500)
 
     def _str_(self):
