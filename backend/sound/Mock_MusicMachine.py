@@ -9,9 +9,8 @@ class Live:
 
     def message_handler(self, address, map):
         map = pickle.loads(map)
-
-        self.client.send_message('/rack', [20, 1.0])
-        self.client.send_message('/rack', [20, 0.0])
+        level = map['level']
+        self.client.send_message('/rack', (level/10))
         print('address: {} map: {}'.format(address, map))
 
 
