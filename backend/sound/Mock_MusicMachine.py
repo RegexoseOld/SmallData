@@ -2,15 +2,27 @@ import pickle
 from pythonosc import dispatcher, osc_server
 from UDPClient import Client_MusicServer
 
+def rules(cat):
+    if cat == "lecture":
+        return 0
+    elif cat == "praise":
+        return 1
+
 class Live:
     def __init__(self, client, message):
         self.client = client
         self.message = message
+        self.song_position = 0
 
     def message_handler(self, address, map):
         map = pickle.loads(map)
         level = map['level']
+        advance = rules(map['cat'])
+        self.song_position += advance
+        # print(self.song_position)
         self.client.send_message('/rack', (level/10))
+        self.client.send_message('/advance', (self.song_position, 1.0))
+        self.client.send_message('/advance', (self.song_position, 0.0))
         print('address: {} map: {}'.format(address, map))
 
 
