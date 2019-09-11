@@ -1,0 +1,25 @@
+{
+  "initial_state": "intro",
+  "transitions": [
+    [
+      "intro",
+      "strophe1",
+      "Lob > 2"
+    ],
+    [
+      "strophe1",
+      "strophe2",
+      "Kritik > 5"
+    ],
+    [
+      "strophe2",
+      "strophe1",
+      "Lob > 5"
+    ],
+    [
+      "strophe2",
+      "ende",
+      "Kritik > 5"
+    ]
+  ]
+}
