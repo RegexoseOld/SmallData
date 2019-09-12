@@ -1,5 +1,6 @@
 {
   "initial_state": "intro",
+  "final_state": "ende",
   "transitions": [
     [
       "intro",
@@ -8,18 +9,13 @@
     ],
     [
       "strophe1",
-      "strophe2",
-      "Kritik > 5"
-    ],
-    [
-      "strophe2",
-      "strophe1",
+      "intro",
       "Lob > 5"
     ],
     [
-      "strophe2",
+      "strophe1",
       "ende",
-      "Kritik > 5"
+      "Kritik > 1"
     ]
   ]
 }

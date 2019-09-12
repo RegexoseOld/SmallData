@@ -52,41 +52,56 @@ class State:
 
 
 class SongMachine:
-    current_state = ''
-    states = []
+    current_state = None
+    final_state = None
+    states = {}
     category_counter = {}
 
     def __init__(self, parser, categories=None):
-        self.states = self._create_states(parser)
+        self._create_states(parser)
         self._add_transitions(parser)
-        self.category_counter = {}.fromkeys(categories, 0) if categories else {}
-        self.current_state = self.states[parser.initial_state]
+        self._reset_counter(categories)
 
-    @staticmethod
-    def _create_states(parser):
-        states = {}
+    def _create_states(self, parser):
         for transition in parser.transitions:
-            if transition.source_name not in states:
-                states[transition.source_name] = State(transition.source_name)
-            if transition.target_name not in states:
-                states[transition.target_name] = State(transition.target_name)
-        return states
+            if transition.source_name not in self.states:
+                self.states[transition.source_name] = State(transition.source_name)
+            if transition.target_name not in self.states:
+                self.states[transition.target_name] = State(transition.target_name)
+
+        self.current_state = self.states[parser.initial_state_name]
+        self.final_state = self.states[parser.final_state_name]
 
     def update_state(self, category):
         if category in self.category_counter:
             self.category_counter[category] += 1
         else:
             self.category_counter[category] = 1
+
         next_state_name = self.current_state.check_transitions(self.category_counter)
-        self.current_state = self.states[next_state_name]
+
+        if next_state_name != self.current_state.name:
+            self.current_state = self.states[next_state_name]
+            self._reset_counter(self.category_counter.keys())
+
+            if self.current_state == self.final_state:
+                print("The END")
 
     def _add_transitions(self, parser):
         for transition in parser.transitions:
             self.states[transition.source_name].add_transition(transition)
 
+    def _reset_counter(self, categories):
+        self.category_counter = {}.fromkeys(categories, 0) if categories else {}
+
 
 class SongParser:
-    initial_state = None
+    INITIAL_STATE = "initial_state"
+    FINAL_STATE = "final_state"
+    TRANSITIONS = "transitions"
+
+    initial_state_name = ''
+    final_state_name = ''
     transitions = []
 
     def __init__(self, path_to_file):
@@ -95,12 +110,13 @@ class SongParser:
             self.__parse_json(data)
 
     def __parse_json(self, data):
-        self.initial_state = data['initial_state']
-        [self.transitions.append(Transition(line)) for line in data['transitions']]
+        self.initial_state_name = data[self.INITIAL_STATE]
+        self.final_state_name = data[self.FINAL_STATE]
+        [self.transitions.append(Transition(line)) for line in data[self.TRANSITIONS]]
 
 
 if __name__ == '__main__':
-    path_to_song_file = '../config/song1.json'
+    path_to_song_file = '../config/song_example.json'
     json_parser = SongParser(path_to_song_file)
     song_machine = SongMachine(json_parser)
 
@@ -111,4 +127,8 @@ if __name__ == '__main__':
     print(song_machine.category_counter)
     song_machine.update_state("Lob")
     print(song_machine.category_counter)
+    print(song_machine.current_state)
+    song_machine.update_state("Kritik")
+    print(song_machine.category_counter)
+    song_machine.update_state("Kritik")
     print(song_machine.current_state)
