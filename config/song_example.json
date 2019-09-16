@@ -1,6 +1,6 @@
 {
-  "initial_state": "intro",
-  "final_state": "ende",
+  "states": ["intro", "strophe1", "ende"],
+  "categories": ["Lob", "Kritik"],
   "transitions": [
     [
       "intro",
