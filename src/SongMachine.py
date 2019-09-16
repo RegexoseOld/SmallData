@@ -51,60 +51,63 @@ class State:
 
 class SongMachine:
     current_state = None
-    final_state = None
-    states = {}
+    last_state = None
+    parser = None
     category_counter = {}
 
-    def __init__(self, parser, categories=None):
-        self._create_states(parser)
-        self._add_transitions(parser)
-        self._reset_counter(categories)
-
-    def _create_states(self, parser):
-        for state_name in parser.state_names:
-            self.states[state_name] = State(state_name)
-
-        self.current_state = self.states[parser.state_names[0]]
-        self.final_state = self.states[parser.state_names[-1]]
-
-    def _add_transitions(self, parser):
-        for transition in parser.transitions:
-            self.states[transition.source_name].add_transition(transition)
+    def __init__(self, parser):
+        self.parser = parser
+        self.current_state = self.parser.states[self.parser.first_state_name]
+        self.last_state = self.parser.states[self.parser.last_state_name]
+        self._reset_counter(parser.categories)
 
     def _reset_counter(self, categories):
         self.category_counter = {}.fromkeys(categories, 0) if categories else {}
 
     def update_state(self, category):
-        if category in self.category_counter:
-            self.category_counter[category] += 1
-        else:
-            self.category_counter[category] = 1
+        self.category_counter[category] += 1
 
         next_state_name = self.current_state.test_transitions(self.category_counter)
 
         if next_state_name != self.current_state.name:
-            self.current_state = self.states[next_state_name]
+            self.current_state = self.parser.states[next_state_name]
             self._reset_counter(self.category_counter.keys())
 
-            if self.current_state == self.final_state:
+            if self.current_state == self.last_state:
                 print("The END")
 
 
 class SongParser:
-    STATES = "states"
-    CATEGORIES = "categories"
-    TRANSITIONS = "transitions"
+    NAME_STATES = "states"
+    NAME_CATEGORIES = "categories"
+    NAME_TRANSITIONS = "transitions"
 
     data = {}
-    transitions = []
-    state_names = []
+    states = {}
+    categories = []
 
-    def __init__(self, data):
-        self.data = data
+    first_state_name = ''
+    last_state_name = ''
+
+    def __init__(self, validated_data):
+        self.data = validated_data
 
     def parse(self):
-        self.state_names = self.data[self.STATES]
-        [self.transitions.append(Transition(line)) for line in self.data[self.TRANSITIONS]]
+        self.categories = self.data[self.NAME_CATEGORIES]
+        self._create_states()
+        self._add_transitions()
+
+    def _create_states(self):
+        for state_name in self.data[self.NAME_STATES]:
+            self.states[state_name] = State(state_name)
+
+        self.first_state_name = self.data[self.NAME_STATES][0]
+        self.last_state_name = self.data[self.NAME_STATES][-1]
+
+    def _add_transitions(self):
+        for transition_array in self.data[self.NAME_TRANSITIONS]:
+            transition = Transition(transition_array)
+            self.states[transition.source_name].add_transition(transition)
 
 
 class SongValidator(object):
@@ -130,9 +133,9 @@ class SongValidator(object):
             if field not in self.data:
                 self.errors.append("song file misses required field `{}`".format(field))
 
-        __validate_field(SongParser.STATES)
-        __validate_field(SongParser.CATEGORIES)
-        __validate_field(SongParser.TRANSITIONS)
+        __validate_field(SongParser.NAME_STATES)
+        __validate_field(SongParser.NAME_CATEGORIES)
+        __validate_field(SongParser.NAME_TRANSITIONS)
 
     def _validate_consistency(self):
         """
@@ -140,19 +143,19 @@ class SongValidator(object):
         corresponding fields of the json
         :return:
         """
-        for idx, transition in enumerate(self.data[SongParser.TRANSITIONS]):
+        for idx, transition in enumerate(self.data[SongParser.NAME_TRANSITIONS]):
             if len(transition) != 3:
                 self.errors.append("Transition `{}` has the wrong length".format(idx))
-            if transition[0] not in self.data[SongParser.STATES]:
+            if transition[0] not in self.data[SongParser.NAME_STATES]:
                 self.errors.append("Source state `{}` listed in transition `{}` is not contained in `states`".format(
                     transition[0], idx))
-            if transition[1] not in self.data[SongParser.STATES]:
+            if transition[1] not in self.data[SongParser.NAME_STATES]:
                 self.errors.append("Target state `{}` listed in transition `{}` is not contained in `states`".format(
                     transition[1], idx))
             cond_array = transition[2].split(" ")
             if len(cond_array) != 3:
                 self.errors.append("Wrong format of condition in transition `{}`".format(idx))
-            if cond_array[0] not in self.data[SongParser.CATEGORIES]:
+            if cond_array[0] not in self.data[SongParser.NAME_CATEGORIES]:
                 self.errors.append("Category `{}` of condition `{}` not contained in categories".format(
                     cond_array[0], idx))
 
