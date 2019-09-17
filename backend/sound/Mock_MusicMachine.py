@@ -3,9 +3,9 @@ from pythonosc import dispatcher, osc_server
 from UDPClient import Client_MusicServer
 
 def rules(cat):
-    if cat == "lecture":
+    if cat == "Kritik":
         return 0
-    elif cat == "praise":
+    elif cat == "Lob":
         return 1
 
 class Live:

@@ -4,7 +4,7 @@ import random
 import pickle
 
 mock_client = ClientIO('127.0.0.1', 5020)
-categories = ['lecture', 'praise']
+categories = ['Kritik', 'Lob']
 level_values = [3, 5, 8]
 
 dict = {}
