@@ -14,16 +14,16 @@ class Live:
         self.message = message
         self.song_position = 0
 
-    def message_handler(self, address, map):
-        map = pickle.loads(map)
-        level = map['level']
-        advance = rules(map['cat'])
+    def message_handler(self, address, osc_map):
+        osc_map = pickle.loads(osc_map)
+        level = osc_map['level']
+        advance = rules(osc_map['cat'])
         self.song_position += advance
         # print(self.song_position)
         self.client.send_message('/rack', (level/10))
         self.client.send_message('/advance', (self.song_position, 1.0))
         self.client.send_message('/advance', (self.song_position, 0.0))
-        print('address: {} map: {}'.format(address, map))
+        print('address: {} map: {}'.format(address, osc_map))
 
 
 if __name__ == "__main__":
@@ -33,9 +33,9 @@ if __name__ == "__main__":
 
     live = Live(mock_Ableton_server, ['initial_category', 'initial_level'])
 
-    def print_message(address, map):
-        map = pickle.loads(map)
-        print('address: {}\nmap: {}'.format(address, map))
+    def print_message(address, osc_map):
+        osc_map = pickle.loads(osc_map)
+        print('address: {}\nmap: {}'.format(address, osc_map))
 
     # dispatcher.map("/buildmap", lambda address, map: print_message(address, map))
     dispatcher.map("/buildmap", lambda address, map: live.message_handler(address, map))
