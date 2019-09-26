@@ -146,18 +146,19 @@ class SongValidator(object):
         for idx, transition in enumerate(self.data[SongParser.NAME_TRANSITIONS]):
             if len(transition) != 3:
                 self.errors.append("Transition `{}` has the wrong length".format(idx))
-            if transition[0] not in self.data[SongParser.NAME_STATES]:
-                self.errors.append("Source state `{}` listed in transition `{}` is not contained in `states`".format(
-                    transition[0], idx))
-            if transition[1] not in self.data[SongParser.NAME_STATES]:
-                self.errors.append("Target state `{}` listed in transition `{}` is not contained in `states`".format(
-                    transition[1], idx))
-            cond_array = transition[2].split(" ")
-            if len(cond_array) != 3:
-                self.errors.append("Wrong format of condition in transition `{}`".format(idx))
-            if cond_array[0] not in self.data[SongParser.NAME_CATEGORIES]:
-                self.errors.append("Category `{}` of condition `{}` not contained in categories".format(
-                    cond_array[0], idx))
+            else:
+                if transition[0] not in self.data[SongParser.NAME_STATES]:
+                    self.errors.append("Source state `{}` listed in transition `{}` is not contained in `states`".format(
+                        transition[0], idx))
+                if transition[1] not in self.data[SongParser.NAME_STATES]:
+                    self.errors.append("Target state `{}` listed in transition `{}` is not contained in `states`".format(
+                        transition[1], idx))
+                cond_array = transition[2].split(" ")
+                if len(cond_array) != 3:
+                    self.errors.append("Wrong format of condition in transition `{}`".format(idx))
+                if cond_array[0] not in self.data[SongParser.NAME_CATEGORIES]:
+                    self.errors.append("Category `{}` of condition `{}` not contained in categories".format(
+                        cond_array[0], idx))
 
 
 if __name__ == '__main__':
