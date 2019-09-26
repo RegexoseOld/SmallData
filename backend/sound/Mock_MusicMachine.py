@@ -8,10 +8,16 @@ def rules(cat):
     elif cat == "Lob":
         return 1
 
-class Live:
-    def __init__(self, client, message):
-        self.client = client
-        self.message = message
+
+class SongServer:
+    """
+    Receives msseages from the Interpreter translates them and forwards the result to the osculator
+    """
+    def __init__(self, client):
+        self.osculator_client = client
+        song_dispatcher = dispatcher.Dispatcher()
+        song_dispatcher.map("/buildmap", lambda address, map: self.message_handler(address, map))
+        self.interpreter_server = osc_server.ThreadingOSCUDPServer(('127.0.0.1', 5020), song_dispatcher)
         self.song_position = 0
 
     def message_handler(self, address, osc_map):
@@ -20,24 +26,26 @@ class Live:
         advance = rules(osc_map['cat'])
         self.song_position += advance
         # print(self.song_position)
-        self.client.send_message('/rack', (level/10))
-        self.client.send_message('/advance', (self.song_position, 1.0))
-        self.client.send_message('/advance', (self.song_position, 0.0))
+        self.osculator_client.send_message('/rack', (level / 10))
+        self.osculator_client.send_message('/advance', (self.song_position, 1.0))
+        self.osculator_client.send_message('/advance', (self.song_position, 0.0))
         print('address: {} map: {}'.format(address, osc_map))
+
+    def serve_forever(self, *args):
+        self.interpreter_server.serve_forever(*args)
 
 
 if __name__ == "__main__":
-    dispatcher = dispatcher.Dispatcher()
-    mock_OSC_server = osc_server.ThreadingOSCUDPServer(('127.0.0.1', 5020), dispatcher)
-    mock_Ableton_server = Client_MusicServer('127.0.0.1', 5010, 'condition')
 
-    live = Live(mock_Ableton_server, ['initial_category', 'initial_level'])
+    mock_osculator_client = Client_MusicServer('127.0.0.1', 5010, 'condition')
+
+    song_server = SongServer(mock_osculator_client)
 
     def print_message(address, osc_map):
         osc_map = pickle.loads(osc_map)
         print('address: {}\nmap: {}'.format(address, osc_map))
 
     # dispatcher.map("/buildmap", lambda address, map: print_message(address, map))
-    dispatcher.map("/buildmap", lambda address, map: live.message_handler(address, map))
 
-    mock_OSC_server.serve_forever()
+
+    song_server.serve_forever()
