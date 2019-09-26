@@ -2,6 +2,8 @@ import pickle
 from pythonosc import dispatcher, osc_server
 from UDPClient import Client_MusicServer
 
+INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
+
 def rules(cat):
     if cat == "Kritik":
         return 0
@@ -16,7 +18,7 @@ class SongServer:
     def __init__(self, client):
         self.osculator_client = client
         song_dispatcher = dispatcher.Dispatcher()
-        song_dispatcher.map("/buildmap", lambda address, map: self.message_handler(address, map))
+        song_dispatcher.map(INTERPRETER_TARGET_ADDRESS, lambda address, map: self.message_handler(address, map))
         self.interpreter_server = osc_server.ThreadingOSCUDPServer(('127.0.0.1', 5020), song_dispatcher)
         self.song_position = 0
 
@@ -36,16 +38,6 @@ class SongServer:
 
 
 if __name__ == "__main__":
-
     mock_osculator_client = Client_MusicServer('127.0.0.1', 5010, 'condition')
-
     song_server = SongServer(mock_osculator_client)
-
-    def print_message(address, osc_map):
-        osc_map = pickle.loads(osc_map)
-        print('address: {}\nmap: {}'.format(address, osc_map))
-
-    # dispatcher.map("/buildmap", lambda address, map: print_message(address, map))
-
-
     song_server.serve_forever()
