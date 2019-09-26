@@ -1,0 +1,26 @@
+{
+  "states": ["intro", "bridge", "part1", "beat", "mandoline"],
+  "categories": ["Lob", "Kritik"],
+  "transitions": [
+    [
+      "intro",
+      "bridge",
+      "Lob > 2"
+    ],
+    [
+      "bridge",
+      "part1",
+      "Lob > 0"
+    ],
+     [
+      "part1",
+      "beat",
+      "Kritik > 1"
+    ],
+    [
+      "part1",
+      "mandoline",
+      "Lob > 1"
+    ]
+  ]
+}
