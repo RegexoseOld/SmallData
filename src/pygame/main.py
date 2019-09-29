@@ -25,9 +25,6 @@ for i in range(len(trigger)):
         trigger[i] = json_data['states'][random_state]
 
 
-
-
-
 def mock_songplay(data):
     if isinstance(data, str):
         playhead.handle_input_data(data)
