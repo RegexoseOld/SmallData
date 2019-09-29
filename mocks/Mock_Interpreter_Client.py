@@ -1,5 +1,4 @@
 from pythonosc.udp_client import SimpleUDPClient
-from song_server import INTERPRETER_TARGET_ADDRESS
 import time
 import random
 import pickle
@@ -11,10 +10,15 @@ level_values = [3, 5, 8]
 osc_dict = {}
 
 if __name__ == "__main__":
+
+    # add file to path so import works, see https://stackoverflow.com/a/19190695/7414040
+    from os import sys, path
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from song import song_server
+
     while True:
         osc_dict = {'cat': categories[random.randint(0, 1)],
-               'level' : level_values[random.randint(0, 2)]}
+                    'level': level_values[random.randint(0, 2)]}
         osc_map = pickle.dumps(osc_dict)
-        mock_client.send_message(INTERPRETER_TARGET_ADDRESS, osc_map)
+        mock_client.send_message(song_server.INTERPRETER_TARGET_ADDRESS, osc_map)
         time.sleep(5)
-

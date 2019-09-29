@@ -1,7 +1,6 @@
 import pickle
 import json
 from pythonosc import dispatcher, osc_server
-import UDPClient
 
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
 
@@ -10,11 +9,11 @@ class SongServer:
     """
     Receives msseages from the Interpreter translates them and forwards the result to the osculator
     """
-    def __init__(self, client, song_machine):
+    def __init__(self, client, song):
         self.osculator_client = client
-        self._song_machine = song_machine
+        self._song_machine = song
         song_dispatcher = dispatcher.Dispatcher()
-        song_dispatcher.map(INTERPRETER_TARGET_ADDRESS, lambda address, map: self.message_handler(address, map))
+        song_dispatcher.map(INTERPRETER_TARGET_ADDRESS, lambda address, content: self.message_handler(address, content))
         self.interpreter_server = osc_server.ThreadingOSCUDPServer(('127.0.0.1', 5020), song_dispatcher)
 
     def message_handler(self, address, osc_map):
@@ -33,22 +32,21 @@ class SongServer:
 
 
 if __name__ == "__main__":
+    # add file to path so import works, see https://stackoverflow.com/a/19190695/7414040
+    from os import sys, path
+    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from song import song_machine, UDPClient
+
     mock_osculator_client = UDPClient.Client_MusicServer('127.0.0.1', 5010, 'condition')
-    path_to_song_file = '../../config/heavy_lemon.json'
+    path_to_song_file = '../config/heavy_lemon.json'
     with open(path_to_song_file, 'r') as f:
         json_data = json.load(f)
 
-
-    ##  TODO remove this dirty hack that makes sure import of SongMachine works
-    import sys
-    sys.path.append('../../src/')
-    import SongMachine
-
-    SongMachine.SongValidator(json_data).validate()
-    json_parser = SongMachine.SongParser(json_data)
+    song_machine.SongValidator(json_data).validate()
+    json_parser = song_machine.SongParser(json_data)
     json_parser.parse()
-    song = SongMachine.SongMachine(json_parser)
+    song_machine = song_machine.SongMachine(json_parser)
 
-    song_server = SongServer(mock_osculator_client, song)
+    song_server = SongServer(mock_osculator_client, song_machine)
 
     song_server.serve_forever()

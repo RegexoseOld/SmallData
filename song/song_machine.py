@@ -148,11 +148,14 @@ class SongValidator(object):
                 self.errors.append("Transition `{}` has the wrong length".format(idx))
             else:
                 if transition[0] not in self.data[SongParser.NAME_STATES]:
-                    self.errors.append("Source state `{}` listed in transition `{}` is not contained in `states`".format(
-                        transition[0], idx))
+                    self.errors.append(
+                        "Source state `{}` listed in transition `{}` is not contained in `states`".format(
+                            transition[0], idx)
+                    )
                 if transition[1] not in self.data[SongParser.NAME_STATES]:
-                    self.errors.append("Target state `{}` listed in transition `{}` is not contained in `states`".format(
-                        transition[1], idx))
+                    self.errors.append(
+                        "Target state `{}` listed in transition `{}` is not contained in `states`".format(
+                            transition[1], idx))
                 cond_array = transition[2].split(" ")
                 if len(cond_array) != 3:
                     self.errors.append("Wrong format of condition in transition `{}`".format(idx))
