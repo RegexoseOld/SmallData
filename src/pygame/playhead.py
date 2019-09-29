@@ -15,9 +15,10 @@ class Playhead:
         self.anim_right = Animation(self.playhead_surface, 0, 0, 2, self.playhead_surface.get_width(), \
                                                               self.playhead_surface.get_height(),3)
         self.dir = 0
-        self.song_parts = {'intro' : 2, 'bridge': 500}
+        self.song_parts = {'intro' : [2, 499]}
+        self.current_part = 'intro'
         #  initial position for playhead
-        self.pos_x = self.song_parts['intro']
+        self.pos_x = self.song_parts['intro'][0]
         self.pos_y = self.playhead_surface.get_height() + 5
         self.playing = False
 
@@ -32,11 +33,12 @@ class Playhead:
         return playhead
 
     def render(self, screen):
-        if self.pos_x == int(self.song_parts['bridge']):
+        # print('self-pos_x: ', self.pos_x)
+        if int(self.pos_x) == int(self.song_parts[self.current_part][1]):
             if self.playing:
                 # only update then
                 self.anim_part_begin.update()
-            self.pos_x = self.song_parts['intro']
+            self.pos_x = self.song_parts[self.current_part][0]
             self.anim_part_begin.render(screen, (self.pos_x, self.pos_y))
         else:
             if self.playing:
@@ -62,6 +64,7 @@ class Playhead:
             self.playing = True
         else:
             print('triggered: ', data)
-            self.pos_x = self.song_parts[data]
+            self.pos_x = self.song_parts[data][0]
+            self.current_part = data
             self.dir = 1
             self.playing = True

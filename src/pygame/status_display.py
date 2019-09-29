@@ -52,6 +52,6 @@ class SongStatus:
             part_length = (SONG_WIDTH / (len(parts) * 5)) * length
             pygame.draw.rect(self.song, (117, 117, 117),
                              (pos, 0, part_length, SCREEN_HEIGHT/4), 2)
-            self.song_parts[part] = pos
+            self.song_parts[part] = [pos, pos + part_length]
             pos += part_length
 

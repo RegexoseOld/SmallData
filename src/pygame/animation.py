@@ -26,9 +26,6 @@ class Animation(object):
 
     # Das aktuelle Frame an einer bestimmten Position rendern:
     def render(self, screen, pos):
-        # Welchen Bereich aus der Grafik müssen wir anzeigen?
-        # Die x-Position können wir aus der Breite und der Start-Position berechnen,
-        # die restlichen Werte kennen wir bereits.
         screen.blit(self.image, pos,
                     pygame.Rect(self.start_x + (self.width * self.current), self.start_y, self.width, self.height))
 
