@@ -1,6 +1,7 @@
 import sys
 import pygame
 import json
+import random
 sys.path.append('/Users/borisjoens/Dropbox/Kommentare/SmallData')
 from status_display import SCREEN_HEIGHT, SCREEN_WIDTH, SongStatus
 from playhead import Playhead
@@ -13,9 +14,25 @@ playhead = Playhead()
 song = SongStatus('heavy_lemon', json_data['states'], playhead)
 playhead.song_parts = song.song_parts
 # print('playhead song parts', playhead.song_parts)
+print('json', json_data['states'])
 
-def mock_songplay():
-    playhead.handle_input_data(1)
+trigger = [1 for x in range(2000)]
+
+for i in range(len(trigger)):
+    random_index = random.randint(0, 2000)
+    random_state = random.randint(0, 4)
+    if i in [200, 500, 750, 945, 1888, 1032]:
+        trigger[i] = json_data['states'][random_state]
+
+
+
+
+
+def mock_songplay(data):
+    if isinstance(data, str):
+        playhead.handle_input_data(data)
+    else:
+        playhead.handle_input_data(1)
 
 
 def main():
@@ -26,6 +43,7 @@ def main():
     pygame.key.set_repeat(1, 30)
 
     clock = pygame.time.Clock()
+    index = 0
     running = True
 
     while running:
@@ -40,7 +58,8 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     pygame.event.post(pygame.event.Event(pygame.QUIT))
                 song.handle_input(event.key)
-        mock_songplay()
+        mock_songplay(trigger[index])
+        index += 1
         song.render(screen)
         pygame.display.flip()
 

@@ -15,9 +15,9 @@ class Playhead:
         self.anim_right = Animation(self.playhead_surface, 0, 0, 2, self.playhead_surface.get_width(), \
                                                               self.playhead_surface.get_height(),3)
         self.dir = 0
-        self.song_parts = {'0' : 2, '1': 500}
+        self.song_parts = {'intro' : 2, 'bridge': 500}
         #  initial position for playhead
-        self.pos_x = INITIAL_POS_X - 4
+        self.pos_x = self.song_parts['intro']
         self.pos_y = self.playhead_surface.get_height() + 5
         self.playing = False
 
@@ -60,7 +60,8 @@ class Playhead:
             self.pos_x += 1
             self.dir = 1
             self.playing = True
-        elif data == pygame.K_LEFT:
-            self.pos_x -= 1
-            self.dir = -1
+        else:
+            print('triggered: ', data)
+            self.pos_x = self.song_parts[data]
+            self.dir = 1
             self.playing = True
