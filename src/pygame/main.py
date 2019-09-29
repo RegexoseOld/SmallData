@@ -12,6 +12,10 @@ with open(SONG_PATH, 'r') as f:
 playhead = Playhead()
 song = SongStatus('heavy_lemon', json_data['states'], playhead)
 playhead.song_parts = song.song_parts
+# print('playhead song parts', playhead.song_parts)
+
+def mock_songplay():
+    playhead.handle_input_data(1)
 
 
 def main():
@@ -36,7 +40,7 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     pygame.event.post(pygame.event.Event(pygame.QUIT))
                 song.handle_input(event.key)
-
+        mock_songplay()
         song.render(screen)
         pygame.display.flip()
 

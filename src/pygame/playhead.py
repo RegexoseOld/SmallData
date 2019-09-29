@@ -10,7 +10,7 @@ class Playhead:
         self.playhead_surface = pygame.Surface((SONG_WIDTH / 8, SCREEN_HEIGHT / 4))
         self.playhead_surface.set_colorkey((0, 0, 0))
         self.playhead = self.create_playhead(self.playhead_surface.get_size())
-        self.anim_left = Animation(self.playhead_surface, 0, 0, 2, self.playhead_surface.get_width(), \
+        self.anim_part_begin = Animation(self.playhead_surface, 0, 0, 2, self.playhead_surface.get_width(), \
                                                               self.playhead_surface.get_height(), 3)
         self.anim_right = Animation(self.playhead_surface, 0, 0, 2, self.playhead_surface.get_width(), \
                                                               self.playhead_surface.get_height(),3)
@@ -32,11 +32,12 @@ class Playhead:
         return playhead
 
     def render(self, screen):
-        if self.dir == -1:
+        if self.pos_x == int(self.song_parts['bridge']):
             if self.playing:
                 # only update then
-                self.anim_left.update()
-            self.anim_left.render(screen, (self.pos_x, self.pos_y))
+                self.anim_part_begin.update()
+            self.pos_x = self.song_parts['intro']
+            self.anim_part_begin.render(screen, (self.pos_x, self.pos_y))
         else:
             if self.playing:
                 # only update then
@@ -55,11 +56,11 @@ class Playhead:
             self.playing = True
 
     def handle_input_data(self, data):
-        if key == pygame.K_RIGHT:
+        if data == 1:
             self.pos_x += 1
             self.dir = 1
             self.playing = True
-        elif key == pygame.K_LEFT:
+        elif data == pygame.K_LEFT:
             self.pos_x -= 1
             self.dir = -1
             self.playing = True
