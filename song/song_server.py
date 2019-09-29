@@ -1,6 +1,6 @@
 import pickle
 import json
-from pythonosc import dispatcher, osc_server
+from pythonosc import dispatcher, osc_server, udp_client
 
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
 
@@ -35,9 +35,9 @@ if __name__ == "__main__":
     # add file to path so import works, see https://stackoverflow.com/a/19190695/7414040
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-    from song import song_machine, UDPClient
+    from song import song_machine
 
-    mock_osculator_client = UDPClient.Client_MusicServer('127.0.0.1', 5010, 'condition')
+    mock_osculator_client = udp_client.SimpleUDPClient('127.0.0.1', 5010)
     path_to_song_file = '../config/heavy_lemon.json'
     with open(path_to_song_file, 'r') as f:
         json_data = json.load(f)
@@ -48,5 +48,4 @@ if __name__ == "__main__":
     song_machine = song_machine.SongMachine(json_parser)
 
     song_server = SongServer(mock_osculator_client, song_machine)
-
     song_server.serve_forever()
