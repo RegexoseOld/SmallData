@@ -1,5 +1,6 @@
 from pythonosc.osc_server import AsyncIOOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
+import pickle
 import asyncio
 import pygame
 import sys
@@ -7,12 +8,12 @@ import sys
 
 pygame.init()
 pygame.font.init()
-font = pygame.font.Font(None, 30)
+font = pygame.font.Font(None, 20)
 
 ip = "127.0.0.1"
 port = 5020
 
-size = width, height = 320, 240
+size = width, height = 420, 240
 black = 0, 0, 0
 font_color = 155, 155, 0
 
@@ -22,12 +23,11 @@ class Display:
 
     def __init__(self):
         self.screen = pygame.display.set_mode(size)
-        self.textsurface = font.render('Called 0 times', False, font_color)
-        self._counter = 0
+        self.textsurface = font.render('Nothing received', False, font_color)
 
-    def update(self, *_):
-        self._counter += 1
-        self.textsurface = font.render('Called {} times'.format(self._counter), False, font_color)
+    def update(self, _, content):
+        osc_map = pickle.loads(content)
+        self.textsurface = font.render('Received map: {}'.format(osc_map), True, font_color)
 
     async def loop(self):
         while True:
