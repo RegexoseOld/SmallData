@@ -91,4 +91,6 @@ if __name__ == '__main__':
     machine = song_machine.create_instance()
 
     song_server = SongServer(mock_osculator_client, machine)
-    asyncio.run(song_server.init_main())
+
+    loop = asyncio.get_event_loop()
+    result = loop.run_until_complete(song_server.init_main())
