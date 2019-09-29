@@ -6,13 +6,15 @@ import sys
 
 
 pygame.init()
+pygame.font.init()
+font = pygame.font.Font(None, 30)
 
 ip = "127.0.0.1"
 port = 5020
 
 size = width, height = 320, 240
-speed = [2, 2]
 black = 0, 0, 0
+font_color = 155, 155, 0
 
 
 class Display:
@@ -20,16 +22,12 @@ class Display:
 
     def __init__(self):
         self.screen = pygame.display.set_mode(size)
+        self.textsurface = font.render('Called 0 times', False, font_color)
+        self._counter = 0
 
-        self.ball = pygame.image.load("/Users/staude/Downloads/intro_ball.gif")
-        self.ballrect = self.ball.get_rect()
-
-    def update(self, address, *args):
-        self.ballrect = self.ballrect.move(speed)
-        if self.ballrect.left < 0 or self.ballrect.right > width:
-            speed[0] = -speed[0]
-        if self.ballrect.top < 0 or self.ballrect.bottom > height:
-            speed[1] = -speed[1]
+    def update(self, *_):
+        self._counter += 1
+        self.textsurface = font.render('Called {} times'.format(self._counter), False, font_color)
 
     async def loop(self):
         while True:
@@ -37,7 +35,7 @@ class Display:
                 if event.type == pygame.QUIT: sys.exit()
 
             self.screen.fill(black)
-            self.screen.blit(self.ball, self.ballrect)
+            self.screen.blit(self.textsurface, (0, 0))
             pygame.display.flip()
 
             await asyncio.sleep(1)
