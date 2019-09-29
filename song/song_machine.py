@@ -148,11 +148,14 @@ class SongValidator(object):
                 self.errors.append("Transition `{}` has the wrong length".format(idx))
             else:
                 if transition[0] not in self.data[SongParser.NAME_STATES]:
-                    self.errors.append("Source state `{}` listed in transition `{}` is not contained in `states`".format(
-                        transition[0], idx))
+                    self.errors.append(
+                        "Source state `{}` listed in transition `{}` is not contained in `states`".format(
+                            transition[0], idx)
+                    )
                 if transition[1] not in self.data[SongParser.NAME_STATES]:
-                    self.errors.append("Target state `{}` listed in transition `{}` is not contained in `states`".format(
-                        transition[1], idx))
+                    self.errors.append(
+                        "Target state `{}` listed in transition `{}` is not contained in `states`".format(
+                            transition[1], idx))
                 cond_array = transition[2].split(" ")
                 if len(cond_array) != 3:
                     self.errors.append("Wrong format of condition in transition `{}`".format(idx))
@@ -161,14 +164,18 @@ class SongValidator(object):
                         cond_array[0], idx))
 
 
-if __name__ == '__main__':
-    path_to_song_file = '../config/song_example.json'
+def create_instance(path_to_song_file='../config/heavy_lemon.json'):
     with open(path_to_song_file, 'r') as f:
         json_data = json.load(f)
+
     SongValidator(json_data).validate()
-    json_parser = SongParser(json_data)
-    json_parser.parse()
-    song_machine = SongMachine(json_parser)
+    parser = SongParser(json_data)
+    parser.parse()
+    return SongMachine(parser)
+
+
+if __name__ == '__main__':
+    song_machine = create_instance()
 
     print(song_machine.current_state)
     song_machine.update_state("Lob")
