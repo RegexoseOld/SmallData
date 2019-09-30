@@ -18,8 +18,9 @@ font = pygame.font.Font(None, 20)
 ip = "127.0.0.1"
 
 
-size = width, height = 420, 240
+size = width, height = 800, 450
 black = 0, 0, 0
+grey = 227, 227, 227
 font_color = 155, 155, 0
 refresh_rate = 10.  # Hz
 
@@ -61,7 +62,7 @@ class SongServer:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit()
 
-            self.screen.fill(black)
+            self.screen.fill(grey)
             self.screen.blit(self.interpreter_output_surf, (0, 0))
             self.screen.blit(self.song_state_surf, (0, 30))
             pygame.display.flip()
