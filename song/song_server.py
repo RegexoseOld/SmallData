@@ -1,3 +1,5 @@
+from os import sys, path
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 from pythonosc.osc_server import AsyncIOOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from pythonosc import udp_client
@@ -5,7 +7,6 @@ from pythonosc import udp_client
 import pickle
 import asyncio
 import pygame
-
 
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
 INTERPRETER_PORT = 5020
@@ -28,11 +29,14 @@ refresh_rate = 10.  # Hz
 class SongServer:
     server = None
 
-    def __init__(self, client, machine):
+    def __init__(self, client, machine, songgraphic):
         self.osculator_client = client
         self._song_machine = machine
+        self.song_graphic = songgraphic
 
         self.screen = pygame.display.set_mode(size)
+        pygame.display.set_caption('Status Screen')
+
         self.interpreter_output_surf = font.render('Nothing received', False, font_color)
         self.song_state_surf = font.render('Nothing received', False, font_color)
 
@@ -40,6 +44,7 @@ class SongServer:
         self.interpreter_output_surf = font.render('Received map: {}'.format(osc_map), True, font_color)
         self.song_state_surf = font.render('Current Part {}'. format(self._song_machine.current_state.name),
                                            True, font_color)
+        self.song_graphic.playhead.handle_input_data(self._song_machine.current_state.name)
 
     def _update_song(self, osc_map):
         level = osc_map['level']
@@ -63,8 +68,14 @@ class SongServer:
                 if event.type == pygame.QUIT: sys.exit()
 
             self.screen.fill(grey)
-            self.screen.blit(self.interpreter_output_surf, (0, 0))
-            self.screen.blit(self.song_state_surf, (0, 30))
+            self.screen.blit(self.interpreter_output_surf, (600, 0))
+            self.screen.blit(self.song_state_surf, (600, 30))
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    self.song_graphic.handle_input(event.key)
+            self.song_graphic.playhead.handle_input_data(1)
+            self.song_graphic.render(self.screen)
             pygame.display.flip()
 
             await asyncio.sleep(1./refresh_rate)
@@ -75,7 +86,7 @@ class SongServer:
 
         self.server = AsyncIOOSCUDPServer((ip, INTERPRETER_PORT), dispatcher, asyncio.get_event_loop())
         transport, protocol = await self.server.create_serve_endpoint()  # Create datagram endpoint and start serving
-
+        print('transport {} protocol {}'.format(transport, protocol))
         await self.loop()  # Enter main loop of program
 
         transport.close()  # Clean up serve endpoint
@@ -88,10 +99,15 @@ if __name__ == '__main__':
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
     from song import song_machine
+    from src.pygame.status_display import SCREEN_HEIGHT, SCREEN_WIDTH, SongStatus
+    from src.pygame.playhead import Playhead
 
     machine = song_machine.create_instance()
 
-    song_server = SongServer(mock_osculator_client, machine)
+    playhead = Playhead()
+    song_graphic = SongStatus('heavy lemon', machine.parser.data['states'], playhead)
+
+    song_server = SongServer(mock_osculator_client, machine, song_graphic)
 
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(song_server.init_main())
