@@ -17,7 +17,8 @@ if __name__ == "__main__":
     from song import song_server
 
     while True:
-        osc_dict = {'cat': categories[random.randint(0, 1)],
+        osc_dict = {'text' : 'Dies ist ein Kommentar von Mock_Interpreter_Client',
+                    'cat': categories[random.randint(0, 1)],
                     'level': level_values[random.randint(0, 2)]}
         osc_map = pickle.dumps(osc_dict)
         mock_client.send_message(song_server.INTERPRETER_TARGET_ADDRESS, osc_map)

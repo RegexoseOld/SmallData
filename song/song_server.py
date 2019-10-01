@@ -68,13 +68,13 @@ class SongServer:
                 if event.type == pygame.QUIT: sys.exit()
 
             self.screen.fill(grey)
-            self.screen.blit(self.interpreter_output_surf, (600, 0))
-            self.screen.blit(self.song_state_surf, (600, 30))
+            self.screen.blit(self.interpreter_output_surf, (15, 350))
+            self.screen.blit(self.song_state_surf, (15, 380))
 
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     self.song_graphic.handle_input(event.key)
-            self.song_graphic.playhead.handle_input_data(1)
+            self.song_graphic.playhead.handle_input_data(1) # moves playhead forward
             self.song_graphic.render(self.screen)
             pygame.display.flip()
 

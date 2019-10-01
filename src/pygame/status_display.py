@@ -30,6 +30,7 @@ class SongStatus:
         self.status_surface = pygame.Surface((STATUS_WIDTH, SCREEN_HEIGHT))
         self.song_surface = pygame.Surface((STATUS_WIDTH, SCREEN_HEIGHT / 2))
         self.song_surface.fill((204, 204, 204))
+        self.song_surface.set_colorkey((204, 204, 204))
         self.song = pygame.Surface((SONG_WIDTH, SCREEN_HEIGHT / 3))
         self.song.set_colorkey((0, 0, 0))
         self.song_parts = {}
