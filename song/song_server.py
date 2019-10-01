@@ -46,19 +46,24 @@ class SongServer:
         self.song_state_surf = font.render('No State Received', False, font_color)
         self.text_surface.blit(self.interpreter_output_surf, (0, 0))
 
-    def _position_text_display(self, text, text_cache=3):
+    def _position_text_display(self, text, text_cache=5):
         self.text_positions[text] = text.get_rect().bottom + self.pos_y
+        # print('text_positions before: ', self.text_positions)
         if len(self.text_positions) == text_cache + 1:
             # replace position of text to the position of the frontrunner
-            # and delete first key 
+            # and delete first key
+            last_position = text.get_rect().bottom # = 14
             for text, position in self.text_positions.items():
-                for index, item in enumerate(:
-                if index != 0:
-                pass
-
-
-        self.pos_y = text.get_rect().bottom + self.pos_y
-        self.text_surface.blit(text, (0, self.pos_y))
+                self.text_positions[text] = position - last_position
+                print('text: {} \nposition: {}'.format(text, position))
+            self.text_positions.popitem(False)
+            self.text_surface.fill(grey)
+            for text, position in self.text_positions.items():
+                self.text_surface.blit(text, (0, position))
+        else:
+            # print('text_positions after: ', self.text_positions)
+            self.pos_y = text.get_rect().bottom + self.pos_y
+            self.text_surface.blit(text, (0, self.pos_y))
 
 
     def _update_display_objects(self, osc_map):
