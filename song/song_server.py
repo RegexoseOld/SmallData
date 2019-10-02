@@ -37,7 +37,7 @@ class SongServer:
 
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Status Screen')
-        self.text_surface = pygame.Surface((width, height/2))
+        self.text_surface = pygame.Surface((width, height / 2))
         self.text_surface.fill(grey)
 
         self.interpreter_output_surf = font.render('No Interpretation Received', False, font_color)
@@ -129,8 +129,8 @@ if __name__ == '__main__':
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
     from song import song_machine
-    from src.pygame.status_display import SCREEN_HEIGHT, SCREEN_WIDTH, SongStatus
-    from src.pygame.playhead import Playhead
+    from display.status_display import SongStatus
+    from display.playhead import Playhead
 
     machine = song_machine.create_instance()
 

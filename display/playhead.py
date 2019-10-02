@@ -2,8 +2,8 @@ import sys
 import pygame
 sys.path.append('/Users/borisjoens/Dropbox/Kommentare/SmallData')
 # import statements must change if imported from song/song_server.py
-from src.pygame.animation import Animation
-from src.pygame.status_display import SCREEN_HEIGHT, SONG_WIDTH, INITIAL_POS_X
+from display.animation import Animation
+from display.status_display import SCREEN_HEIGHT, SONG_WIDTH
 
 
 class Playhead:

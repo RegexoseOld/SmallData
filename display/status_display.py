@@ -1,6 +1,4 @@
-import sys
 import pygame
-sys.path.append('/Users/borisjoens/Dropbox/Kommentare/SmallData')
 
 SCREEN_HEIGHT = 1000
 SCREEN_WIDTH = 1200
