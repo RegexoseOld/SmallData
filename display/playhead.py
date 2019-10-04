@@ -1,6 +1,4 @@
-import sys
 import pygame
-sys.path.append('/Users/borisjoens/Dropbox/Kommentare/SmallData')
 # import statements must change if imported from song/song_server.py
 from display.animation import Animation
 from display.status_display import SCREEN_HEIGHT, SONG_WIDTH
@@ -15,7 +13,7 @@ class Playhead:
                                                               self.playhead_surface.get_height(), 1)
         self.anim_right = Animation(self.playhead_surface, 0, 0, 1, self.playhead_surface.get_width(), \
                                                               self.playhead_surface.get_height(),1)
-        self.song_parts = {} # will be populated in SongStatus
+        self.song_parts = {'intro' : [2, 499]} # will be populated in SongStatus
         self.current_part = 'intro'
         # initial position for playhead
         self.pos_x = float(self.song_parts['intro'][0])
@@ -29,8 +27,8 @@ class Playhead:
             t = list(t)
             t[0] = size[0] / t[0]
             t[1] = size[1] / t[1]
-        playhead = pygame.draw.polygon(self.playhead_surface, (117, 117, 117), pointer, 0)
-        return playhead
+        play_arrow = pygame.draw.polygon(self.playhead_surface, (117, 117, 117), pointer, 0)
+        return play_arrow
 
     def render(self, screen):
         # part loopen
