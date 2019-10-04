@@ -1,6 +1,4 @@
-import sys
 import pygame
-sys.path.append('/Users/borisjoens/Dropbox/Kommentare/SmallData')
 
 
 class Animation(object):

@@ -46,7 +46,6 @@ class SongServer:
 
     def _position_text_display(self, text, text_cache=5):
         self.text_positions[text] = text.get_rect().bottom + self.pos_y
-        # print('text_positions before: ', self.text_positions)
         if len(self.text_positions) == text_cache + 1:
             # replace position of text to the position of the frontrunner
             # and delete first key
@@ -65,7 +64,6 @@ class SongServer:
 
 
     def _update_display_objects(self, osc_map):
-        # self.text_surface.fill(grey)
         self.interpreter_output_surf = font.render('Received map: {}'.format(osc_map), True, font_color)
         self.song_state_surf = font.render('Current Part {}'. format(self._song_machine.current_state.name),
                                            True, font_color)
