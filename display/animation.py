@@ -2,6 +2,7 @@ import sys
 import pygame
 sys.path.append('/Users/borisjoens/Dropbox/Kommentare/SmallData')
 
+
 class Animation(object):
 
     def __init__(self, image, start_x, start_y, num, width, height, duration):

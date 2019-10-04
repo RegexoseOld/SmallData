@@ -15,7 +15,7 @@ class Playhead:
                                                               self.playhead_surface.get_height(), 1)
         self.anim_right = Animation(self.playhead_surface, 0, 0, 1, self.playhead_surface.get_width(), \
                                                               self.playhead_surface.get_height(),1)
-        self.song_parts = {'intro' : [2, 499]}
+        self.song_parts = {} # will be populated in SongStatus
         self.current_part = 'intro'
         # initial position for playhead
         self.pos_x = float(self.song_parts['intro'][0])
