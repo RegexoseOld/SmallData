@@ -13,7 +13,7 @@ OSCULATOR_PORT = 5010
 
 pygame.init()
 pygame.font.init()
-font = pygame.font.Font(None, 20)
+font = pygame.font.Font(None, 25)
 
 ip = "127.0.0.1"
 
@@ -35,7 +35,7 @@ class SongServer:
 
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Status Screen')
-        self.text_surface = pygame.Surface((width, height / 2))
+        self.text_surface = pygame.Surface((400, height / 2))
         self.text_surface.fill(grey)
 
         self.interpreter_output_surf = font.render('No Interpretation Received', False, font_color)
@@ -44,30 +44,35 @@ class SongServer:
         self.song_state_surf = font.render('No State Received', False, font_color)
         self.text_surface.blit(self.interpreter_output_surf, (0, 0))
 
-    def _position_text_display(self, text, text_cache=5):
-        self.text_positions[text] = text.get_rect().bottom + self.pos_y
+    def _position_text_display(self, font_surface, text_cache=2):
+        self.text_positions[font_surface] = font_surface.get_rect().bottom + self.pos_y
+        print('self positions: ', self.text_positions)
+
         if len(self.text_positions) == text_cache + 1:
             # replace position of text to the position of the frontrunner
             # and delete first key
-            last_position = text.get_rect().bottom # = 14
-            for text, position in self.text_positions.items():
-                self.text_positions[text] = position - last_position
-                print('text: {} \nposition: {}'.format(text, position))
+            last_position = font_surface.get_rect().bottom
+            for font_surface, position in self.text_positions.items():
+                self.text_positions[font_surface] = position - last_position
+                print('text: {} \nposition: {}'.format(font_surface, position))
             self.text_positions.popitem(False)
             self.text_surface.fill(grey)
-            for text, position in self.text_positions.items():
-                self.text_surface.blit(text, (0, position))
+
+            for surface, position in self.text_positions.items():
+                self.text_surface.blit(surface, (0, position))
         else:
-            # print('text_positions after: ', self.text_positions)
-            self.pos_y = text.get_rect().bottom + self.pos_y
-            self.text_surface.blit(text, (0, self.pos_y))
+            self.pos_y = font_surface.get_rect().bottom + self.pos_y
+            self.text_surface.blit(font_surface, (0, self.pos_y))
+
 
 
     def _update_display_objects(self, osc_map):
-        self.interpreter_output_surf = font.render('Received map: {}'.format(osc_map), True, font_color)
+        # self.interpreter_output_surf = font.render('Received map: {}'.format(osc_map), True, font_color)
+        self.interpreter_output_surf = linebreak(osc_map['text'], font_color, self.text_surface.get_rect(), font, 0, None)
+
         self.song_state_surf = font.render('Current Part {}'. format(self._song_machine.current_state.name),
                                            True, font_color)
-        self._position_text_display(self.interpreter_output_surf)
+        self._position_text_display(self.interpreter_output_surf, 3)
         self.song_graphic.playhead.handle_input_data(self._song_machine.current_state.name)
 
     def _update_song(self, osc_map):
@@ -127,6 +132,7 @@ if __name__ == '__main__':
     from song import song_machine
     from display.status_display import SongStatus
     from display.playhead import Playhead
+    from display.font_render import linebreak
 
     machine = song_machine.create_instance()
 
