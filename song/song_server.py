@@ -54,7 +54,7 @@ class SongServer:
             last_position = font_surface.get_rect().bottom
             for font_surface, position in self.text_positions.items():
                 self.text_positions[font_surface] = position - last_position
-                print('text: {} \nposition: {}'.format(font_surface, position))
+                # print('text: {} \nposition: {}'.format(font_surface, position))
             self.text_positions.popitem(False)
             self.text_surface.fill(grey)
 
@@ -68,7 +68,7 @@ class SongServer:
 
     def _update_display_objects(self, osc_map):
         # self.interpreter_output_surf = font.render('Received map: {}'.format(osc_map), True, font_color)
-        self.interpreter_output_surf = linebreak(osc_map['text'], font_color, self.text_surface.get_rect(), font, 0, None)
+        self.interpreter_output_surf = linebreak(self.text_surface, osc_map['text'], font_color, self.text_surface.get_rect(), font, 0, None)
 
         self.song_state_surf = font.render('Current Part {}'. format(self._song_machine.current_state.name),
                                            True, font_color)

@@ -2,11 +2,10 @@ from os import sys, path
 # sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import pygame
 
-def linebreak(text, color, rect, font, aa=False, bkg=None):
+def linebreak(surface, text, color, rect, font, aa=False, bkg=None):
     # aa = antialiased bkg= background color
     # print('text: {}\ncolor  {}\nrect: {}'.format(text, color, rect))
-    surface = pygame.Surface((rect.width, rect.height))
-    surface.fill((50, 74, 168))
+    surface.fill((22, 155, 227))
     y = rect.top
     line_spacing = -2
 
