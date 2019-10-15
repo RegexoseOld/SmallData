@@ -7,7 +7,7 @@ mock_client = SimpleUDPClient('127.0.0.1', 5020)
 texts = ['Dies ist der nullte Kommentar von Mock_Interpreter_Client',
          'Dies ist der erste Kommentar',
          'der zweite Kommentar' ,
-         'der dritte Kommentar von Mock_Interpreter_Client',
+         'der dritte Kommentar von Mock_Interpreter_Client. Ich weiss gar nicht mehr, wann ich das letzte Mal so richtig viel geschrieben habe',
          'Dies ist der vierte und finite Kommentar von Mock_Interpreter_Client']
 categories = ['Kritik', 'Lob']
 level_values = [3, 5, 8]

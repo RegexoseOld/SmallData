@@ -38,7 +38,7 @@ class SongServer:
         self.text_surface = pygame.Surface((400, height / 2))
         self.text_surface.fill(grey)
 
-        self.interpreter_output_surf = font.render('No Interpretation Received', False, font_color)
+        self.interpreter_output_surf = font.render('No Interpretation Received', 1, font_color)
         self.text_positions = OrderedDict()
         self.pos_y = 0
         self.song_state_surf = font.render('No State Received', False, font_color)
@@ -62,17 +62,18 @@ class SongServer:
                 self.text_surface.blit(surface, (0, position))
         else:
             self.pos_y = font_surface.get_rect().bottom + self.pos_y
+            print('self_y: ', self.pos_y)
             self.text_surface.blit(font_surface, (0, self.pos_y))
-
+            # self.text_surface.blit(font_surface, (0, 0))
 
 
     def _update_display_objects(self, osc_map):
         # self.interpreter_output_surf = font.render('Received map: {}'.format(osc_map), True, font_color)
-        self.interpreter_output_surf = linebreak(self.text_surface, osc_map['text'], font_color, self.text_surface.get_rect(), font, 0, None)
+        self.interpreter_output_surf = linebreak(osc_map['text'], font_color, self.text_surface.get_rect(), font, 1, None)
 
         self.song_state_surf = font.render('Current Part {}'. format(self._song_machine.current_state.name),
                                            True, font_color)
-        self._position_text_display(self.interpreter_output_surf, 3)
+        self._position_text_display(self.interpreter_output_surf, 6)
         self.song_graphic.playhead.handle_input_data(self._song_machine.current_state.name)
 
     def _update_song(self, osc_map):
