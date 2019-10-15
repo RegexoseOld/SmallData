@@ -41,9 +41,8 @@ def linebreak(text, color, rect, font, aa=False, bkg=None):
         text = text[(i+1):] # the remaining text (i+1 skips " ")
 
     # create another surface with the height of the text
-    surface = pygame.Surface((rect.width, y))
+    surface = pygame.Surface((rect.width , y))
     surface.fill((0, 0, 0))
     surface.fill((227, 227, 227), (surface.get_rect().inflate(-2, -2)))
-    # surface.set_colorkey((227, 227, 227))
-    surface.blit(initial_surface, (0, 0))
+    surface.blit(initial_surface, (1, 1))
     return surface

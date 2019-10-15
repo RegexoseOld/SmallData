@@ -64,7 +64,7 @@ class SongServer:
                 last_position = last_heights[index_last_position]
                 self.text_positions[font_surface] = position - last_position
                 index_last_position += 1
-                # print('text: {} \nposition: {}\nlast position: {}'.format(font_surface, position, last_height))
+                print('text: {} \nposition: {}\nlast position: {}'.format(font_surface, position, last_height))
             self.text_surface.fill(grey)
             last_heights.pop(0)
 
