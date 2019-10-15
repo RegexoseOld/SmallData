@@ -4,13 +4,11 @@ import pygame
 
 def linebreak(text, color, rect, font, aa=False, bkg=None):
     # aa = antialiased bkg= background color
-    # print('text: {}\ncolor  {}\nrect: {}'.format(text, color, rect))
     y = rect.top
-    line_spacing = -2
+    line_spacing = 5
 
     #get height of font
     fontHeight = font.size("Tg")[1]
-    # print('surface height: ', surface_height)
     initial_surface = pygame.Surface((rect.width, rect.height))
     initial_surface.fill((227, 227, 227))
 
@@ -44,5 +42,8 @@ def linebreak(text, color, rect, font, aa=False, bkg=None):
 
     # create another surface with the height of the text
     surface = pygame.Surface((rect.width, y))
+    surface.fill((0, 0, 0))
+    surface.fill((227, 227, 227), (surface.get_rect().inflate(-2, -2)))
+    # surface.set_colorkey((227, 227, 227))
     surface.blit(initial_surface, (0, 0))
     return surface

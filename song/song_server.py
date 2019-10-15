@@ -35,34 +35,47 @@ class SongServer:
 
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Status Screen')
-        self.text_surface = pygame.Surface((400, height / 2))
+        self.text_surface = pygame.Surface((600, height / 2))
         self.text_surface.fill(grey)
 
         self.interpreter_output_surf = font.render('No Interpretation Received', 1, font_color)
         self.text_positions = OrderedDict()
         self.pos_y = 0
         self.song_state_surf = font.render('No State Received', False, font_color)
+        self.text_positions[self.interpreter_output_surf] = 24
         self.text_surface.blit(self.interpreter_output_surf, (0, 0))
 
     def _position_text_display(self, font_surface, text_cache=2):
-        self.text_positions[font_surface] = font_surface.get_rect().bottom + self.pos_y
-        print('self positions: ', self.text_positions)
+        self.text_positions[font_surface] = font_surface.get_rect().height + self.pos_y
+        print('text_positions: ', self.text_positions)
 
         if len(self.text_positions) == text_cache + 1:
             # replace position of text to the position of the frontrunner
             # and delete first key
-            last_position = font_surface.get_rect().bottom
+            last_heights = []
             for font_surface, position in self.text_positions.items():
-                self.text_positions[font_surface] = position - last_position
-                # print('text: {} \nposition: {}'.format(font_surface, position))
+                # store last_height for every surface in new dict "last_heights"
+                last_height = font_surface.get_rect().height
+                last_heights.append(last_height)
+            print('last positions: ', last_heights)
             self.text_positions.popitem(False)
+            index_last_position = 0
+            for font_surface, position in self.text_positions.items():
+                last_position = last_heights[index_last_position]
+                self.text_positions[font_surface] = position - last_position
+                index_last_position += 1
+                # print('text: {} \nposition: {}\nlast position: {}'.format(font_surface, position, last_height))
             self.text_surface.fill(grey)
+            last_heights.pop(0)
 
             for surface, position in self.text_positions.items():
                 self.text_surface.blit(surface, (0, position))
+        elif len(self.text_positions) == 1:
+            print('first self.pos_y : ', self.pos_y)
+            self.text_surface.blit(font_surface, (0, self.pos_y))
         else:
-            self.pos_y = font_surface.get_rect().bottom + self.pos_y
-            print('self_y: ', self.pos_y)
+            self.pos_y = font_surface.get_rect().height + self.pos_y
+            print('self.pos_y before text cache: ', self.pos_y)
             self.text_surface.blit(font_surface, (0, self.pos_y))
             # self.text_surface.blit(font_surface, (0, 0))
 
@@ -73,7 +86,7 @@ class SongServer:
 
         self.song_state_surf = font.render('Current Part {}'. format(self._song_machine.current_state.name),
                                            True, font_color)
-        self._position_text_display(self.interpreter_output_surf, 6)
+        self._position_text_display(self.interpreter_output_surf, 3)
         self.song_graphic.playhead.handle_input_data(self._song_machine.current_state.name)
 
     def _update_song(self, osc_map):
