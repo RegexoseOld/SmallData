@@ -1,5 +1,3 @@
-from os import sys, path
-# sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 import pygame
 
 def linebreak(text, color, rect, font, aa=False, bkg=None):
@@ -7,14 +5,13 @@ def linebreak(text, color, rect, font, aa=False, bkg=None):
     y = rect.top
     line_spacing = 5
 
-    #get height of font
+    # get height of font
     fontHeight = font.size("Tg")[1]
-    initial_surface = pygame.Surface((rect.width, rect.height))
+    initial_surface = pygame.Surface((rect.width -3, rect.height-3))
     initial_surface.fill((227, 227, 227))
 
-
     while text:
-        i = 1 # index of characters
+        i = 1  # index of characters
         # determine if row of text will be outside area
         if y + fontHeight > rect.bottom:
             print('font too big. y + fontHeight = ', y + fontHeight)
@@ -37,12 +34,12 @@ def linebreak(text, color, rect, font, aa=False, bkg=None):
         initial_surface.blit(image, (rect.left, y))
         y += fontHeight + line_spacing
 
-        #remove text (line) we just blitted
-        text = text[(i+1):] # the remaining text (i+1 skips " ")
+        # remove text (line) we just blitted
+        text = text[(i+1):]  # the remaining text (i+1 skips " ")
 
     # create another surface with the height of the text
-    surface = pygame.Surface((rect.width , y))
+    surface = pygame.Surface((rect.width, y))
     surface.fill((0, 0, 0))
-    surface.fill((227, 227, 227), (surface.get_rect().inflate(-2, -2)))
+    surface.fill((227, 227, 227), (surface.get_rect().inflate(-3, -3)))
     surface.blit(initial_surface, (1, 1))
     return surface
