@@ -20,6 +20,9 @@ ip = "127.0.0.1"
 
 size = width, height = 800, 800
 height_textsurface = height / 2
+width_text = width / 2
+width_cat = width/4
+
 black = 0, 0, 0
 grey = 227, 227, 227
 font_color = 155, 155, 0
@@ -36,39 +39,46 @@ class SongServer:
 
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Status Screen')
-        self.text_surface = pygame.Surface((600, height_textsurface))
+        self.text_surface = pygame.Surface((width_text, height_textsurface))
         self.text_surface.fill(grey)
 
-        self.interpreter_output_surf = font.render('No Interpretation Received', 1, font_color)
+        self.cat_surface = pygame.Surface((width_cat, height_textsurface))
+        self.cat_surface.fill(grey)
+
         self.text_positions = OrderedDict()
         self.song_state_surf = font.render('No State Received', False, font_color)
-        self.text_surface.blit(self.interpreter_output_surf, (0, 0))
 
-    def _position_text_display(self, font_surface):
-        new_height = font_surface.get_rect().height
+        text_output_surf = font.render('No Interpretation Received', 1, font_color)
+        self.text_surface.blit(text_output_surf, (0, 0))
+
+    def _position_text_display(self, text_surface, cat_surface):
+        new_height = text_surface.get_rect().height
         to_remove = []
-        for surface in self.text_positions:
-            self.text_positions[surface] += new_height
-            if self.text_positions[surface] > height_textsurface:
-                to_remove.append(surface)
-        self.text_positions[font_surface] = 0
+        for surfaces in self.text_positions:
+            self.text_positions[surfaces] += new_height
+            if self.text_positions[surfaces] > height_textsurface:
+                to_remove.append(surfaces)
+
+        self.text_positions[(text_surface, cat_surface)] = 0
 
         # remove surfaces outside of drawing area
-        [self.text_positions.pop(surface) for surface in to_remove]
+        [self.text_positions.pop(surfaces) for surfaces in to_remove]
 
         # blit
-        [self.text_surface.blit(surface, (0, y_pos)) for surface, y_pos in self.text_positions.items()]
+        self.text_surface.fill(grey)
+        self.cat_surface.fill(grey)
+
+        for (text, cat), y_pos in self.text_positions.items():
+            self.text_surface.blit(text, (0, y_pos))
+            self.cat_surface.blit(cat, (0, y_pos))
 
     def _update_display_objects(self, osc_map):
-        self.interpreter_output_surf = linebreak(osc_map['text'],
-                                                 font_color,
-                                                 self.text_surface.get_rect(),
-                                                 font,
-                                                 1)
+        text_output_surf = linebreak(osc_map['text'], font_color, self.text_surface.get_rect(), font, 1)
+        cat_output_surf = linebreak(osc_map['cat'], font_color, self.cat_surface.get_rect(), font, 1)
 
         self.song_state_surf = font.render('Current Part {}'. format(self._song_machine.current_state.name),
                                            True, font_color)
-        self._position_text_display(self.interpreter_output_surf)
+        self._position_text_display(text_output_surf, cat_output_surf)
         self.song_graphic.playhead.handle_input_data(self._song_machine.current_state.name)
 
     def _update_song(self, osc_map):
@@ -100,6 +110,7 @@ class SongServer:
 
             self.screen.blit(self.song_state_surf, (15, 325))
             self.screen.blit(self.text_surface, (15, 350))
+            self.screen.blit(self.cat_surface, (15 + width_text, 350))
 
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
