@@ -125,9 +125,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-'''
 # we whitelist localhost:3000 because that's where frontend will be served
-
 CORS_ORIGIN_WHITELIST = [
          'http://localhost:3000'
      ]
