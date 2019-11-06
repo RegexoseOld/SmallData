@@ -1,8 +1,8 @@
 import pygame
 
 
-def linebreak(text, color, rect, font, aa=False, bkg=None):
-    # aa = antialiased bkg= background color
+def linebreak(text, color, rect, font, aa=False):
+    # aa = anti-aliased bkg= background color
     y = rect.top
     line_spacing = 5
 
@@ -26,11 +26,7 @@ def linebreak(text, color, rect, font, aa=False, bkg=None):
             i = text.rfind(" ", 0, i)
 
         # render the line and blit on surface
-        if bkg:
-            image = font.render(text[:i], 0, color, bkg)
-            image.set_colorkey(bkg)
-        else:
-            image = font.render('{}'.format(text[:i]), aa, color)
+        image = font.render('{}'.format(text[:i]), aa, color)
 
         initial_surface.blit(image, (rect.left, y))
         y += font_height + line_spacing

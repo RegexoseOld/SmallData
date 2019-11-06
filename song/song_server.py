@@ -19,6 +19,7 @@ ip = "127.0.0.1"
 
 
 size = width, height = 800, 800
+height_textsurface = height / 2
 black = 0, 0, 0
 grey = 227, 227, 227
 font_color = 155, 155, 0
@@ -35,57 +36,39 @@ class SongServer:
 
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Status Screen')
-        self.text_surface = pygame.Surface((600, height / 2))
+        self.text_surface = pygame.Surface((600, height_textsurface))
         self.text_surface.fill(grey)
 
         self.interpreter_output_surf = font.render('No Interpretation Received', 1, font_color)
         self.text_positions = OrderedDict()
-        self.pos_y = 0
         self.song_state_surf = font.render('No State Received', False, font_color)
         self.text_surface.blit(self.interpreter_output_surf, (0, 0))
 
-    def _position_text_display(self, font_surface, text_cache=2):
-        self.text_positions[font_surface] = self.pos_y
-        if len(self.text_positions) == text_cache + 1:
-            # replace position of text to the position of the frontrunner
-            # and delete first key
-            last_heights = []
-            for surface, position in self.text_positions.items():
-                # store last_height for every surface in new dict "last_heights"
-                last_height = surface.get_rect().height
-                last_heights.append(last_height)
-            last_heights.pop(0)
-            self.text_positions.popitem(False)
-            keys = list(self.text_positions.keys())
-            for key in range(len(keys)):
-                if key == 0:
-                    self.text_positions[keys[key]] = 0
-                else:
-                    self.text_positions[keys[key]] = sum(last_heights[:key])
-            self.text_surface.fill(grey)
-            last_key = keys[-1]
-            self.pos_y = last_key.get_rect().height + self.text_positions[last_key]
+    def _position_text_display(self, font_surface):
+        new_height = font_surface.get_rect().height
+        to_remove = []
+        for surface in self.text_positions:
+            self.text_positions[surface] += new_height
+            if self.text_positions[surface] > height_textsurface:
+                to_remove.append(surface)
+        self.text_positions[font_surface] = 0
 
-            for surface, position in self.text_positions.items():
-                self.text_surface.blit(surface, (0, position))
-        elif len(self.text_positions) == 1:
-            self.text_surface.blit(font_surface, (0, self.pos_y))
-            self.pos_y += font_surface.get_rect().height
-        else:
-            self.text_surface.blit(font_surface, (0, self.pos_y))
-            self.pos_y += font_surface.get_rect().height
+        # remove surfaces outside of drawing area
+        [self.text_positions.pop(surface) for surface in to_remove]
+
+        # blit
+        [self.text_surface.blit(surface, (0, y_pos)) for surface, y_pos in self.text_positions.items()]
 
     def _update_display_objects(self, osc_map):
         self.interpreter_output_surf = linebreak(osc_map['text'],
                                                  font_color,
                                                  self.text_surface.get_rect(),
                                                  font,
-                                                 1,
-                                                 None)
+                                                 1)
 
         self.song_state_surf = font.render('Current Part {}'. format(self._song_machine.current_state.name),
                                            True, font_color)
-        self._position_text_display(self.interpreter_output_surf, 5)
+        self._position_text_display(self.interpreter_output_surf)
         self.song_graphic.playhead.handle_input_data(self._song_machine.current_state.name)
 
     def _update_song(self, osc_map):
@@ -107,7 +90,8 @@ class SongServer:
     async def loop(self):
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT: sys.exit()
+                if event.type == pygame.QUIT:
+                    sys.exit()
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     print("escape :::")
                     return False
