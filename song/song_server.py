@@ -75,9 +75,13 @@ class SongServer:
             self.text_surface.blit(font_surface, (0, self.pos_y))
             self.pos_y += font_surface.get_rect().height
 
-
     def _update_display_objects(self, osc_map):
-        self.interpreter_output_surf = linebreak(osc_map['text'], font_color, self.text_surface.get_rect(), font, 1, None)
+        self.interpreter_output_surf = linebreak(osc_map['text'],
+                                                 font_color,
+                                                 self.text_surface.get_rect(),
+                                                 font,
+                                                 1,
+                                                 None)
 
         self.song_state_surf = font.render('Current Part {}'. format(self._song_machine.current_state.name),
                                            True, font_color)
@@ -117,7 +121,7 @@ class SongServer:
                 if event.type == pygame.KEYDOWN:
                     self.song_graphic.handle_input(event.key)
 
-            self.song_graphic.playhead.handle_input_data(1) # moves playhead forward
+            self.song_graphic.playhead.handle_input_data(1)  # moves playhead forward
             self.song_graphic.render(self.screen)
             pygame.display.flip()
 
@@ -146,12 +150,12 @@ if __name__ == '__main__':
     from display.playhead import Playhead
     from display.font_render import linebreak
 
-    machine = song_machine.create_instance()
+    machine_instance = song_machine.create_instance()
 
     playhead = Playhead()
-    song_graphic = SongStatus('heavy lemon', machine.parser.data['states'], playhead)
+    song_graphic = SongStatus('heavy lemon', machine_instance.parser.data['states'], playhead)
 
-    song_server = SongServer(mock_osculator_client, machine, song_graphic)
+    song_server = SongServer(mock_osculator_client, machine_instance, song_graphic)
 
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(song_server.init_main())
