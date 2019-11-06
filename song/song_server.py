@@ -13,12 +13,16 @@ OSCULATOR_PORT = 5010
 
 pygame.init()
 pygame.font.init()
-font = pygame.font.Font(None, 20)
+font = pygame.font.Font(None, 25)
 
 ip = "127.0.0.1"
 
 
 size = width, height = 800, 800
+height_textsurface = height / 2
+width_text = width / 2
+width_cat = width/4
+
 black = 0, 0, 0
 grey = 227, 227, 227
 font_color = 155, 155, 0
@@ -35,39 +39,46 @@ class SongServer:
 
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Status Screen')
-        self.text_surface = pygame.Surface((width, height / 2))
+        self.text_surface = pygame.Surface((width_text, height_textsurface))
         self.text_surface.fill(grey)
 
-        self.interpreter_output_surf = font.render('No Interpretation Received', False, font_color)
+        self.cat_surface = pygame.Surface((width_cat, height_textsurface))
+        self.cat_surface.fill(grey)
+
         self.text_positions = OrderedDict()
-        self.pos_y = 0
         self.song_state_surf = font.render('No State Received', False, font_color)
-        self.text_surface.blit(self.interpreter_output_surf, (0, 0))
 
-    def _position_text_display(self, text, text_cache=5):
-        self.text_positions[text] = text.get_rect().bottom + self.pos_y
-        if len(self.text_positions) == text_cache + 1:
-            # replace position of text to the position of the frontrunner
-            # and delete first key
-            last_position = text.get_rect().bottom # = 14
-            for text, position in self.text_positions.items():
-                self.text_positions[text] = position - last_position
-                print('text: {} \nposition: {}'.format(text, position))
-            self.text_positions.popitem(False)
-            self.text_surface.fill(grey)
-            for text, position in self.text_positions.items():
-                self.text_surface.blit(text, (0, position))
-        else:
-            # print('text_positions after: ', self.text_positions)
-            self.pos_y = text.get_rect().bottom + self.pos_y
-            self.text_surface.blit(text, (0, self.pos_y))
+        text_output_surf = font.render('No Interpretation Received', 1, font_color)
+        self.text_surface.blit(text_output_surf, (0, 0))
 
+    def _position_text_display(self, text_surface, cat_surface):
+        new_height = text_surface.get_rect().height
+        to_remove = []
+        for surfaces in self.text_positions:
+            self.text_positions[surfaces] += new_height
+            if self.text_positions[surfaces] > height_textsurface:
+                to_remove.append(surfaces)
+
+        self.text_positions[(text_surface, cat_surface)] = 0
+
+        # remove surfaces outside of drawing area
+        [self.text_positions.pop(surfaces) for surfaces in to_remove]
+
+        # blit
+        self.text_surface.fill(grey)
+        self.cat_surface.fill(grey)
+
+        for (text, cat), y_pos in self.text_positions.items():
+            self.text_surface.blit(text, (0, y_pos))
+            self.cat_surface.blit(cat, (0, y_pos))
 
     def _update_display_objects(self, osc_map):
-        self.interpreter_output_surf = font.render('Received map: {}'.format(osc_map), True, font_color)
+        text_output_surf = linebreak(osc_map['text'], font_color, self.text_surface.get_rect(), font, 1)
+        cat_output_surf = linebreak(osc_map['cat'], font_color, self.cat_surface.get_rect(), font, 1)
+
         self.song_state_surf = font.render('Current Part {}'. format(self._song_machine.current_state.name),
                                            True, font_color)
-        self._position_text_display(self.interpreter_output_surf)
+        self._position_text_display(text_output_surf, cat_output_surf)
         self.song_graphic.playhead.handle_input_data(self._song_machine.current_state.name)
 
     def _update_song(self, osc_map):
@@ -89,18 +100,23 @@ class SongServer:
     async def loop(self):
         while True:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT: sys.exit()
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    print("escape :::")
+                    return False
 
             self.screen.fill(grey)
 
             self.screen.blit(self.song_state_surf, (15, 325))
             self.screen.blit(self.text_surface, (15, 350))
+            self.screen.blit(self.cat_surface, (15 + width_text, 350))
 
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     self.song_graphic.handle_input(event.key)
 
-            self.song_graphic.playhead.handle_input_data(1) # moves playhead forward
+            self.song_graphic.playhead.handle_input_data(1)  # moves playhead forward
             self.song_graphic.render(self.screen)
             pygame.display.flip()
 
@@ -127,13 +143,14 @@ if __name__ == '__main__':
     from song import song_machine
     from display.status_display import SongStatus
     from display.playhead import Playhead
+    from display.font_render import linebreak
 
-    machine = song_machine.create_instance()
+    machine_instance = song_machine.create_instance()
 
     playhead = Playhead()
-    song_graphic = SongStatus('heavy lemon', machine.parser.data['states'], playhead)
+    song_graphic = SongStatus('heavy lemon', machine_instance.parser.data['states'], playhead)
 
-    song_server = SongServer(mock_osculator_client, machine, song_graphic)
+    song_server = SongServer(mock_osculator_client, machine_instance, song_graphic)
 
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(song_server.init_main())

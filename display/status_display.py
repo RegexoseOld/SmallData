@@ -39,7 +39,6 @@ class SongStatus:
         self.status_surface.fill((214, 32, 32))
 
     def render(self, screen):
-        # print('blitt')
         screen.blit(self.song_surface, (0, 0))
         self.playhead.render(screen)
 

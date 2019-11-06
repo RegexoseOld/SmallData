@@ -60,7 +60,7 @@ class Playhead:
             self.pos_x += 1
             self.playing = True
         else:
-            print('triggered: ', data)
+            # print('triggered: ', data)
             self.pos_x = self.song_parts[data][0]
             # print('self-pos_x: {} self.pos_y. {}'.format(self.pos_x, self.pos_y))
             self.current_part = data
