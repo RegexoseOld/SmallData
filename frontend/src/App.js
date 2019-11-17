@@ -25,8 +25,10 @@ class App extends Component {
                 '.\n Machine thinks: ' + data['category']['name'])
             }).then(val => this.resetForm()))
         });
+    }
 
-        // console.log("Successful" + data);
+    resetForm() {
+        this.input.value = "";
     }
 
     render() {
@@ -39,20 +41,23 @@ class App extends Component {
                     Please enter your utterance:
                 </label>
                 </div>
+
                 <div className="row ">
                 <form onSubmit={this.handleSubmit}>
-                    <input type="text" style={{width: 350}} ref={(input) => this.input = input} />
-                    <input type="submit" value="Submit" />
+                    <textarea type="text" style={{width: 350}} ref={(input) => this.input = input} />
                 </form>
                 </div>
+
+                <div className="row ">
+                    <input type="submit" value="Submit" />
+                </div>
+
                 </div>
             </main>
         );
     }
 
-    resetForm() {
-        this.input.value = "";
-    }
+
 }
 
 export default App;
