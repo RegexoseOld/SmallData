@@ -21,12 +21,12 @@ class App extends Component {
                 'Content-Type': 'application/json'
             },
         }).then(response => {
-            response.json().then(data =>{
-                console.log("Successful" + data);
-            }).then(val => this.resetForm())
+            (response.json().then(data => {alert('You said: ' + data['text'] +
+                '.\n Machine thinks: ' + data['category']['name'])
+            }).then(val => this.resetForm()))
         });
 
-        // alert('The value is: ' +  this.input.value);
+        // console.log("Successful" + data);
     }
 
     render() {
@@ -44,7 +44,6 @@ class App extends Component {
                     <input type="text" style={{width: 350}} ref={(input) => this.input = input} />
                     <input type="submit" value="Submit" />
                 </form>
-
                 </div>
                 </div>
             </main>
