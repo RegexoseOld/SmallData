@@ -10,7 +10,7 @@ from pythonosc import dispatcher, osc_server
 from .MusicObjects import Chords
 from .PlayObjects import To_Client_Thread, Play_Thread, play_dict, playmap, PLAYTHREADS
 from .Manipulate import Manipulate
-from backend.sound.UDPClient import Client_MusicServer, START
+from .UDPClient import Client_MusicServer, START
 
 
 logging.basicConfig(level = logging.DEBUG, format = '(%(threadName)-10s) %(message)s',)
