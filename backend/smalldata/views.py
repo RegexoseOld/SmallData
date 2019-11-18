@@ -1,19 +1,19 @@
 import time
 import os
 
+from backend.settings import BASE_DIR
 from rest_framework import viewsets
 from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
 from .models import Utterance, Category, TrainingUtterance
 
 from classification.Classifier_max import Classifier
-from sound.MusicServer03 import COND1
 from sound.UDPClient import Client_MusicServer
 from sound.rules import SIMPLE_NOTES
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-clf = Classifier(os.path.join(dir_path,'../model_data'))
+clf = Classifier(os.path.join(BASE_DIR, 'model_data'))
 #   Client for a simple Feedback from Ableton Live
-music_client = Client_MusicServer('127.0.0.1', 5015, COND1)
+music_client = Client_MusicServer('127.0.0.1', 5015)
 
 
 class UtteranceView(viewsets.ModelViewSet):
