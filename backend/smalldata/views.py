@@ -22,22 +22,35 @@ class UtteranceView(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         #  TODO: First detect the correct category,
-        #Fetch sent data:
+        # Fetch sent data:
+        print(serializer.validated_data)
         text = serializer.validated_data["text"]
         # send text to clf to return a category
         cat, prob = clf.predict_proba(text, verbose=True)
         print('cat: {}\nproba {}'.format(cat, prob))
         # lookup found category in database
-        category_name = str(cat)
-        category = Category.objects.all().filter(name=category_name)[0]
+
+        #  TODO: build a test during startup to make sure the db and the model reproduce the same categories!
+        categories = Category.objects.all().filter(name=str(cat))
+        if not categories:  # if db is inconsistent with model, just use any cat
+            categories = Category.objects.all()
+            print('WARNING: no matching category in db! Using random assignment')
+        category = categories[0]
+
         serializer.validated_data["category"] = category
         #  Second, send the category to the music server
-        note = SIMPLE_NOTES[cat]
+        #  TODO: build a test during startup to make sure the db and the model reproduce the same categories!
+        if cat not in SIMPLE_NOTES:
+            note = SIMPLE_NOTES.popitem()[1]
+            print('WARNING: category not contained in SIMPLE_NOTES! Using random assignment')
+        else:
+            note = SIMPLE_NOTES[cat]
         print('note: ', note)
+        
         music_client.msg_send(note, 100, 1.0)
         time.sleep(1)
         music_client.msg_send(note, 100, 0.0)
-        #display found category in the app
+        # display found category in the app
         super(UtteranceView, self).perform_create(serializer)
 
 
