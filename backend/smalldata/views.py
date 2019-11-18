@@ -1,6 +1,6 @@
-import time
 import os
 import pickle
+import random
 
 from backend.settings import BASE_DIR
 from rest_framework import viewsets
@@ -24,11 +24,10 @@ class UtteranceView(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         #  First detect the correct category,
         # Fetch sent data:
-        print(serializer.validated_data)
+
         text = serializer.validated_data["text"]
         # send text to clf to return a category
         cat, prob = clf.predict_proba(text, verbose=True)
-        print('cat: {}\nproba {}'.format(cat, prob))
 
         # lookup found category in database
         #  TODO: build a test during startup to make sure the db and the model reproduce the same categories!
@@ -39,16 +38,18 @@ class UtteranceView(viewsets.ModelViewSet):
         category = categories[0]
         serializer.validated_data["category"] = category
 
+        #  save result in db
+        super(UtteranceView, self).perform_create(serializer)
+        print('cat: {}\ntext {}'.format(category, text))
+
         #  Send the category to the music server
         osc_dict = {
             'text': text,
-            'cat': category
+            'cat': category.name,
+            'level': random.randint(0, 10)
         }
         osc_map = pickle.dumps(osc_dict)
         music_client.send_message(INTERPRETER_TARGET_ADDRESS, osc_map)
-
-        #  save result in db
-        super(UtteranceView, self).perform_create(serializer)
 
 
 class CategoryView(viewsets.ModelViewSet):
