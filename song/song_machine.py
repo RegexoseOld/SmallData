@@ -164,7 +164,7 @@ class SongValidator(object):
                         cond_array[0], idx))
 
 
-def create_instance(path_to_song_file='../config/heavy_lemon.json'):
+def create_instance(path_to_song_file):
     with open(path_to_song_file, 'r') as f:
         json_data = json.load(f)
 

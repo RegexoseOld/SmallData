@@ -6,6 +6,7 @@ from collections import OrderedDict
 import pickle
 import asyncio
 import pygame
+import os
 
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
 INTERPRETER_PORT = 5020
@@ -146,7 +147,8 @@ if __name__ == '__main__':
     from display.playhead import Playhead
     from display.font_render import linebreak
 
-    machine_instance = song_machine.create_instance()
+    default_song = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config/heavy_lemon.json")
+    machine_instance = song_machine.create_instance(default_song)
 
     playhead = Playhead()
     song_graphic = SongStatus('heavy lemon', machine_instance.parser.data['states'], playhead)
