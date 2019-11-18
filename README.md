@@ -19,4 +19,4 @@ To start, run `python3 UserClassifier03.py`
  - django-import-export
  - django-cors-headers
  - django-rest-framework
-
+ - sklearn
