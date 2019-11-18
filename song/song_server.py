@@ -92,8 +92,9 @@ class SongServer:
             self.osculator_client.send_message('/advance', (0, 0.0))
 
     def message_handler(self, address, content):
+        print('address: {} map: {}'.format(address, content))
         osc_map = pickle.loads(content)
-        print('address: {} map: {}'.format(address, osc_map))
+
         self._update_song(osc_map)
         self._update_display_objects(osc_map)
 
