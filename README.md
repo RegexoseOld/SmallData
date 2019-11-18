@@ -12,6 +12,11 @@ To start, run `python3 UserClassifier03.py`
 ## Dependencies
  - python 3
  - python-osc
- - spacey
+ - spacy
  - gensim
+ - joblib
+ - django
+ - django-import-export
+ - django-cors-headers
+ - django-rest-framework
 
