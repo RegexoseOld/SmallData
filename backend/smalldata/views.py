@@ -2,7 +2,7 @@ import os
 import pickle
 import random
 
-from backend.settings import BASE_DIR
+from django.conf import settings
 from rest_framework import viewsets
 from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
 from .models import Utterance, Category, TrainingUtterance
@@ -10,8 +10,7 @@ from .models import Utterance, Category, TrainingUtterance
 from classification.Classifier_max import Classifier
 from sound.UDPClient import MusicClient, INTERPRETER_PORT, INTERPRETER_TARGET_ADDRESS
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-clf = Classifier(os.path.join(BASE_DIR, 'model_data'))
+clf = Classifier(os.path.join(settings.BASE_DIR, 'model_data'))
 #   Client for a simple Feedback from Ableton Live
 music_client = MusicClient('127.0.0.1', INTERPRETER_PORT)
 
