@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import fetch from "node-fetch";
 
 
-export default class Utterance extends Component {
+export default class TriggerCaegory extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -17,16 +17,14 @@ export default class Utterance extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        fetch("http://localhost:8000/api/utterances/", {
+        fetch("http://localhost:8000/api/categories/1/trigger", {
             method: "POST",
-            body: JSON.stringify(this.state),
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
         }).then(response => {
-            (response.json().then(data => {alert('You said: ' + data['text'] +
-                '\n Machine thinks: ' + data['category']['name'])
+            (response.json().then(data => {alert('message: ' + data['message'] )
             }).then(val => this.resetForm()))
         });
     }
@@ -44,7 +42,7 @@ export default class Utterance extends Component {
             <div>
                 <div className="row ">
                     <label>
-                        Please enter your utterance:
+                        Please select your category:
                     </label>
                 </div>
 
