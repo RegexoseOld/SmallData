@@ -87,14 +87,15 @@ class SongServer:
     def _update_song(self, osc_map):
         level = osc_map['level']
         self.osculator_client.send_message('/rack', (level / 10))
+        print('scenes: ', self.song_scenes )
         current_state = self._song_machine.current_state
         self._song_machine.update_state(osc_map['cat'])
         if current_state != self._song_machine.current_state:
-            self.advance_to_scene = self.song_scenes[current_state.name]
+            self.advance_to_scene = self.song_scenes[self._song_machine.current_state.name]
             print('update with status: {}\ncurrent_state: {}\nadvance_to_scene: {}'
                   .format(
                 osc_map['cat'],
-                current_state.name,
+                self._song_machine.current_state.name,
                 self.advance_to_scene))
             self.osculator_client.send_message('/advance', (self.advance_to_scene, 1.0))
             self.osculator_client.send_message('/advance', (self.advance_to_scene, 0.0))
