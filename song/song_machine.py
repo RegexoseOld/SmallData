@@ -71,7 +71,6 @@ class SongMachine:
 
         if next_state_name != self.current_state.name:
             self.current_state = self.parser.states[next_state_name]
-            print('self.current_state', self.current_state.name)
             self._reset_counter(self.category_counter.keys())
 
             if self.current_state == self.last_state:

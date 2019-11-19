@@ -36,7 +36,10 @@ class SongServer:
         self.osculator_client = client
         self._song_machine = machine
         self.song_graphic = songgraphic
-        self.song_scenes = {k : v for k, v in zip(self._song_machine.parser.states, range(len(self._song_machine.parser.states)))}
+        self.song_scenes = {k : v for k, v in zip(
+            self._song_machine.parser.states,
+            range(len(self._song_machine.parser.states)
+                  ))}
 
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Status Screen')
@@ -87,7 +90,6 @@ class SongServer:
     def _update_song(self, osc_map):
         level = osc_map['level']
         self.osculator_client.send_message('/rack', (level / 10))
-        print('scenes: ', self.song_scenes )
         current_state = self._song_machine.current_state
         self._song_machine.update_state(osc_map['cat'])
         if current_state != self._song_machine.current_state:
