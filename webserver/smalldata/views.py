@@ -7,8 +7,8 @@ from rest_framework import viewsets
 from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
 from .models import Utterance, Category, TrainingUtterance
 
-from classification.Classifier_max import Classifier
-from sound.UDPClient import MusicClient, INTERPRETER_PORT, INTERPRETER_TARGET_ADDRESS
+from webserver.classification.Classifier_max import Classifier
+from webserver.sound.UDPClient import MusicClient, INTERPRETER_PORT, INTERPRETER_TARGET_ADDRESS
 
 clf = Classifier(os.path.join(settings.BASE_DIR, 'model_data'))
 #   Client for a simple Feedback from Ableton Live
@@ -38,7 +38,7 @@ class UtteranceView(viewsets.ModelViewSet):
 
         #  save result in db
         super(UtteranceView, self).perform_create(serializer)
-        print('cat: {}\ntext {}'.format(category, text))
+        print('cat: {}\ntext {}'.format(category.name, text))
 
         #  Send the category to the music server
         osc_dict = {
