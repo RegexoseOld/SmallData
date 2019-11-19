@@ -27,10 +27,12 @@ def check_model_song_cats():
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("app")
+parser.add_argument('app')
+parser.add_argument('--skip-checks', help='skip consistency checks', action="store_true")
 args = parser.parse_args()
 
-check_model_song_cats()
+if not args.skip_checks:
+    check_model_song_cats()
 
 if args.app == 'backend':
     p = subprocess.check_call(["python", "webserver/manage.py", "runserver"])
