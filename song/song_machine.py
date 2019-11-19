@@ -117,6 +117,10 @@ class SongValidator(object):
     def __init__(self, data):
         self.data = data
 
+    @property
+    def categories(self):
+        return self.data[SongParser.NAME_CATEGORIES]
+
     def validate(self):
         self._validate_fields()
         self._validate_consistency()
