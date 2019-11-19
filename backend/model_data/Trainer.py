@@ -199,7 +199,6 @@ def load_data_and_train_model(df):
 
 if __name__ == '__main__':
     data_path = os.path.dirname(os.path.realpath(__file__))
-    print(data_path)
     # create logic to import database entries into data_frame
 
     data_frame = pd.read_excel(os.path.join(data_path, 'TrainingData_5cat_de.xlsx'))

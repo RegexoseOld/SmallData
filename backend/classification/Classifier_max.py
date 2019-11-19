@@ -68,7 +68,7 @@ class Classifier:
 
     def check_sent_with_regex(self, sentence):
         for exp, cat in self.regex_mapping.items():
-            #   print('Regex: {} (category: {}) for sentence: {}'.format(exp, cat, sentence))
+            print('Regex: {} (category: {}) for sentence: {}'.format(exp, cat, sentence))
             if re.search(exp, sentence):
                 if self.verbose:
                     print('Regex matched: {} (category: {})'.format(exp, cat))
