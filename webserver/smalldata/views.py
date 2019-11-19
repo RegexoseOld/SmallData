@@ -1,6 +1,8 @@
 import pickle
 import random
 
+from django.http import JsonResponse
+
 from config import settings
 from rest_framework import viewsets
 from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
@@ -12,6 +14,16 @@ from webserver.sound.UDPClient import MusicClient, INTERPRETER_PORT, INTERPRETER
 clf = Classifier(settings.DATA_DIR)
 #   Client for a simple Feedback from Ableton Live
 music_client = MusicClient('127.0.0.1', INTERPRETER_PORT)
+
+
+def send_to_music_server(utterance, category):
+    osc_dict = {
+        'text': utterance,
+        'cat': category,
+        'level': random.randint(0, 10)
+    }
+    osc_map = pickle.dumps(osc_dict)
+    music_client.send_message(INTERPRETER_TARGET_ADDRESS, osc_map)
 
 
 class UtteranceView(viewsets.ModelViewSet):
@@ -39,14 +51,7 @@ class UtteranceView(viewsets.ModelViewSet):
         super(UtteranceView, self).perform_create(serializer)
         print('cat: {}\ntext {}'.format(category.name, text))
 
-        #  Send the category to the music server
-        osc_dict = {
-            'text': text,
-            'cat': category.name,
-            'level': random.randint(0, 10)
-        }
-        osc_map = pickle.dumps(osc_dict)
-        music_client.send_message(INTERPRETER_TARGET_ADDRESS, osc_map)
+        send_to_music_server(text, category.anem)
 
 
 class CategoryView(viewsets.ModelViewSet):
@@ -57,3 +62,12 @@ class CategoryView(viewsets.ModelViewSet):
 class TrainingUtteranceView(viewsets.ModelViewSet):
     serializer_class = TrainingUtteranceSerializer
     queryset = TrainingUtterance.objects.all()
+
+
+def trigger_category(request, pk):
+    if request.method == 'POST':
+        category = Category.objects.get(pk=pk)
+        text = 'test text, um eine Kategorie zu starten!'
+        send_to_music_server(text, category.name)
+
+        return JsonResponse(data={'status': 'true', 'message': 'ok'})
