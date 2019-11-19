@@ -51,7 +51,7 @@ class UtteranceView(viewsets.ModelViewSet):
         super(UtteranceView, self).perform_create(serializer)
         print('cat: {}\ntext {}'.format(category.name, text))
 
-        send_to_music_server(text, category.anem)
+        send_to_music_server(text, category.name)
 
 
 class CategoryView(viewsets.ModelViewSet):
