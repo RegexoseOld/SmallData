@@ -110,4 +110,5 @@ class Classifier:
             sorted_preds = self.aggregate_vector_preds(clf_preds)
             return sorted_preds[0]
         else:
+            print('else')
             return ('Gaga', 1.0)

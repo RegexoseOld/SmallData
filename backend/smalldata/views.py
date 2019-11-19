@@ -9,7 +9,6 @@ from .models import Utterance, Category, TrainingUtterance
 
 from classification.Classifier_max import Classifier
 from sound.UDPClient import MusicClient, INTERPRETER_PORT, INTERPRETER_TARGET_ADDRESS
-from sound.rules import SIMPLE_NOTES
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 clf = Classifier(os.path.join(BASE_DIR, 'model_data'))
@@ -40,7 +39,7 @@ class UtteranceView(viewsets.ModelViewSet):
 
         #  save result in db
         super(UtteranceView, self).perform_create(serializer)
-        print('cat: {}\ntext {}'.format(category, text))
+        print('cat: {}\ntext {}'.format(category.name, text))
 
         #  Send the category to the music server
         osc_dict = {

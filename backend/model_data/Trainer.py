@@ -198,10 +198,11 @@ def load_data_and_train_model(df):
 
 
 if __name__ == '__main__':
-    data_path = '/Users/borisjoens/Dropbox/Kommentare/SmallData/backend/model_data'
+    data_path = os.path.dirname(os.path.realpath(__file__))
+    print(data_path)
     # create logic to import database entries into data_frame
 
-    data_frame = pd.read_excel(os.path.join(data_path, 'TrainingData_clean_de.xlsx'))
+    data_frame = pd.read_excel(os.path.join(data_path, 'TrainingData_5cat_de.xlsx'))
     clf, regexes = load_data_and_train_model(data_frame)
 
     joblib.dump(regexes, os.path.join(data_path, 'regex_mapping.pkl'))
