@@ -1,8 +1,7 @@
-import os
 import pickle
 import random
 
-from django.conf import settings
+from config import settings
 from rest_framework import viewsets
 from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
 from .models import Utterance, Category, TrainingUtterance
@@ -10,7 +9,7 @@ from .models import Utterance, Category, TrainingUtterance
 from webserver.classification.Classifier_max import Classifier
 from webserver.sound.UDPClient import MusicClient, INTERPRETER_PORT, INTERPRETER_TARGET_ADDRESS
 
-clf = Classifier(os.path.join(settings.BASE_DIR, 'model_data'))
+clf = Classifier(settings.DATA_DIR)
 #   Client for a simple Feedback from Ableton Live
 music_client = MusicClient('127.0.0.1', INTERPRETER_PORT)
 
