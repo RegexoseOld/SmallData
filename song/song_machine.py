@@ -175,7 +175,12 @@ def create_instance(path_to_song_file):
 
 
 if __name__ == '__main__':
-    song_machine = create_instance()
+    import sys
+    from os import path
+    sys.path.append(path.dirname(path.dirname(__file__)))
+    from config import settings
+
+    song_machine = create_instance(path.join(settings.song_path))
 
     print(song_machine.current_state)
     song_machine.update_state("Lob")
