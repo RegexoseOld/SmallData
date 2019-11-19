@@ -1,0 +1,26 @@
+{
+  "states": ["scene00", "scene01", "scene02",  "scene023",, "scene04", "scene05", "scene06", "scene07", "scene10"],
+  "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
+  "transitions": [
+    [
+      "scene01",
+      "scene02",
+      "praise > 2"
+    ],
+    [
+      "scene02",
+      "scene03",
+      "praise > 1"
+    ],
+    [
+      "scene03",
+      "scene04",
+      "insinuation > 1"
+    ],
+     [
+      "scene04",
+      "scene05",
+      "dissence > 1"
+    ]
+  ]
+}
