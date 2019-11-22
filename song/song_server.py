@@ -2,6 +2,7 @@ from pythonosc.osc_server import AsyncIOOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from pythonosc import udp_client
 from collections import OrderedDict
+import time
 
 import pickle
 import asyncio
@@ -54,8 +55,8 @@ class SongServer:
 
         text_output_surf = font.render('No Interpretation Received', 1, font_color)
         self.text_surface.blit(text_output_surf, (0, 0))
-        self.osculator_client.send_message('/advance', (1, 1.0))
-        self.osculator_client.send_message('/advance', (1, 0.0))
+        self.osculator_client.send_message('/advance', (0, 1.0))
+        self.osculator_client.send_message('/advance', (0, 0.0))
 
     def _position_text_display(self, text_surface, cat_surface):
         new_height = text_surface.get_rect().height
@@ -90,6 +91,9 @@ class SongServer:
     def _update_song(self, osc_map):
         level = osc_map['level']
         self.osculator_client.send_message('/rack', (level / 10))
+        self.osculator_client.send_message('/osc_notes', (level + 90, 100, 1.0))
+        time.sleep(level)
+        self.osculator_client.send_message('/osc_notes', (level + 9 0, 100, 0.0))
         current_state = self._song_machine.current_state
         self._song_machine.update_state(osc_map['cat'])
         if current_state != self._song_machine.current_state:

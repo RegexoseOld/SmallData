@@ -1,17 +1,22 @@
 {
   "states": ["intro", "scene01", "scene02",  "scene03", "scene04", "scene05",
     "scene06", "scene07", "scene08", "scene09", "scene10", "ende"],
-  "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
+  "categories": ["praise", "lecture", "dissence", "insinuation", "concession", "attack"],
   "transitions": [
     [
       "intro",
       "scene02",
-      "dissence > 2"
+      "praise > 2"
     ],
     [
       "scene02",
       "scene03",
       "praise > 1"
+    ],
+    [
+      "scene02",
+      "scene05",
+      "attack > 1"
     ],
     [
       "scene03",
@@ -22,6 +27,11 @@
       "scene04",
       "scene10",
       "dissence > 1"
+    ],
+    [
+      "scene04",
+      "scene02",
+      "attack > 1"
     ],
      [
       "scene10",
