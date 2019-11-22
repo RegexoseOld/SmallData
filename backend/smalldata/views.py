@@ -26,7 +26,7 @@ class UtteranceView(viewsets.ModelViewSet):
 
         text = serializer.validated_data["text"]
         # send text to clf to return a category
-        cat, prob = clf.predict_proba(text, verbose=False)
+        cat, prob = clf.predict_proba(text, verbose=True)
 
         # lookup found category in database
         #  TODO: build a test during startup to make sure the db and the model reproduce the same categories!

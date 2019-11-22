@@ -185,6 +185,7 @@ def load_data_and_train_model(df):
     '''
     keywords_to_cat, regexes = read_trainingdata_utterances(df)
     print('Keywords with multiple categories are ignored\n')
+    print('  keywords_to_cat:',  keywords_to_cat)
     for keyword, cats in list(keywords_to_cat.items()):
         if len(cats) > 1:
             print('{:<20} {}'.format(keyword, cats))
