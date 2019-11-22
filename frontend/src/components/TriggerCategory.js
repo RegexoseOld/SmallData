@@ -1,6 +1,6 @@
 // frontend/src/components/Utterance.js
 
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import Select from 'react-select';
 import fetch from "node-fetch";
 
@@ -68,9 +68,13 @@ export default class TriggerCategory extends Component<*, State> {
             isLoading,
         } = this.state;
         return (
-            <form onSubmit={this.handleSubmit}>
-                Please select the category to send!
-                <Fragment>
+            <form style={{width: 350}} onSubmit={this.handleSubmit}>
+                <div className="row ">
+                    <label>
+                        Please select the category to send!
+                    </label>
+                </div>
+
                 <Select
                     className="basic-single"
                     classNamePrefix="select"
@@ -84,7 +88,6 @@ export default class TriggerCategory extends Component<*, State> {
                 <div>
                     <input type="submit" value="Submit" />
                 </div>
-                </Fragment>
             </form>
         );
     }
