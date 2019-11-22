@@ -5,31 +5,34 @@ import Select from 'react-select';
 import fetch from "node-fetch";
 
 type State = {
-    isClearable: boolean,
     isDisabled: boolean,
     isLoading: boolean,
-    isRtl: boolean,
     isSearchable: boolean,
 };
-
-const techCompanies = [
-    { label: "Apple", value: 1 },
-    { label: "Facebook", value: 2 },
-    { label: "Netflix", value: 3 },
-    { label: "Tesla", value: 4 },
-    { label: "Amazon", value: 5 },
-    { label: "Alphabet", value: 6 },
-];
 
 export default class TriggerCategory extends Component<*, State> {
     constructor(props) {
         super(props);
         this.state = {
-            categoryID: techCompanies[0]
+            categoryID: null,
+            options: []
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    componentDidMount(): void {
+        fetch("http://localhost:8000/api/categories", {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => {
+            (response.json().then(data => {
+                this.parseCategories(data)
+            }))
+        });
     }
 
     handleSubmit(e) {
@@ -46,6 +49,12 @@ export default class TriggerCategory extends Component<*, State> {
                 alert('message: ' + data['message'])
             }))
         });
+    }
+
+    parseCategories(data) {
+        this.setState({options:
+                data.map(element => { return { label: element['name'], value: element['id'] } })
+        })
     }
 
     handleChange(event) {
@@ -65,12 +74,11 @@ export default class TriggerCategory extends Component<*, State> {
                 <Select
                     className="basic-single"
                     classNamePrefix="select"
-                    defaultValue={techCompanies[0]}
                     isDisabled={isDisabled}
                     isLoading={isLoading}
                     isSearchable={isSearchable}
                     name="color"
-                    options={techCompanies}
+                    options={this.state.options}
                     onChange={this.handleChange}
                 />
                 <div>
