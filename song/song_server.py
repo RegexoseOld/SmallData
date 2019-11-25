@@ -142,14 +142,16 @@ if __name__ == '__main__':
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
     from song import song_machine
+    from config import settings
     from display.status_display import SongStatus
     from display.playhead import Playhead
     from display.font_render import linebreak
 
-    machine_instance = song_machine.create_instance()
+    machine_instance = song_machine.create_instance(settings.song_path)
 
     playhead = Playhead()
-    song_graphic = SongStatus('heavy lemon', machine_instance.parser.data['states'], playhead)
+    song_name, _ = path.splitext(settings.song_file)
+    song_graphic = SongStatus(song_name, machine_instance.parser.data['states'], playhead)
 
     song_server = SongServer(mock_osculator_client, machine_instance, song_graphic)
 

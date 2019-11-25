@@ -117,6 +117,10 @@ class SongValidator(object):
     def __init__(self, data):
         self.data = data
 
+    @property
+    def categories(self):
+        return self.data[SongParser.NAME_CATEGORIES]
+
     def validate(self):
         self._validate_fields()
         self._validate_consistency()
@@ -164,7 +168,7 @@ class SongValidator(object):
                         cond_array[0], idx))
 
 
-def create_instance(path_to_song_file='../config/heavy_lemon.json'):
+def create_instance(path_to_song_file):
     with open(path_to_song_file, 'r') as f:
         json_data = json.load(f)
 
@@ -175,7 +179,12 @@ def create_instance(path_to_song_file='../config/heavy_lemon.json'):
 
 
 if __name__ == '__main__':
-    song_machine = create_instance()
+    import sys
+    from os import path
+    sys.path.append(path.dirname(path.dirname(__file__)))
+    from config import settings
+
+    song_machine = create_instance(path.join(settings.song_path))
 
     print(song_machine.current_state)
     song_machine.update_state("Lob")

@@ -2,7 +2,7 @@
 
 ## Installation
 * clone git repo
-* place `german.model` in `model_data`
+* place `german.model` in `webserver/model_data`
 * install language model for spacey `python -m spacy download de`
 * Setup backend:
   * Change into `backend` directory and run `python manage.py makemigrations` and `python manage.py migrate`
@@ -15,9 +15,12 @@
 
 ## Running
 ### Backend
- Change into `backend` directory and run `python manage.py runserver`
+ Run `python run.py backend` from repo's root directory
 ### Frontend
- Change into `frontend` directrory and type `npm start`
+ Run `python run.py frontend` from repo's root directory
+### Song
+ Run `python run.py song` from repo's root directory
+
 
 ## Dependencies
  - python 3
