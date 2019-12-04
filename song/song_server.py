@@ -93,7 +93,7 @@ class SongServer:
         self.osculator_client.send_message('/rack', (level / 10))
         self.osculator_client.send_message('/osc_notes', (level + 90, 100, 1.0))
         time.sleep(level)
-        self.osculator_client.send_message('/osc_notes', (level + 9 0, 100, 0.0))
+        self.osculator_client.send_message('/osc_notes', (level + 90, 100, 0.0))
         current_state = self._song_machine.current_state
         self._song_machine.update_state(osc_map['cat'])
         if current_state != self._song_machine.current_state:
