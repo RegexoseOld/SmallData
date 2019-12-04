@@ -160,12 +160,12 @@ if __name__ == '__main__':
     from display.playhead import Playhead
     from display.font_render import linebreak
 
-    SONG = 'praise.json'
+    song_file = 'praise.json'
 
-    machine_instance = song_machine.create_instance(path.join('../config', SONG))
+    machine_instance = song_machine.create_instance(path.join('../config', song_file))
 
     playhead = Playhead()
-    song_graphic = SongStatus(SONG, machine_instance.parser.data['states'], playhead)
+    song_graphic = SongStatus(song_file, machine_instance.parser.data['states'], playhead)
 
     song_server = SongServer(osculator_client, machine_instance, song_graphic)
 
