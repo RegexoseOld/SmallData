@@ -2,7 +2,7 @@
   "states": ["intro", "scene02",  "scene03", "scene04", "scene05",
     "scene06", "scene07", "scene08", "scene09", "scene10", "scene11", "scene12",
     "scene13", "scene14", "scene15", "ende"],
-  "categories": ["praise", "lecture", "dissence", "insinuation", "concession", "attack"],
+  "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
   "transitions": [
     [
       "intro",
