@@ -41,3 +41,5 @@ elif args.app == 'song':
 elif args.app == 'frontend':
     os.chdir('frontend')
     p = subprocess.check_call(["npm", "start"])
+else:
+    raise Exception('Unknown command: {}'.format(args.app))
