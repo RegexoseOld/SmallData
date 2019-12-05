@@ -2,7 +2,6 @@ from pythonosc.osc_server import AsyncIOOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from pythonosc import udp_client
 from collections import OrderedDict
-import time
 
 import pickle
 import asyncio
@@ -156,9 +155,9 @@ if __name__ == '__main__':
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
     from song import song_machine
-    from display.status_display import SongStatus
-    from display.playhead import Playhead
-    from display.font_render import linebreak
+    from song.display.status_display import SongStatus
+    from song.display.playhead import Playhead
+    from song.display.font_render import linebreak
     from config import settings
 
     machine_instance = song_machine.create_instance(settings.song_path)
