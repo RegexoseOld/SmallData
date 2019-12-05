@@ -2,7 +2,7 @@ from pythonosc.udp_client import SimpleUDPClient
 import time
 import random
 import pickle
-from config import settings
+
 
 mock_client = SimpleUDPClient('127.0.0.1', 5020)
 texts = ['Dies ist der nullte Kommentar von Mock_Interpreter_Client',
@@ -20,10 +20,11 @@ if __name__ == "__main__":
     # add file to path so import works, see https://stackoverflow.com/a/19190695/7414040
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+    from config import settings
     from song import song_server, song_machine
 
     song_machine = song_machine.create_instance(settings.song_path)
-    categories = song_machine.category_counter.keys()
+    categories = list(song_machine.category_counter.keys())
 
     while True:
         osc_dict = {'text': texts[random.randint(0, 4)],
