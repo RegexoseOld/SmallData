@@ -68,7 +68,6 @@ class Classifier:
 
     def check_sent_with_regex(self, sentence):
         for exp, cat in self.regex_mapping.items():
-            #   print('Regex: {} (category: {}) for sentence: {}'.format(exp, cat, sentence))
             if re.search(exp, sentence):
                 if self.verbose:
                     print('Regex matched: {} (category: {})'.format(exp, cat))
@@ -106,6 +105,8 @@ class Classifier:
 
         clf_preds = self.check_sent_with_vector_clf(sentence)
         clf_preds = [p for p in clf_preds if p is not None]
+        print('regex_pred: {}, clf_preds: {}'.format(regex_pred, clf_preds))
+
         if clf_preds:
             sorted_preds = self.aggregate_vector_preds(clf_preds)
             return sorted_preds[0]

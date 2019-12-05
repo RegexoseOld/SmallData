@@ -185,6 +185,7 @@ def load_data_and_train_model(df):
     '''
     keywords_to_cat, regexes = read_trainingdata_utterances(df)
     print('Keywords with multiple categories are ignored\n')
+    print('  keywords_to_cat:',  keywords_to_cat)
     for keyword, cats in list(keywords_to_cat.items()):
         if len(cats) > 1:
             print('{:<20} {}'.format(keyword, cats))
@@ -198,10 +199,10 @@ def load_data_and_train_model(df):
 
 
 if __name__ == '__main__':
-    data_path = '/Users/borisjoens/Dropbox/Kommentare/SmallData/backend/model_data'
+    data_path = os.path.dirname(os.path.realpath(__file__))
     # create logic to import database entries into data_frame
 
-    data_frame = pd.read_excel(os.path.join(data_path, 'TrainingData_clean_de.xlsx'))
+    data_frame = pd.read_excel(os.path.join(data_path, 'TrainingData_5cat_de.xlsx'))
     clf, regexes = load_data_and_train_model(data_frame)
 
     joblib.dump(regexes, os.path.join(data_path, 'regex_mapping.pkl'))

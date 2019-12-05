@@ -2,6 +2,7 @@ from pythonosc.osc_server import AsyncIOOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from pythonosc import udp_client
 from collections import OrderedDict
+import time
 
 import pickle
 import asyncio
@@ -36,6 +37,10 @@ class SongServer:
         self.osculator_client = client
         self._song_machine = machine
         self.song_graphic = songgraphic
+        self.song_scenes = {k : v for k, v in zip(
+            self._song_machine.parser.states,
+            range(len(self._song_machine.parser.states)
+                  ))}
 
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Status Screen')
@@ -50,6 +55,8 @@ class SongServer:
 
         text_output_surf = font.render('No Interpretation Received', 1, font_color)
         self.text_surface.blit(text_output_surf, (0, 0))
+        self.osculator_client.send_message('/advance', (0, 1.0))
+        self.osculator_client.send_message('/advance', (0, 0.0))
 
     def _position_text_display(self, text_surface, cat_surface):
         new_height = text_surface.get_rect().height
@@ -84,17 +91,24 @@ class SongServer:
     def _update_song(self, osc_map):
         level = osc_map['level']
         self.osculator_client.send_message('/rack', (level / 10))
-
+        self.osculator_client.send_message('/osc_notes', (level + 90, 100, 1.0))
+        time.sleep(level)
+        self.osculator_client.send_message('/osc_notes', (level + 90, 100, 0.0))
         current_state = self._song_machine.current_state
         self._song_machine.update_state(osc_map['cat'])
         if current_state != self._song_machine.current_state:
-            self.osculator_client.send_message('/advance', (0, 1.0))  # was braucht Osculator hier?
-            self.osculator_client.send_message('/advance', (0, 0.0))
+            self.advance_to_scene = self.song_scenes[self._song_machine.current_state.name]
+            print('update with status: {}\ncurrent_state: {}\nadvance_to_scene: {}'
+                  .format(
+                osc_map['cat'],
+                self._song_machine.current_state.name,
+                self.advance_to_scene))
+            self.osculator_client.send_message('/advance', (self.advance_to_scene, 1.0))
+            self.osculator_client.send_message('/advance', (self.advance_to_scene, 0.0))
 
     def message_handler(self, address, content):
-        print('address: {} map: {}'.format(address, content))
         osc_map = pickle.loads(content)
-
+        print('address: {}\nmap: {}'.format(address, osc_map))
         self._update_song(osc_map)
         self._update_display_objects(osc_map)
 
@@ -136,24 +150,23 @@ class SongServer:
 
 
 if __name__ == '__main__':
-    mock_osculator_client = udp_client.SimpleUDPClient(ip, OSCULATOR_PORT)
+    osculator_client = udp_client.SimpleUDPClient(ip, OSCULATOR_PORT)
 
     # add file to path so import works, see https://stackoverflow.com/a/19190695/7414040
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
     from song import song_machine
-    from config import settings
     from display.status_display import SongStatus
     from display.playhead import Playhead
     from display.font_render import linebreak
+    from config import settings
 
     machine_instance = song_machine.create_instance(settings.song_path)
 
     playhead = Playhead()
-    song_name, _ = path.splitext(settings.song_file)
-    song_graphic = SongStatus(song_name, machine_instance.parser.data['states'], playhead)
+    song_graphic = SongStatus(settings.song_file, machine_instance.parser.data['states'], playhead)
 
-    song_server = SongServer(mock_osculator_client, machine_instance, song_graphic)
+    song_server = SongServer(osculator_client, machine_instance, song_graphic)
 
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(song_server.init_main())
