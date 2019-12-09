@@ -45,6 +45,9 @@ class SongStatus:
     def handle_input(self, data):
         self.playhead.handle_input_key(data)
 
+    def update(self, data):
+        self.playhead.handle_input_data(data)
+
     def build_song(self, parts):
         pos = INITIAL_POS_X
         for part, length in list(parts.items()):
@@ -53,4 +56,3 @@ class SongStatus:
                              (pos, 0, part_length, SCREEN_HEIGHT/4), 2)
             self.song_parts[part] = [pos, pos + part_length]
             pos += part_length
-

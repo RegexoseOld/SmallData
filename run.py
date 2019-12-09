@@ -57,14 +57,16 @@ elif args.app == 'frontend':
     p = subprocess.check_call(["npm", "start"])
 elif args.app == 'display':
     from song.display.playhead import Playhead
-    from song.display.status_display import SongStatus
+    from song.display.song_status import SongStatus
+    from song.display.utterances import Utterances
     from song.display.display_server import DisplayServer
     import asyncio
 
     playhead = Playhead()
     #  TODO use actula states of song
     song_graphic = SongStatus(settings.song_file, ["intro", "scene02", "scene03"], playhead)
-    display_server = DisplayServer(song_graphic)
+    utterances_graphic =  Utterances()
+    display_server = DisplayServer(song_graphic, utterances_graphic)
 
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(display_server.init_main())
