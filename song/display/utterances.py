@@ -48,6 +48,6 @@ class Utterances:
         cat_output_surf = linebreak(data['cat'], font_color, self.cat_surface.get_rect(), font, 1)
         self._position_text_display(text_output_surf, cat_output_surf)
 
-    def render(self, screen):
-        screen.blit(self.text_surface, (15, 350))
-        screen.blit(self.cat_surface, (15 + width_text, 350))
+    def render(self, screen, pos=(0, 0)):
+        screen.blit(self.text_surface, pos)
+        screen.blit(self.cat_surface, (pos[0] + width_text, pos[1]))

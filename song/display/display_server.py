@@ -57,10 +57,10 @@ class DisplayServer:
 
             self.screen.blit(self.song_state_surf, (15, 325))
 
-            self.utterances.render(self.screen)
+            self.utterances.render(self.screen, pos=(15, 350))
 
             self.song_graphic.update(1)  # moves playhead forward
-            self.song_graphic.render(self.screen)
+            self.song_graphic.render(self.screen, pos=(0, 0))
 
             pygame.display.flip()
 
