@@ -48,18 +48,3 @@ class SongServer:
         print('address: {}\nmap: {}'.format(address, osc_map))
         self._update_song(osc_map)
         self._update_display(content)
-
-
-if __name__ == '__main__':
-    # add file to path so import works, see https://stackoverflow.com/a/19190695/7414040
-    from os import sys, path
-    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-    from song import song_machine
-
-    oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
-    disp_client = udp_client.SimpleUDPClient(settings.ip, settings.DISPLAY_PORT)
-
-    machine_instance = song_machine.create_instance(settings.song_path)
-
-    song_server = SongServer(oscul_client, disp_client, machine_instance)
-    song_server.server.serve_forever()

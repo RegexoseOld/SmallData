@@ -1,7 +1,6 @@
 import pygame
-# import statements must change if imported from song/song_server.py
 from song.display.animation import Animation
-from song.display.status_display import SCREEN_HEIGHT, SONG_WIDTH
+from song.display.song_status import SCREEN_HEIGHT, SONG_WIDTH
 
 
 class Playhead:
