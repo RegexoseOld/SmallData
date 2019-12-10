@@ -22,9 +22,10 @@ refresh_rate = 10.  # Hz
 class DisplayServer:
     server = None
 
-    def __init__(self, songgraphic, utterances):
+    def __init__(self, songgraphic, utterances, beat):
         self.song_graphic = songgraphic
         self.utterances = utterances
+        self.beat = beat
         self.song_state_surf = font.render('No State Received', False, font_color)
 
         self.screen = pygame.display.set_mode(size)
@@ -58,6 +59,7 @@ class DisplayServer:
             self.screen.blit(self.song_state_surf, (15, 325))
 
             self.utterances.render(self.screen, pos=(15, 350))
+            self.beat.render(self.screen, pos=(600, 50))
 
             self.song_graphic.update(1)  # moves playhead forward
             self.song_graphic.render(self.screen, pos=(0, 0))
