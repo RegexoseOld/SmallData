@@ -43,9 +43,9 @@ class DisplayServer:
         self.utterances.update(osc_map)
         self._update_display_objects(osc_map)
 
-    def beat_handler(self, _, content):
-        print('DisplayServer: Receiving "{}"'.format(content))
-        self.beat.update('{}'.format(content))
+    def beat_handler(self, _, note):
+        print('DisplayServer: Receiving "{}"'.format(note))
+        self.beat.update(settings.note_to_beat[note])
 
     async def loop(self):
         while True:

@@ -3,12 +3,11 @@ import time
 from config import settings
 
 
-notes = [121, 122, 123, 124]
+notes = list(settings.note_to_beat.keys())
 mock_client = SimpleUDPClient(settings.ip, settings.DISPLAY_PORT)
 
 
 def run_mock():
-
     idx = 0
     while True:
         note = notes[idx]
