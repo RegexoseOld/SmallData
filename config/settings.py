@@ -12,6 +12,7 @@ song_path = path.join(BASE_DIR, 'config', song_file)
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
 INTERPRETER_PORT = 5020
 OSCULATOR_PORT = 5010
+OSCULATOR_TARGET_ADDRESS = "/osculator_input"
 
 DISPLAY_TARGET_ADDRESS = "/display_input"
 DISPLAY_PORT = 5030

@@ -43,6 +43,10 @@ class DisplayServer:
         self.utterances.update(osc_map)
         self._update_display_objects(osc_map)
 
+    def beat_handler(self, _, content):
+        print('DisplayServer: Receiving "{}"'.format(content))
+        self.beat.update('{}'.format(content))
+
     async def loop(self):
         while True:
             self.screen.fill(grey)
@@ -71,6 +75,7 @@ class DisplayServer:
     async def init_main(self):
         dispatcher = Dispatcher()
         dispatcher.map(settings.DISPLAY_TARGET_ADDRESS, self.message_handler)
+        dispatcher.map(settings.OSCULATOR_TARGET_ADDRESS, self.beat_handler)
 
         self.server = AsyncIOOSCUDPServer((settings.ip, settings.DISPLAY_PORT), dispatcher, asyncio.get_event_loop())
         transport, protocol = await self.server.create_serve_endpoint()  # Create datagram endpoint and start serving
@@ -78,15 +83,3 @@ class DisplayServer:
         await self.loop()  # Enter main loop of program
 
         transport.close()  # Clean up serve endpoint
-
-
-if __name__ == '__main__':
-    from song.display.playhead import Playhead
-    from song.display.song_status import SongStatus
-    playhead = Playhead()
-    #  TODO use actula states of song
-    song_graphic = SongStatus(settings.song_file, ["intro", "scene02",  "scene03"], playhead)
-    display_server = DisplayServer(song_graphic)
-
-    loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(display_server.init_main())

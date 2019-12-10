@@ -10,10 +10,11 @@ class Beat(pygame.Surface):
                  font_color=(140, 40, 240),
                  font_size=80):
         super(Beat, self).__init__(size)
-        self.font = pygame.font.Font(None, self.font_size)
         self.background_color = background_color
         self.font_color = font_color
         self.font_size = font_size
+        self.font = pygame.font.Font(None, self.font_size)
+
         self.fill(self.background_color)
         self.update('1')
         self.render(self)

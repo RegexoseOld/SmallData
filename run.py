@@ -38,9 +38,6 @@ if args.app == 'backend':
     p = subprocess.check_call(["python", "webserver/manage.py", "runserver"])
 elif args.app == 'song':
     from pythonosc import udp_client
-    from os import sys, path
-
-    # sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
     from song import song_machine
     from song.song_server import SongServer
 
@@ -72,10 +69,12 @@ elif args.app == 'display':
 
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(display_server.init_main())
-elif args.app == 'mock':
-    from mocks import Mock_Interpreter_Client
-
-    Mock_Interpreter_Client.run_mock()
+elif args.app == 'interpreter':
+    from mocks import mock_interpreter_client
+    mock_interpreter_client.run_mock()
+elif args.app == 'osculator':
+    from mocks import mock_osculator_client
+    mock_osculator_client.run_mock()
 
 else:
-    raise Exception('Unknown command: {}'.format(args.app))
+    raise Exception('Unknown command: {}. Please see run.py for options'.format(args.app))
