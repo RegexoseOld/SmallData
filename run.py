@@ -55,9 +55,8 @@ elif args.app == 'frontend':
 elif args.app == 'display':
     from song.display.playhead import Playhead
     from song.display.song_status import SongStatus
-    from song.display.utterances import Utterances
     from song.display.display_server import DisplayServer
-    from song.display.surfaces import Beat
+    from song.display.surfaces import Beat, Utterances
     import asyncio
 
     playhead = Playhead()
