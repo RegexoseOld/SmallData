@@ -22,8 +22,8 @@ class SongServer:
             range(len(self._song_machine.parser.states)
                   ))}
 
-        self.osculator_client.send_message('/advance', (0, 1.0))
-        self.osculator_client.send_message('/advance', (0, 0.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 1.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 0.0))
 
     def _update_song(self, osc_map):
         level = osc_map['level']
@@ -37,8 +37,9 @@ class SongServer:
             self.advance_to_scene = self.song_scenes[self._song_machine.current_state.name]
             print('update with status: {}\ncurrent_state: {}\nadvance_to_scene: {}'
                   .format(osc_map['cat'], self._song_machine.current_state.name, self.advance_to_scene))
-            self.osculator_client.send_message('/advance', (self.advance_to_scene, 1.0))
-            self.osculator_client.send_message('/advance', (self.advance_to_scene, 0.0))
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.advance_to_scene, 1.0))
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.advance_to_scene, 0.0))
+            self.display_client.send_message(settings.SONG_ADVANCE_ADDRESS, self.advance_to_scene)
 
     def _update_display(self, content):
         self.display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, content)

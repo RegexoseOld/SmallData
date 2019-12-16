@@ -43,9 +43,13 @@ class DisplayServer:
         self.utterances.update(osc_map)
         self._update_display_objects(osc_map)
 
+    def beat_advance_handler(self, _, content):
+        print("TRIGGERING NEXT PART")
+        self.beat.trigger_next_part(content)
+
     def beat_handler(self, _, note):
         print('DisplayServer: Receiving "{}"'.format(note))
-        self.beat.update(settings.note_to_beat[note])
+        self.beat.update(note)
 
     async def loop(self):
         while True:
@@ -76,6 +80,7 @@ class DisplayServer:
         dispatcher = Dispatcher()
         dispatcher.map(settings.DISPLAY_TARGET_ADDRESS, self.message_handler)
         dispatcher.map(settings.OSCULATOR_TARGET_ADDRESS, self.beat_handler)
+        dispatcher.map(settings.SONG_ADVANCE_ADDRESS, self.beat_advance_handler)
 
         self.server = AsyncIOOSCUDPServer((settings.ip, settings.DISPLAY_PORT), dispatcher, asyncio.get_event_loop())
         transport, protocol = await self.server.create_serve_endpoint()  # Create datagram endpoint and start serving

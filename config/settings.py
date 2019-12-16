@@ -10,6 +10,7 @@ song_path = path.join(BASE_DIR, 'config', song_file)
 
 # OSC-Settings
 ip = "127.0.0.1"
+SONG_ADVANCE_ADDRESS = '/advance'
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
 INTERPRETER_PORT = 5020
 OSCULATOR_PORT = 5010
@@ -23,5 +24,6 @@ note_to_beat = {
     121: '1',
     122: '2',
     123: '3',
-    124: '4'
+    124: '4',
+    'first_note_in_bar': 121
 }

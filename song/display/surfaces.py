@@ -1,6 +1,7 @@
 import pygame
 from collections import OrderedDict
 
+from config import settings
 from song.display.font_render import linebreak
 
 
@@ -10,22 +11,38 @@ class Beat(pygame.Surface):
     def __init__(self,
                  size=(100, 100),
                  background_color=(190, 190, 190),
-                 font_color=(140, 40, 240),
+                 normal_font_color=(240, 0, 0),
+                 change_font_color=(0, 240, 0),
                  font_size=80):
         super(Beat, self).__init__(size)
         self.background_color = background_color
-        self.font_color = font_color
+        self.normal_font_color = normal_font_color
+        self.change_font_color = change_font_color
+        self.__current_font_color = normal_font_color
+        self.__next_font_color = normal_font_color
+
         self.font_size = font_size
         self.font = pygame.font.Font(None, self.font_size)
 
         self.fill(self.background_color)
-        self.update('1')
+        self.update(list(settings.note_to_beat.keys())[0])
         self.render(self)
 
-    def update(self, string):
-        #  change the content of the display
+    def trigger_next_part(self, part):
+        # TODO: show next part in display
+        print(part)
+        self.__next_font_color = self.change_font_color
+
+    def update(self, note):
+        if note == settings.note_to_beat['first_note_in_bar']:
+            # make sure colors are set correctly for part change
+            if self.__next_font_color == self.change_font_color:
+                self.__current_font_color = self.change_font_color
+            else:
+                self.__current_font_color = self.normal_font_color
+            self.__next_font_color = self.normal_font_color
         self.fill(self.background_color)
-        self.__text_surf = self.font.render(string, 1, self.font_color)
+        self.__text_surf = self.font.render(settings.note_to_beat[note], 1, self.__current_font_color)
         self.blit(self.__text_surf, (0, 0))
 
     def render(self, screen, pos=(0, 0)):

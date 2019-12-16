@@ -13,5 +13,5 @@ def run_mock():
         note = notes[idx]
         print('Sending "{}"'.format(note))
         mock_client.send_message(settings.OSCULATOR_TARGET_ADDRESS, note)
-        idx = (idx + 1) % len(notes)
+        idx = (idx + 1) % (len(notes)-1)
         time.sleep(2)
