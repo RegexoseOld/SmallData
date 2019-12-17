@@ -6,7 +6,7 @@ from song.display.font_render import linebreak
 
 
 class Beat(pygame.Surface):
-    __text_surf = None
+    __counter_surf = None
 
     def __init__(self,
                  size=(100, 100),
@@ -20,7 +20,6 @@ class Beat(pygame.Surface):
         self.change_font_color = change_font_color
         self.__current_font_color = normal_font_color
         self.__next_font_color = normal_font_color
-
         self.font_size = font_size
         self.font = pygame.font.Font(None, self.font_size)
 
@@ -30,7 +29,6 @@ class Beat(pygame.Surface):
 
     def trigger_next_part(self, part):
         # TODO: show next part in display
-        print(part)
         self.__next_font_color = self.change_font_color
 
     def update(self, note):
@@ -42,8 +40,38 @@ class Beat(pygame.Surface):
                 self.__current_font_color = self.normal_font_color
             self.__next_font_color = self.normal_font_color
         self.fill(self.background_color)
-        self.__text_surf = self.font.render(settings.note_to_beat[note], 1, self.__current_font_color)
-        self.blit(self.__text_surf, (0, 0))
+        self.__counter_surf = self.font.render(settings.note_to_beat[note], 1, self.__current_font_color)
+
+        self.blit(self.__counter_surf, (0, 0))
+
+    def render(self, screen, pos=(0, 0)):
+        screen.blit(self, pos)
+
+
+class PartInfo(pygame.Surface):
+    __current_surf = None
+    __next_surf = None
+
+    def __init__(self,
+                 size=(400, 40),
+                 background_color=(190, 190, 190),
+                 font_color=(40, 40, 40),
+                 font_size=20):
+        super(PartInfo, self).__init__(size)
+        self.background_color = background_color
+        self.font_color = font_color
+        self.font_size = font_size
+        self.font = pygame.font.Font(None, self.font_size)
+
+        self.update()
+        self.render(self)
+
+    def update(self, current_part='Unkown', next_part='Unkown'):
+        self.fill(self.background_color)
+        self.__current_surf = self.font.render('Current part: {}'.format(current_part), 1, self.font_color)
+        self.__next_surf = self.font.render('Next part: {}'.format(next_part), 1, self.font_color)
+        self.blit(self.__current_surf, (0, 0))
+        self.blit(self.__next_surf, (0, self.font_size))
 
     def render(self, screen, pos=(0, 0)):
         screen.blit(self, pos)

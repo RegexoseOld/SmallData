@@ -56,7 +56,7 @@ elif args.app == 'display':
     from song.display.playhead import Playhead
     from song.display.song_status import SongStatus
     from song.display.display_server import DisplayServer
-    from song.display.surfaces import Beat, Utterances
+    from song.display.surfaces import Beat, Utterances, PartInfo
     import asyncio
 
     playhead = Playhead()
@@ -64,7 +64,8 @@ elif args.app == 'display':
     song_surface = SongStatus(settings.song_file, ["intro", "scene02", "scene03"], playhead)
     utterances_surface = Utterances()
     beat_surface = Beat()
-    display_server = DisplayServer(song_surface, utterances_surface, beat_surface)
+    partinfo_surface = PartInfo()
+    display_server = DisplayServer(song_surface, utterances_surface, beat_surface, partinfo_surface)
 
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(display_server.init_main())

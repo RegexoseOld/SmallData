@@ -22,11 +22,11 @@ refresh_rate = 10.  # Hz
 class DisplayServer:
     server = None
 
-    def __init__(self, songgraphic, utterances, beat):
+    def __init__(self, songgraphic, utterances, beat, part_info):
         self.song_graphic = songgraphic
         self.utterances = utterances
         self.beat = beat
-        self.song_state_surf = font.render('No State Received', False, font_color)
+        self.part_info = part_info
 
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption('Status Screen')
@@ -43,9 +43,9 @@ class DisplayServer:
         self.utterances.update(osc_map)
         self._update_display_objects(osc_map)
 
-    def beat_advance_handler(self, _, content):
-        print("TRIGGERING NEXT PART")
-        self.beat.trigger_next_part(content)
+    def beat_advance_handler(self, _, next_part):
+        print("TRIGGERING NEXT PART: {}".format(next_part))
+        self.beat.trigger_next_part(next_part)
 
     def beat_handler(self, _, note):
         print('DisplayServer: Receiving "{}"'.format(note))
@@ -64,13 +64,15 @@ class DisplayServer:
                 elif event.type == pygame.KEYDOWN:
                     self.song_graphic.handle_input(event.key)
 
-            self.screen.blit(self.song_state_surf, (15, 325))
+            # 2self.screen.blit(self.song_state_surf, (15, 325))
 
             self.utterances.render(self.screen, pos=(15, 350))
             self.beat.render(self.screen, pos=(600, 50))
 
             self.song_graphic.update(1)  # moves playhead forward
             self.song_graphic.render(self.screen, pos=(0, 0))
+
+            self.part_info.render(self.screen, pos=(600, 200))
 
             pygame.display.flip()
 
@@ -84,7 +86,6 @@ class DisplayServer:
 
         self.server = AsyncIOOSCUDPServer((settings.ip, settings.DISPLAY_PORT), dispatcher, asyncio.get_event_loop())
         transport, protocol = await self.server.create_serve_endpoint()  # Create datagram endpoint and start serving
-        print('transport {} protocol {}'.format(transport, protocol))
         await self.loop()  # Enter main loop of program
 
         transport.close()  # Clean up serve endpoint
