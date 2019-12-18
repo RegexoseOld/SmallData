@@ -19,10 +19,43 @@ font_color = 155, 155, 0
 refresh_rate = 10.  # Hz
 
 
+class BeatAdvanceManager:
+    """ A simple state machine. Machine starts in 'normal' state. When the next part is changed,
+    machine changes to 'prepare'. On the next '1' machine moves to 'warning', then on the next
+    '1' back to 'normal' """
+    STATE_NORMAL = 0
+    STATE_PREPARE = 1
+    STATE_WARNING = 2
+
+    def __init__(self):
+        self.state = self.STATE_NORMAL
+        self.counter = ''
+        self.next_part = 'Unknown'
+        self.current_part = 'Unknown'
+
+    def update_next_part(self, part_name):
+        self.state = self.STATE_PREPARE
+        self.next_part = part_name
+
+    def update_beat_counter(self, note):
+        self.counter = settings.note_to_beat[note]
+        if note == settings.note_to_beat['first_note_in_bar']:
+            self.current_part = self.next_part
+            if self.state == self.STATE_PREPARE:
+                self.state = self.STATE_WARNING
+            elif self.state == self.STATE_WARNING:
+                self.state = self.STATE_NORMAL
+                self.next_part = self.current_part
+
+    def is_warning(self):
+        return self.state == self.STATE_WARNING
+
+
 class DisplayServer:
     server = None
 
-    def __init__(self, songgraphic, utterances, beat, part_info):
+    def __init__(self, beat_manager, songgraphic, utterances, beat, part_info):
+        self.beat_manager = beat_manager
         self.song_graphic = songgraphic
         self.utterances = utterances
         self.beat = beat
@@ -43,13 +76,17 @@ class DisplayServer:
         self.utterances.update(osc_map)
         self._update_display_objects(osc_map)
 
-    def beat_advance_handler(self, _, next_part):
+    def part_handler(self, _, next_part):
         print("TRIGGERING NEXT PART: {}".format(next_part))
-        self.beat.trigger_next_part(next_part)
+        self.beat_manager.update_next_part(next_part)
+        self.part_info.update(next_part=next_part)
 
     def beat_handler(self, _, note):
         print('DisplayServer: Receiving "{}"'.format(note))
-        self.beat.update(note)
+        self.beat_manager.update_beat_counter(note)
+        self.beat.update(self.beat_manager.counter, self.beat_manager.is_warning())
+        self.part_info.update(current_part=self.beat_manager.current_part,
+                              next_part=self.beat_manager.next_part)
 
     async def loop(self):
         while True:
@@ -82,7 +119,7 @@ class DisplayServer:
         dispatcher = Dispatcher()
         dispatcher.map(settings.DISPLAY_TARGET_ADDRESS, self.message_handler)
         dispatcher.map(settings.OSCULATOR_TARGET_ADDRESS, self.beat_handler)
-        dispatcher.map(settings.SONG_ADVANCE_ADDRESS, self.beat_advance_handler)
+        dispatcher.map(settings.SONG_ADVANCE_ADDRESS, self.part_handler)
 
         self.server = AsyncIOOSCUDPServer((settings.ip, settings.DISPLAY_PORT), dispatcher, asyncio.get_event_loop())
         transport, protocol = await self.server.create_serve_endpoint()  # Create datagram endpoint and start serving

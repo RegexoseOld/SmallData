@@ -12,36 +12,24 @@ class Beat(pygame.Surface):
                  size=(100, 100),
                  background_color=(190, 190, 190),
                  normal_font_color=(240, 0, 0),
-                 change_font_color=(0, 240, 0),
+                 warning_font_color=(0, 240, 0),
                  font_size=80):
         super(Beat, self).__init__(size)
         self.background_color = background_color
         self.normal_font_color = normal_font_color
-        self.change_font_color = change_font_color
-        self.__current_font_color = normal_font_color
-        self.__next_font_color = normal_font_color
+        self.warning_font_color = warning_font_color
         self.font_size = font_size
         self.font = pygame.font.Font(None, self.font_size)
 
         self.fill(self.background_color)
-        self.update(list(settings.note_to_beat.keys())[0])
+        self.update(list(settings.note_to_beat.values())[0], False)
         self.render(self)
 
-    def trigger_next_part(self, part):
-        # TODO: show next part in display
-        self.__next_font_color = self.change_font_color
+    def update(self, counter, is_warning):
+        colour = self.warning_font_color if is_warning else self.normal_font_color
 
-    def update(self, note):
-        if note == settings.note_to_beat['first_note_in_bar']:
-            # make sure colors are set correctly for part change
-            if self.__next_font_color == self.change_font_color:
-                self.__current_font_color = self.change_font_color
-            else:
-                self.__current_font_color = self.normal_font_color
-            self.__next_font_color = self.normal_font_color
         self.fill(self.background_color)
-        self.__counter_surf = self.font.render(settings.note_to_beat[note], 1, self.__current_font_color)
-
+        self.__counter_surf = self.font.render(counter, 1, colour)
         self.blit(self.__counter_surf, (0, 0))
 
     def render(self, screen, pos=(0, 0)):

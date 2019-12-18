@@ -39,7 +39,7 @@ class SongServer:
                   .format(osc_map['cat'], self._song_machine.current_state.name, self.advance_to_scene))
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.advance_to_scene, 1.0))
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.advance_to_scene, 0.0))
-            self.display_client.send_message(settings.SONG_ADVANCE_ADDRESS, self.advance_to_scene)
+            self.display_client.send_message(settings.SONG_ADVANCE_ADDRESS, self._song_machine.current_state.name)
 
     def _update_display(self, content):
         self.display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, content)
