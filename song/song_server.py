@@ -41,11 +41,7 @@ class SongServer:
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.advance_to_scene, 0.0))
             self.display_client.send_message(settings.SONG_ADVANCE_ADDRESS, self._song_machine.current_state.name)
 
-    def _update_display(self, content):
-        self.display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, content)
-
     def message_handler(self, address, content):
         osc_map = pickle.loads(content)
         print('address: {}\nmap: {}'.format(address, osc_map))
         self._update_song(osc_map)
-        self._update_display(content)

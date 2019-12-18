@@ -5,7 +5,8 @@ import pickle
 from config import settings
 from song import song_machine
 
-mock_client = SimpleUDPClient(settings.ip, settings.INTERPRETER_PORT)
+song_client = SimpleUDPClient(settings.ip, settings.INTERPRETER_PORT)
+display_client = SimpleUDPClient(settings.ip, settings.DISPLAY_PORT)
 texts = ['Dies ist der nullte Kommentar von Mock_Interpreter_Client',
          'Dies ist der erste Kommentar',
          'der zweite Kommentar',
@@ -25,7 +26,8 @@ def run_mock():
                     'level': random.sample(level_values, 1)[0]
                     }
         osc_map = pickle.dumps(osc_dict)
-        mock_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
+        song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
+        display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, osc_map)
         time.sleep(2)
 
 
