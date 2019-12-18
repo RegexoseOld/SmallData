@@ -54,7 +54,7 @@ class PartInfo(pygame.Surface):
         self.update()
         self.render(self)
 
-    def update(self, current_part='Unkown', next_part='Unkown'):
+    def update(self, current_part='Unknown', next_part='Unknown'):
         self.fill(self.background_color)
         self.__current_surf = self.font.render('Current part: {}'.format(current_part), 1, self.font_color)
         self.__next_surf = self.font.render('Next part: {}'.format(next_part), 1, self.font_color)

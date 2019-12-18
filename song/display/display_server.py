@@ -34,18 +34,18 @@ class BeatAdvanceManager:
         self.current_part = 'Unknown'
 
     def update_next_part(self, part_name):
-        self.state = self.STATE_PREPARE
-        self.next_part = part_name
+        if self.state == self.STATE_NORMAL:
+            self.state = self.STATE_PREPARE
+            self.next_part = part_name
 
     def update_beat_counter(self, note):
         self.counter = settings.note_to_beat[note]
         if note == settings.note_to_beat['first_note_in_bar']:
-            self.current_part = self.next_part
             if self.state == self.STATE_PREPARE:
                 self.state = self.STATE_WARNING
             elif self.state == self.STATE_WARNING:
                 self.state = self.STATE_NORMAL
-                self.next_part = self.current_part
+                self.current_part = self.next_part
 
     def is_warning(self):
         return self.state == self.STATE_WARNING
@@ -79,7 +79,6 @@ class DisplayServer:
     def part_handler(self, _, next_part):
         print("TRIGGERING NEXT PART: {}".format(next_part))
         self.beat_manager.update_next_part(next_part)
-        self.part_info.update(next_part=next_part)
 
     def beat_handler(self, _, note):
         print('DisplayServer: Receiving "{}"'.format(note))
