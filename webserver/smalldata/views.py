@@ -3,17 +3,18 @@ import random
 
 from django.http import JsonResponse
 
-from config import settings
 from rest_framework import viewsets
 from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
 from .models import Utterance, Category, TrainingUtterance
 
 from webserver.classification.Classifier_max import Classifier
-from webserver.sound.UDPClient import MusicClient, INTERPRETER_PORT, INTERPRETER_TARGET_ADDRESS
+from webserver.sound.UDPClient import MusicClient
+from config import settings
 
 clf = Classifier(settings.DATA_DIR)
 #   Client for a simple Feedback from Ableton Live
-music_client = MusicClient('127.0.0.1', INTERPRETER_PORT)
+song_client = MusicClient('127.0.0.1', settings.INTERPRETER_PORT)
+display_client = MusicClient('127.0.0.1', settings.DISPLAY_PORT)
 
 
 def send_to_music_server(utterance, category):
@@ -23,7 +24,8 @@ def send_to_music_server(utterance, category):
         'level': random.randint(0, 10)
     }
     osc_map = pickle.dumps(osc_dict)
-    music_client.send_message(INTERPRETER_TARGET_ADDRESS, osc_map)
+    song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
+    display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, osc_map)
 
 
 class UtteranceView(viewsets.ModelViewSet):

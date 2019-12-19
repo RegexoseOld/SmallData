@@ -38,12 +38,15 @@ class SongStatus:
         self.song_surface.blit(self.song, (20, 5))
         self.status_surface.fill((214, 32, 32))
 
-    def render(self, screen):
-        screen.blit(self.song_surface, (0, 0))
+    def render(self, screen, pos=(0, 0)):
+        screen.blit(self.song_surface, pos)
         self.playhead.render(screen)
 
     def handle_input(self, data):
         self.playhead.handle_input_key(data)
+
+    def update(self, data):
+        self.playhead.handle_input_data(data)
 
     def build_song(self, parts):
         pos = INITIAL_POS_X
@@ -53,4 +56,3 @@ class SongStatus:
                              (pos, 0, part_length, SCREEN_HEIGHT/4), 2)
             self.song_parts[part] = [pos, pos + part_length]
             pos += part_length
-

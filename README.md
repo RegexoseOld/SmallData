@@ -14,12 +14,26 @@
  
 
 ## Running
+
+The entire application consists of several apps that communicate via OSC. The infrastructure to start those apps is capsuled in the script `run.py` in the repo's root directory.
 ### Backend
- Run `python run.py backend` from repo's root directory
+ * contains the rest-api, the database and the logic for classification (the *interpreter*). 
+ * start by running `python run.py backend`
 ### Frontend
- Run `python run.py frontend` from repo's root directory
+ * contains the code for the web-client, where users can enter utterances 
+ * start by running `python run.py frontend` from repo's root directory
 ### Song
- Run `python run.py song` from repo's root directory
+ * contains the logic to update the song status given the entered utterances
+ * start by running `python run.py song`
+### Display
+ * a pygame display that shows the song progress, user input, classification results, etc... 
+ * start by running `python run.py display`
+### Interpreter
+ * A mock to simulate the operation of the frontend-backend, sends random utterances and categories.
+ * start by running `python run.py interpreter`
+### Osculator
+ * A mock to simulate the operation of the osculator, sends beat-information to the display.
+ * start by running `python run.py osculator`
 
 
 ## Dependencies
