@@ -6,6 +6,7 @@ import pickle
 from pythonosc.osc_server import AsyncIOOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 
+from mocks.mock_interpreter_client import processing_client
 from config import settings
 
 pygame.init()
@@ -77,15 +78,20 @@ class DisplayServer:
         self._update_display_objects(osc_map)
 
     def part_handler(self, _, next_part):
+        # is only called when next_part != current_part
         print("TRIGGERING NEXT PART: {}".format(next_part))
         self.beat_manager.update_next_part(next_part)
 
     def beat_handler(self, _, note):
         print('DisplayServer: Receiving "{}"'.format(note))
         self.beat_manager.update_beat_counter(note)
-        self.beat.update(self.beat_manager.counter, self.beat_manager.is_warning())
+        self.beat.update(self.beat_manager.counter, self.beat_manager.is_warning()) # font_color is changed
         self.part_info.update(current_part=self.beat_manager.current_part,
                               next_part=self.beat_manager.next_part)
+        self.processing_part_info_update(self.beat_manager.current_part, self.beat_manager.next_part)
+
+    def processing_part_info_update(self, current_part, next_part):
+        processing_client.send_message("/part_info", [current_part, next_part])
 
     async def loop(self):
         while True:

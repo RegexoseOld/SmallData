@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 from config import settings
 from song.display.font_render import linebreak
+from mocks.mock_interpreter_client import processing_client
 
 
 class Beat(pygame.Surface):
@@ -27,9 +28,11 @@ class Beat(pygame.Surface):
 
     def update(self, counter, is_warning):
         colour = self.warning_font_color if is_warning else self.normal_font_color
+        hex_colour = "00F000" if is_warning else "F00000"
 
         self.fill(self.background_color)
         self.__counter_surf = self.font.render(counter, 1, colour)
+        processing_client.send_message("/beat_number", [counter, hex_colour])
         self.blit(self.__counter_surf, (0, 0))
 
     def render(self, screen, pos=(0, 0)):
