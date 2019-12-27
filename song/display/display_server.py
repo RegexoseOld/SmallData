@@ -91,6 +91,8 @@ class DisplayServer:
         self.processing_part_info_update(self.beat_manager.current_part, self.beat_manager.next_part)
 
     def processing_part_info_update(self, current_part, next_part):
+        if current_part == next_part:
+            processing_client.send_message(settings.SONG_ADVANCE_ADDRESS, current_part)
         processing_client.send_message("/part_info", [current_part, next_part])
 
     async def loop(self):
