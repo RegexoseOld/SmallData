@@ -1,7 +1,6 @@
 import pickle
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
-from mocks.mock_interpreter_client import processing_client
 from config import settings
 
 

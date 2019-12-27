@@ -31,12 +31,13 @@ class BeatAdvanceManager:
     def __init__(self):
         self.state = self.STATE_NORMAL
         self.counter = ''
-        self.next_part = 'Unknown'
+        self.next_part = 'intro'
         self.current_part = 'Unknown'
 
     def update_next_part(self, part_name):
         if self.state == self.STATE_NORMAL:
             self.state = self.STATE_PREPARE
+            print("prepare: ", self.state)
             self.next_part = part_name
 
     def update_beat_counter(self, note):
@@ -45,6 +46,7 @@ class BeatAdvanceManager:
             if self.state == self.STATE_PREPARE:
                 self.state = self.STATE_WARNING
             elif self.state == self.STATE_WARNING:
+                print("warning: ",self.state)
                 self.state = self.STATE_NORMAL
                 self.current_part = self.next_part
 
@@ -54,6 +56,7 @@ class BeatAdvanceManager:
 
 class DisplayServer:
     server = None
+    note = None
 
     def __init__(self, beat_manager, songgraphic, utterances, beat, part_info):
         self.beat_manager = beat_manager
@@ -83,12 +86,14 @@ class DisplayServer:
         self.beat_manager.update_next_part(next_part)
 
     def beat_handler(self, _, note):
-        print('DisplayServer: Receiving "{}"'.format(note))
-        self.beat_manager.update_beat_counter(note)
-        self.beat.update(self.beat_manager.counter, self.beat_manager.is_warning()) # font_color is changed
-        self.part_info.update(current_part=self.beat_manager.current_part,
-                              next_part=self.beat_manager.next_part)
-        self.processing_part_info_update(self.beat_manager.current_part, self.beat_manager.next_part)
+        if note != self.note:
+            self.note = note
+            print('DisplayServer: Receiving "{}"'.format(note))
+            self.beat_manager.update_beat_counter(note)
+            self.beat.update(self.beat_manager.counter, self.beat_manager.is_warning()) # font_color is changed
+            self.part_info.update(current_part=self.beat_manager.current_part,
+                                  next_part=self.beat_manager.next_part)
+            self.processing_part_info_update(self.beat_manager.current_part, self.beat_manager.next_part)
 
     def processing_part_info_update(self, current_part, next_part):
         if current_part == next_part:
