@@ -94,6 +94,7 @@ class DisplayServer:
         if current_part == next_part:
             processing_client.send_message(settings.SONG_ADVANCE_ADDRESS, current_part)
         processing_client.send_message("/part_info", [current_part, next_part])
+        # TODO send transitions of that part according to json data
 
     async def loop(self):
         while True:
