@@ -6,6 +6,7 @@ from config import settings
 
 class SongServer:
     server = None
+    beat_manager = False
 
     def __init__(self, osculator_client, display_client, machine):
         self.osculator_client = osculator_client
@@ -14,6 +15,7 @@ class SongServer:
 
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.message_handler)
+        dispatcher.map(settings.BEATMANAGER_ADDRESS, self.message_handler)
         self.server = ThreadingOSCUDPServer((settings.ip, settings.INTERPRETER_PORT), dispatcher)
 
         self.song_scenes = {k: v for k, v in zip(
@@ -28,7 +30,6 @@ class SongServer:
         level = osc_map['level']
         self.osculator_client.send_message('/rack', (level / 10))
         self.osculator_client.send_message('/osc_notes', (level + 90, 100, 1.0))
-        
         self.osculator_client.send_message('/osc_notes', (level + 90, 100, 0.0))
         current_state = self._song_machine.current_state
         self._song_machine.update_state(osc_map['cat'])

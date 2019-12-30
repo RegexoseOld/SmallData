@@ -28,11 +28,12 @@ class BeatAdvanceManager:
     STATE_PREPARE = 1
     STATE_WARNING = 2
 
-    def __init__(self):
+    def __init__(self, song_client):
         self.state = self.STATE_NORMAL
         self.counter = ''
         self.next_part = 'intro'
         self.current_part = 'Unknown'
+        self.song_client = song_client
 
     def update_next_part(self, part_name):
         if self.state == self.STATE_NORMAL:
@@ -49,6 +50,7 @@ class BeatAdvanceManager:
                 print("warning: ",self.state)
                 self.state = self.STATE_NORMAL
                 self.current_part = self.next_part
+                self.song_client.send_message(settings.BEATMANAGER_ADDRESS, True)
 
     def is_warning(self):
         return self.state == self.STATE_WARNING

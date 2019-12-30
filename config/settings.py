@@ -12,6 +12,7 @@ song_path = path.join(BASE_DIR, 'config', song_file)
 ip = "127.0.0.1"
 SONG_ADVANCE_ADDRESS = '/advance'
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
+BEATMANAGER_ADDRESS = "/beat_manager"
 INTERPRETER_PORT = 5020
 OSCULATOR_PORT = 5010
 OSCULATOR_TARGET_ADDRESS = "/osculator_input"

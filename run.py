@@ -53,6 +53,7 @@ elif args.app == 'frontend':
     os.chdir('frontend')
     p = subprocess.check_call(["npm", "start"])
 elif args.app == 'display':
+    from mocks.mock_interpreter_client import song_client
     from song.display.playhead import Playhead
     from song.display.song_status import SongStatus
     from song.display.display_server import DisplayServer, BeatAdvanceManager
@@ -62,12 +63,11 @@ elif args.app == 'display':
     playhead = Playhead()
     #  TODO use actula states of song
     song_surface = SongStatus(settings.song_file, ["intro", "scene02", "scene03"], playhead)
-    beat_manager = BeatAdvanceManager()
+    beat_manager = BeatAdvanceManager(song_client)
     utterances_surface = Utterances()
     beat_surface = Beat()
     partinfo_surface = PartInfo()
     display_server = DisplayServer(beat_manager, song_surface, utterances_surface, beat_surface, partinfo_surface)
-
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(display_server.init_main())
 elif args.app == 'interpreter':
