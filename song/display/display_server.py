@@ -27,11 +27,12 @@ class BeatAdvanceManager:
     STATE_PREPARE = 1
     STATE_WARNING = 2
 
+
     def __init__(self):
         self.state = self.STATE_NORMAL
-        self.counter = ''
         self.next_part = 'Unknown'
         self.current_part = 'Unknown'
+        self.__first_beat_of_normal = False
 
     def update_next_part(self, part_name):
         if self.state == self.STATE_NORMAL:
@@ -39,16 +40,20 @@ class BeatAdvanceManager:
             self.next_part = part_name
 
     def update_beat_counter(self, note):
-        self.counter = settings.note_to_beat[note]
+        self.__first_beat_of_normal = False
         if note == settings.note_to_beat['first_note_in_bar']:
             if self.state == self.STATE_PREPARE:
                 self.state = self.STATE_WARNING
             elif self.state == self.STATE_WARNING:
                 self.state = self.STATE_NORMAL
                 self.current_part = self.next_part
+                self.__first_beat_of_normal = True
 
     def is_warning(self):
         return self.state == self.STATE_WARNING
+
+    def is_start_of_normal(self):
+        return self.__first_beat_of_normal
 
 
 class DisplayServer:

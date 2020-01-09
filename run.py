@@ -40,13 +40,15 @@ elif args.app == 'song':
     from pythonosc import udp_client
     from song import song_machine
     from song.song_server import SongServer
+    from song.display.display_server import BeatAdvanceManager
 
     oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
-    disp_client = udp_client.SimpleUDPClient(settings.ip, settings.DISPLAY_PORT)
+    disp_client = udp_client.SimpleUDPClient(settings.ip, settings.PROCESSING_PORT)
 
     machine_instance = song_machine.create_instance(settings.song_path)
+    beat_manager = BeatAdvanceManager()
 
-    song_server = SongServer(oscul_client, disp_client, machine_instance)
+    song_server = SongServer(oscul_client, disp_client, machine_instance, beat_manager)
     song_server.server.serve_forever()
     # p = subprocess.check_call(["python", "song/song_server.py"])
 elif args.app == 'frontend':

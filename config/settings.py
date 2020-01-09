@@ -18,6 +18,7 @@ OSCULATOR_PORT = 5010
 OSCULATOR_TARGET_ADDRESS = "/osculator_input"
 DISPLAY_TARGET_ADDRESS = "/display_input"
 DISPLAY_PORT = 5030
+PROCESSING_PORT = 5040
 
 
 # MIDI-note-to-beat-counter-conversion (for Ableton)
