@@ -13,7 +13,7 @@ from config import settings
 
 clf = Classifier(settings.DATA_DIR)
 #   Client for a simple Feedback from Ableton Live
-song_client = MusicClient('127.0.0.1', settings.INTERPRETER_PORT)
+song_client = MusicClient('127.0.0.1', settings.SONG_SERVER_PORT)
 display_client = MusicClient('127.0.0.1', settings.DISPLAY_PORT)
 
 

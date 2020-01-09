@@ -14,8 +14,9 @@ class SongServer:
         self._song_machine = machine
 
         dispatcher = Dispatcher()
-        dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.message_handler)
-        self.server = ThreadingOSCUDPServer((settings.ip, settings.INTERPRETER_PORT), dispatcher)
+        dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
+        dispatcher.map(settings.SONG_BEAT_ADDRESS, self.beat_handler)
+        self.server = ThreadingOSCUDPServer((settings.ip, settings.SONG_SERVER_PORT), dispatcher)
 
         self.song_scenes = {k: v for k, v in zip(
             self._song_machine.parser.states,
@@ -41,7 +42,10 @@ class SongServer:
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.advance_to_scene, 0.0))
             self.display_client.send_message(settings.SONG_ADVANCE_ADDRESS, self._song_machine.current_state.name)
 
-    def message_handler(self, address, content):
+    def interpreter_handler(self, address, content):
         osc_map = pickle.loads(content)
         print('address: {}\nmap: {}'.format(address, osc_map))
         self._update_song(osc_map)
+
+    def beat_handler(self, _, counter):
+        print('SongServer, beat: {}'.format(counter))

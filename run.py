@@ -74,8 +74,8 @@ elif args.app == 'interpreter':
     from mocks import mock_interpreter_client
     mock_interpreter_client.run_mock()
 elif args.app == 'osculator':
-    from mocks import mock_osculator_client
-    mock_osculator_client.run_mock()
+    from mocks import beat_mock
+    beat_mock.run_mock()
 
 else:
     raise Exception('Unknown command: {}. Please see run.py for options'.format(args.app))

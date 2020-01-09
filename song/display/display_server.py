@@ -73,6 +73,7 @@ class DisplayServer:
 
     def message_handler(self, _, content):
         osc_map = pickle.loads(content)
+        print("DisplayServer, received {}".format(osc_map))
         self.utterances.update(osc_map)
         self._update_display_objects(osc_map)
 
@@ -99,8 +100,6 @@ class DisplayServer:
                     return False
                 elif event.type == pygame.KEYDOWN:
                     self.song_graphic.handle_input(event.key)
-
-            # 2self.screen.blit(self.song_state_surf, (15, 325))
 
             self.utterances.render(self.screen, pos=(15, 350))
             self.beat.render(self.screen, pos=(600, 50))
