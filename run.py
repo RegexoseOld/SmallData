@@ -39,8 +39,7 @@ if args.app == 'backend':
 elif args.app == 'song':
     from pythonosc import udp_client
     from song import song_machine
-    from song.song_server import SongServer
-    from song.display.display_server import BeatAdvanceManager
+    from song.song_server import SongServer, BeatAdvanceManager
 
     oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
     disp_client = udp_client.SimpleUDPClient(settings.ip, settings.PROCESSING_PORT)
