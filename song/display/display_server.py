@@ -27,7 +27,6 @@ class BeatAdvanceManager:
     STATE_PREPARE = 1
     STATE_WARNING = 2
 
-
     def __init__(self):
         self.state = self.STATE_NORMAL
         self.next_part = 'Unknown'

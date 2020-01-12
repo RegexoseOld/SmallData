@@ -42,8 +42,8 @@ class SongServer:
     def beat_handler(self, _, counter):
         print('SongServer, beat: {}'.format(counter))
         self.beat_manager.update_beat_counter(counter)
+        self.send_part(counter)
         if self.beat_manager.is_start_of_normal():
-            self.send_part()
             self.song_machine.release_lock()
 
     def send_level(self, level):
@@ -51,8 +51,12 @@ class SongServer:
         self.osculator_client.send_message('/osc_notes', (level + 90, 100, 1.0))
         self.osculator_client.send_message('/osc_notes', (level + 90, 100, 0.0))
 
-    def send_part(self):
-        advance_to_scene = self.song_scenes[self.song_machine.current_state.name]
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (advance_to_scene, 1.0))
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (advance_to_scene, 0.0))
-        self.display_client.send_message(settings.SONG_ADVANCE_ADDRESS, self.song_machine.current_state.name)
+    def send_part(self, counter):
+        next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
+
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (next_part, 1.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (next_part, 0.0))
+        self.display_client.send_message(
+            settings.SONG_ADVANCE_ADDRESS,
+            (counter, self.beat_manager.is_warning(), self.beat_manager.current_part, next_part)
+        )
