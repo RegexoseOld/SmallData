@@ -21,15 +21,16 @@ void oscEvent(OscMessage theOscMessage) {
   } else if (theOscMessage.checkAddrPattern("/beat") == true) {
     beat = theOscMessage.get(0).stringValue();
     int c = 150;
-    println(theOscMessage.get(1).stringValue());
     if (theOscMessage.get(1).stringValue().equals("True")) {
       c = 20;
     }
-    
-    //hex_color = theOscMessage.get(1).stringValue();   unhex(hex_color);
     beat_update(beat, c); 
-  
-  } else if (theOscMessage.checkAddrPattern("/advance") == true) {
+
+    current_part_name = theOscMessage.get(2).stringValue();
+    next_part_name = theOscMessage.get(3).stringValue();
+    task_update(current_part_name, next_part_name);
+   
+   } else if (theOscMessage.checkAddrPattern("/advance") == true) {
     String advance_to = theOscMessage.get(0).stringValue();
     if (advance_to.equals(previous_part_name) == false) {
       println("advance to:   " + advance_to); 

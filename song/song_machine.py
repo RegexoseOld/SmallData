@@ -66,10 +66,10 @@ class SongMachine:
         self.category_counter = {}.fromkeys(categories, 0) if categories else {}
 
     def set_lock(self):
-        self.__lock = False
+        self.__lock = True
 
     def release_lock(self):
-        self.__lock = True
+        self.__lock = False
 
     def is_locked(self):
         return self.__lock
