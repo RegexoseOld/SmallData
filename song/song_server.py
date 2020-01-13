@@ -72,7 +72,7 @@ class SongServer:
         self.song_machine.update_state(osc_map['cat'])
 
         if current_state != self.song_machine.current_state:
-            self.beat_manager.update_next_part(self.song_machine.current_state)
+            self.beat_manager.update_next_part(self.song_machine.current_state.name)
             self.song_machine.set_lock()
 
     def beat_handler(self, _, counter):
