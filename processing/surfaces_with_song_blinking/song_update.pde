@@ -78,7 +78,7 @@ void current_part_blink(PartsPosition pp) {
   /* Problem ist wahrscheinlich eine Zeitüberschneidung. OSC ruft song_update() auf, während 
   die 12 Frames noch nicht vorbei sind, die den blinker ausschalten. Also bleibt dieser part dann uU hell
   */
-  println("part bg: " + pp.bg);
+  // println("part bg: " + pp.bg);
   if (blinker) {
     pp.surface.beginDraw();
     pp.bg = 222;

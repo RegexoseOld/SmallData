@@ -1,7 +1,7 @@
 /* incoming osc message are forwarded to the oscEvent method. */
 void oscEvent(OscMessage theOscMessage) {
   /* print the address pattern and the typetag of the received OscMessage */
-  //println(" addrpattern: "+theOscMessage.addrPattern() +"\n");
+  println(" addrpattern: "+theOscMessage.addrPattern() +"\n");
   // println(" typetag: "+theOscMessage.typetag() +"\n");
   if(theOscMessage.checkAddrPattern("/parts") == true) {
     String part = theOscMessage.get(0).stringValue();
@@ -18,16 +18,21 @@ void oscEvent(OscMessage theOscMessage) {
     // println("current part:     " + current_part_name + "   next part:     " + next_part_name);
     task_update(current_part_info, next_part_name);
   
-  } else if (theOscMessage.checkAddrPattern("/beat_number") == true) {
+  } else if (theOscMessage.checkAddrPattern("/beat") == true) {
     beat = theOscMessage.get(0).stringValue();
-    hex_color = theOscMessage.get(1).stringValue();
-    col = unhex(hex_color);
-    beat_update(beat, col); 
+    int c = 150;
+    println(theOscMessage.get(1).stringValue());
+    if (theOscMessage.get(1).stringValue().equals("True")) {
+      c = 20;
+    }
+    
+    //hex_color = theOscMessage.get(1).stringValue();   unhex(hex_color);
+    beat_update(beat, c); 
   
   } else if (theOscMessage.checkAddrPattern("/advance") == true) {
     String advance_to = theOscMessage.get(0).stringValue();
     if (advance_to.equals(previous_part_name) == false) {
-      println("advance to:   " + advance_to);
+      println("advance to:   " + advance_to); 
       song_update(advance_to); 
     }
   

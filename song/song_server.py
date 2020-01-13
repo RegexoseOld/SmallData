@@ -17,6 +17,7 @@ class BeatAdvanceManager:
         self.state = self.STATE_NORMAL
         self.next_part = 'Unknown'
         self.current_part = 'Unknown'
+        self.__counter = 0
         self.__first_beat_of_normal = False
 
     def update_next_part(self, part_name):
@@ -24,15 +25,20 @@ class BeatAdvanceManager:
             self.state = self.STATE_PREPARE
             self.next_part = part_name
 
-    def update_beat_counter(self, note):
-        self.__first_beat_of_normal = False
-        if note == settings.note_to_beat['first_note_in_bar']:
-            if self.state == self.STATE_PREPARE:
-                self.state = self.STATE_WARNING
-            elif self.state == self.STATE_WARNING:
-                self.state = self.STATE_NORMAL
-                self.current_part = self.next_part
-                self.__first_beat_of_normal = True
+    def update_beat_counter(self, counter):
+        if counter == self.__counter:
+            return False
+        else:
+            self.__counter = counter
+            self.__first_beat_of_normal = False
+            if counter == settings.note_to_beat['first_count_in_bar']:
+                if self.state == self.STATE_PREPARE:
+                    self.state = self.STATE_WARNING
+                elif self.state == self.STATE_WARNING:
+                    self.state = self.STATE_NORMAL
+                    self.current_part = self.next_part
+                    self.__first_beat_of_normal = True
+            return True
 
     def is_warning(self):
         return self.state == self.STATE_WARNING
@@ -75,12 +81,12 @@ class SongServer:
             self.beat_manager.update_next_part(self.song_machine.current_state.name)
             self.song_machine.set_lock()
 
-    def beat_handler(self, _, counter):
-        print('SongServer, beat: {}'.format(counter))
-        self.beat_manager.update_beat_counter(counter)
-        self.send_part(counter)
-        if self.beat_manager.is_start_of_normal():
-            self.song_machine.release_lock()
+    def beat_handler(self, _, note):
+        counter = settings.note_to_beat[note]
+        if self.beat_manager.update_beat_counter(counter):
+            self.send_part(counter)
+            if self.beat_manager.is_start_of_normal():
+                self.song_machine.release_lock()
 
     def send_level(self, level):
         self.osculator_client.send_message('/rack', (level / 10))
@@ -92,7 +98,6 @@ class SongServer:
 
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (next_part, 1.0))
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (next_part, 0.0))
-        self.display_client.send_message(
-            settings.SONG_ADVANCE_ADDRESS,
-            (counter, self.beat_manager.is_warning(), self.beat_manager.current_part, next_part)
-        )
+        message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part, next_part)
+        print('SongerServer. sending: ', message)
+        self.display_client.send_message(settings.SONG_BEAT_ADDRESS, message)

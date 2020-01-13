@@ -32,7 +32,9 @@ void beat_update(String beat, int c) {
   countdown_surf.background(222);
   countdown_surf.textFont(Arial, 40);
   // see https://forum.processing.org/two/discussion/23953/convert-a-string-to-a-hexidecimal
-  countdown_surf.fill(0xff000000 | c);
+  // countdown_surf.fill(0xff000000 | c);
+  countdown_surf.fill(c);
+
   countdown_surf.textAlign(CENTER, CENTER);
   countdown_surf.text(beat, countdown_surf.width/2, countdown_surf.height/2);
   countdown_surf.endDraw();

@@ -27,5 +27,5 @@ note_to_beat = {
     122: '2',
     123: '3',
     124: '4',
-    'first_note_in_bar': 121
+    'first_count_in_bar': '1'
 }
