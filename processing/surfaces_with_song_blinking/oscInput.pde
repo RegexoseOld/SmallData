@@ -20,9 +20,9 @@ void oscEvent(OscMessage theOscMessage) {
   
   } else if (theOscMessage.checkAddrPattern("/beat") == true) {
     beat = theOscMessage.get(0).stringValue();
-    int c = 150;
+    color c = color(0, 153, 0);
     if (theOscMessage.get(1).stringValue().equals("True")) {
-      c = 20;
+      c = color(255 , 0 , 0);
     }
     beat_update(beat, c); 
 

@@ -43,36 +43,6 @@ void song_update(String new_part_name) {
     } 
   }
 }
-/*
-void current_part_blink(PGraphics part_surf) {
-  //Problem ist wahrscheinlich eine Zeitüberschneidung. OSC ruft song_update() auf, während 
-  // die 12 Frames noch nicht vorbei sind, die den blinker ausschalten. Also bleibt dieser part dann uU hell
-  
-  println("part bg: " + part_surf.bg);
-  if (blinker) {
-    part_surf.beginDraw();
-    part_surf.background(222);
-    part_surf.bg.set(222);
-    part_surf.textFont(Arial, 10);
-    part_surf.textAlign(CENTER);
-    part_surf.fill(20);
-    part_surf.text(current_part_name, part_surf.width/2, part_surf.height/2);
-    part_surf.noFill();
-    part_surf.rect(0, 0, part_surf.width -1, part_surf.height -1);
-    part_surf.endDraw();
-  }  else {
-    part_surf.beginDraw();
-    part_surf.background(250);
-    part_surf.textFont(Arial, 10);
-    part_surf.textAlign(CENTER);
-    part_surf.text(current_part_name, part_surf.width/2, part_surf.height/2);
-    part_surf.noFill();
-    part_surf.rect(0, 0, part_surf.width -1, part_surf.height -1);
-    part_surf.endDraw();
-  } 
-  update_music_surf(part_surf, pos_x);
-}
-*/
 
 void current_part_blink(PartsPosition pp) {
   /* Problem ist wahrscheinlich eine Zeitüberschneidung. OSC ruft song_update() auf, während 
@@ -103,17 +73,3 @@ void current_part_blink(PartsPosition pp) {
   } 
   update_music_surf(pp.surface, pos_x);
 }
-/*
-void reset_surf(PGraphics surface, float position) {
-  println("reset surf");
-    surface.beginDraw();
-    surface.background(180);
-    surface.textFont(Arial, 10);
-    surface.textAlign(CENTER);
-    surface.fill(20);
-    surface.text(previous_part_name, part_surf.width/2, part_surf.height/2);
-    surface.noFill();
-    surface.rect(0, 0, part_surf.width -1, part_surf.height -1);
-    surface.endDraw();
-  update_music_surf(surface, position);
-} */

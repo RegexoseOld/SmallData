@@ -16,7 +16,7 @@ void task_update(String current, String next) {
   // next_part_name = next;
   next_surf.beginDraw();
   next_surf.background(222);
-  next_surf.textFont(Arial, 14);
+  next_surf.textFont(Arial, 20);
   next_surf.fill(0);
   next_surf.textAlign(CENTER);
   next_surf.text(("current part is: " + current), next_surf.width/2, next_surf.height/4);
@@ -27,10 +27,10 @@ void task_update(String current, String next) {
   task_surf.endDraw();
 }
 
-void beat_update(String beat, int c) {
+void beat_update(String beat, color c) {
   countdown_surf.beginDraw();
   countdown_surf.background(222);
-  countdown_surf.textFont(Arial, 40);
+  countdown_surf.textFont(Arial, 50);
   // see https://forum.processing.org/two/discussion/23953/convert-a-string-to-a-hexidecimal
   // countdown_surf.fill(0xff000000 | c);
   countdown_surf.fill(c);
