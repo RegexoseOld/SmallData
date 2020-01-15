@@ -1,5 +1,6 @@
 void song_build(StringList parts) {
   for (String part : parts) {
+    println(part);
     part_surf = createGraphics(song_surf.width/parts.size(), song_surf.height);
     part_surf.beginDraw();
     part_surf.textFont(Arial, 10);
@@ -19,7 +20,7 @@ void song_build(StringList parts) {
   music_surf.beginDraw();
   music_surf.image(song_surf, music_surf.width/20, music_surf.height/3);
   music_surf.endDraw();
-  song_update("intro");
+  song_update("9");
 }
 
 void song_update(String new_part_name) {

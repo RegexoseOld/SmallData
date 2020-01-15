@@ -5,7 +5,7 @@ void oscEvent(OscMessage theOscMessage) {
   // println(" typetag: "+theOscMessage.typetag() +"\n");
   if(theOscMessage.checkAddrPattern("/parts") == true) {
     String part = theOscMessage.get(0).stringValue();
-    if (part.equals("ende")) {
+    if (part.equals("13")) {
       part_list.append(part);
       song_build(part_list);
       loop();

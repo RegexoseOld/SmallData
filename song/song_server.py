@@ -44,7 +44,6 @@ class BeatAdvanceManager:
         return self.state == self.STATE_WARNING
 
 
-
 class SongServer:
     def __init__(self, osculator_client, display_client, machine, beat_manager):
         self.osculator_client = osculator_client
@@ -62,8 +61,8 @@ class SongServer:
             range(len(self.song_machine.parser.states)
                   ))}
 
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 1.0))
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 0.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (9, 1.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (9, 0.0))
 
     def interpreter_handler(self, _, content):
         if self.song_machine.is_locked():
@@ -95,8 +94,8 @@ class SongServer:
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
 
         if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_WARNING):
-            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (next_part, 1.0))
-            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (next_part, 0.0))
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part), 1.0))
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part), 0.0))
 
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part, next_part)
         print('SongerServer. sending: ', message)

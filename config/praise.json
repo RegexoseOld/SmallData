@@ -1,117 +1,117 @@
 {
-  "states": ["intro", "scene02",  "scene03", "scene04", "scene05",
-    "scene06", "scene07", "scene08", "scene09", "scene10", "scene11", "scene12",
-    "scene13", "scene14", "scene15", "ende"],
+  "states": ["1", "2",  "3", "4", "5",
+    "6", "7", "8", "9", "11", "11", "12",
+    "13", "14", "15", "16"],
   "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
   "transitions": [
     [
-      "intro",
-      "scene02",
+      "1",
+      "2",
       "lecture > 2"
     ],
      [
-      "intro",
-      "scene03",
+      "1",
+      "3",
       "concession > 2"
     ],
      [
-      "intro",
-      "scene08",
+      "1",
+      "8",
       "insinuation > 2"
     ],
     [
-      "scene02",
-      "scene03",
+      "2",
+      "3",
       "praise > 1"
     ],
     [
-      "scene02",
-      "intro",
+      "2",
+      "1",
       "lecture > 1"
     ],
     [
-      "scene03",
-      "scene05",
+      "3",
+      "5",
       "praise > 2"
     ],
     [
-      "scene03",
-      "scene06",
+      "3",
+      "6",
       "concession > 1"
     ],
      [
-      "scene05",
-      "scene06",
+      "5",
+      "6",
       "concession > 1"
     ],
     [
-      "scene05",
-      "scene03",
+      "5",
+      "3",
       "insinuation > 1"
     ],
     [
-      "scene05",
-      "scene07",
+      "5",
+      "7",
       "praise > 1"
     ],
      [
-      "scene06",
-      "scene15",
+      "6",
+      "15",
       "concession > 2"
     ],
     [
-      "scene06",
-      "scene07",
+      "6",
+      "7",
       "praise > 2"
     ],
     [
-      "scene07",
-      "scene08",
+      "7",
+      "8",
       "praise > 1"
     ],
     [
-      "scene08",
-      "scene09",
+      "8",
+      "9",
       "concession > 1"
     ],
     [
-      "scene08",
-      "scene10",
+      "8",
+      "11",
       "dissence > 1"
     ],
     [
-      "scene09",
-      "scene08",
+      "9",
+      "8",
       "lecture > 1"
     ],
     [
-      "scene09",
-      "scene10",
+      "9",
+      "11",
       "praise > 1"
     ],
      [
-      "scene10",
-      "scene14",
+      "11",
+      "14",
       "concession > 2"
     ],
      [
-      "scene13",
-      "scene14",
+      "13",
+      "14",
       "dissence > 1"
     ],
     [
-      "scene14",
-      "scene15",
+      "14",
+      "15",
       "lecture > 2"
     ],
     [
-      "scene15",
-      "ende",
+      "15",
+      "16",
       "praise > 2"
     ],
     [
-      "scene15",
-      "scene13",
+      "15",
+      "13",
       "lecture > 1"
     ]
   ]

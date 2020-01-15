@@ -5,7 +5,7 @@ BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 DATA_DIR = path.join(BASE_DIR, 'webserver/model_data')
 
 # Song settings
-song_file = 'praise.json'
+song_file = 'WirSind.json'
 song_path = path.join(BASE_DIR, 'config', song_file)
 
 # OSC-Settings
@@ -23,9 +23,13 @@ PROCESSING_PORT = 5040
 
 # MIDI-note-to-beat-counter-conversion (for Ableton)
 note_to_beat = {
-    121: '1',
-    122: '2',
-    123: '3',
-    124: '4',
+    120: '1',
+    121: '2',
+    122: '3',
+    123: '4',
+    124: '5',
+    125: '6',
+    126: '7',
+    127: '8',
     'first_count_in_bar': '1'
 }
