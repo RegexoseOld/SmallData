@@ -5,43 +5,98 @@ from pythonosc.dispatcher import Dispatcher
 from config import settings
 
 
-class SongServer:
-    server = None
+class BeatAdvanceManager:
+    """ A simple state machine. Machine starts in 'normal' state. When the next part is changed,
+    machine changes to 'prepare'. On the next '1' machine moves to 'warning', then on the next
+    '1' back to 'normal' """
+    STATE_NORMAL = 0
+    STATE_PREPARE = 1
+    STATE_WARNING = 2
 
-    def __init__(self, osculator_client, display_client, machine):
+    def __init__(self):
+        self.state = self.STATE_NORMAL
+        self.next_part = 'Unknown'
+        self.current_part = 'Unknown'
+        self.__counter = 0
+
+    def update_next_part(self, part_name):
+        if self.state == self.STATE_NORMAL:
+            self.state = self.STATE_PREPARE
+            self.next_part = part_name
+
+    def update_beat_counter(self, counter):
+        if counter == self.__counter:
+            return False
+        else:
+            self.__counter = counter
+            if counter == settings.note_to_beat['first_count_in_bar']:
+                if self.state == self.STATE_PREPARE:
+                    self.state = self.STATE_WARNING
+                elif self.state == self.STATE_WARNING:
+                    self.state = self.STATE_NORMAL
+                    self.current_part = self.next_part
+            return True
+
+    def check_is_one_of_state(self, state):
+        return (self.__counter == '1') and (self.state == state)
+
+    def is_warning(self):
+        return self.state == self.STATE_WARNING
+
+
+class SongServer:
+    def __init__(self, osculator_client, display_client, machine, beat_manager):
         self.osculator_client = osculator_client
         self.display_client = display_client
-        self._song_machine = machine
+        self.song_machine = machine
+        self.beat_manager = beat_manager
 
         dispatcher = Dispatcher()
-        dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.message_handler)
-        self.server = ThreadingOSCUDPServer((settings.ip, settings.INTERPRETER_PORT), dispatcher)
+        dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
+        dispatcher.map(settings.SONG_BEAT_ADDRESS, self.beat_handler)
+        self.server = ThreadingOSCUDPServer((settings.ip, settings.SONG_SERVER_PORT), dispatcher)
 
         self.song_scenes = {k: v for k, v in zip(
-            self._song_machine.parser.states,
-            range(len(self._song_machine.parser.states)
+            self.song_machine.parser.states,
+            range(len(self.song_machine.parser.states)
                   ))}
 
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 1.0))
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 0.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (9, 1.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (9, 0.0))
 
-    def _update_song(self, osc_map):
-        level = osc_map['level']
+    def interpreter_handler(self, _, content):
+        if self.song_machine.is_locked():
+            return
+
+        osc_map = pickle.loads(content)
+        self.send_level(osc_map['level'])
+
+        current_state = self.song_machine.current_state
+        self.song_machine.update_state(osc_map['cat'])
+
+        if current_state != self.song_machine.current_state:
+            self.beat_manager.update_next_part(self.song_machine.current_state.name)
+            self.song_machine.set_lock()
+
+    def beat_handler(self, _, note):
+        counter = settings.note_to_beat[note]
+        if self.beat_manager.update_beat_counter(counter):
+            self.send_part(counter)
+            if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_NORMAL):
+                self.song_machine.release_lock()
+
+    def send_level(self, level):
         self.osculator_client.send_message('/rack', (level / 10))
         self.osculator_client.send_message('/osc_notes', (level + 90, 100, 1.0))
-        
         self.osculator_client.send_message('/osc_notes', (level + 90, 100, 0.0))
-        current_state = self._song_machine.current_state
-        self._song_machine.update_state(osc_map['cat'])
-        if current_state != self._song_machine.current_state:
-            self.advance_to_scene = self.song_scenes[self._song_machine.current_state.name]
-            print('update with status: {}\ncurrent_state: {}\nadvance_to_scene: {}'
-                  .format(osc_map['cat'], self._song_machine.current_state.name, self.advance_to_scene))
-            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.advance_to_scene, 1.0))
-            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.advance_to_scene, 0.0))
-            self.display_client.send_message(settings.SONG_ADVANCE_ADDRESS, self._song_machine.current_state.name)
 
-    def message_handler(self, address, content):
-        osc_map = pickle.loads(content)
-        print('address: {}\nmap: {}'.format(address, osc_map))
-        self._update_song(osc_map)
+    def send_part(self, counter):
+        next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
+
+        if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_WARNING):
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part), 1.0))
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part), 0.0))
+
+        message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part, next_part)
+        print('SongerServer. sending: ', message)
+        self.display_client.send_message(settings.SONG_BEAT_ADDRESS, message)

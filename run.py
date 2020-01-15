@@ -39,14 +39,15 @@ if args.app == 'backend':
 elif args.app == 'song':
     from pythonosc import udp_client
     from song import song_machine
-    from song.song_server import SongServer
+    from song.song_server import SongServer, BeatAdvanceManager
 
     oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
-    disp_client = udp_client.SimpleUDPClient(settings.ip, settings.DISPLAY_PORT)
+    disp_client = udp_client.SimpleUDPClient(settings.ip, settings.PROCESSING_PORT)
 
     machine_instance = song_machine.create_instance(settings.song_path)
+    beat_manager = BeatAdvanceManager()
 
-    song_server = SongServer(oscul_client, disp_client, machine_instance)
+    song_server = SongServer(oscul_client, disp_client, machine_instance, beat_manager)
     song_server.server.serve_forever()
     # p = subprocess.check_call(["python", "song/song_server.py"])
 elif args.app == 'frontend':
@@ -74,8 +75,8 @@ elif args.app == 'interpreter':
     from mocks import mock_interpreter_client
     mock_interpreter_client.run_mock()
 elif args.app == 'osculator':
-    from mocks import mock_osculator_client
-    mock_osculator_client.run_mock()
+    from mocks import beat_mock
+    beat_mock.run_mock()
 
 else:
     raise Exception('Unknown command: {}. Please see run.py for options'.format(args.app))

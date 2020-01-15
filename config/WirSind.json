@@ -1,0 +1,91 @@
+{
+  "states": ["5", "9",  "11", "12", "13"],
+  "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
+  "transitions": [
+    [
+      "9",
+      "11",
+      "lecture > 2"
+    ],
+     [
+      "9",
+      "12",
+      "concession > 2"
+    ],
+     [
+      "9",
+      "5",
+      "insinuation > 2"
+    ],
+    [
+      "9",
+      "13",
+      "praise > 1"
+    ],
+    [
+      "11",
+      "9",
+      "lecture > 1"
+    ],
+    [
+      "11",
+      "5",
+      "praise > 2"
+    ],
+    [
+      "11",
+      "12",
+      "concession > 1"
+    ],
+     [
+      "11",
+      "13",
+      "concession > 1"
+    ],
+    [
+      "12",
+      "9",
+      "insinuation > 1"
+    ],
+    [
+      "12",
+      "11",
+      "praise > 1"
+    ],
+     [
+      "12",
+      "13",
+      "concession > 2"
+    ],
+    [
+      "12",
+      "5",
+      "praise > 2"
+    ],
+    [
+      "5",
+      "11",
+      "praise > 1"
+    ],
+    [
+      "5",
+      "12",
+      "concession > 1"
+    ],
+    [
+      "5",
+      "13",
+      "dissence > 1"
+    ],
+    [
+      "13",
+      "5",
+      "lecture > 1"
+    ],
+    [
+      "13",
+      "11",
+      "praise > 1"
+    ]
+  ]
+}

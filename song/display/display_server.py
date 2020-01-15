@@ -19,38 +19,6 @@ font_color = 155, 155, 0
 refresh_rate = 10.  # Hz
 
 
-class BeatAdvanceManager:
-    """ A simple state machine. Machine starts in 'normal' state. When the next part is changed,
-    machine changes to 'prepare'. On the next '1' machine moves to 'warning', then on the next
-    '1' back to 'normal' """
-    STATE_NORMAL = 0
-    STATE_PREPARE = 1
-    STATE_WARNING = 2
-
-    def __init__(self):
-        self.state = self.STATE_NORMAL
-        self.counter = ''
-        self.next_part = 'Unknown'
-        self.current_part = 'Unknown'
-
-    def update_next_part(self, part_name):
-        if self.state == self.STATE_NORMAL:
-            self.state = self.STATE_PREPARE
-            self.next_part = part_name
-
-    def update_beat_counter(self, note):
-        self.counter = settings.note_to_beat[note]
-        if note == settings.note_to_beat['first_note_in_bar']:
-            if self.state == self.STATE_PREPARE:
-                self.state = self.STATE_WARNING
-            elif self.state == self.STATE_WARNING:
-                self.state = self.STATE_NORMAL
-                self.current_part = self.next_part
-
-    def is_warning(self):
-        return self.state == self.STATE_WARNING
-
-
 class DisplayServer:
     server = None
 
@@ -73,6 +41,7 @@ class DisplayServer:
 
     def message_handler(self, _, content):
         osc_map = pickle.loads(content)
+        print("DisplayServer, received {}".format(osc_map))
         self.utterances.update(osc_map)
         self._update_display_objects(osc_map)
 
@@ -99,8 +68,6 @@ class DisplayServer:
                     return False
                 elif event.type == pygame.KEYDOWN:
                     self.song_graphic.handle_input(event.key)
-
-            # 2self.screen.blit(self.song_state_surf, (15, 325))
 
             self.utterances.render(self.screen, pos=(15, 350))
             self.beat.render(self.screen, pos=(600, 50))

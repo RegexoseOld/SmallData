@@ -54,6 +54,7 @@ class SongMachine:
     last_state = None
     parser = None
     category_counter = {}
+    __lock = False
 
     def __init__(self, parser):
         self.parser = parser
@@ -63,6 +64,15 @@ class SongMachine:
 
     def _reset_counter(self, categories):
         self.category_counter = {}.fromkeys(categories, 0) if categories else {}
+
+    def set_lock(self):
+        self.__lock = True
+
+    def release_lock(self):
+        self.__lock = False
+
+    def is_locked(self):
+        return self.__lock
 
     def update_state(self, category):
         self.category_counter[category] += 1
