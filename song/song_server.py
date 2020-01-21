@@ -14,10 +14,10 @@ class BeatAdvanceManager:
     STATE_PREPARE = 1
     STATE_WARNING = 2
 
-    def __init__(self):
+    def __init__(self, first_part_name):
         self.state = self.STATE_NORMAL
-        self.next_part = State('Unknown', 0)
-        self.current_part = State('Unknown', 0)
+        self.next_part = State(first_part_name, 0)
+        self.current_part = State(first_part_name, 0)
         self.__counter = 0
 
     def update_next_part(self, part):

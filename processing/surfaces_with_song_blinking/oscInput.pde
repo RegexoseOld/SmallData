@@ -28,12 +28,15 @@ void oscEvent(OscMessage theOscMessage) {
     current_part_name = theOscMessage.get(2).stringValue();
     next_part_name = theOscMessage.get(3).stringValue();
     task_update(current_part_name, next_part_name);
-    song_update(current_part_name); 
+    song_update(current_part_name);
 
-  } else {
+  } else if (theOscMessage.checkAddrPattern("/display_input") == true) {
     message = theOscMessage.get(0).stringValue();
     cat = theOscMessage.get(1).stringValue();
     position_utts(message, cat);
+
+  } else {
+    println("Unkown action on address: " + theOscMessage.addrPattern());
   }
   redraw();
 }
