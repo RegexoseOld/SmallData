@@ -1,4 +1,5 @@
 void song_build(StringList parts) {
+  int partCounter = 0;
   for (String part : parts) {
     // println(part);
     part_surf = createGraphics(song_surf.width/parts.size(), song_surf.height);
