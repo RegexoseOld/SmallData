@@ -9,7 +9,7 @@ PGraphics music_surf, song_surf, part_surf, current_part_surf, previous_part_sur
 boolean blinker;
 TreeMap<String, PGraphics> utt_map;
 HashMap<String, PartsPosition> part_map;
-PartsPosition current_pp;
+PartsPosition current_pp, previous_pp;
 int index;
 int position_y;
 int bg_color1 = 222;
@@ -47,7 +47,7 @@ void draw() {
   image(task_surf, (width/100 + task_surf.width +10), height/2);
   if (frameCount % 12 == 0) {
     blinker = !blinker;
-    current_pp.changeBg(blinker);
+    current_pp.changeBg(blinker, current_part_name);
     }
   image(music_surf, width/100, 0);
 }

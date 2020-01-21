@@ -26,7 +26,7 @@ void song_build(StringList parts) {
 }
 
 void song_update(String new_part_name) {
-  // println("previous:   " + previous_part_name);
+  String parttoReset = previous_part_name;
   for (HashMap.Entry<String, PartsPosition> entry : part_map.entrySet()) {
     String part_key = entry.getKey();
     PartsPosition pp = entry.getValue();
@@ -44,15 +44,17 @@ void song_update(String new_part_name) {
       // blinker = true;
       // float previous_position = p_previous.getPosition();
       // reset_surf(previous_part_surf, previous_position);
-    } 
+    } else if (part_key.equals(parttoReset)) {
+      pp.changeBg(false, pp.name);
+    }
   }
 }
 
-void current_part_blink(PartsPosition pp) {
-  if (blinker) {
-    pp.changeBg(true);
-  }  else {
-    pp.changeBg(false);
-  } 
-  update_music_surf(pp.surface, pos_x);
-}
+//void current_part_blink(PartsPosition pp) {
+//  if (blinker) {
+//    pp.changeBg(true,);
+//  }  else {
+//    pp.changeBg(false);
+//  } 
+//  update_music_surf(pp.surface, pos_x);
+//}

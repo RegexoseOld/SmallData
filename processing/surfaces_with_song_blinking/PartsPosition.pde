@@ -20,14 +20,15 @@ class PartsPosition {
   public int getKey() {
     return key;
   }
-  void changeBg(boolean boo) {
+  
+  void changeBg(boolean boo, String currentName) {
       if (boo) {
         this.surface.beginDraw();
         this.surface.background(250); //<>//
         this.surface.textFont(Arial, 10);
         this.surface.textAlign(CENTER);
         this.surface.fill(20);
-        this.surface.text(current_part_name, this.surface.width/2, this.surface.height/2);
+        this.surface.text(currentName, this.surface.width/2, this.surface.height/2);
         this.surface.noFill();
         this.surface.rect(0, 0, this.surface.width -1, this.surface.height -1);
         this.surface.endDraw();
@@ -37,7 +38,7 @@ class PartsPosition {
         this.surface.textFont(Arial, 10);
         this.surface.textAlign(CENTER);
         this.surface.fill(20);
-        this.surface.text(current_part_name, this.surface.width/2, this.surface.height/2);
+        this.surface.text(currentName, this.surface.width/2, this.surface.height/2);
         this.surface.noFill();
         this.surface.rect(0, 0, this.surface.width -1, this.surface.height -1);
         this.surface.endDraw();
