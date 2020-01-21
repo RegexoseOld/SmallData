@@ -48,12 +48,3 @@ void draw_text1(PGraphics surface, String text) {
   surface.text(text, 0, 0, surface.width, surface.height);
   surface.endDraw();
 }
-/*
-void draw_text_big(PGraphics surface, String text) {
-  surface.beginDraw();
-  surface.fill(0);
-  surface.textFont(Arial, 30);
-  surface.text(text, 0, 0, surface.width, surface.height);
-  surface.endDraw();
-} */
-  
