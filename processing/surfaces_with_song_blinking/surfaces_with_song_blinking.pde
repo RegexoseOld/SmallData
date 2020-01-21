@@ -5,7 +5,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 OscP5 oscP5;
-PGraphics music_surf, song_surf, part_surf, current_part_surf, previous_part_surf, task_surf, next_surf, countdown_surf, text_surf, utt_surf, cat_surf, utt_cat_surf;
+PGraphics music_surf, song_surf, part_surf, current_part_surf, previous_part_surf, task_surf, next_surf, countdown_surf, text_surf, utt_surf, cat_surf, utt_cat_surf; //<>//
 boolean blinker;
 TreeMap<String, PGraphics> utt_map;
 HashMap<String, PartsPosition> part_map;
@@ -46,8 +46,8 @@ void draw() {
   image(text_surf, width/100, height/2);
   image(task_surf, (width/100 + task_surf.width +10), height/2);
   if (frameCount % 12 == 0) {
-    blinker = !blinker; //<>//
-    current_part_blink(current_pp);
+    blinker = !blinker;
+    current_pp.changeBg(blinker);
     }
-  image(music_surf, width/100, 0); //<>//
+  image(music_surf, width/100, 0);
 }
