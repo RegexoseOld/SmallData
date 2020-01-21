@@ -22,11 +22,11 @@ void song_build(StringList parts) {
   music_surf.beginDraw();
   music_surf.image(song_surf, music_surf.width/20, music_surf.height/3);
   music_surf.endDraw();
-  song_update("9");
+  song_update("Hippie-Solo");
 }
 
 void song_update(String new_part_name) {
-  println("previous:   " + previous_part_name);
+  // println("previous:   " + previous_part_name);
   for (HashMap.Entry<String, PartsPosition> entry : part_map.entrySet()) {
     String part_key = entry.getKey();
     PartsPosition pp = entry.getValue();
@@ -34,6 +34,7 @@ void song_update(String new_part_name) {
     float position = pp.getPosition();
     if (part_key.equals(new_part_name)){
       current_pp = pp;
+      // println("currentpp name:   " + current_pp.name);
       current_part_surf = part_surf;
       current_part_name = part_key;
       pos_x = position;

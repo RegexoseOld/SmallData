@@ -21,16 +21,15 @@ class PartsPosition {
     return key;
   }
   void changeBg(boolean boo) {
-      println("blink:  part " + this.name + "   true?: " + boo);
-      if (boo == true) {
+      if (boo) {
         this.surface.beginDraw();
         this.surface.background(250); //<>//
         this.surface.textFont(Arial, 10);
         this.surface.textAlign(CENTER);
         this.surface.fill(20);
-        this.surface.text("wumbaba", part_surf.width/2, part_surf.height/2);
+        this.surface.text(current_part_name, this.surface.width/2, this.surface.height/2);
         this.surface.noFill();
-        this.surface.rect(0, 0, part_surf.width -1, part_surf.height -1);
+        this.surface.rect(0, 0, this.surface.width -1, this.surface.height -1);
         this.surface.endDraw();
     } else {
         this.surface.beginDraw();
@@ -38,10 +37,11 @@ class PartsPosition {
         this.surface.textFont(Arial, 10);
         this.surface.textAlign(CENTER);
         this.surface.fill(20);
-        this.surface.text(current_part_name, part_surf.width/2, part_surf.height/2);
+        this.surface.text(current_part_name, this.surface.width/2, this.surface.height/2);
         this.surface.noFill();
-        this.surface.rect(0, 0, part_surf.width -1, part_surf.height -1);
+        this.surface.rect(0, 0, this.surface.width -1, this.surface.height -1);
         this.surface.endDraw();
      }
+     update_music_surf(this.surface, this.position);
   }
 }
