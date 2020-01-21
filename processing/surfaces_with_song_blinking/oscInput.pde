@@ -37,10 +37,13 @@ void oscEvent(OscMessage theOscMessage) {
       song_update(advance_to); 
     }
   
-  } else {
+  } else if (theOscMessage.checkAddrPattern("/display_input") == true) {
     message = theOscMessage.get(0).stringValue();
     cat = theOscMessage.get(1).stringValue();
     position_utts(message, cat);
+    
+  } else {
+    println("Unkown action on address: " + theOscMessage.addrPattern());
   }
   redraw();
 }
