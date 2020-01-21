@@ -39,6 +39,8 @@ void oscEvent(OscMessage theOscMessage) {
   
   } else {
     message = theOscMessage.get(0).stringValue();
+    cat = theOscMessage.get(1).stringValue();
+    position_utts(message, cat);
   }
   redraw();
 }
