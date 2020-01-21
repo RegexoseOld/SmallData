@@ -21,6 +21,7 @@ def run_mock():
     categories = list(machine.category_counter.keys())
     song_parts = list(machine.parser.states.keys())
     [processing_client.send_message('/parts', part) for part in song_parts]
+    processing_client.send_message('/parts', 'all_sent')
 
     while True:
         osc_dict = {'text': random.sample(texts, 1)[0],

@@ -3,6 +3,7 @@ from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 
 from config import settings
+from song.song_machine import State
 
 
 class BeatAdvanceManager:
@@ -15,14 +16,14 @@ class BeatAdvanceManager:
 
     def __init__(self):
         self.state = self.STATE_NORMAL
-        self.next_part = 'Unknown'
-        self.current_part = 'Unknown'
+        self.next_part = State('Unknown', 0)
+        self.current_part = State('Unknown', 0)
         self.__counter = 0
 
-    def update_next_part(self, part_name):
+    def update_next_part(self, part):
         if self.state == self.STATE_NORMAL:
             self.state = self.STATE_PREPARE
-            self.next_part = part_name
+            self.next_part = part
 
     def update_beat_counter(self, counter):
         if counter == self.__counter:
@@ -75,7 +76,7 @@ class SongServer:
         self.song_machine.update_state(osc_map['cat'])
 
         if current_state != self.song_machine.current_state:
-            self.beat_manager.update_next_part(self.song_machine.current_state.name)
+            self.beat_manager.update_next_part(self.song_machine.current_state)
             self.song_machine.set_lock()
 
     def beat_handler(self, _, note):
@@ -94,9 +95,9 @@ class SongServer:
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
 
         if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_WARNING):
-            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part), 1.0))
-            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part), 0.0))
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (next_part.note, 1.0))
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (next_part.note, 0.0))
 
-        message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part, next_part)
+        message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
         print('SongerServer. sending: ', message)
         self.display_client.send_message(settings.SONG_BEAT_ADDRESS, message)

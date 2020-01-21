@@ -1,90 +1,98 @@
 {
-  "states": ["5", "9",  "11", "12", "13"],
+  "states_to_notes": {
+    "Hippie-Solo":  "1",
+    "Afro-Slim":  "2",
+    "Afro-Full":  "3",
+    "Break-Slim":  "4",
+    "Break-Full": "5"
+  },
+  "first_state": "Hippie-Solo",
+  "last_state": "Break-Full",
   "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
   "transitions": [
     [
-      "9",
-      "11",
+      "Afro-Slim",
+      "Afro-Full",
       "lecture > 2"
     ],
      [
-      "9",
-      "12",
+      "Afro-Slim",
+      "Break-Slim",
       "concession > 2"
     ],
      [
-      "9",
-      "5",
+      "Afro-Slim",
+      "Hippie-Solo",
       "insinuation > 2"
     ],
     [
-      "9",
-      "13",
+      "Afro-Slim",
+      "Break-Full",
       "praise > 1"
     ],
     [
-      "11",
-      "9",
+      "Afro-Full",
+      "Afro-Slim",
       "lecture > 1"
     ],
     [
-      "11",
-      "5",
+      "Afro-Full",
+      "Hippie-Solo",
       "praise > 2"
     ],
     [
-      "11",
-      "12",
+      "Afro-Full",
+      "Break-Slim",
       "concession > 1"
     ],
      [
-      "11",
-      "13",
+      "Afro-Full",
+      "Break-Full",
       "concession > 1"
     ],
     [
-      "12",
-      "9",
+      "Break-Slim",
+      "Afro-Slim",
       "insinuation > 1"
     ],
     [
-      "12",
-      "11",
+      "Break-Slim",
+      "Afro-Full",
       "praise > 1"
     ],
      [
-      "12",
-      "13",
+      "Break-Slim",
+      "Break-Full",
       "concession > 2"
     ],
     [
-      "12",
-      "5",
+      "Break-Slim",
+      "Hippie-Solo",
       "praise > 2"
     ],
     [
-      "5",
-      "11",
+      "Hippie-Solo",
+      "Afro-Full",
       "praise > 1"
     ],
     [
-      "5",
-      "12",
+      "Hippie-Solo",
+      "Break-Slim",
       "concession > 1"
     ],
     [
-      "5",
-      "13",
+      "Hippie-Solo",
+      "Break-Full",
       "dissence > 1"
     ],
     [
-      "13",
-      "5",
+      "Break-Full",
+      "Hippie-Solo",
       "lecture > 1"
     ],
     [
-      "13",
-      "11",
+      "Break-Full",
+      "Afro-Full",
       "praise > 1"
     ]
   ]
