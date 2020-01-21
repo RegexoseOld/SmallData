@@ -45,9 +45,8 @@ void setup() {
 void draw() {
   image(text_surf, width/100, height/2);
   image(task_surf, (width/100 + task_surf.width +10), height/2);
-  if (frameCount % 12 == 0) {
-    blinker = !blinker;
+  if (current_pp != null) {
     current_pp.changeBg(blinker, current_part_name);
-    }
+  }
   image(music_surf, width/100, 0);
 }

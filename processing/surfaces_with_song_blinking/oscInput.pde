@@ -29,6 +29,7 @@ void oscEvent(OscMessage theOscMessage) {
     next_part_name = theOscMessage.get(3).stringValue();
     task_update(current_part_name, next_part_name);
     song_update(current_part_name);
+    blinker = !blinker;
 
   } else if (theOscMessage.checkAddrPattern("/display_input") == true) {
     message = theOscMessage.get(0).stringValue();
