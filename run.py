@@ -48,6 +48,10 @@ elif args.app == 'song':
     beat_manager = BeatAdvanceManager()
 
     song_server = SongServer(oscul_client, disp_client, machine_instance, beat_manager)
+    song_parts = list(machine_instance.parser.states.keys())
+    [disp_client.send_message('/parts', part) for part in song_parts]
+    disp_client.send_message('/parts', 'all_sent')
+
     song_server.server.serve_forever()
     # p = subprocess.check_call(["python", "song/song_server.py"])
 elif args.app == 'frontend':

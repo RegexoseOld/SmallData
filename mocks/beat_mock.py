@@ -16,4 +16,4 @@ def run_mock():
         processing_client.send_message(settings.OSCULATOR_TARGET_ADDRESS, note)
         song_client.send_message(settings.SONG_BEAT_ADDRESS, note)
         idx = (idx + 1) % (len(notes)-1)
-        time.sleep(2)
+        time.sleep(1)
