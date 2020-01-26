@@ -6,6 +6,7 @@ import pickle
 from pythonosc.osc_server import AsyncIOOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 
+from mocks.mock_interpreter_client import processing_client
 from config import settings
 
 pygame.init()
@@ -55,6 +56,14 @@ class DisplayServer:
         self.beat.update(self.beat_manager.counter, self.beat_manager.is_warning())
         self.part_info.update(current_part=self.beat_manager.current_part,
                               next_part=self.beat_manager.next_part)
+        self.processing_part_info_update(self.beat_manager.current_part, self.beat_manager.next_part, note)
+
+    def processing_part_info_update(self, current_part, next_part, note):
+        print('current {}\t next: {}'.format(current_part, next_part))
+        if current_part == next_part and note == settings.note_to_beat['first_note_in_bar']:
+            processing_client.send_message(settings.SONG_ADVANCE_ADDRESS, current_part)
+        processing_client.send_message("/part_info", [current_part, next_part])
+
 
     async def loop(self):
         while True:
