@@ -24,7 +24,7 @@ class PartsPosition {
   void changeBg(boolean boo, String currentName) {
       if (boo) {
         this.surface.beginDraw();
-        this.surface.background(250); //<>//
+        this.surface.background(250); //<>// //<>//
         this.surface.textFont(Arial, 10);
         this.surface.textAlign(CENTER);
         this.surface.fill(20);
