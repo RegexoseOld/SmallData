@@ -29,15 +29,22 @@ def setup():
     global current_part_name, next_part_name, current_beat
     global beat_color
     AREAS = build_areas(width/40, height/36)
-    sub_surfaces(Arial)
+    sub_surfaces(font)
     osc = OscP5(this, 5040)
     loc = NetAddress('127.0.0.1', 5040) # send to self
     osc.addListener(Listen()) # assigning a listener to class Listen
     
 def draw():
+    global font_size, beat_color
     for a in AREAS:
         area = AREAS[a]
-        surface_dict = area.update_sub(font, font_size, col)
+        if mousePressed:
+            font_size = 25
+            beat_color = color(0, 255, 0)
+        else:
+            font_size = 14
+            beat_color = color(0, 0, 255)
+        surface_dict = area.update_sub(font, font_size, beat_color)
         # print("subsurf: {}, x: {}  y: {}".format(subsurf.width, x, y))
         image(area.surface, area.pos_x, area.pos_y)
         for surf, pos in surface_dict.items():

@@ -24,11 +24,11 @@ class Area:
             for ss in self.subsurfaces:
                 # print("updating   ", ss.name)
                 with ss.surface.beginDraw():
-                    ss.surface.background(111)
+                    ss.surface.background(122)
                     ss.surface.textFont(font)
-                    ss.surface.textSize(20)
+                    ss.surface.textSize(font_size)
                     ss.surface.textAlign(CENTER)
-                    ss.surface.fill(200)
+                    ss.surface.fill(col)
                     ss.surface.text("dong", ss.surface.width/2, ss.surface.height/2)
                 ss_dict[ss.surface] = [ss.x_pos, ss.y_pos]
             return ss_dict
