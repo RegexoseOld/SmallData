@@ -1,6 +1,6 @@
 from surfaces import *
+import getpass
 # from surfaces import Area, build_areas, sub_surfaces, AREAS
-
 
 add_library('oscP5') 
 addr = "?"
@@ -10,24 +10,34 @@ current_part_name = "Unknown"
 next_part_name =  "Unknown too"
 current_beat = "1"
 beat_color = color(255, 0 , 0)
+part_dict = {}
 
 class Listen(OscEventListener):
     def oscEvent(self, m):
-        global col, addr, font
-        col = m.arguments()[0]
-        # col = int(m.arguments()[0])
-        addr = m.addrPattern()
-        print("Listen.oscEvent",m.addrPattern(), m.arguments())
+        global addr, font, beat_color
+        addr = m.arguments()[0]
+        self.select_action(addr, m.arguments()[1:])
+        print("the OscMessage ", m)
+        
+    def select_action(self, addr, arguments):
+        print("addr !!", addr)
+        global part_dict
+        if addr == "/parts":
+           
+            part_dict[arguments[0]] = []
+            print(part_dict)
+        
 
 def setup():
     size(1500, 1000)
     global font, font_size
     font_size = 14
     font = createFont("Arial-BoldMT", font_size, True)
-    global osc, loc, col
+    global osc, loc, addr
     global surface, sub_surface
     global current_part_name, next_part_name, current_beat
     global beat_color
+    global part_dict
     AREAS = build_areas(width/40, height/36)
     sub_surfaces(font)
     osc = OscP5(this, 5040)

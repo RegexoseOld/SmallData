@@ -61,7 +61,6 @@ class Subsurface:
 def build_areas(spacing_x, spacing_y): 
     pos_y1 = pos_y2 = height/16
     for i in range(len(AREA_NAMES)):
-        print("pos_y: ", pos_y1)
         if i <= 1:
             surface_width = width*8/13
             surface_height = height*7/16
