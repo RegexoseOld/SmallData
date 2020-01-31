@@ -41,14 +41,14 @@ class Subsurface:
         self.surface.smooth()
         self.parent.subsurfaces[self.name] = self
     
-    def text_on_surface(self, surface, txt, font, font_size, col):
+    def text_on_surface(self, surface, txt, font, font_size, col, div_y=1):
         with surface.beginDraw():
             surface.background(222)
             surface.textFont(font)
             surface.textSize(font_size)
             surface.textAlign(CENTER)
             surface.fill(col)
-            surface.text(txt, surface.width/2, surface.height/2, surface.width, surface.height)
+            surface.text(txt, surface.width/2, surface.height/2, surface.width, surface.height/div_y)
         return surface
     
     def utts_on_surface(self, surface):
@@ -73,19 +73,30 @@ class Subsurface:
         self.surface = self.text_on_surface(self.surface, "next part - \n" + next_part, self.font, 20, color(50))
         self.parent.update_subsurfaces(self.name, self.surface)
     
-    def update_utts(self, utt, category):
-        self.surface = self.text_on_surface(self.surface, utt, self.font, 20, color(50))
-        surface_height = self.surface.height
-        self.utterance_dict[utt[category, surface.height]
-        
-        if len(self.utterance_dict > 5:
+    def update_utts(self, utt, category, max_utts=5):
+        utt_surface = self.text_on_surface(self.surface, utt, self.font, 20, color(50), max_utts)
+        utterance_height = self.surface.height # momentan: height/max_utts
+        cat_surface = self.text_on_surface(parent.subsurfaces['cats'].surface, category, self.font, 20, color(50), max_utts)
+        self.utterance_dict[utt] = [cat_surface, utterance_height]
+        if len(self.utterance_dict) > max_utts:
             self.utterance_dict.popitem(last=False)
-        self utts_on_surface(self.surface
-            
-                   
+        for utt, cat in self.utterance_dict.items():
+            # alle untereinander positionieren
+            pos_y = self.pos_y
+            self.surface, cat_surface = self.position_utt_surfaces(utt, cat, pos_y)
+            pos_y += utt.height
+        self.parent.update_subsurfaces("utts", self.surface)
+        self.parent.update_subsurfaces("cats", cat_surface)
         
-
-        
+    def position_utt_surfaces(self, utt, cat, pos_y):
+        cat_surf = parent.subsurfaces['cats'].surface
+        if not pos_y >= self.surface.height:
+            with self.surface.beginDraw():
+                self.surface.image(utt, self.x_pos, pos_y)
+            with cat_surf.beginDraw():
+                cat_surf.image(cat, parent.subsurfaces["cats"].x_pos, y_pos)
+        else:      
+            return utt_surface, cat_surface
 
 def build_areas(spacing_x, spacing_y): 
     pos_y1 = pos_y2 = height/16

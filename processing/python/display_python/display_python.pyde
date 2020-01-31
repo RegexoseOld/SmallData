@@ -24,7 +24,8 @@ class Listen(OscEventListener):
             utterance = "".join([str(i) for i in list(m.arguments()[0])])
             category = "".join([str(i) for i in list(m.arguments()[1])])
             print("utterance" , utterance)
-            AREAS['utterances'].subsurfaces['utts'].update_utts(utterance, category)
+            AREAS['utterances'].subsurfaces['utts'].update_utts(utterance)
+
         
 
 def setup():
