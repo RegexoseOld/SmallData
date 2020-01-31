@@ -5,15 +5,9 @@ import getpass
 add_library('oscP5') 
 addr = "?"
 
-# Arial14 = loadFont("Arial-BoldMT-14.vlw")
-current_part_name = "Unknown"
-next_part_name =  "Unknown too"
-current_beat = "1"
-beat_color = color(255, 0 , 0)
-part_dict = {}
-
 class Listen(OscEventListener):
     def oscEvent(self, m):
+        global loc, osc
         if m.checkAddrPattern("/beat")==True:
             current_beat = [str(i) for i in list(m.arguments()[0])][0]
             change_color = [str(i) for i in list(m.arguments()[1])]
@@ -30,13 +24,11 @@ class Listen(OscEventListener):
             utterance = "".join([str(i) for i in list(m.arguments()[0])])
             category = "".join([str(i) for i in list(m.arguments()[1])])
             print("utterance" , utterance)
-            AREAS['utterances'].subsurfaces['utts'].update_utts(utterance)
-            # AREAS['utterances'].subsurfaces['cats'].update_cats(category)
+            AREAS['utterances'].subsurfaces['utts'].update_utts(utterance, category)
         
 
 def setup():
     size(1500, 1000)
-    global font, font_size
     font_size = 14
     font = createFont("Arial-BoldMT", font_size, True)
     global osc, loc
@@ -44,14 +36,10 @@ def setup():
     sub_surfaces(font)
     osc = OscP5(this, 5040)
     loc = NetAddress('127.0.0.1', 5040) # send to self
-    global listener
     listener = Listen()
     osc.addListener(listener) # assigning a listener to class Listen
     
 def draw():
-    if keyPressed:
-            if key == 'q':
-                reconnect()
     for a in AREAS:
         area = AREAS[a]
         # surface_dict = area.update_sub(font, font_size, beat_color)
@@ -67,4 +55,8 @@ def reconnect():
     print("Net Address {} connected ?  {}".format(loc, loc.isvalid()))
     osc = OscP5(this, 5040)
     loc = NetAddress('127.0.0.1', 5040)
+
+def stop():
+    global osc
+    osc.dispose()
     

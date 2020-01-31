@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 AREA_NAMES = ["song", "utterances", "blocks", "part_info"]
 AREAS = {}
 # SUBSURFACE_NAMES = ["utts", "cats", "current_part", "next_part", "beat"]
@@ -34,12 +36,12 @@ class Subsurface:
         self.txt = ""
         self.font = font
         self.beat_color = color(0, 230, 20)
-        self.utterance_dict = {}
+        self.utterance_dict = OrderedDict()
         self.surface = createGraphics(int(self.parent.surface.width * self.x_div), int(self.parent.surface.height * self.y_div))
         self.surface.smooth()
         self.parent.subsurfaces[self.name] = self
     
-    def text_on_surface(self, surface, txt, font, font_size,  col):
+    def text_on_surface(self, surface, txt, font, font_size, col):
         with surface.beginDraw():
             surface.background(222)
             surface.textFont(font)
@@ -49,8 +51,9 @@ class Subsurface:
             surface.text(txt, surface.width/2, surface.height/2, surface.width, surface.height)
         return surface
     
-    def utts_on_surface(self, surface, txt, font):
-        pass
+    def utts_on_surface(self, surface):
+        self.surface = self.text_on_surface(self.surface, utterance, self.font, 20, color(50))
+        self.parent.update_subsurfaces(self.name, self.surface)
     
     def update_beat(self, beat_number, change_color):
         # print("beat {} change?  {}".format(beat_number, change_color))
@@ -70,9 +73,17 @@ class Subsurface:
         self.surface = self.text_on_surface(self.surface, "next part - \n" + next_part, self.font, 20, color(50))
         self.parent.update_subsurfaces(self.name, self.surface)
     
-    def update_utts(self, utterance):
-        self.surface = self.text_on_surface(self.surface, utterance, self.font, 20, color(50))
-        self.parent.update_subsurfaces(self.name, self.surface)
+    def update_utts(self, utt, category):
+        self.surface = self.text_on_surface(self.surface, utt, self.font, 20, color(50))
+        surface_height = self.surface.height
+        self.utterance_dict[utt[category, surface.height]
+        
+        if len(self.utterance_dict > 5:
+            self.utterance_dict.popitem(last=False)
+        self utts_on_surface(self.surface
+            
+                   
+        
 
         
 
