@@ -16,7 +16,8 @@ class Listen(OscEventListener):
             change_color = "".join(change_color)
             current_part_name = "".join(current_part_name)
             next_part_name = "".join(next_part_name)
-            # print('geil: ', change_color)
+            # print('geil: ', next_part_name)
+            # print("Areas part info: ", AREAS['part_info'].subsurfaces['current'])
             AREAS['part_info'].subsurfaces['beat'].update_beat(current_beat, change_color)
             AREAS['part_info'].subsurfaces['current'].update_current(current_part_name)
             AREAS['part_info'].subsurfaces['next'].update_next(next_part_name)
@@ -24,7 +25,7 @@ class Listen(OscEventListener):
             utterance = "".join([str(i) for i in list(m.arguments()[0])])
             category = "".join([str(i) for i in list(m.arguments()[1])])
             print("utterance" , utterance)
-            AREAS['utterances'].subsurfaces['utts'].update_utts(utterance)
+            AREAS['utterances'].subsurfaces['utts'].update_utts(utterance, category)
 
         
 
