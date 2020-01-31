@@ -1,6 +1,6 @@
 AREA_NAMES = ["song", "utterances", "blocks", "part_info"]
 AREAS = {}
-SUBSURFACE_NAMES = ["utts", "cats", "current_part", "next_part", "beat"]
+# SUBSURFACE_NAMES = ["utts", "cats", "current_part", "next_part", "beat"]
 
 
 class Area:
@@ -9,7 +9,7 @@ class Area:
         self.surface = surface
         self.pos_x = pos_x
         self.pos_y = pos_y
-        self.subsurfaces = []
+        self.subsurfaces = {}
         self.fill_surface(222)
     
     def fill_surface(self, col):
@@ -17,27 +17,14 @@ class Area:
             self.surface.background(col) 
         # print("filled {} with {}".format(self.name, col))
       
-    def update_sub(self, font, font_size, col):
-        if len(self.subsurfaces) != 0:
-            # print("updating ...  ", self.name)
-            ss_dict = {}
-            for ss in self.subsurfaces:
-                # print("updating   ", ss.name)
-                with ss.surface.beginDraw():
-                    ss.surface.background(122)
-                    ss.surface.textFont(font)
-                    ss.surface.textSize(font_size)
-                    ss.surface.textAlign(CENTER)
-                    ss.surface.fill(col)
-                    ss.surface.text("dong", ss.surface.width/2, ss.surface.height/2)
-                ss_dict[ss.surface] = [ss.x_pos, ss.y_pos]
-            return ss_dict
-                
-        else:
-            return {self.surface: [self.pos_x, self.pos_y]}
+    def update_subsurfaces(self, name, surface):
+        for value in list(self.subsurfaces.values()):
+            surf = value.surface
+            if name == value.name:
+                surf = surface
             
 class Subsurface:
-    def __init__(self, name, parent_surface, x_div, y_div, x_pos, y_pos):
+    def __init__(self, name, parent_surface, x_div, y_div, x_pos, y_pos, font):
         self.name = name
         self.parent = parent_surface
         self.x_div = x_div
@@ -45,16 +32,47 @@ class Subsurface:
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.txt = ""
+        self.font = font
+        self.beat_color = color(0, 230, 20)
+        self.utterance_dict = {}
         self.surface = createGraphics(int(self.parent.surface.width * self.x_div), int(self.parent.surface.height * self.y_div))
-        self.parent.subsurfaces.append(self)
+        self.surface.smooth()
+        self.parent.subsurfaces[self.name] = self
     
-    def add_text(self, txt, font, col):
-        self.txt = txt
-        with self.surface.beginDraw():
-            self.surface.textFont(font)
-            self.surface.fill(col)
-            self.surface.textAlign(CENTER)
-            self.surface.text("next part is: " + self.txt, self.surface.width/2, self.surface.height/2)
+    def text_on_surface(self, surface, txt, font, font_size,  col):
+        with surface.beginDraw():
+            surface.background(222)
+            surface.textFont(font)
+            surface.textSize(font_size)
+            surface.textAlign(CENTER)
+            surface.fill(col)
+            surface.text(txt, surface.width/2, surface.height/2, surface.width, surface.height)
+        return surface
+    
+    def utts_on_surface(self, surface, txt, font):
+        pass
+    
+    def update_beat(self, beat_number, change_color):
+        # print("beat {} change?  {}".format(beat_number, change_color))
+        if change_color == "True":
+            self.beat_color = color(250, 0, 150)
+        else: 
+            self.beat_color = color(10, 250, 20)
+        self.txt = beat_number
+        self.surface = self.text_on_surface(self.surface, self.txt, self.font, 80, self.beat_color)
+        self.parent.update_subsurfaces(self.name, self.surface)
+    
+    def update_current(self, current_part):
+        self.surface = self.text_on_surface(self.surface, "current part - \n" + current_part, self.font, 20,  color(50))
+        self.parent.update_subsurfaces(self.name, self.surface)
+    
+    def update_next(self, next_part):
+        self.surface = self.text_on_surface(self.surface, "next part - \n" + next_part, self.font, 20, color(50))
+        self.parent.update_subsurfaces(self.name, self.surface)
+    
+    def update_utts(self, utterance):
+        self.surface = self.text_on_surface(self.surface, utterance, self.font, 20, color(50))
+        self.parent.update_subsurfaces(self.name, self.surface)
 
         
 
@@ -82,14 +100,14 @@ def sub_surfaces(font):
     for name in AREAS:
         parent = AREAS[name]
         if name == "utterances":
-            sub_surf1 = Subsurface("utts", parent, 0.66, 1, parent.pos_x, parent.pos_y)
-            sub_surf2 = Subsurface("cats", parent, 0.33, 1, parent.pos_x + sub_surf1.surface.width, parent.pos_y)
+            sub_surf1 = Subsurface("utts", parent, 0.66, 1, parent.pos_x, parent.pos_y, font)
+            sub_surf2 = Subsurface("cats", parent, 0.33, 1, parent.pos_x + sub_surf1.surface.width, parent.pos_y, font)
         elif name == "part_info":
-            current_surf = Subsurface("current", parent, 0.5, 0.5, parent.pos_x, parent.pos_y)
-            current_surf.add_text("Unknown", font, color(20))
-            next_surf = Subsurface("next", parent, 0.5, 0.5, parent.pos_x, parent.pos_y + current_surf.surface.height)
-            next_surf.add_text("not known either", font, color(20))
-            beat_surf = Subsurface("beat", parent, 0.5, 1, parent.pos_x + parent.surface.width/2, parent.pos_y)
-            beat_surf.add_text("beat: ", font, color(255, 0 , 0))
+            current_surf = Subsurface("current", parent, 0.5, 0.5, parent.pos_x, parent.pos_y, font)
+            current_surf.txt = "current part"
+            next_surf = Subsurface("next", parent, 0.5, 0.5, parent.pos_x, parent.pos_y + current_surf.surface.height, font)
+            next_surf.txt = "next Part"
+            beat_surf = Subsurface("beat", parent, 0.5, 1, parent.pos_x + parent.surface.width/2, parent.pos_y, font)
+            beat_surf.txt = 1
         else:
             pass
