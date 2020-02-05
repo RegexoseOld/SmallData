@@ -48,8 +48,8 @@ class Subsurface:
             surface.textSize(font_size)
             surface.textAlign(CENTER)
             surface.fill(col)
-            # print("txt ?", surface.height/2)
-            surface.text(txt, surface.width/2, surface.height/2, surface.width, surface.height)
+            surface.rectMode(CENTER)
+            surface.text(txt, surface.width/2, surface.height/2)
         return surface
     
     def utts_on_surface(self, surface):
