@@ -21,11 +21,11 @@ class Listen(OscEventListener):
             AREAS['part_info'].subsurfaces['beat'].update_beat(current_beat, change_color)
             AREAS['part_info'].subsurfaces['current'].update_current(current_part_name)
             AREAS['part_info'].subsurfaces['next'].update_next(next_part_name)
-       # elif m.checkAddrPattern("/display_input") == True:
-           # utterance = "".join([str(i) for i in list(m.arguments()[0])])
-            # category = "".join([str(i) for i in list(m.arguments()[1])])
-           # print("utterance" , utterance)
-            # AREAS['utterances'].subsurfaces['utts'].update_utts(utterance, category)
+        elif m.checkAddrPattern("/display_input") == True:
+            utterance = "".join([str(i) for i in list(m.arguments()[0])])
+            category = "".join([str(i) for i in list(m.arguments()[1])])
+            print("utterance" , utterance)
+            AREAS['utterances'].update_utterances(utterance, category)
 
         
 
