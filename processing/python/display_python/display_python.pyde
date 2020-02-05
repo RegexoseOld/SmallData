@@ -21,16 +21,17 @@ class Listen(OscEventListener):
             AREAS['part_info'].subsurfaces['beat'].update_beat(current_beat, change_color)
             AREAS['part_info'].subsurfaces['current'].update_current(current_part_name)
             AREAS['part_info'].subsurfaces['next'].update_next(next_part_name)
-        elif m.checkAddrPattern("/display_input") == True:
-            utterance = "".join([str(i) for i in list(m.arguments()[0])])
-            category = "".join([str(i) for i in list(m.arguments()[1])])
-            print("utterance" , utterance)
-            AREAS['utterances'].subsurfaces['utts'].update_utts(utterance, category)
+       # elif m.checkAddrPattern("/display_input") == True:
+           # utterance = "".join([str(i) for i in list(m.arguments()[0])])
+            # category = "".join([str(i) for i in list(m.arguments()[1])])
+           # print("utterance" , utterance)
+            # AREAS['utterances'].subsurfaces['utts'].update_utts(utterance, category)
 
         
 
 def setup():
-    size(1500, 1000)
+    size(1000, 750)
+    global font, font_size
     font_size = 14
     font = createFont("Arial-BoldMT", font_size, True)
     global osc, loc
@@ -38,6 +39,7 @@ def setup():
     sub_surfaces(font)
     osc = OscP5(this, 5040)
     loc = NetAddress('127.0.0.1', 5040) # send to self
+    global listener
     listener = Listen()
     osc.addListener(listener) # assigning a listener to class Listen
     

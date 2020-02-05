@@ -40,7 +40,7 @@ class Subsurface:
         self.surface.smooth()
         self.parent.subsurfaces[self.name] = self
   
-    def text_on_surface(self, surface, txt, font, font_size, col, div_y=1):
+    def text_on_surface(self, surface, txt, font, font_size, col):
         print("update txt: {}".format(txt))
         with surface.beginDraw():
             surface.background(222)
@@ -48,7 +48,8 @@ class Subsurface:
             surface.textSize(font_size)
             surface.textAlign(CENTER)
             surface.fill(col)
-            surface.text(txt, surface.width/2, surface.height/2, surface.width, surface.height/div_y)
+            # print("txt ?", surface.height/2)
+            surface.text(txt, surface.width/2, surface.height/2, surface.width, surface.height)
         return surface
     
     def utts_on_surface(self, surface):
@@ -62,17 +63,18 @@ class Subsurface:
         else: 
             self.beat_color = color(10, 250, 20)
         self.txt = beat_number
-        self.surface = self.text_on_surface(self.surface, self.txt, self.font, 80, self.beat_color, 1)
+        self.surface = self.text_on_surface(self.surface, self.txt, self.font, 80, self.beat_color)
+        print("beat.parent: ", self.parent.name)
         self.parent.update_subsurfaces(self.name, self.surface)
     
     def update_current(self, current_part):
         print("update current: ", current_part)
-        self.surface = self.text_on_surface(self.surface, "current part - \n" + current_part, self.font, 20,  color(50), 1)
+        self.surface = self.text_on_surface(self.surface, "current part - \n" + current_part, self.font, 20,  color(50))
         self.parent.update_subsurfaces(self.name, self.surface)
     
     def update_next(self, next_part):
         print("update next: ", next_part)
-        self.surface = self.text_on_surface(self.surface, "next part - \n" + next_part, self.font, 20, color(50), 1)
+        self.surface = self.text_on_surface(self.surface, "next part - \n" + next_part, self.font, 20, color(50))
         self.parent.update_subsurfaces(self.name, self.surface)
     
     def update_utts(self, utt, category, max_utts=5):
@@ -128,10 +130,10 @@ def sub_surfaces(font):
             sub_surf2 = Subsurface("cats", parent, 0.33, 1, parent.pos_x + sub_surf1.surface.width, parent.pos_y, font)
         elif name == "part_info":
             current_surf = Subsurface("current", parent, 0.5, 0.5, parent.pos_x, parent.pos_y, font)
-            # current_surf.txt = "current part"
+            current_surf.txt = "current part"
             next_surf = Subsurface("next", parent, 0.5, 0.5, parent.pos_x, parent.pos_y + current_surf.surface.height, font)
             next_surf.txt = "next Part"
             beat_surf = Subsurface("beat", parent, 0.5, 1, parent.pos_x + parent.surface.width/2, parent.pos_y, font)
-            beat_surf.txt = 1
+            beat_surf.txt = "1"
         else:
             pass
