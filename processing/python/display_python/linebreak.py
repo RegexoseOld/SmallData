@@ -1,37 +1,46 @@
-def linebreak(surface, text, color, font):
+
+def linebreak(surface, break_text, font, font_size):
     y = 0
+    char_index = 0
+    scalar = 0.8
     line_spacing = 5
 
     # get height of font
-    font_height = font.size("Tg")[1]
-    initial_surface.fill((227, 227, 227))
+    textSize(font_size)
+    font_height = textAscent() * scalar
+    temp_surface = createGraphics(surface.width, surface.height)
 
-    while text:
+    while break_text:
         i = 1  # index of characters
         # determine if row of text will be outside area
-        if y + font_height > rect.bottom:
+        if y + font_height > surface.height:
             print('font too big. y + font_height = ', y + font_height)
             break
         # determine max width of line
-        while font.size(text[:i])[0] < rect.width and i < len(text) + 1:
+        while textWidth(break_text[:i]) < surface.width and i < len(break_text) + 1:
             i += 1
 
         # if text is wrapped then adjust the wrap to the last word
-        if i < len(text):
-            i = text.rfind(" ", 0, i)
+        if i < len(break_text):
+            i = break_text.rfind(" ", 0, i)
 
-        # render the line and blit on surface
-        image = font.render('{}'.format(text[:i]), aa, color)
+        # render the line and put on surface
+        with temp_surface.beginDraw():
+            temp_surface.textFont(font)
+            temp_surface.textSize(font_size)
+            temp_surface.textAlign(LEFT, TOP)
+            temp_surface.fill(0)
+            temp_surface.text(break_text[:i], 0, y)
 
-        initial_surface.blit(image, (rect.left, y))
         y += font_height + line_spacing
 
         # remove text (line) we just blitted
-        text = text[(i+1):]  # the remaining text (i+1 skips " ")
+        break_text = break_text[(i+1):]  # the remaining text (i+1 skips " ")
+        print("y: ", y)
 
     # create another surface with the height of the text
-    surface = pygame.Surface((rect.width, y))
-    surface.fill((0, 0, 0))
-    surface.fill((227, 227, 227), (surface.get_rect().inflate(-3, -3)))
-    surface.blit(initial_surface, (1, 1))
-    return surface
+    new_surface = createGraphics(surface.width, int(y))
+    with new_surface.beginDraw():
+        new_surface.background(222)
+        new_surface.image(temp_surface, 1, 1)
+    return new_surface

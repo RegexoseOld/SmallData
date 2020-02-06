@@ -1,7 +1,9 @@
 from collections import OrderedDict
+from linebreak import linebreak
 
 AREA_NAMES = ["song", "utterances", "blocks", "part_info"]
 AREAS = {}
+UTTERANCE_DICT = OrderedDict()
 
 class Area:
     def __init__(self, tempName, surface, pos_x, pos_y):
@@ -13,8 +15,9 @@ class Area:
         self.fill_surface(222)
     
     def fill_surface(self, col):
-        with self.surface.beginDraw():
-            self.surface.background(col) 
+        if not self.name == "utterances":
+            with self.surface.beginDraw():
+                self.surface.background(col) 
         # print("filled {} with {}".format(self.name, col))
       
     def update_subsurfaces(self, name, surface):
@@ -86,34 +89,31 @@ class Subsurface:
         self.surface = self.text_on_surface(self.surface, "next part - \n" + next_part, 20, color(50))
         self.parent.update_subsurfaces(self.name, self.surface)
     
-    def update_utts(self, message, max_utts):
-        temp_surface = createGraphics(self.surface.width, self.surface.height/max_utts)
-        with temp_surface.beginDraw():
-            temp_surface.textFont(self.font)
-            temp_surface.textSize(15)
-            temp_surface.fill(20)
-            temp_surface.textAlign(LEFT, TOP)
-            temp_surface.rectMode(CORNER)
-            temp_surface.text(message, 5, 2)
-            temp_surface.noFill()
-            temp_surface.rect(2, 2, temp_surface.width -2, temp_surface.height -2)
-        with self.surface.beginDraw():
-            self.surface.background(222)
-        self.utterance_dict[self.index] = [temp_surface, temp_surface.height]
+    def update_utts(self, message, max_utts, ):
+        global UTTERANCE_DICT
+        temp_surface = linebreak(self.surface, message, self.font, 18)
+        if self.name == "utts":
+            self.utterance_dict[self.index] = [temp_surface, temp_surface.height + 5]
+            UTTERANCE_DICT = self.utterance_dict
+        else: 
+            self.utterance_dict[self.index] = [temp_surface, UTTERANCE_DICT[self.index][1]]
+
         pos_y = 0
+        with self.surface.beginDraw():
+            self.surface.background(250)
         for value in reversed(list(self.utterance_dict.values())):
             # alle untereinander positionieren
             with self.surface.beginDraw():
-                print("\nsurf: {}  y_pos: {} ".format(value[0], pos_y))
+                # print("\index: {}  y_pos: {} ".format(self.index, pos_y))
                 self.surface.image(value[0], 0, pos_y)
             pos_y += value[1]
             
-        if len(self.utterance_dict) > max_utts:
+        if len(UTTERANCE_DICT) > max_utts:
             print("dict length: ", len(self.utterance_dict))
+            UTTERANCE_DICT.popitem(last=False)
             self.utterance_dict.popitem(last=False)
         self.index += 1
         return self.surface
-        
         
     def position_utt_surfaces(self, utt, cat, pos_y):
         cat_surf = self.parent.subsurfaces["cats"]
@@ -131,7 +131,7 @@ def build_areas(spacing_x, spacing_y):
             surface_width = width*8/13
             surface_height = height*7/16
             pos_x = width*2/3 
-            surface = createGraphics(surface_width, surface_height )
+            surface = createGraphics(surface_width, surface_height)
             AREAS[AREA_NAMES[i]] = Area(AREA_NAMES[i], surface, pos_x - surface_width - (spacing_x/2) , pos_y1)
             pos_y1 += surface_height + spacing_y
         else:
