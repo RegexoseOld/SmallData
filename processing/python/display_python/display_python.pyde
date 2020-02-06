@@ -24,19 +24,23 @@ class Listen(OscEventListener):
         elif m.checkAddrPattern("/display_input") == True:
             utterance = "".join([str(i) for i in list(m.arguments()[0])])
             category = "".join([str(i) for i in list(m.arguments()[1])])
-            print("utterance" , utterance)
+            # print("utterance" , utterance)
             AREAS['utterances'].update_utterances(utterance, category)
 
         
 
 def setup():
     size(1000, 750)
-    global font, font_size
+    background(200)
+    global font, font2, font_size
     font_size = 14
+    for f in PFont.list():
+        print(f)
     font = createFont("Arial-BoldMT", font_size, True)
+    font2 = createFont( "Helvetica Neue", font_size, True)
     global osc, loc
     AREAS = build_areas(width/40, height/36)
-    sub_surfaces(font)
+    sub_surfaces(font2)
     osc = OscP5(this, 5040)
     loc = NetAddress('127.0.0.1', 5040) # send to self
     global listener

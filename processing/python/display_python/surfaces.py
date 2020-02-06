@@ -21,7 +21,7 @@ class Area:
         # print("filled {} with {}".format(self.name, col))
       
     def update_subsurfaces(self, name, surface):
-        print("subdate: {} with {}".format(self.name, name))
+        # print("subdate: {} with {}".format(self.name, name))
         for value in list(self.subsurfaces.values()):
             surf = value.surface
             if name == value.name:
@@ -100,7 +100,7 @@ class Subsurface:
 
         pos_y = 0
         with self.surface.beginDraw():
-            self.surface.background(250)
+            self.surface.background(200)
         for value in reversed(list(self.utterance_dict.values())):
             # alle untereinander positionieren
             with self.surface.beginDraw():

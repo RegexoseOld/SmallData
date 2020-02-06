@@ -36,11 +36,10 @@ def linebreak(surface, break_text, font, font_size):
 
         # remove text (line) we just blitted
         break_text = break_text[(i+1):]  # the remaining text (i+1 skips " ")
-        print("y: ", y)
 
     # create another surface with the height of the text
-    new_surface = createGraphics(surface.width, int(y))
+    new_surface = createGraphics(surface.width, int(y)+ 10)
     with new_surface.beginDraw():
         new_surface.background(222)
-        new_surface.image(temp_surface, 1, 1)
+        new_surface.image(temp_surface, 0, 0)
     return new_surface
