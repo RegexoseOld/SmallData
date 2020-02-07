@@ -71,7 +71,6 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
-notebooks/
 
 # pyenv
 .python-version
@@ -113,5 +112,5 @@ venv.bak/
 # ignore model files
 webserver/model_data/german.model
 
-#TrainingData Files
-TrainingData.xlsx
+# preliminary xlsx-Files
+*.xlsx#
