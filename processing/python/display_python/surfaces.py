@@ -27,20 +27,17 @@ class Area:
             if name == value.name:
                 surf = surface
     
-    def update_utterances(self, utt, cat, max_utts=5):
-        for surf in self.subsurfaces.values():
-            if surf.name == "utts":
-                surf = surf.update_utts(utt, cat)
-                self.update_subsurfaces("utts", surf)
-        # else:
-        #     surf = surf.update_utts(cat, max_utts)
-        #     self.update_subsurfaces("cats", surf)
+    def update_utterances(self, utt, cat):
+        surf = self.subsurfaces["utts"].update_utts(utt, cat)
+        self.surface = surf
 
                
             
 class Subsurface:
     index = 1
     total_height = 0
+    iterate = False
+    
     def __init__(self, name, parent_surface, x_div, y_div, x_pos, y_pos, font):
         self.name = name
         self.parent = parent_surface
@@ -83,11 +80,11 @@ class Subsurface:
     
     def create_utt_cat(self, utt, cat):
         temp_utt_surface = linebreak(self.surface, utt, self.font, 18)
-        temp_cat_surface = createGraphics(self.parent.surface.width - utt_surface.width, temp_utt_surface.height)
+        temp_cat_surface = createGraphics(self.parent.surface.width - temp_utt_surface.width, temp_utt_surface.height)
         utt_cat_surface = createGraphics(temp_utt_surface.width + temp_cat_surface.width, temp_utt_surface.height)
         with temp_cat_surface.beginDraw():
-            temp_cat_surface.textFont(font)
-            temp_cat_surface.textSize(font_size)
+            temp_cat_surface.textFont(self.font)
+            temp_cat_surface.textSize(18)
             temp_cat_surface.textAlign(LEFT, TOP)
             temp_cat_surface.fill(0)
             temp_cat_surface.text(cat, 0, 0)
@@ -97,24 +94,32 @@ class Subsurface:
         return utt_cat_surface
     
     def update_utts(self, utt, cat):
-        # global UTTERANCE_DICT
         utt_cat_surf = self.create_utt_cat(utt, cat)
-        area_surf = createGraphics(utt_cat_surf.width, self.surface.height)
+        area_surf = self.parent.surface
         self.utterance_dict[self.index] =  utt_cat_surf 
+        print("utt_dict: ", self.utterance_dict)
         pos_y = 0
-        while self.total_height < self.surface.height:
-            with area_surf.beginDraw():
-                area_surf.background(200)
-            for value in reversed(list(self.utterance_dict.values())):
-                # alle untereinander positionieren
+        self.iterate = True
+        surfaces_to_iterate = reversed(list(self.utterance_dict.values()))
+        with area_surf.beginDraw():
+            area_surf.background(222)
+        while self.total_height <= self.surface.height and self.iterate:
+            for value in surfaces_to_iterate:
+                print("total height: {} value.height: {}".format(self.total_height, value.height))
+            # alle untereinander positionieren
                 with area_surf.beginDraw():
+                    area_surf.smooth()
                     # print("\index: {}  y_pos: {} ".format(self.index, pos_y))
                     area_surf.image(value, 0, pos_y)
-                pos_y += value.heigth
+                pos_y += value.height
                 self.total_height += value.height
+            self.iterate = False
+        
         if self.total_height > self.surface.height:
-            print("total height: ", self.total_height)
+            current_surfaces = list(self.utterance_dict.values())
+            print("total height: {} surface height: {} last height: {}".format(self.total_height, self.surface.height, current_surfaces[0].height))
             self.utterance_dict.popitem(last=False)
+            self.total_height = 0
         self.index += 1
         return area_surf
 
