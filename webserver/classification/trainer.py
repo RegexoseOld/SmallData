@@ -27,13 +27,13 @@ nlp = spacy.load('de')
 model = gensim.models.KeyedVectors.load_word2vec_format('../model_data/german.model', binary=True)
 
 
-def replace_umlaut(text):
+def clean_string(text):
     text = text.lower()
     text = text.replace('ä', 'ae')
     text = text.replace('ö', 'oe')
     text = text.replace('ü', 'ue')
     text = text.replace('ß', 'ss')
-    return text
+    return text.strip()
 
 
 def sent_to_vects(sentence):
@@ -81,7 +81,7 @@ def read_trainingdata_textfiles(trainingdata_path):
             for keywords in text.split('\n'):
                 keywords = keywords.strip()
                 keywords = keywords.lower()
-                keywords = replace_umlaut(keywords)
+                keywords = clean_string(keywords)
                 if keywords and keywords[0] != '[':
                     if len(keywords.split(' ')) == 1:
                         keywords_to_cat[keywords].append(category)
@@ -120,7 +120,7 @@ def read_trainingdata_utterances(df):
         for keywords in utt.split('\n'):
             keywords = keywords.strip()
             keywords = keywords.lower()
-            keywords = replace_umlaut(keywords)
+            keywords = clean_string(keywords)
             if keywords and keywords[0] != '[':
                 if len(keywords.split(' ')) == 1:
                     #if its one word only
@@ -193,11 +193,12 @@ def load_ml_data_and_train_model(file_path):
 
 def load_regexes(file_path):
     df = pd.read_excel(file_path)
-    return dict(zip(df.utterance, df.Effekt))
+    expressions = map(clean_string, df.utterance)
+    return dict(zip(expressions, df.Effekt))
 
 
 if __name__ == '__main__':
-    data_path = os.path.dirname(os.path.realpath(__file__))
+    data_path = '../model_data'
     # create logic to import database entries into data_frame
 
     regexes = load_regexes(os.path.join(data_path, 'TrainingData_regex.xlsx'))

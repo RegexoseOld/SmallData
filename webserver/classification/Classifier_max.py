@@ -5,6 +5,7 @@ import gensim
 import joblib
 import numpy as np
 from collections import defaultdict
+from . import trainer
 
 
 class Classifier:
@@ -26,15 +27,6 @@ class Classifier:
         self.regex_mapping = joblib.load(os.path.join(data_dir, 'regex_mapping.pkl'))
         self.filter_stop_words = False
         self.verbose = False
-
-    @staticmethod
-    def clean_string(string):
-        string = string.lower()
-        string = string.replace('ä', 'ae')
-        string = string.replace('ö', 'oe')
-        string = string.replace('ü', 'ue')
-        string = string.replace('ß', 'ss')
-        return string.strip()
 
     def word_to_vect(self, word):
         word = str(word)
@@ -97,7 +89,7 @@ class Classifier:
     def predict_proba(self, sentence, filter_stop_words=True, verbose=False):
         self.verbose = verbose
         self.filter_stop_words = filter_stop_words
-        sentence = self.clean_string(sentence)
+        sentence = trainer.clean_string(sentence)
         regex_pred = self.check_sent_with_regex(sentence)
 
         if regex_pred is not None:
