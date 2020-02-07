@@ -64,11 +64,7 @@ class Subsurface:
             surface.fill(col)
             surface.textAlign(CENTER)
             surface.text(txt, surface.width/2, surface.height/2 + spacing)
-    
-    def utts_on_surface(self, surface):
-        self.surface = self.text_on_surface(self.surface, utterance, 20, color(50))
-        self.parent.update_subsurfaces(self.name, self.surface)
-    
+
     def update_beat(self, beat_number, change_color):
         # print("beat {} change?  {}".format(beat_number, change_color))
         if change_color == "True":
@@ -93,7 +89,6 @@ class Subsurface:
             UTTERANCE_DICT = self.utterance_dict
         else: 
             self.utterance_dict[self.index] = [temp_surface, UTTERANCE_DICT[self.index][1]]
-
         pos_y = 0
         with self.surface.beginDraw():
             self.surface.background(200)
@@ -103,22 +98,12 @@ class Subsurface:
                 # print("\index: {}  y_pos: {} ".format(self.index, pos_y))
                 self.surface.image(value[0], 0, pos_y)
             pos_y += value[1]
-            
         if len(UTTERANCE_DICT) > max_utts:
             print("dict length: ", len(self.utterance_dict))
             UTTERANCE_DICT.popitem(last=False)
             self.utterance_dict.popitem(last=False)
         self.index += 1
         return self.surface
-        
-    def position_utt_surfaces(self, utt, cat, pos_y):
-        cat_surf = self.parent.subsurfaces["cats"]
-        if not pos_y >= self.surface.height:
-           
-            with cat_surf.beginDraw():
-                cat_surf.image(cat, self.parent.subsurfaces["cats"].x_pos, y_pos)
-        else:      
-            return utt, cat
 
 def build_areas(spacing_x, spacing_y): 
     pos_y1 = pos_y2 = height/16

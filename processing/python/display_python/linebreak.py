@@ -3,7 +3,7 @@ def linebreak(surface, break_text, font, font_size):
     y = 0
     char_index = 0
     scalar = 0.8
-    line_spacing = 5
+    line_spacing = 8
 
     # get height of font
     textSize(font_size)
