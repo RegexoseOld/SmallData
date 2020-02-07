@@ -102,18 +102,11 @@ def read_trainingdata_utterances(df):
     word1
     word2
 
-    [regexes]
-    word .* another three words
-    ^Begin .* like this
-
-
-    The function returns 2 dictionaries:  One with single words as keys and categories as values
-                                          One with regexes as keys and categories as values
+    The function returns 1 dictionaries:  One with single words as keys and categories as values
 
     all umlauts are replaced and words are lowercases.
     '''
     keywords_to_cat = defaultdict(list)
-    regexes = {}
     line = 0
 
     for i in df.index:
@@ -123,7 +116,7 @@ def read_trainingdata_utterances(df):
         else:
             effekt = 'not yet defined'
 
-        line +=1
+        line += 1
         for keywords in utt.split('\n'):
             keywords = keywords.strip()
             keywords = keywords.lower()
@@ -135,8 +128,9 @@ def read_trainingdata_utterances(df):
                     # print('for keyword {} in line {} appended: {}'.format(keywords, line, effekt) + '\n')
                 else:
                     # else if its more than one word
-                    regexes[keywords] = effekt
-    return keywords_to_cat, regexes
+                    pass
+
+    return keywords_to_cat
 
 
 def transform_keywords_to_trainingdata(keywords_to_cat):
@@ -153,7 +147,6 @@ def transform_keywords_to_trainingdata(keywords_to_cat):
         if vect is not None:
             x.append(vect)
             y.append(category)
-
 
     x = np.asarray(x)
     y = np.asarray(y)
@@ -178,12 +171,12 @@ def train_clf(x, y):
     return clf
 
 
-def load_data_and_train_model(df):
+def load_ml_data_and_train_model(file_path):
     '''
-    was:    get texts from txt files in a folder
-    keywords_to_cat, regexes = read_trainingdata_textfiles(trainingdata_path)
+    was:    get texts from excel file and train the ml classifier
     '''
-    keywords_to_cat, regexes = read_trainingdata_utterances(df)
+    df = pd.read_excel(file_path)
+    keywords_to_cat = read_trainingdata_utterances(df)
     print('Keywords with multiple categories are ignored\n')
     print('  keywords_to_cat:',  keywords_to_cat)
     for keyword, cats in list(keywords_to_cat.items()):
@@ -194,16 +187,21 @@ def load_data_and_train_model(df):
             keywords_to_cat[keyword] = cats[0]
 
     x, y = transform_keywords_to_trainingdata(keywords_to_cat)
-    clf = train_clf(x, y)
-    return clf, regexes
+    classifier = train_clf(x, y)
+    return classifier
+
+
+def load_regexes(file_path):
+    df = pd.read_excel(file_path)
+    return dict(zip(df.utterance, df.Effekt))
 
 
 if __name__ == '__main__':
     data_path = os.path.dirname(os.path.realpath(__file__))
     # create logic to import database entries into data_frame
 
-    data_frame = pd.read_excel(os.path.join(data_path, 'TrainingData_5cat_de.xlsx'))
-    clf, regexes = load_data_and_train_model(data_frame)
+    regexes = load_regexes(os.path.join(data_path, 'TrainingData_regex.xlsx'))
+    clf = load_ml_data_and_train_model(os.path.join(data_path, 'TrainingData_ml.xlsx'))
 
     joblib.dump(regexes, os.path.join(data_path, 'regex_mapping.pkl'))
-    joblib.dump(clf, os.path.join(data_path,'sgd_clf.pkl'))
+    joblib.dump(clf, os.path.join(data_path, 'sgd_clf.pkl'))
