@@ -105,8 +105,6 @@ class Subsurface:
         pos_y = 0
         self.iterate = True
         surfaces_to_iterate = reversed(list(self.utterance_dict.values()))
-        # with area_surf.beginDraw():
-        #     area_surf.background(222)
         while self.total_height <= self.surface.height and self.iterate:
             for value in surfaces_to_iterate:
                 with area_surf.beginDraw():
@@ -118,7 +116,6 @@ class Subsurface:
         
         if self.total_height > self.surface.height:
             current_surfaces = list(self.utterance_dict.values())
-            # print("total height: {} surface height: {} last height: {}".format(self.total_height, self.surface.height, current_surfaces[0].height))
             self.utterance_dict.popitem(last=False)
             self.total_height = 0
         self.index += 1
@@ -157,5 +154,3 @@ def sub_surfaces(font):
             next_surf.txt = "next part"
             beat_surf = Subsurface("beat", parent, 0.5, 1, parent.pos_x + parent.surface.width/2, parent.pos_y, font)
             beat_surf.txt = "1"
-        else:
-            pass

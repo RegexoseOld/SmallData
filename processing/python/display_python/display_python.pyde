@@ -24,7 +24,7 @@ class Listen(OscEventListener):
         
 
 def setup():
-    size(1000, 750)
+    size(1200, 850)
     background(200)
     global font, font2, font_size
     font_size = 14
