@@ -55,7 +55,7 @@ class Subsurface:
         self.surface.smooth()
         self.parent.subsurfaces[self.name] = self
   
-    def text_on_surface(self, surface, txt, font_size, col):
+    def text_on_surface(self, surface, txt, font_size, col, spacing=0):
         # print("update txt: {}".format(txt))
         with surface.beginDraw():
             surface.background(222)
@@ -63,8 +63,7 @@ class Subsurface:
             surface.textSize(font_size)
             surface.fill(col)
             surface.textAlign(CENTER)
-            surface.text(txt, surface.width/2, surface.height/2)
-        return surface
+            surface.text(txt, surface.width/2, surface.height/2 + spacing)
     
     def utts_on_surface(self, surface):
         self.surface = self.text_on_surface(self.surface, utterance, 20, color(50))
@@ -77,17 +76,14 @@ class Subsurface:
         else: 
             self.beat_color = color(10, 250, 20)
         self.txt = beat_number
-        self.surface = self.text_on_surface(self.surface, self.txt, 80, self.beat_color)
+        self.text_on_surface(self.surface, self.txt, 80, self.beat_color)
         # print("beat.parent: ", self.parent.name)
         self.parent.update_subsurfaces(self.name, self.surface)
     
-    def update_current(self, current_part):
-        self.surface = self.text_on_surface(self.surface, "current part - \n" + current_part, 20,  color(50))
+    def update_part(self, current_part, prefix):
+        self.text_on_surface(self.surface, prefix + current_part, 20,  color(50), 10)
         self.parent.update_subsurfaces(self.name, self.surface)
     
-    def update_next(self, next_part):
-        self.surface = self.text_on_surface(self.surface, "next part - \n" + next_part, 20, color(50))
-        self.parent.update_subsurfaces(self.name, self.surface)
     
     def update_utts(self, message, max_utts, ):
         global UTTERANCE_DICT
@@ -154,7 +150,7 @@ def sub_surfaces(font):
             current_surf = Subsurface("current", parent, 0.5, 0.5, parent.pos_x, parent.pos_y, font)
             current_surf.txt = "current part"
             next_surf = Subsurface("next", parent, 0.5, 0.5, parent.pos_x, parent.pos_y + current_surf.surface.height, font)
-            next_surf.txt = "next Part"
+            next_surf.txt = "next part"
             beat_surf = Subsurface("beat", parent, 0.5, 1, parent.pos_x + parent.surface.width/2, parent.pos_y, font)
             beat_surf.txt = "1"
         else:
