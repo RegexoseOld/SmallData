@@ -1,5 +1,5 @@
 
-def linebreak(surface, break_text, font, font_size):
+def linebreak(s_width, s_height, break_text, font, font_size):
     y = 0
     char_index = 0
     scalar = 0.8
@@ -8,16 +8,16 @@ def linebreak(surface, break_text, font, font_size):
     # get height of font
     textSize(font_size)
     font_height = textAscent() * scalar
-    temp_surface = createGraphics(surface.width, surface.height)
+    temp_surface = createGraphics(s_width, s_height)
 
     while break_text:
         i = 1  # index of characters
         # determine if row of text will be outside area
-        if y + font_height > surface.height:
+        if y + font_height > s_height:
             print('font too big. y + font_height = ', y + font_height)
             break
         # determine max width of line
-        while textWidth(break_text[:i]) < surface.width and i < len(break_text) + 1:
+        while textWidth(break_text[:i]) < s_width and i < len(break_text) + 1:
             i += 1
 
         # if text is wrapped then adjust the wrap to the last word
@@ -38,7 +38,7 @@ def linebreak(surface, break_text, font, font_size):
         break_text = break_text[(i+1):]  # the remaining text (i+1 skips " ")
 
     # create another surface with the height of the text
-    new_surface = createGraphics(surface.width, int(y)+ 10)
+    new_surface = createGraphics(s_width, int(y)+ 10)
     with new_surface.beginDraw():
         new_surface.background(222)
         new_surface.image(temp_surface, 0, 0)
