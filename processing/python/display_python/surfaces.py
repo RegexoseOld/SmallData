@@ -5,6 +5,101 @@ AREA_NAMES = ["song", "utterances", "blocks", "part_info"]
 AREAS = {}
 UTTERANCE_DICT = OrderedDict()
 
+class SurfaceBase:
+    def __init__(self, name, pos_x, pos_y, s_width, s_height):
+        self.name = name
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.subsurfaces = OrderedDict()
+        self.__create_surface(s_width, s_height)
+        
+    def __create_surface(self, w, h):
+        self.surface = createGraphics(w, h)
+        self.surface.smooth()
+        with self.surface.beginDraw():
+            self.surface.background(222)
+    
+    def draw(self, surface=None):
+        if surface:
+            with surface.beginDraw():
+                surface.image(self.surface, self.pos_x, self.pos_y)
+        else:
+            image(self.surface, self.pos_x, self.pos_y)
+        for subsurf in self.subsurfaces.values():
+            subsurf.draw(self.surface)
+        
+    def add_subsurface(self, name, area):
+        self.subsurfaces[name] = area
+        
+class UtteranceLine:
+    def __init__(self, s_width, s_height, utt, cat, font, pos_x):
+        self.pos_x = pos_x
+        self.pos_y = 0
+        temp_utt_surface = linebreak(s_width * 2/3, s_height, utt, font, 17)
+        temp_cat_surface = createGraphics(s_width * 1/3, temp_utt_surface.height)
+        utt_cat_surface = createGraphics((temp_utt_surface.width + temp_cat_surface.width) - 10 , temp_utt_surface.height)
+        with temp_cat_surface.beginDraw():
+            temp_cat_surface.textFont(font)
+            temp_cat_surface.textSize(17)
+            temp_cat_surface.textAlign(LEFT, TOP)
+            temp_cat_surface.fill(0)
+            temp_cat_surface.text(cat, 0, 0)
+        with utt_cat_surface.beginDraw():
+            utt_cat_surface.background(222)
+            utt_cat_surface.image(temp_utt_surface, 0, 0)
+            utt_cat_surface.image(temp_cat_surface, temp_utt_surface.width + 10 , 0)
+            utt_cat_surface.stroke(200)
+            utt_cat_surface.strokeWeight(15)
+            utt_cat_surface.line(0, utt_cat_surface.height, utt_cat_surface.width, utt_cat_surface.height)
+            utt_cat_surface.line(temp_utt_surface.width, 0, temp_utt_surface.width, utt_cat_surface.height)
+        self.surface = utt_cat_surface
+        
+    def set_pos_y(self, pos):
+        self.pos_y = pos
+    
+    def draw(self, surface):
+        with surface.beginDraw():
+            surface.image(self.surface, self.pos_x, self.pos_y) 
+
+class UtterancesArea(SurfaceBase):
+    def __init__(self, name, pos_x, pos_y, s_width, s_height, font):
+        SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
+        self.index = 0
+        
+        self.font = font
+    
+    def update_utts(self, utt, cat):
+        utt_cat_surf = UtteranceLine(self.surface.width, self.surface.height, utt, cat, self.font, self.pos_x)
+        self.add_subsurface(self.index, utt_cat_surf)
+        self.index += 1
+               
+        pos_y = 0
+        self.iterate = True
+        surfaces_to_iterate = reversed(list(self.subsurfaces.values()))
+        for utt_line in surfaces_to_iterate:
+            utt_line.set_pos_y(pos_y)
+            if pos_y >= self.surface.height:
+                break 
+            # with area_surf.beginDraw():
+            #     area_surf.smooth()
+            #     area_surf.image(value, 0, pos_y)
+            pos_y += utt_line.surface.height
+    
+        if pos_y > self.surface.height:
+            self.subsurfaces.popitem(last=False)   
+   
+
+def build_areas2(font):
+    y_spacing = height/100
+    x_spacing = width/100
+    AREAS["utterances"] = UtterancesArea("utterances", width/100, height/2 + y_spacing, width*8/13, height*7/16, font)
+    # utt_cat_area = Area2("utt_cat", width/100, height/2 + y_spacing, width*8/13, height*7/16)
+    # utt_area = Utterances("utt", utt_cat_area.pos_x + x_spacing , utt_cat_area.pos_y + y_spacing, utt_cat_area.s_width -10 , utt_cat_area.s_height -10, font)
+    # cat_area = Utterances("cat", utt_cat_area.pos_x + utt_area.s_width, height/2 + y_spacing, utt_cat_area.s_width/3, utt_cat_area.s_height,font)
+    # part_area = Area2("part_info", utt_cat_area.pos_x + 
+    # print("utt_cat pos_x {}\nutt pos_x {}\ncat pos_x {}".format(utt_cat_area.pos_x, utt_area.pos_x, cat_area.pos_x))
+    return AREAS
+
 class Area:
     def __init__(self, tempName, surface, pos_x, pos_y):
         self.name = tempName
@@ -30,8 +125,7 @@ class Area:
     def update_utterances(self, utt, cat):
         surf = self.subsurfaces["utts"].update_utts(utt, cat)
         self.surface = surf
-
-               
+    
             
 class Subsurface:
     index = 1
