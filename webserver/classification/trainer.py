@@ -54,6 +54,11 @@ def sentence_to_vec_spacy(sentence):
 
 
 def sentence_to_vec_german_model(sentence):
+    """
+    Warning: return nan, if none of the words in the sentence are known to the model!
+    :param sentence:
+    :return:
+    """
     data_matrix = []
     for word in sentence.split(' '):
         if word in model.index2word:
@@ -63,14 +68,23 @@ def sentence_to_vec_german_model(sentence):
     return np.mean(np.asarray(data_matrix), axis=0)
 
 
-def vectorize_corpus(texts, vectorizer):
-    print('\nVectorizing trainingdata')
+def vectorize_corpus(texts, vectorizer, categories=None):
+    if categories is not None and len(texts) != len(categories):
+        raise Exception('category and texts input must be of the same shape')
+
     vectors = []
-    for text in texts:
+    return_cats = []
+    for idx, text in enumerate(texts):
         vect = vectorizer(text)
-        if vect is not None:
+        if isinstance(vect, np.ndarray):
             vectors.append(vect)
-    return np.asarray(vectors)
+            if categories is not None:
+                return_cats.append(categories[idx])
+
+    if categories:
+        return np.asarray(vectors), np.asarray(return_cats)
+    else:
+        return np.asarray(vectors)
 
 
 def read_trainingdata_textfiles(trainingdata_path):
@@ -184,9 +198,9 @@ if __name__ == '__main__':
 
     df_ml = pd.read_excel(os.path.join(data_path, 'TrainingData_ml.xlsx'))
 
-    sentences, y = read_trainingdata_utterances(df_ml, max_wc=1)
+    sentences, categories = read_trainingdata_utterances(df_ml)
 
-    x = vectorize_corpus(sentences, sentence_to_vec_german_model)
+    x, y = vectorize_corpus(sentences, sentence_to_vec_spacy, categories=categories)
     clf = train_clf(x, y)
 
     joblib.dump(regexes, os.path.join(data_path, 'regex_mapping.pkl'))
