@@ -18,17 +18,14 @@ class Listen(OscEventListener):
             category = "".join([str(i) for i in list(m.arguments()[1])])
             AREAS['utterances'].update_utts(utterance, category)
 
-        
-
 def setup():
     size(1200, 850)
     background(200)
-    global font, font2, font_size
+    # global font, font_size
     font_size = 14
-    font = createFont("Arial-BoldMT", font_size, True)
-    font2 = createFont( "Helvetica Neue", font_size, True)
+    font = createFont( "Helvetica Neue", font_size, True)
     global osc, loc
-    AREAS = build_areas2(font2)
+    AREAS = build_areas(font2)
     osc = OscP5(this, 5040)
     loc = NetAddress('127.0.0.1', 5040) # send to self
     global listener
@@ -39,8 +36,6 @@ def draw():
     for area in AREAS.values():
         area.draw()
         
-        
-
 def reconnect():
     global osc, loc
     print("Net Address {} connected ?  {}".format(loc, loc.isvalid()))
