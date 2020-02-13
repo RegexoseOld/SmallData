@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from linebreak import linebreak
 
-AREAS = {}
+# AREAS = {}
 
 class SurfaceBase:
     def __init__(self, name, pos_x, pos_y, s_width, s_height):
@@ -135,10 +135,3 @@ class PartArea(SurfaceBase):
         self.add_subsurface("beat", beat_surf)
         self.add_subsurface("parts", current_next_surf)
    
-
-def build_areas(font):
-    y_spacing = height/100
-    x_spacing = width/100
-    AREAS["utterances"] = UtterancesArea("utterances", width/100, height/2 + y_spacing, width*8/13, height*7/16, font)
-    AREAS["part_info"] = PartArea("part_info", width *2/3, height/2 + y_spacing, width *4/13, height *7/16, font)
-    return AREAS

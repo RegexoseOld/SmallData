@@ -4,6 +4,8 @@ import getpass
 add_library('oscP5') 
 addr = "?"
 
+AREAS = {}
+
 class Listen(OscEventListener):
     def oscEvent(self, m):
         global loc, osc
@@ -21,11 +23,11 @@ class Listen(OscEventListener):
 def setup():
     size(1200, 850)
     background(200)
-    # global font, font_size
+    global font
     font_size = 14
     font = createFont( "Helvetica Neue", font_size, True)
     global osc, loc
-    AREAS = build_areas(font2)
+    AREAS = build_areas()
     osc = OscP5(this, 5040)
     loc = NetAddress('127.0.0.1', 5040) # send to self
     global listener
@@ -35,14 +37,14 @@ def setup():
 def draw():
     for area in AREAS.values():
         area.draw()
-        
-def reconnect():
-    global osc, loc
-    print("Net Address {} connected ?  {}".format(loc, loc.isvalid()))
-    osc.disconnect(loc)
-    print("Net Address {} connected ?  {}".format(loc, loc.isvalid()))
-    osc = OscP5(this, 5040)
-    loc = NetAddress('127.0.0.1', 5040)
+
+def build_areas():
+    global font
+    y_spacing = height/100
+    x_spacing = width/100
+    AREAS["utterances"] = UtterancesArea("utterances", width/100, height/2 + y_spacing, width*8/13, height*7/16, font)
+    AREAS["part_info"] = PartArea("part_info", width *2/3, height/2 + y_spacing, width *4/13, height *7/16, font)
+    return AREAS
 
 def stop():
     global osc
