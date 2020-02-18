@@ -25,7 +25,15 @@ import warnings
 warnings.filterwarnings("ignore")
 
 nlp = spacy.load('de')
-model = gensim.models.KeyedVectors.load_word2vec_format('../model_data/german.model', binary=True)
+
+
+def load_model():
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return gensim.models.KeyedVectors.load_word2vec_format(
+        os.path.join(parent_dir, 'model_data/german.model'), binary=True)
+
+
+model = load_model()
 
 
 def replace_umnlaut(text):
@@ -136,12 +144,12 @@ def read_trainingdata_utterances(df, min_wc=1, max_wc=np.Inf):
 
     for i in df.index:
         utt = df['utterance'][i]
-        if not isinstance(df['Effekt'][i], float):
+        if not isinstance(df['category'][i], float):
             text = clean_string(utt)
             wc = len(text.split(' '))  # word_count
             if min_wc <= wc <= max_wc:
                 x.append(text)
-                y.append(df['Effekt'][i])
+                y.append(df['category'][i])
 
     return x, y
 
@@ -196,7 +204,7 @@ if __name__ == '__main__':
 
     regexes = load_regexes(os.path.join(data_path, 'TrainingData_regex.xlsx'))
 
-    df_ml = pd.read_excel(os.path.join(data_path, 'TrainingData_ml.xlsx'))
+    df_ml = pd.read_excel(os.path.join(data_path, 'TrainingData_ml.xlsx')).rename(columns={'Effekt': 'category'})
 
     sentences, categories = read_trainingdata_utterances(df_ml)
 
