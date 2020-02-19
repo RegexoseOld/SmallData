@@ -1,6 +1,7 @@
 import pickle
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
+import time
 
 from config import settings
 from song.song_machine import State
@@ -70,10 +71,11 @@ class SongServer:
             return
 
         osc_map = pickle.loads(content)
-        self.send_level(osc_map['level'])
+        self.send_level(osc_map['rack'])
 
         current_state = self.song_machine.current_state
         self.song_machine.update_state(osc_map['cat'])
+        self.send_osc_notes(osc_map['cat'], 30 + osc_map['rack'] * 10, )
 
         if current_state != self.song_machine.current_state:
             self.beat_manager.update_next_part(self.song_machine.current_state)
@@ -88,8 +90,12 @@ class SongServer:
 
     def send_level(self, level):
         self.osculator_client.send_message('/rack', (level / 10))
-        self.osculator_client.send_message('/osc_notes', (level + 90, 100, 1.0))
-        self.osculator_client.send_message('/osc_notes', (level + 90, 100, 0.0))
+
+    def send_osc_notes(self, note, velo, dura):
+        self.osculator_client.send_message('/osc_notes', (note, velo, 1.0))
+        time.sleep(dura)
+        self.osculator_client.send_message('/osc_notes', (note, velo, 0.0))
+
 
     def send_part(self, counter):
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part

@@ -33,3 +33,10 @@ note_to_beat = {
     127: '8',
     'first_count_in_bar': '1'
 }
+category_to_note = {
+    'praise': 64,
+    'lecture': 110,
+    'insinuation': 90,
+    'dissence': 40,
+    'concession': 51
+}
