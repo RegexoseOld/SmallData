@@ -95,8 +95,8 @@ class SongServer:
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
 
         if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_WARNING):
-            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (next_part.note, 1.0))
-            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (next_part.note, 0.0))
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 1.0))
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 0.0))
 
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
         print('SongerServer. sending: ', message)
