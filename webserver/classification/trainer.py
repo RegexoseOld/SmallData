@@ -77,6 +77,13 @@ def sentence_to_vec_german_model(sentence):
 
 
 def vectorize_corpus(texts, vectorizer, categories=None):
+    """
+    :param texts: a list of texts
+    :param vectorizer: the vectorizing callable
+    :param categories: an optional list of categories. If provided, a new list of categories is returned,
+                        with the cats of the texts removed that have not been vectorized
+    :return: an array of vectors. WARNING: if a text cannot be vectorized, it is removed from the corpus!
+    """
     if categories is not None and len(texts) != len(categories):
         raise Exception('category and texts input must be of the same shape')
 
@@ -208,7 +215,7 @@ if __name__ == '__main__':
 
     sentences, categories = read_trainingdata_utterances(df_ml)
 
-    x, y = vectorize_corpus(sentences, sentence_to_vec_spacy, categories=categories)
+    x, y = vectorize_corpus(sentences, sentence_to_vec_german_model, categories=categories)
     clf = train_clf(x, y)
 
     joblib.dump(regexes, os.path.join(data_path, 'regex_mapping.pkl'))
