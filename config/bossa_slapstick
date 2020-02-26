@@ -1,0 +1,30 @@
+{
+  "states_to_notes": {
+    "intro_beat":  "2",
+    "cobbweb classroom":  "3",
+    "bacteriae":  "4",
+    "leech_me":  "5",
+    "conspiracious_student": "6",
+    "time for a break": "7"
+  },
+  "first_state": "intro_beat",
+  "last_state": "time for a break",
+  "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
+  "transitions": [
+    [
+      "intro_beat",
+      "cobbweb classroom",
+      "praise > 2"
+    ],
+     [
+      "cobbweb classroom",
+      "bacteriae",
+      "praise > 2"
+    ],
+     [
+      "bacteriae",
+      "leech_me",
+      "praise > 2"
+    ]
+  ]
+}
