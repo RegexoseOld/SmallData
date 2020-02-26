@@ -70,6 +70,7 @@ class SongServer:
             return
 
         osc_map = pickle.loads(content)
+        print('SongerServer. receiving: ', osc_map)
         self.send_level(osc_map['level'])
 
         current_state = self.song_machine.current_state
@@ -99,5 +100,5 @@ class SongServer:
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 0.0))
 
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
-        print('SongerServer. sending: ', message)
+        # print('SongerServer. sending: ', message)
         self.display_client.send_message(settings.SONG_BEAT_ADDRESS, message)

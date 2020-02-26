@@ -14,7 +14,7 @@ from config import settings
 clf = Classifier(settings.DATA_DIR)
 #   Client for a simple Feedback from Ableton Live
 song_client = MusicClient('127.0.0.1', settings.SONG_SERVER_PORT)
-display_client = MusicClient('127.0.0.1', settings.DISPLAY_PORT)
+display_client = MusicClient('127.0.0.1', settings.PROCESSING_PORT)
 
 
 def send_to_music_server(utterance, category):
@@ -25,7 +25,7 @@ def send_to_music_server(utterance, category):
     }
     osc_map = pickle.dumps(osc_dict)
     song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
-    display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, osc_map)
+    display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, [utterance, category])
 
 
 class UtteranceView(viewsets.ModelViewSet):
