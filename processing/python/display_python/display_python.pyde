@@ -24,7 +24,7 @@ class Listen(OscEventListener):
             
             AREAS['utterances'].update_utts(utterance, category)
             if info2display["is_locked"]:
-                AREAS['category_counter'].reset_counter()
+                AREAS['category_counter'].add_locked()
             else:
                 AREAS['category_counter'].update_counter(info2display['category_counter'])
 

@@ -155,6 +155,10 @@ class CategoryCounter(SurfaceBase):
     
     def reset_counter(self):
         self.update_counter({}.fromkeys(self.categories, 0))
+        
+    def add_locked(self):
+        with self.surface.beginDraw():
+            self.surface.text("Locked", 20, 20)
     
     def update_counter(self, category_counter):
         idx = 0
