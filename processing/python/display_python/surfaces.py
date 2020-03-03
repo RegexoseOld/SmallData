@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from linebreak import linebreak
+import math
 
-# AREAS = {}
 
 class SurfaceBase:
     def __init__(self, name, pos_x, pos_y, s_width, s_height):
@@ -28,7 +28,8 @@ class SurfaceBase:
         
     def add_subsurface(self, name, area):
         self.subsurfaces[name] = area
-        
+
+
 class UtteranceLine:
     def __init__(self, s_width, s_height, utt, cat, font, pos_x):
         self.pos_x = pos_x
@@ -59,6 +60,7 @@ class UtteranceLine:
         with surface.beginDraw():
             surface.image(self.surface, self.pos_x, self.pos_y) 
 
+
 class UtterancesArea(SurfaceBase):
     def __init__(self, name, pos_x, pos_y, s_width, s_height, font):
         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
@@ -81,7 +83,8 @@ class UtterancesArea(SurfaceBase):
     
         if pos_y > self.surface.height:
             self.subsurfaces.popitem(last=False)  
-             
+
+
 class Beat:
     def __init__(self, s_width, s_height, beatnum, col, font):
         self.surface = createGraphics(s_width, s_height)
@@ -99,7 +102,8 @@ class Beat:
     def draw(self, surface):
         with surface.beginDraw():
             surface.image(self.surface, self.surface.width *4/5, 0) 
-    
+
+
 class Parts:
     def __init__(self, s_width, s_height, current, next, font, col):
         self.surface = createGraphics(s_width, s_height)
@@ -161,9 +165,9 @@ class CategoryCounter(SurfaceBase):
             self.surface.text("Locked", 20, 20)
     
     def update_counter(self, category_counter):
-        idx = 0
         with self.surface.beginDraw():
             self.surface.background(222)
+            idx = 0
             for cat, count in category_counter.items():
                 self.surface.rect(self.x_offset + idx * (self.bar_width + self.bar_distance), 
                                   self.max_count*self.height_per_count, 
@@ -171,3 +175,28 @@ class CategoryCounter(SurfaceBase):
                                   -count*self.height_per_count)
                 self.surface.text(cat, self.x_offset + idx * (self.bar_width + self.bar_distance), self.height_per_count * self.max_count + self.text_height/2.)
                 idx += 1
+
+
+class CategoryStar(SurfaceBase):
+    circle_radius = 150
+    marker_radius = 50
+    circle_distance = 40
+    categories = ['praise', 'dissence', 'insinuation', 'lecture', 'concession']
+
+    def __init__(self, *args):
+        SurfaceBase.__init__(self, *args)
+        self.__x, self.__y = self.surface.width/2, self.surface.height/2  # x and y coordinate of the center
+
+        self.update(2)
+
+    def update(self, category_counter):
+        with self.surface.beginDraw():
+            self.surface.background(222)
+            for idx, cat in enumerate(self.categories):
+                x = self.__x + self.circle_radius * math.sin(idx * 2*math.pi/len(self.categories))
+                y = self.__y + self.circle_radius * math.cos(idx * 2*math.pi/len(self.categories))
+                self.surface.line(self.__x, self.__y, x, y)
+                self.surface.textAlign(CENTER)
+                self.surface.text(cat, self.__x + (x - self.__x)/2, self.__y+ (y - self.__y)/2)
+                self.surface.circle(x, y, self.marker_radius)
+            self.surface.circle(self.__x, self.__y, self.marker_radius)
