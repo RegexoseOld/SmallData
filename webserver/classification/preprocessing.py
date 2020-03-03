@@ -42,7 +42,7 @@ def word_to_vec(word):
         return None
 
 
-def sentence_to_vec(sentence, filter_stop_words=True):
+def sentence_to_vec(sentence, filter_stop_words=False):
     """
     Warning: returns None, if none of the words in the sentence are known to the model!
     :param sentence:
