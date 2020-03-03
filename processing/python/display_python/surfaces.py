@@ -165,4 +165,5 @@ class CategoryCounter(SurfaceBase):
                                   self.max_count*self.height_per_count, 
                                   self.bar_width, 
                                   -count*self.height_per_count)
+                self.surface.text(cat, self.x_offset + idx * (self.bar_width + self.bar_distance), self.height_per_count * self.max_count + self.text_height/2.)
                 idx += 1
