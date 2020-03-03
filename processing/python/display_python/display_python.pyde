@@ -23,6 +23,7 @@ class Listen(OscEventListener):
             category = info2display["cat"]
             
             AREAS['utterances'].update_utts(utterance, category)
+            AREAS['category_counter'].update_counter(info2display['category_counter'])
 
 def setup():
     size(1200, 850)
@@ -48,6 +49,7 @@ def build_areas():
     x_spacing = width/100
     AREAS["utterances"] = UtterancesArea("utterances", width/100, height/2 + y_spacing, width*8/13, height*7/16, font)
     AREAS["part_info"] = PartArea("part_info", width *2/3, height/2 + y_spacing, width *4/13, height *7/16, font)
+    AREAS["category_counter"] = CategoryCounter("category_counter", 20, 100)
     return AREAS
 
 def stop():

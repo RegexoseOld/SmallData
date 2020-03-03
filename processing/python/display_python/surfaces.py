@@ -134,4 +134,28 @@ class PartArea(SurfaceBase):
         current_next_surf = Parts(self.surface.width/2, self.surface.height, current, next, self.font, col)
         self.add_subsurface("beat", beat_surf)
         self.add_subsurface("parts", current_next_surf)
-   
+        
+
+class CategoryCounter(SurfaceBase):
+    bar_width = 20
+    bar_distance = 5
+    height_per_count = 5
+    max_count = 10
+    
+    categories = ['praise', 'dissence', 'insinuation', 'lecture', 'concession']
+    
+    def __init__(self, name, pos_x, pos_y):
+        s_width = self.bar_width * len(self.categories) + self.bar_distance * (len(self.categories)-1)
+        s_height = self.height_per_count * self.max_count 
+        SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
+        self.update_counter({}.fromkeys(self.categories, 0))
+    
+    def update_counter(self, category_counter):
+        idx = 0
+        with self.surface.beginDraw():
+            for cat, count in category_counter.items():
+                self.surface.rect(idx * (self.bar_width + self.bar_distance), 
+                                  self.max_count*self.height_per_count, 
+                                  self.bar_width, 
+                                  -count*self.height_per_count)
+                idx += 1
