@@ -106,8 +106,9 @@ class SongServer:
         self.display_client.send_message(settings.SONG_BEAT_ADDRESS, message)
 
     def _send_utterance_info(self, input_dict):
+        print(self.song_machine.category_counter, isinstance(self.song_machine.category_counter, dict))
         input_dict['category_counter'] = self.song_machine.category_counter
-        input_dict['is_locked'] = self.song_machine.is_locked
+        input_dict['is_locked'] = self.song_machine.is_locked()
 
-        content = pickle.dumps(input_dict)
+        content = pickle.dumps(input_dict, protocol=2)
         self.display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, content)

@@ -1,5 +1,6 @@
 from surfaces import *
-import getpass
+# import getpass
+import pickle
 
 add_library('oscP5') 
 addr = "?"
@@ -16,8 +17,11 @@ class Listen(OscEventListener):
             next_part_name = "".join([str(i) for i in list(m.arguments()[3])])
             AREAS['part_info'].update_parts(current_part_name, next_part_name, current_beat, change_color)
         elif m.checkAddrPattern("/display_input") == True:
-            utterance = "".join([str(i) for i in list(m.arguments()[0])])
-            category = "".join([str(i) for i in list(m.arguments()[1])])
+            info2display = pickle.loads(m.arguments()[0])
+            print(info2display)
+            utterance = info2display["text"]
+            category = info2display["cat"]
+            
             AREAS['utterances'].update_utts(utterance, category)
 
 def setup():
