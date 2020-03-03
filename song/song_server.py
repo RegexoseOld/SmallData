@@ -71,7 +71,7 @@ class SongServer:
 
         osc_map = pickle.loads(content)
         print('SongerServer. receiving: ', osc_map)
-        self.send_level(osc_map['level'])
+        self._send_level(osc_map['level'])
 
         current_state = self.song_machine.current_state
         self.song_machine.update_state(osc_map['cat'])
@@ -80,19 +80,21 @@ class SongServer:
             self.beat_manager.update_next_part(self.song_machine.current_state)
             self.song_machine.set_lock()
 
+        self._send_utterance_info(osc_map)
+
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
         if self.beat_manager.update_beat_counter(counter):
-            self.send_part(counter)
+            self._send_part(counter)
             if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_NORMAL):
                 self.song_machine.release_lock()
 
-    def send_level(self, level):
+    def _send_level(self, level):
         self.osculator_client.send_message('/rack', (level / 10))
         self.osculator_client.send_message('/osc_notes', (level + 90, 100, 1.0))
         self.osculator_client.send_message('/osc_notes', (level + 90, 100, 0.0))
 
-    def send_part(self, counter):
+    def _send_part(self, counter):
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
 
         if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_WARNING):
@@ -102,3 +104,10 @@ class SongServer:
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
         # print('SongerServer. sending: ', message)
         self.display_client.send_message(settings.SONG_BEAT_ADDRESS, message)
+
+    def _send_utterance_info(self, input_dict):
+        input_dict['category_counter'] = self.song_machine.category_counter
+        input_dict['is_locked'] = self.song_machine.is_locked
+
+        content = pickle.dumps(input_dict)
+        self.display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, content)
