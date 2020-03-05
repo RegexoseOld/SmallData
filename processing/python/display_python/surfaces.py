@@ -181,13 +181,16 @@ class CategoryCounter(SurfaceBase):
 class CategoryStar(SurfaceBase):
     circle_radius = 150
     marker_radius = 50
-    circle_distance = 40
+    max_count = 5.
     categories = ['praise', 'dissence', 'insinuation', 'lecture', 'concession']
 
     def __init__(self, *args):
         SurfaceBase.__init__(self, *args)
         self.__x, self.__y = self.surface.width / 2, self.surface.height / 2  # x and y coordinate of the center
-        self.update(2)
+        self.reset()
+
+    def reset(self):
+        self.update({}.fromkeys(self.categories, 0))
 
     def update(self, category_counter, is_locked=False):
         with self.surface.beginDraw():
@@ -197,12 +200,18 @@ class CategoryStar(SurfaceBase):
                 self.surface.background(222)
                 self.__create_background()
 
-                idx = random.randint(0, 4)
-                x = self.__x + self.circle_radius * math.sin(idx * 2*math.pi/len(self.categories))
-                y = self.__y + self.circle_radius * math.cos(idx * 2*math.pi/len(self.categories))
-                self.surface.stroke(204, 102, 0)
-                self.surface.strokeWeight(7)
-                self.surface.line(self.__x, self.__y, x, y)
+                idx = 0
+                for cat, count in category_counter.items():
+                    x = self.__x + self.circle_radius * math.sin(idx * 2*math.pi/len(self.categories))
+                    y = self.__y + self.circle_radius * math.cos(idx * 2*math.pi/len(self.categories))
+                    self.surface.stroke(0, 102, 102)
+                    self.surface.strokeWeight(7)
+                    self.surface.line(self.__x,
+                                      self.__y,
+                                      self.__x + (x-self.__x) * count/self.max_count,
+                                      self.__y + (y-self.__y) * count/self.max_count
+                                      )
+                    idx += 1
 
     def __create_background(self):
         self.surface.stroke(0, 0, 0)
