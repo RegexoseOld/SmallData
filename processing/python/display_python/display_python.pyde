@@ -23,10 +23,7 @@ class Listen(OscEventListener):
             category = info2display["cat"]
             
             AREAS['utterances'].update_utts(utterance, category)
-            if info2display["is_locked"]:
-                AREAS['category_counter'].add_locked()
-            else:
-                AREAS['category_counter'].update(info2display['category_counter'])
+            AREAS['category_counter'].update(info2display['category_counter'], info2display["is_locked"])
 
 def setup():
     size(1200, 850)

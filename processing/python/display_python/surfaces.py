@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from linebreak import linebreak
 import math
+import random
 
 
 class SurfaceBase:
@@ -185,18 +186,33 @@ class CategoryStar(SurfaceBase):
 
     def __init__(self, *args):
         SurfaceBase.__init__(self, *args)
-        self.__x, self.__y = self.surface.width/2, self.surface.height/2  # x and y coordinate of the center
-
+        self.__x, self.__y = self.surface.width / 2, self.surface.height / 2  # x and y coordinate of the center
         self.update(2)
 
-    def update(self, category_counter):
+    def update(self, category_counter, is_locked=False):
         with self.surface.beginDraw():
-            self.surface.background(222)
-            for idx, cat in enumerate(self.categories):
+            if is_locked:
+                self.surface.text("Locked", 20, 20)
+            else:
+                self.surface.background(222)
+                self.__create_background()
+
+                idx = random.randint(0, 4)
                 x = self.__x + self.circle_radius * math.sin(idx * 2*math.pi/len(self.categories))
                 y = self.__y + self.circle_radius * math.cos(idx * 2*math.pi/len(self.categories))
+                self.surface.stroke(204, 102, 0)
+                self.surface.strokeWeight(7)
                 self.surface.line(self.__x, self.__y, x, y)
-                self.surface.textAlign(CENTER)
-                self.surface.text(cat, self.__x + (x - self.__x)/2, self.__y+ (y - self.__y)/2)
-                self.surface.circle(x, y, self.marker_radius)
-            self.surface.circle(self.__x, self.__y, self.marker_radius)
+
+    def __create_background(self):
+        self.surface.stroke(0, 0, 0)
+        self.surface.strokeWeight(2)
+        for idx, cat in enumerate(self.categories):
+            x = self.__x + self.circle_radius * math.sin(idx * 2*math.pi/len(self.categories))
+            y = self.__y + self.circle_radius * math.cos(idx * 2*math.pi/len(self.categories))
+            self.surface.line(self.__x, self.__y, x, y)
+            self.surface.textAlign(CENTER)
+            self.surface.text(cat, self.__x + (x - self.__x) / 2, self.__y + (y - self.__y) / 2)
+            self.surface.circle(x, y, self.marker_radius)
+        self.surface.circle(self.__x, self.__y, self.marker_radius)
+
