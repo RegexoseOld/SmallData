@@ -183,10 +183,16 @@ class CategoryStar(SurfaceBase):
     marker_radius = 50
     max_count = 5.
     categories = ['praise', 'dissence', 'insinuation', 'lecture', 'concession']
+    # a dictionary of type {categrory1: (x1,y1), ...} that holds the coordinates of the center
+    # of the correspponding circle:
+    __directions = {}
+    # x and y coordinate of the center of the image
+    __x = None
+    __y = None
 
     def __init__(self, *args):
         SurfaceBase.__init__(self, *args)
-        self.__x, self.__y = self.surface.width / 2, self.surface.height / 2  # x and y coordinate of the center
+        self.__create_coordinates()
         self.reset()
 
     def reset(self):
@@ -200,28 +206,29 @@ class CategoryStar(SurfaceBase):
                 self.surface.background(222)
                 self.__create_background()
 
-                idx = 0
                 for cat, count in category_counter.items():
-                    x = self.__x + self.circle_radius * math.sin(idx * 2*math.pi/len(self.categories))
-                    y = self.__y + self.circle_radius * math.cos(idx * 2*math.pi/len(self.categories))
                     self.surface.stroke(0, 102, 102)
                     self.surface.strokeWeight(7)
                     self.surface.line(self.__x,
                                       self.__y,
-                                      self.__x + (x-self.__x) * count/self.max_count,
-                                      self.__y + (y-self.__y) * count/self.max_count
+                                      self.__x + (self.__directions[cat][0]-self.__x) * count/self.max_count,
+                                      self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
                                       )
-                    idx += 1
 
     def __create_background(self):
         self.surface.stroke(0, 0, 0)
         self.surface.strokeWeight(2)
-        for idx, cat in enumerate(self.categories):
-            x = self.__x + self.circle_radius * math.sin(idx * 2*math.pi/len(self.categories))
-            y = self.__y + self.circle_radius * math.cos(idx * 2*math.pi/len(self.categories))
+        for cat, (x, y) in self.__directions.items():
             self.surface.line(self.__x, self.__y, x, y)
             self.surface.textAlign(CENTER)
             self.surface.text(cat, self.__x + (x - self.__x) / 2, self.__y + (y - self.__y) / 2)
             self.surface.circle(x, y, self.marker_radius)
         self.surface.circle(self.__x, self.__y, self.marker_radius)
+
+    def __create_coordinates(self):
+        self.__x, self.__y = self.surface.width / 2, self.surface.height / 2
+        for idx, cat in enumerate(self.categories):
+            x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(self.categories))
+            y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(self.categories))
+            self.__directions[cat] = (x, y)
 
