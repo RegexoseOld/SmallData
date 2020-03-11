@@ -43,8 +43,9 @@ elif args.app == 'song':
 
     oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
     disp_client = udp_client.SimpleUDPClient(settings.ip, settings.PROCESSING_PORT)
+    parser = song_machine.create_parser(settings.song_path)
 
-    machine_instance = song_machine.create_instance(settings.song_path)
+    machine_instance = song_machine.SongMachine(parser)
     beat_manager = BeatAdvanceManager(machine_instance.parser.first_state_name)
 
     song_server = SongServer(oscul_client, disp_client, machine_instance, beat_manager)

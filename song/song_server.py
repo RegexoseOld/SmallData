@@ -73,10 +73,9 @@ class SongServer:
         print('SongerServer. receiving: ', osc_map)
         self._send_level(osc_map['level'])
 
-        current_state = self.song_machine.current_state
         self.song_machine.update_state(osc_map['cat'])
 
-        if current_state != self.song_machine.current_state:
+        if self.song_machine.is_criteria_met():
             self.beat_manager.update_next_part(self.song_machine.current_state)
             self.song_machine.set_lock()
 

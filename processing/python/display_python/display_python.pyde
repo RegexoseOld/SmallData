@@ -1,6 +1,11 @@
 from surfaces import *
-# import getpass
 import pickle
+
+import sys
+import os
+sys.path.append(os.path.abspath('../../../'))
+import config
+from song import song_machine
 
 add_library('oscP5') 
 addr = "?"
@@ -49,7 +54,9 @@ def build_areas():
     x_spacing = width/100
     AREAS["utterances"] = UtterancesArea("utterances", width/100, height/2 + y_spacing, width*8/13, height*7/16, font)
     AREAS["part_info"] = PartArea("part_info", width *2/3, height/2 + y_spacing, width *4/13, height *7/16, font)
-    AREAS["category_counter"] = CategoryStar("category_counter", 100, 20, 400, 400)
+    
+    parser = song_machine.create_parser(config.settings.song_path)
+    AREAS["category_counter"] = CategoryStar(parser, "category_counter", 100, 20, 400, 400)
     return AREAS
 
 def stop():

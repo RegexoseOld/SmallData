@@ -2,24 +2,26 @@ import json
 
 
 class Transition:
+    SIGN = '>'
     source_name = ''
     target_name = ''
     condition = None
+    limit = None
 
     def __init__(self, transition_array):
         self.source_name = transition_array[0]
         self.target_name = transition_array[1]
-        self.condition = self._parse_condition_string(transition_array[2])
+        self.__create_condition(transition_array[2])
 
-    @staticmethod
-    def _parse_condition_string(cond_string):
+    def __create_condition(self, cond_string):
         """
         convert the condition-string (as contained in the song.json) to a callable
         :param cond_string:
         :return: callable. returns true if the category-counter fulfills the condition
         """
-        category, condition, count = cond_string.split(" ")
-        return lambda cat_counter: cat_counter[category] > int(count)
+        category, limit = cond_string.split(self.SIGN)
+        self.limit = int(limit.strip())
+        self.condition = lambda cat_counter: cat_counter[category.strip()] > self.limit
 
 
 class State:
@@ -56,6 +58,7 @@ class SongMachine:
     last_state = None
     parser = None
     category_counter = {}
+    __criteria = False
     __lock = False
 
     def __init__(self, parser):
@@ -76,12 +79,17 @@ class SongMachine:
     def is_locked(self):
         return self.__lock
 
+    def is_criteria_met(self):
+        return self.__criteria
+
     def update_state(self, category):
+        self.__criteria = False
         self.category_counter[category] += 1
 
         next_state_name = self.current_state.test_transitions(self.category_counter)
 
         if next_state_name != self.current_state.name:
+            self.__criteria = True
             self.current_state = self.parser.states[next_state_name]
             self._reset_counter(self.category_counter.keys())
 
@@ -189,14 +197,14 @@ class SongValidator(object):
             )
 
 
-def create_instance(path_to_song_file):
+def create_parser(path_to_song_file):
     with open(path_to_song_file, 'r') as f:
         json_data = json.load(f)
 
     SongValidator(json_data).validate()
     parser = SongParser(json_data)
     parser.parse()
-    return SongMachine(parser)
+    return parser
 
 
 if __name__ == '__main__':
@@ -205,7 +213,8 @@ if __name__ == '__main__':
     sys.path.append(path.dirname(path.dirname(__file__)))
     from config import settings
 
-    song_machine = create_instance(path.join(settings.song_path))
+    song_parser = create_parser(settings.song_path)
+    song_machine = SongMachine(song_parser)
 
     print(song_machine.current_state)
     song_machine.update_state("Lob")

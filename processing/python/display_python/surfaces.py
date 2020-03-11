@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from linebreak import linebreak
 import math
-import random
 
 
 class SurfaceBase:
@@ -182,21 +181,24 @@ class CategoryStar(SurfaceBase):
     circle_radius = 150
     marker_radius = 50
     max_count = 5.
-    categories = ['praise', 'dissence', 'insinuation', 'lecture', 'concession']
+    parser = None
+
     # a dictionary of type {categrory1: (x1,y1), ...} that holds the coordinates of the center
     # of the correspponding circle:
     __directions = {}
+
     # x and y coordinate of the center of the image
     __x = None
     __y = None
 
-    def __init__(self, *args):
+    def __init__(self, parser, *args):
         SurfaceBase.__init__(self, *args)
+        self.parser = parser
         self.__create_coordinates()
         self.reset()
 
     def reset(self):
-        self.update({}.fromkeys(self.categories, 0))
+        self.update({}.fromkeys(self.parser.categories, 0))
 
     def update(self, category_counter, is_locked=False):
         with self.surface.beginDraw():
@@ -227,8 +229,7 @@ class CategoryStar(SurfaceBase):
 
     def __create_coordinates(self):
         self.__x, self.__y = self.surface.width / 2, self.surface.height / 2
-        for idx, cat in enumerate(self.categories):
-            x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(self.categories))
-            y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(self.categories))
+        for idx, cat in enumerate(self.parser.categories):
+            x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(self.parser.categories))
+            y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(self.parser.categories))
             self.__directions[cat] = (x, y)
-
