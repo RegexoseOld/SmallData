@@ -74,6 +74,7 @@ class SongMachine:
         self.__lock = True
 
     def release_lock(self):
+        self._reset_counter(self.category_counter.keys())
         self.__lock = False
 
     def is_locked(self):
@@ -91,7 +92,6 @@ class SongMachine:
         if next_state_name != self.current_state.name:
             self.__criteria = True
             self.current_state = self.parser.states[next_state_name]
-            self._reset_counter(self.category_counter.keys())
 
             if self.current_state == self.last_state:
                 print("The END")

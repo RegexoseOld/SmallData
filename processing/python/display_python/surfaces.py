@@ -202,21 +202,20 @@ class CategoryStar(SurfaceBase):
 
     def update(self, category_counter, is_locked=False):
         with self.surface.beginDraw():
+            self.surface.background(222)
+            self.__create_background()
+
+            for cat, count in category_counter.items():
+                self.surface.stroke(0, 102, 102)
+                self.surface.strokeWeight(7)
+                self.surface.line(self.__x,
+                                self.__y,
+                                self.__x + (self.__directions[cat][0]-self.__x) * count/self.max_count,
+                                self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
+                                )
             if is_locked:
                 self.surface.fill(255, 0, 0)
                 self.surface.text("YEAH!", 20, 20)
-            else:
-                self.surface.background(222)
-                self.__create_background()
-
-                for cat, count in category_counter.items():
-                    self.surface.stroke(0, 102, 102)
-                    self.surface.strokeWeight(7)
-                    self.surface.line(self.__x,
-                                      self.__y,
-                                      self.__x + (self.__directions[cat][0]-self.__x) * count/self.max_count,
-                                      self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
-                                      )
 
     def __create_background(self):
         self.surface.stroke(0, 0, 0)
