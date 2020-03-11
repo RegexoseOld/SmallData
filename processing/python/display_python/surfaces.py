@@ -203,7 +203,8 @@ class CategoryStar(SurfaceBase):
     def update(self, category_counter, is_locked=False):
         with self.surface.beginDraw():
             if is_locked:
-                self.surface.text("Locked", 20, 20)
+                self.surface.fill(255, 0, 0)
+                self.surface.text("YEAH!", 20, 20)
             else:
                 self.surface.background(222)
                 self.__create_background()
