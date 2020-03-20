@@ -64,6 +64,7 @@ class SongServer:
 
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (9, 1.0))
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (9, 0.0))
+        self._send_partinfo_to_display()
 
     def interpreter_handler(self, _, content):
         if self.song_machine.is_locked():
@@ -74,12 +75,11 @@ class SongServer:
         self._send_level(osc_map['level'])
 
         self.song_machine.update_state(osc_map['cat'])
+        self._send_utterance_to_display(osc_map)
 
         if self.song_machine.is_criteria_met():
             self.beat_manager.update_next_part(self.song_machine.current_state)
-            self.song_machine.set_lock()
-
-        self._send_utterance_info(osc_map)
+            self._send_partinfo_to_display()
 
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
@@ -104,10 +104,15 @@ class SongServer:
         # print('SongerServer. sending: ', message)
         self.display_client.send_message(settings.SONG_BEAT_ADDRESS, message)
 
-    def _send_utterance_info(self, input_dict):
+    def _send_utterance_to_display(self, input_dict):
         print(self.song_machine.category_counter, isinstance(self.song_machine.category_counter, dict))
         input_dict['category_counter'] = self.song_machine.category_counter
         input_dict['is_locked'] = self.song_machine.is_locked()
 
         content = pickle.dumps(input_dict, protocol=2)
-        self.display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, content)
+        self.display_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, content)
+
+    def _send_partinfo_to_display(self):
+        self.display_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
+                                         pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
+                                         )

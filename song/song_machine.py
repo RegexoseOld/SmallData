@@ -5,23 +5,27 @@ class Transition:
     SIGN = '>'
     source_name = ''
     target_name = ''
-    condition = None
-    limit = None
+    category = ''
+    limit = 0
 
     def __init__(self, transition_array):
         self.source_name = transition_array[0]
         self.target_name = transition_array[1]
-        self.__create_condition(transition_array[2])
+        self.__parse_condition_string(transition_array[2])
 
-    def __create_condition(self, cond_string):
-        """
-        convert the condition-string (as contained in the song.json) to a callable
-        :param cond_string:
-        :return: callable. returns true if the category-counter fulfills the condition
-        """
+    def __parse_condition_string(self, cond_string):
         category, limit = cond_string.split(self.SIGN)
+        self.category = category.strip()
         self.limit = int(limit.strip())
-        self.condition = lambda cat_counter: cat_counter[category.strip()] > self.limit
+
+    def condition(self, cat_counter):
+        return cat_counter[self.category] > self.limit
+
+    def get_readable(self):
+        """
+        :return: a triple with (category, limit, target_name)
+        """
+        return self.category, self.limit, self.target_name
 
 
 class State:
@@ -39,6 +43,13 @@ class State:
 
     def add_transition(self, transition):
         self.transitions.append(transition)
+
+    def get_targets(self):
+        targets = {}
+        for trans in self.transitions:
+            triple = trans.get_readable()
+            targets[triple[0]] = (triple[1], triple[2])
+        return targets
 
     def test_transitions(self, category_counter):
         """
@@ -70,9 +81,6 @@ class SongMachine:
     def _reset_counter(self, categories):
         self.category_counter = {}.fromkeys(categories, 0) if categories else {}
 
-    def set_lock(self):
-        self.__lock = True
-
     def release_lock(self):
         self._reset_counter(self.category_counter.keys())
         self.__lock = False
@@ -90,6 +98,7 @@ class SongMachine:
         next_state_name = self.current_state.test_transitions(self.category_counter)
 
         if next_state_name != self.current_state.name:
+            self.__lock = True
             self.__criteria = True
             self.current_state = self.parser.states[next_state_name]
 
@@ -205,6 +214,11 @@ def create_parser(path_to_song_file):
     parser = SongParser(json_data)
     parser.parse()
     return parser
+
+
+def create_instance(path_to_song_file):
+    song_parser = create_parser(path_to_song_file)
+    return SongMachine(song_parser)
 
 
 if __name__ == '__main__':

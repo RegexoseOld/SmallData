@@ -29,6 +29,9 @@ class Listen(OscEventListener):
             
             AREAS['utterances'].update_utts(utterance, category)
             AREAS['category_counter'].update(info2display['category_counter'], info2display["is_locked"])
+        elif m.checkAddrPattern("/display_partinfo") == True:
+            targets = pickle.loads(m.arguments()[0])
+            AREAS['category_counter'].update_targets(targets)
 
 def setup():
     size(1200, 850)

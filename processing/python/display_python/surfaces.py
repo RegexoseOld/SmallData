@@ -178,13 +178,17 @@ class CategoryCounter(SurfaceBase):
 
 
 class CategoryStar(SurfaceBase):
+    color_active = 0, 0, 0
+    color_inactive = 100, 100, 100
     circle_radius = 150
     marker_radius = 50
     max_count = 5.
     parser = None
 
-    # a dictionary of type {categrory1: (x1,y1), ...} that holds the coordinates of the center
-    # of the correspponding circle:
+    # a dictionary of type {categrory1: (x1, y1, is_active, limit, target_state), ...} that holds the
+    #  - coordinates of the center of the correspponding circle
+    #  - whether the target state is set (active)
+    #  - the
     __directions = {}
 
     # x and y coordinate of the center of the image
@@ -194,7 +198,7 @@ class CategoryStar(SurfaceBase):
     def __init__(self, parser, *args):
         SurfaceBase.__init__(self, *args)
         self.parser = parser
-        self.__create_coordinates()
+        self.__create_directions()
         self.reset()
 
     def reset(self):
@@ -209,27 +213,38 @@ class CategoryStar(SurfaceBase):
                 self.surface.stroke(0, 102, 102)
                 self.surface.strokeWeight(7)
                 self.surface.line(self.__x,
-                                self.__y,
-                                self.__x + (self.__directions[cat][0]-self.__x) * count/self.max_count,
-                                self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
-                                )
+                                  self.__y,
+                                  self.__x + (self.__directions[cat][0]-self.__x) * count/self.max_count,
+                                  self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
+                                  )
             if is_locked:
                 self.surface.fill(255, 0, 0)
                 self.surface.text("YEAH!", 20, 20)
 
+    def update_targets(self, targets):
+        for cat, (x, y, is_active, limit, state_name) in self.__directions.items():
+            if cat in targets:
+                self.__directions[cat] = (x, y, True, targets[cat][0], targets[cat][1])
+            else:
+                self.__directions[cat] = (x, y, False, 0, 'Inactive')
+
     def __create_background(self):
-        self.surface.stroke(0, 0, 0)
         self.surface.strokeWeight(2)
-        for cat, (x, y) in self.__directions.items():
+        for cat, (x, y, is_active, limit, state_name) in self.__directions.items():
+            self.surface.stroke(0, 0, 0)
             self.surface.line(self.__x, self.__y, x, y)
             self.surface.textAlign(CENTER)
             self.surface.text(cat, self.__x + (x - self.__x) / 2, self.__y + (y - self.__y) / 2)
             self.surface.circle(x, y, self.marker_radius)
+            color = self.color_active if is_active else self.color_inactive
+            self.surface.fill(*color)
+            self.surface.text(state_name, x, y)
+            self.surface.fill(255, 255, 255)
         self.surface.circle(self.__x, self.__y, self.marker_radius)
 
-    def __create_coordinates(self):
+    def __create_directions(self):
         self.__x, self.__y = self.surface.width / 2, self.surface.height / 2
         for idx, cat in enumerate(self.parser.categories):
             x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(self.parser.categories))
             y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(self.parser.categories))
-            self.__directions[cat] = (x, y)
+            self.__directions[cat] = [x, y, False, 0, 'Inactive']
