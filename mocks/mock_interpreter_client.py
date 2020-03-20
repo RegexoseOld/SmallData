@@ -17,7 +17,8 @@ level_values = [3, 5, 8]
 
 
 def run_mock():
-    machine = song_machine.create_instance(settings.song_path)
+    parser = song_machine.create_parser(settings.song_path)
+    machine = song_machine.SongMachine(parser)
     categories = list(machine.category_counter.keys())
 
     while True:
