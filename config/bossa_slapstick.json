@@ -9,7 +9,7 @@
     "immerzu5": "7",
     "immerzu6": "8",
     "immerzu7": "9",
-  ,,"immerzu8": "10",
+    "immerzu8": "10",
     "immersag1": "11",
     "immersag2": "12",
     "immersag3": "13",
@@ -20,7 +20,7 @@
     "sprichmit2": "18",
     "sprichmit3": "19",
     "lassmich1": "20",
-    "bistdusicher": "21",
+    "bistdusicher": "21"
   },
   "first_state": "intro_beat",
   "last_state": "bistdusicher",

@@ -5,7 +5,7 @@ BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 DATA_DIR = path.join(BASE_DIR, 'webserver/model_data')
 
 # Song settings
-song_file = 'WirSind.json'
+song_file = "bossa_slapstick.json"
 song_path = path.join(BASE_DIR, 'config', song_file)
 
 # OSC-Settings

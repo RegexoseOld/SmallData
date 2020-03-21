@@ -71,11 +71,13 @@ class SongServer:
             return
 
         osc_map = pickle.loads(content)
-        self.send_level(osc_map['rack'])
+        # self.send_level(osc_map['rack'])
 
         current_state = self.song_machine.current_state
         self.song_machine.update_state(osc_map['cat'])
-        self.send_osc_notes(osc_map['cat'], 30 + osc_map['rack'] * 10, )
+        note = settings.category_to_note[osc_map['cat']]
+        dura = osc_map['f_dura']
+        self.send_quittung(note, 100, dura)
 
         if current_state != self.song_machine.current_state:
             self.beat_manager.update_next_part(self.song_machine.current_state)
@@ -91,10 +93,10 @@ class SongServer:
     def send_level(self, level):
         self.osculator_client.send_message('/rack', (level / 10))
 
-    def send_osc_notes(self, note, velo, dura):
-        self.osculator_client.send_message('/osc_notes', (note, velo, 1.0))
+    def send_quittung(self, note, velo, dura):
+        self.osculator_client.send_message('/quittung', (note, velo, 1.0))
         time.sleep(dura)
-        self.osculator_client.send_message('/osc_notes', (note, velo, 0.0))
+        self.osculator_client.send_message('/quittung', (note, velo, 0.0))
 
 
     def send_part(self, counter):
