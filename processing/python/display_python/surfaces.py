@@ -180,6 +180,7 @@ class CategoryCounter(SurfaceBase):
 class CategoryStar(SurfaceBase):
     textcolor_active = 0, 0, 0
     textcolor_inactive = 200, 200, 200
+    textcolor_warning = 255, 0, 0
     linecolor_active = 0, 182, 182
     linecolor_inactive = 200, 200, 200
     circle_radius = 150
@@ -221,8 +222,9 @@ class CategoryStar(SurfaceBase):
                                   self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
                                   )
             if is_locked:
-                self.surface.fill(255, 0, 0)
+                self.surface.fill(*self.textcolor_warning)
                 self.surface.text("YEAH!", 20, 20)
+                self.surface.fill(255, 255, 255)
 
     def update_targets(self, targets):
         for cat, (x, y, is_active, limit, state_name) in self.__directions.items():
@@ -230,6 +232,7 @@ class CategoryStar(SurfaceBase):
                 self.__directions[cat] = (x, y, True, targets[cat][0], targets[cat][1])
             else:
                 self.__directions[cat] = (x, y, False, 0, 'Inactive')
+        self.reset()
 
     def __create_background(self):
         self.surface.strokeWeight(2)

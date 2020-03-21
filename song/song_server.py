@@ -79,14 +79,14 @@ class SongServer:
 
         if self.song_machine.is_criteria_met():
             self.beat_manager.update_next_part(self.song_machine.current_state)
-            self._send_partinfo_to_display()
 
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
         if self.beat_manager.update_beat_counter(counter):
             self._send_part(counter)
-            if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_NORMAL):
+            if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_NORMAL) and self.song_machine.is_locked():
                 self.song_machine.release_lock()
+                self._send_partinfo_to_display()
 
     def _send_level(self, level):
         self.osculator_client.send_message('/rack', (level / 10))
