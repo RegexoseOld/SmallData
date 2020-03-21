@@ -69,7 +69,6 @@ class SongMachine:
     last_state = None
     parser = None
     category_counter = {}
-    __criteria = False
     __lock = False
 
     def __init__(self, parser):
@@ -88,22 +87,26 @@ class SongMachine:
     def is_locked(self):
         return self.__lock
 
-    def is_criteria_met(self):
-        return self.__criteria
-
     def update_state(self, category):
-        self.__criteria = False
+        """
+        :param category:
+        :return: Boolean, True if state is changed
+        """
         self.category_counter[category] += 1
-
         next_state_name = self.current_state.test_transitions(self.category_counter)
 
-        if next_state_name != self.current_state.name:
+        if next_state_name == self.current_state.name:
+            # no state change
+            return False
+        else:
+            # state change
             self.__lock = True
-            self.__criteria = True
             self.current_state = self.parser.states[next_state_name]
 
             if self.current_state == self.last_state:
                 print("The END")
+
+            return True
 
 
 class SongParser:
@@ -217,8 +220,8 @@ def create_parser(path_to_song_file):
 
 
 def create_instance(path_to_song_file):
-    song_parser = create_parser(path_to_song_file)
-    return SongMachine(song_parser)
+    parser = create_parser(path_to_song_file)
+    return SongMachine(parser)
 
 
 if __name__ == '__main__':

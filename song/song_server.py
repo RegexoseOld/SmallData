@@ -74,11 +74,10 @@ class SongServer:
         print('SongerServer. receiving: ', osc_map)
         self._send_level(osc_map['level'])
 
-        self.song_machine.update_state(osc_map['cat'])
-        self._send_utterance_to_display(osc_map)
-
-        if self.song_machine.is_criteria_met():
+        if self.song_machine.update_state(osc_map['cat']):  # True if state is changed
             self.beat_manager.update_next_part(self.song_machine.current_state)
+
+        self._send_utterance_to_display(osc_map)
 
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]

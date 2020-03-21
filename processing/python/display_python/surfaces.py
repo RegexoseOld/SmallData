@@ -222,9 +222,7 @@ class CategoryStar(SurfaceBase):
                                   self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
                                   )
             if is_locked:
-                self.surface.fill(*self.textcolor_warning)
-                self.surface.text("YEAH!", 20, 20)
-                self.surface.fill(255, 255, 255)
+                self.__show_success_message()
 
     def update_targets(self, targets):
         for cat, (x, y, is_active, limit, state_name) in self.__directions.items():
@@ -254,3 +252,8 @@ class CategoryStar(SurfaceBase):
             x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(self.parser.categories))
             y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(self.parser.categories))
             self.__directions[cat] = [x, y, False, 0, 'Inactive']
+
+    def __show_success_message(self):
+        self.surface.fill(*self.textcolor_warning)
+        self.surface.text("YEAH!", 20, 20)
+        self.surface.fill(255, 255, 255)
