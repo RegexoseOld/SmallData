@@ -178,11 +178,13 @@ class CategoryCounter(SurfaceBase):
 
 
 class CategoryStar(SurfaceBase):
-    color_active = 0, 0, 0
-    color_inactive = 100, 100, 100
+    textcolor_active = 0, 0, 0
+    textcolor_inactive = 200, 200, 200
+    linecolor_active = 0, 182, 182
+    linecolor_inactive = 200, 200, 200
     circle_radius = 150
     marker_radius = 50
-    max_count = 5.
+    max_count = 3.
     parser = None
 
     # a dictionary of type {categrory1: (x1, y1, is_active, limit, target_state), ...} that holds the
@@ -210,7 +212,8 @@ class CategoryStar(SurfaceBase):
             self.__create_background()
 
             for cat, count in category_counter.items():
-                self.surface.stroke(0, 102, 102)
+                color = self.linecolor_active if self.__directions[cat][2] else self.linecolor_inactive
+                self.surface.stroke(*color)
                 self.surface.strokeWeight(7)
                 self.surface.line(self.__x,
                                   self.__y,
@@ -236,7 +239,7 @@ class CategoryStar(SurfaceBase):
             self.surface.textAlign(CENTER)
             self.surface.text(cat, self.__x + (x - self.__x) / 2, self.__y + (y - self.__y) / 2)
             self.surface.circle(x, y, self.marker_radius)
-            color = self.color_active if is_active else self.color_inactive
+            color = self.textcolor_active if is_active else self.textcolor_inactive
             self.surface.fill(*color)
             self.surface.text(state_name, x, y)
             self.surface.fill(255, 255, 255)
