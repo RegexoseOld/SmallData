@@ -209,18 +209,13 @@ class SongValidator(object):
             )
 
 
-def create_parser(path_to_song_file):
+def create_instance(path_to_song_file):
     with open(path_to_song_file, 'r') as f:
         json_data = json.load(f)
 
     SongValidator(json_data).validate()
     parser = SongParser(json_data)
     parser.parse()
-    return parser
-
-
-def create_instance(path_to_song_file):
-    parser = create_parser(path_to_song_file)
     return SongMachine(parser)
 
 
@@ -230,8 +225,7 @@ if __name__ == '__main__':
     sys.path.append(path.dirname(path.dirname(__file__)))
     from config import settings
 
-    song_parser = create_parser(settings.song_path)
-    song_machine = SongMachine(song_parser)
+    song_machine = create_instance(settings.song_path)
 
     print(song_machine.current_state)
     song_machine.update_state("Lob")
