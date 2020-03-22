@@ -46,7 +46,7 @@ class UtteranceLine:
         with utt_cat_surface.beginDraw():
             utt_cat_surface.background(222)
             utt_cat_surface.image(temp_utt_surface, 0, 0)
-            utt_cat_surface.image(temp_cat_surface, temp_utt_surface.width + 10 , 0)
+            utt_cat_surface.image(temp_cat_surface, temp_utt_surface.width + 10, 0)
             utt_cat_surface.stroke(200)
             utt_cat_surface.strokeWeight(15)
             utt_cat_surface.line(0, utt_cat_surface.height, utt_cat_surface.width, utt_cat_surface.height)
@@ -73,7 +73,6 @@ class UtterancesArea(SurfaceBase):
         self.index += 1
                
         pos_y = 0
-        self.iterate = True
         surfaces_to_iterate = reversed(list(self.subsurfaces.values()))
         for utt_line in surfaces_to_iterate:
             utt_line.set_pos_y(pos_y)
@@ -97,11 +96,11 @@ class Beat:
             self.surface.textSize(100)
             self.surface.fill(col)
             self.surface.textAlign(CENTER)
-            self.surface.text(beatnum, self.surface.width/2, self.surface.height * 3/5)
+            self.surface.text(beatnum, self.surface.width / 2, self.surface.height * 3 / 5)
         
     def draw(self, surface):
         with surface.beginDraw():
-            surface.image(self.surface, self.surface.width *4/5, 0) 
+            surface.image(self.surface, self.surface.width * 4 / 5, 0)
 
 
 class Parts:
@@ -152,7 +151,8 @@ class CategoryCounter(SurfaceBase):
     
     def __init__(self, name, pos_x, pos_y, font):
         self.font = font
-        s_width = self.bar_width * len(self.categories) + self.bar_distance * (len(self.categories)-1) + 2* self.x_offset
+        s_width = self.bar_width * len(self.categories) + self.bar_distance * (len(self.categories) - 1) + \
+                  2 * self.x_offset
         s_height = self.height_per_count * self.max_count + self.text_height
         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
         self.reset_counter()
@@ -173,7 +173,8 @@ class CategoryCounter(SurfaceBase):
                                   self.max_count*self.height_per_count, 
                                   self.bar_width, 
                                   -count*self.height_per_count)
-                self.surface.text(cat, self.x_offset + idx * (self.bar_width + self.bar_distance), self.height_per_count * self.max_count + self.text_height/2.)
+                self.surface.text(cat, self.x_offset + idx * (self.bar_width + self.bar_distance),
+                                  self.height_per_count * self.max_count + self.text_height / 2.)
                 idx += 1
 
 
