@@ -4,7 +4,6 @@ import pickle
 import sys
 import os
 sys.path.append(os.path.abspath('../../../'))
-import config
 from song import song_machine
 
 add_library('oscP5') 
@@ -22,16 +21,17 @@ class Listen(OscEventListener):
             next_part_name = "".join([str(i) for i in list(m.arguments()[3])])
             AREAS['part_info'].update_parts(current_part_name, next_part_name, current_beat, change_color)
         elif m.checkAddrPattern("/display_input") == True:
-            info2display = pickle.loads(m.arguments()[0])
+            content = pickle.loads(m.arguments()[0])
             
-            utterance = info2display["text"]
-            category = info2display["cat"]
-            
-            AREAS['utterances'].update_utts(utterance, category)
-            AREAS['category_counter'].update(info2display['category_counter'], info2display["is_locked"])
+            AREAS['utterances'].update_utts(content["text"], content["cat"])
+            AREAS['category_counter'].update(content['category_counter'], content["is_locked"])
         elif m.checkAddrPattern("/display_partinfo") == True:
             targets = pickle.loads(m.arguments()[0])
             AREAS['category_counter'].update_targets(targets)
+            
+        elif m.checkAddrPattern("/display_init") == True:
+            categories = pickle.loads(m.arguments()[0])
+            AREAS['category_counter'].init_categories(categories)
 
 def setup():
     size(1200, 850)
@@ -58,8 +58,7 @@ def build_areas():
     AREAS["utterances"] = UtterancesArea("utterances", width/100, height/2 + y_spacing, width*8/13, height*7/16, font)
     AREAS["part_info"] = PartArea("part_info", width *2/3, height/2 + y_spacing, width *4/13, height *7/16, font)
     
-    parser = song_machine.create_parser(config.settings.song_path)
-    AREAS["category_counter"] = CategoryStar(parser, "category_counter", 100, 20, 400, 400)
+    AREAS["category_counter"] = CategoryStar("category_counter", 100, 20, 400, 400)
     return AREAS
 
 def stop():

@@ -186,7 +186,6 @@ class CategoryStar(SurfaceBase):
     circle_radius = 150
     marker_radius = 50
     max_count = 3.
-    parser = None
 
     # a dictionary of type {categrory1: (x1, y1, is_active, limit, target_state), ...} that holds the
     #  - coordinates of the center of the correspponding circle
@@ -198,14 +197,11 @@ class CategoryStar(SurfaceBase):
     __x = None
     __y = None
 
-    def __init__(self, parser, *args):
+    def __init__(self, *args):
         SurfaceBase.__init__(self, *args)
-        self.parser = parser
-        self.__create_directions()
-        self.reset()
 
     def reset(self):
-        self.update({}.fromkeys(self.parser.categories, 0))
+        self.update({}.fromkeys(self.__directions, 0))
 
     def update(self, category_counter, is_locked=False):
         with self.surface.beginDraw():
@@ -232,6 +228,10 @@ class CategoryStar(SurfaceBase):
                 self.__directions[cat] = (x, y, False, 0, 'Inactive')
         self.reset()
 
+    def init_categories(self, categories):
+        self.__create_directions(categories)
+        self.reset()
+
     def __create_background(self):
         self.surface.strokeWeight(2)
         for cat, (x, y, is_active, limit, state_name) in self.__directions.items():
@@ -246,11 +246,11 @@ class CategoryStar(SurfaceBase):
             self.surface.fill(255, 255, 255)
         self.surface.circle(self.__x, self.__y, self.marker_radius)
 
-    def __create_directions(self):
+    def __create_directions(self, categories):
         self.__x, self.__y = self.surface.width / 2, self.surface.height / 2
-        for idx, cat in enumerate(self.parser.categories):
-            x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(self.parser.categories))
-            y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(self.parser.categories))
+        for idx, cat in enumerate(categories):
+            x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(categories))
+            y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(categories))
             self.__directions[cat] = [x, y, False, 0, 'Inactive']
 
     def __show_success_message(self):

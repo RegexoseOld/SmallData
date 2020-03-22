@@ -62,6 +62,8 @@ class SongServer:
             range(len(self.song_machine.parser.states)
                   ))}
 
+        self._send_init_to_display()
+
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (9, 1.0))
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (9, 0.0))
         self._send_partinfo_to_display()
@@ -114,4 +116,9 @@ class SongServer:
     def _send_partinfo_to_display(self):
         self.display_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
                                          pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
+                                         )
+
+    def _send_init_to_display(self):
+        self.display_client.send_message(settings.DISPLAY_INIT_ADDRESS,
+                                         pickle.dumps(self.song_machine.parser.categories, protocol=2)
                                          )
