@@ -198,9 +198,6 @@ class CategoryStar(SurfaceBase):
     __x = None
     __y = None
 
-    def __init__(self, *args):
-        SurfaceBase.__init__(self, *args)
-
     def reset(self):
         self.update({}.fromkeys(self.__directions, 0))
 
