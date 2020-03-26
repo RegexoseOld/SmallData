@@ -9,91 +9,92 @@
   "first_state": "Hippie-Solo",
   "last_state": "Break-Full",
   "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
+  "limit": 5,
   "transitions": [
     [
       "Afro-Slim",
       "Afro-Full",
-      "lecture > 2"
+      "lecture"
     ],
      [
       "Afro-Slim",
       "Break-Slim",
-      "concession > 2"
+      "concession"
     ],
      [
       "Afro-Slim",
       "Hippie-Solo",
-      "insinuation > 2"
+      "insinuation"
     ],
     [
       "Afro-Slim",
       "Break-Full",
-      "praise > 1"
+      "praise"
     ],
     [
       "Afro-Full",
       "Afro-Slim",
-      "lecture > 1"
+      "lecture"
     ],
     [
       "Afro-Full",
       "Hippie-Solo",
-      "praise > 2"
+      "praise"
     ],
     [
       "Afro-Full",
       "Break-Slim",
-      "concession > 1"
+      "concession"
     ],
      [
       "Afro-Full",
       "Break-Full",
-      "concession > 1"
+      "concession"
     ],
     [
       "Break-Slim",
       "Afro-Slim",
-      "insinuation > 1"
+      "insinuation"
     ],
     [
       "Break-Slim",
       "Afro-Full",
-      "praise > 1"
+      "praise"
     ],
      [
       "Break-Slim",
       "Break-Full",
-      "concession > 2"
+      "concession"
     ],
     [
       "Break-Slim",
       "Hippie-Solo",
-      "praise > 2"
+      "praise"
     ],
     [
       "Hippie-Solo",
       "Afro-Full",
-      "praise > 1"
+      "praise"
     ],
     [
       "Hippie-Solo",
       "Break-Slim",
-      "concession > 1"
+      "concession"
     ],
     [
       "Hippie-Solo",
       "Break-Full",
-      "dissence > 1"
+      "dissence"
     ],
     [
       "Break-Full",
       "Hippie-Solo",
-      "lecture > 1"
+      "lecture"
     ],
     [
       "Break-Full",
       "Afro-Full",
-      "praise > 1"
+      "praise"
     ]
   ]
 }

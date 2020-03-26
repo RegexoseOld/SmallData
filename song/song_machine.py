@@ -2,21 +2,16 @@ import json
 
 
 class Transition:
-    SIGN = '>'
     source_name = ''
     target_name = ''
     category = ''
     limit = 0
 
-    def __init__(self, transition_array):
-        self.source_name = transition_array[0]
-        self.target_name = transition_array[1]
-        self.__parse_condition_string(transition_array[2])
-
-    def __parse_condition_string(self, cond_string):
-        category, limit = cond_string.split(self.SIGN)
-        self.category = category.strip()
-        self.limit = int(limit.strip())
+    def __init__(self, source_name, target_name, category, limit):
+        self.source_name = source_name
+        self.target_name = target_name
+        self.category = category
+        self.limit = limit
 
     def condition(self, cat_counter):
         return cat_counter[self.category] > self.limit
@@ -36,7 +31,6 @@ class State:
     def __init__(self, name, note):
         self.name = name
         self.note = note
-        self.transitions = []
 
     def __str__(self):
         return "<State {}>".format(self.name)
@@ -115,6 +109,7 @@ class SongParser:
     NAME_TRANSITIONS = "transitions"
     NAME_FIRST_STATE = "first_state"
     NAME_LAST_STATE = "last_state"
+    NAME_LIMIT = "limit"
 
     data = {}
     states = {}
@@ -139,7 +134,7 @@ class SongParser:
 
     def _add_transitions(self):
         for transition_array in self.data[self.NAME_TRANSITIONS]:
-            transition = Transition(transition_array)
+            transition = Transition(*transition_array, self.data[self.NAME_LIMIT])
             self.states[transition.source_name].add_transition(transition)
 
 
@@ -173,6 +168,9 @@ class SongValidator(object):
         __validate_field(SongParser.NAME_STATES_TO_NOTES)
         __validate_field(SongParser.NAME_CATEGORIES)
         __validate_field(SongParser.NAME_TRANSITIONS)
+        __validate_field(SongParser.NAME_FIRST_STATE)
+        __validate_field(SongParser.NAME_LAST_STATE)
+        __validate_field(SongParser.NAME_LIMIT)
 
     def _validate_consistency(self):
         """
@@ -193,12 +191,10 @@ class SongValidator(object):
                     self.errors.append(
                         "Target state `{}` listed in transition `{}` is not contained in `states`".format(
                             transition[1], idx))
-                cond_array = transition[2].split(" ")
-                if len(cond_array) != 3:
-                    self.errors.append("Wrong format of condition in transition `{}`".format(idx))
-                if cond_array[0] not in self.data[SongParser.NAME_CATEGORIES]:
-                    self.errors.append("Category `{}` of condition `{}` not contained in categories".format(
-                        cond_array[0], idx))
+                if transition[2] not in self.data[SongParser.NAME_CATEGORIES]:
+                    self.errors.append(
+                        "Category `{}` of transition `{}` is not contained in declared `categories`".format(
+                            transition[1], idx))
         if self.data[SongParser.NAME_FIRST_STATE] not in self.data[SongParser.NAME_STATES_TO_NOTES]:
             self.errors.append(
                 "First state (`{}`) is not contained in `states`".format(self.data[SongParser.NAME_FIRST_STATE])
