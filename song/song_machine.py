@@ -1,36 +1,11 @@
 import json
 
 
-class Transition:
-    source_name = ''
-    target_name = ''
-    category = ''
-    limit = 0
-
-    def __init__(self, source_name, target_name, category, limit):
-        self.source_name = source_name
-        self.target_name = target_name
-        self.category = category
-        self.limit = limit
-
-    def condition(self, cat_counter):
-        return cat_counter[self.category] > self.limit
-
-    def get_readable(self):
-        """
-        :return: a triple with (category, limit, target_name)
-        """
-        return self.category, self.limit, self.target_name
-
-
 class State:
-    name = ''
-    note = 0
-    transitions = {}  # {category1: target_name1, category2: target_name2, ...}
-
     def __init__(self, name, note):
         self.name = name
         self.note = note
+        self.transitions = {}  # {category1: target_name1, category2: target_name2, ...}
 
     def __str__(self):
         return "<State {}>".format(self.name)
@@ -43,17 +18,13 @@ class State:
 
 
 class SongMachine:
-    current_state = None
-    last_state = None
-    parser = None
-    category_counter = {}
-    __lock = False
-
     def __init__(self, parser):
         self.parser = parser
         self.current_state = self.parser.states[self.parser.first_state_name]
         self.last_state = self.parser.states[self.parser.last_state_name]
         self._reset_counter(parser.categories)
+        self.category_counter = {}
+        self.__lock = False
 
     def _reset_counter(self, categories):
         self.category_counter = {}.fromkeys(categories, 0) if categories else {}
@@ -94,16 +65,14 @@ class SongParser:
     NAME_LAST_STATE = "last_state"
     NAME_LIMIT = "limit"
 
-    data = {}
-    states = {}
-    categories = []
-    limit = 0
-
-    first_state_name = ''
-    last_state_name = ''
-
     def __init__(self, validated_data):
         self.data = validated_data
+
+        self.states = {}
+        self.categories = []
+        self.limit = 0
+        self.first_state_name = ''
+        self.last_state_name = ''
 
     def parse(self):
         self.categories = self.data[self.NAME_CATEGORIES]
@@ -123,11 +92,9 @@ class SongParser:
 
 
 class SongValidator(object):
-    data = {}
-    errors = []
-
     def __init__(self, data):
         self.data = data
+        self.errors = []
 
     @property
     def categories(self):
