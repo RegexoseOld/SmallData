@@ -1,10 +1,6 @@
 from surfaces import *
 import pickle
 
-import sys
-import os
-sys.path.append(os.path.abspath('../../../'))
-from song import song_machine
 
 add_library('oscP5') 
 addr = "?"
