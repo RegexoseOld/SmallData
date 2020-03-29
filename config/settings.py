@@ -1,5 +1,6 @@
 from os import path
 
+
 #  Directories
 BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 DATA_DIR = path.join(BASE_DIR, 'webserver/model_data')
@@ -40,3 +41,6 @@ category_to_note = {
     'dissence': 40,
     'concession': 51
 }
+note_durations = [0.25, 0.5, 1.0, 1.5, 2.0, 2.5, 4.0, 5.0]
+rack_chains = [3, 6, 8]
+CHAIN_DURATION = 5 # specifies how many utterances are needed to change the tonality
