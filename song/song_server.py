@@ -115,10 +115,13 @@ class SongServer:
 
     def _send_partinfo_to_display(self):
         self.display_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
-                                         pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
+                                         pickle.dumps(self.song_machine.current_state.transitions, protocol=2)
                                          )
 
     def _send_init_to_display(self):
         self.display_client.send_message(settings.DISPLAY_INIT_ADDRESS,
-                                         pickle.dumps(self.song_machine.parser.categories, protocol=2)
+                                         pickle.dumps({
+                                             'categories': self.song_machine.parser.categories,
+                                             'limit': self.song_machine.parser.limit},
+                                             protocol=2)
                                          )

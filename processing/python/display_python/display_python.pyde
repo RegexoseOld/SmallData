@@ -26,12 +26,13 @@ class Listen(OscEventListener):
             AREAS['utterances'].update_utts(content["text"], content["cat"])
             AREAS['category_counter'].update(content['category_counter'], content["is_locked"])
         elif m.checkAddrPattern("/display_partinfo") == True:
-            targets = pickle.loads(m.arguments()[0])
-            AREAS['category_counter'].update_targets(targets)
+            transitions = pickle.loads(m.arguments()[0])
+            AREAS['category_counter'].update_targets(transitions)
             
         elif m.checkAddrPattern("/display_init") == True:
-            categories = pickle.loads(m.arguments()[0])
-            AREAS['category_counter'].init_categories(categories)
+            data = pickle.loads(m.arguments()[0])
+            AREAS['category_counter'].set_limit(data['limit'])
+            AREAS['category_counter'].init_categories(data['categories'])
 
 def setup():
     size(1200, 850)

@@ -26,7 +26,7 @@ class Transition:
 class State:
     name = ''
     note = 0
-    transitions = []
+    transitions = {}  # {category1: target_name1, category2: target_name2, ...}
 
     def __init__(self, name, note):
         self.name = name
@@ -35,27 +35,11 @@ class State:
     def __str__(self):
         return "<State {}>".format(self.name)
 
-    def add_transition(self, transition):
-        self.transitions.append(transition)
+    def add_transition(self, target_name, category):
+        self.transitions[category] = target_name
 
-    def get_targets(self):
-        targets = {}
-        for trans in self.transitions:
-            triple = trans.get_readable()
-            targets[triple[0]] = (triple[1], triple[2])
-        return targets
-
-    def test_transitions(self, category_counter):
-        """
-        iterates over all transitions and checks their transfer-conditions. If a condition is true, return the name of
-        the corresponding target state. If no condition is true, return the name of the current state
-        :param category_counter:
-        :return: name of next state (can be the current state if no condition is met)
-        """
-        for transition in self.transitions:
-            if transition.condition(category_counter):
-                return transition.target_name
-        return self.name
+    def get_target_by_category(self, category):
+        return self.transitions[category]
 
 
 class SongMachine:
@@ -87,13 +71,10 @@ class SongMachine:
         :return: Boolean, True if state is changed
         """
         self.category_counter[category] += 1
-        next_state_name = self.current_state.test_transitions(self.category_counter)
 
-        if next_state_name == self.current_state.name:
-            # no state change
-            return False
-        else:
-            # state change
+        if self.category_counter[category] >= self.parser.limit:  # state change
+            next_state_name = self.current_state.get_target_by_category(category)
+
             self.__lock = True
             self.current_state = self.parser.states[next_state_name]
 
@@ -101,6 +82,8 @@ class SongMachine:
                 print("The END")
 
             return True
+        else:
+            return False
 
 
 class SongParser:
@@ -114,6 +97,7 @@ class SongParser:
     data = {}
     states = {}
     categories = []
+    limit = 0
 
     first_state_name = ''
     last_state_name = ''
@@ -123,6 +107,7 @@ class SongParser:
 
     def parse(self):
         self.categories = self.data[self.NAME_CATEGORIES]
+        self.limit = int(self.data[self.NAME_LIMIT])
         self._create_states()
         self._add_transitions()
 
@@ -134,8 +119,7 @@ class SongParser:
 
     def _add_transitions(self):
         for transition_array in self.data[self.NAME_TRANSITIONS]:
-            transition = Transition(*transition_array, self.data[self.NAME_LIMIT])
-            self.states[transition.source_name].add_transition(transition)
+            self.states[transition_array[0]].add_transition(transition_array[1], transition_array[2])
 
 
 class SongValidator(object):
