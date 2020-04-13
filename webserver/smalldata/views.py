@@ -25,7 +25,7 @@ def send_to_music_server(utterance, category):
     }
     osc_map = pickle.dumps(osc_dict)
     song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
-    display_client.send_message(settings.DISPLAY_TARGET_ADDRESS, [utterance, category])
+    display_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, [utterance, category])
 
 
 class UtteranceView(viewsets.ModelViewSet):
