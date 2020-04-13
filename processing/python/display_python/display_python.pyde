@@ -1,5 +1,6 @@
 from surfaces import *
-import getpass
+import pickle
+
 
 add_library('oscP5') 
 addr = "?"
@@ -16,9 +17,17 @@ class Listen(OscEventListener):
             next_part_name = "".join([str(i) for i in list(m.arguments()[3])])
             AREAS['part_info'].update_parts(current_part_name, next_part_name, current_beat, change_color)
         elif m.checkAddrPattern("/display_input") == True:
-            utterance = "".join([str(i) for i in list(m.arguments()[0])])
-            category = "".join([str(i) for i in list(m.arguments()[1])])
-            AREAS['utterances'].update_utts(utterance, category)
+            content = pickle.loads(m.arguments()[0])
+            
+            AREAS['utterances'].update_utts(content["text"], content["cat"])
+            AREAS['category_counter'].update(content['category_counter'], content["is_locked"])
+        elif m.checkAddrPattern("/display_partinfo") == True:
+            targets = pickle.loads(m.arguments()[0])
+            AREAS['category_counter'].update_targets(targets)
+            
+        elif m.checkAddrPattern("/display_init") == True:
+            categories = pickle.loads(m.arguments()[0])
+            AREAS['category_counter'].init_categories(categories)
 
 def setup():
     size(1200, 850)
@@ -44,6 +53,8 @@ def build_areas():
     x_spacing = width/100
     AREAS["utterances"] = UtterancesArea("utterances", width/100, height/2 + y_spacing, width*8/13, height*7/16, font)
     AREAS["part_info"] = PartArea("part_info", width *2/3, height/2 + y_spacing, width *4/13, height *7/16, font)
+    
+    AREAS["category_counter"] = CategoryStar("category_counter", 100, 20, 400, 400)
     return AREAS
 
 def stop():

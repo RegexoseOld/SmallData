@@ -26,7 +26,6 @@ def run_mock():
                     }
         osc_map = pickle.dumps(osc_dict)
         song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
-        processing_client.send_message(settings.DISPLAY_TARGET_ADDRESS, [osc_dict['text'], osc_dict['cat']])
         time.sleep(2)
 
 

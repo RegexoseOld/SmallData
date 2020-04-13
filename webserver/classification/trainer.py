@@ -9,6 +9,7 @@ import os
 import spacy
 import joblib
 import gensim
+import gensim.parsing.preprocessing as gsp
 
 import numpy as np
 import pandas as pd
@@ -16,7 +17,7 @@ import pandas as pd
 from pathlib import Path
 from collections import defaultdict
 
-from sklearn.linear_model.stochastic_gradient import SGDClassifier
+from sklearn.linear_model import SGDClassifier
 from sklearn.model_selection import cross_val_score
 
 import warnings
@@ -24,30 +25,81 @@ import warnings
 warnings.filterwarnings("ignore")
 
 nlp = spacy.load('de')
-model = gensim.models.KeyedVectors.load_word2vec_format('../model_data/german.model', binary=True)
 
 
-def clean_string(text):
-    text = text.lower()
+def load_model():
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return gensim.models.KeyedVectors.load_word2vec_format(
+        os.path.join(parent_dir, 'model_data/german.model'), binary=True)
+
+
+model = load_model()
+
+
+def replace_umnlaut(text):
     text = text.replace('ä', 'ae')
     text = text.replace('ö', 'oe')
     text = text.replace('ü', 'ue')
     text = text.replace('ß', 'ss')
+    return text
+
+
+def clean_string(text):
+    filters = [replace_umnlaut,
+               gsp.strip_tags,
+               gsp.strip_multiple_whitespaces,
+               gsp.strip_numeric]
+
+    text = text.lower()
+    for f in filters:
+        text = f(text)
     return text.strip()
 
 
-def sent_to_vects(sentence):
-    return [word.vector for word in nlp(sentence)]
+def sentence_to_vec_spacy(sentence):
+    data_matrix = np.array([word.vector for word in nlp(sentence)])
+    return np.mean(data_matrix, axis=0)
 
 
-def word_to_vect(word):
-    # return nlp(word).vector
-    if word in model.index2word:
-        return model.word_vec(word)
-    elif word.capitalize() in model.index2word:
-        return model.word_vec(word.capitalize())
+def sentence_to_vec_german_model(sentence):
+    """
+    Warning: return nan, if none of the words in the sentence are known to the model!
+    :param sentence:
+    :return:
+    """
+    data_matrix = []
+    for word in sentence.split(' '):
+        if word in model.index2word:
+            data_matrix.append(model.word_vec(word))
+        elif word.capitalize() in model.index2word:
+            data_matrix.append(model.word_vec(word.capitalize()))
+    return np.mean(np.asarray(data_matrix), axis=0)
+
+
+def vectorize_corpus(texts, vectorizer, categories=None):
+    """
+    :param texts: a list of texts
+    :param vectorizer: the vectorizing callable
+    :param categories: an optional list of categories. If provided, a new list of categories is returned,
+                        with the cats of the texts removed that have not been vectorized
+    :return: an array of vectors. WARNING: if a text cannot be vectorized, it is removed from the corpus!
+    """
+    if categories is not None and len(texts) != len(categories):
+        raise Exception('category and texts input must be of the same shape')
+
+    vectors = []
+    return_cats = []
+    for idx, text in enumerate(texts):
+        vect = vectorizer(text)
+        if isinstance(vect, np.ndarray):
+            vectors.append(vect)
+            if categories is not None:
+                return_cats.append(categories[idx])
+
+    if categories:
+        return np.asarray(vectors), np.asarray(return_cats)
     else:
-        return None
+        return np.asarray(vectors)
 
 
 def read_trainingdata_textfiles(trainingdata_path):
@@ -91,46 +143,22 @@ def read_trainingdata_textfiles(trainingdata_path):
     return keywords_to_cat, regexes
 
 
-def read_trainingdata_utterances(df):
-    '''
-    should read all lines of a Excel column. The textfiles can contain single words and regular expressions.
-    Every line containing more than one word ist considered a regular expression
-    lines starting with "[" are ignored.
-    An example trainingdata file could look like this:
-
-    [words]
-    word1
-    word2
-
-    The function returns 1 dictionaries:  One with single words as keys and categories as values
-
-    all umlauts are replaced and words are lowercases.
-    '''
-    keywords_to_cat = defaultdict(list)
-    line = 0
+def read_trainingdata_utterances(df, min_wc=1, max_wc=np.Inf):
+    print('\nReading trainingdata')
+    df = df.drop_duplicates(['utterance'])  # avoid duplication
+    x = []
+    y = []
 
     for i in df.index:
         utt = df['utterance'][i]
-        if not isinstance(df['Effekt'][i], float):
-            effekt = df['Effekt'][i]
-        else:
-            effekt = 'not yet defined'
+        if not isinstance(df['category'][i], float):
+            text = clean_string(utt)
+            wc = len(text.split(' '))  # word_count
+            if min_wc <= wc <= max_wc:
+                x.append(text)
+                y.append(df['category'][i])
 
-        line += 1
-        for keywords in utt.split('\n'):
-            keywords = keywords.strip()
-            keywords = keywords.lower()
-            keywords = clean_string(keywords)
-            if keywords and keywords[0] != '[':
-                if len(keywords.split(' ')) == 1:
-                    #if its one word only
-                    keywords_to_cat[keywords].append(effekt)
-                    # print('for keyword {} in line {} appended: {}'.format(keywords, line, effekt) + '\n')
-                else:
-                    # else if its more than one word
-                    pass
-
-    return keywords_to_cat
+    return x, y
 
 
 def transform_keywords_to_trainingdata(keywords_to_cat):
@@ -171,27 +199,8 @@ def train_clf(x, y):
     return clf
 
 
-def load_ml_data_and_train_model(file_path):
-    '''
-    was:    get texts from excel file and train the ml classifier
-    '''
-    df = pd.read_excel(file_path)
-    keywords_to_cat = read_trainingdata_utterances(df)
-    print('Keywords with multiple categories are ignored\n')
-    print('  keywords_to_cat:',  keywords_to_cat)
-    for keyword, cats in list(keywords_to_cat.items()):
-        if len(cats) > 1:
-            print('{:<20} {}'.format(keyword, cats))
-            del keywords_to_cat[keyword]
-        else:
-            keywords_to_cat[keyword] = cats[0]
-
-    x, y = transform_keywords_to_trainingdata(keywords_to_cat)
-    classifier = train_clf(x, y)
-    return classifier
-
-
 def load_regexes(file_path):
+    print('\nBuilding regexes')
     df = pd.read_excel(file_path)
     expressions = map(clean_string, df.utterance)
     return dict(zip(expressions, df.Effekt))
@@ -199,10 +208,15 @@ def load_regexes(file_path):
 
 if __name__ == '__main__':
     data_path = '../model_data'
-    # create logic to import database entries into data_frame
 
     regexes = load_regexes(os.path.join(data_path, 'TrainingData_regex.xlsx'))
-    clf = load_ml_data_and_train_model(os.path.join(data_path, 'TrainingData_ml.xlsx'))
+
+    df_ml = pd.read_excel(os.path.join(data_path, 'TrainingData_ml.xlsx')).rename(columns={'Effekt': 'category'})
+
+    sentences, categories = read_trainingdata_utterances(df_ml)
+
+    x, y = vectorize_corpus(sentences, sentence_to_vec_german_model, categories=categories)
+    clf = train_clf(x, y)
 
     joblib.dump(regexes, os.path.join(data_path, 'regex_mapping.pkl'))
     joblib.dump(clf, os.path.join(data_path, 'sgd_clf.pkl'))
