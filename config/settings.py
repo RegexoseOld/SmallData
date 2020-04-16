@@ -12,6 +12,9 @@ song_path = path.join(BASE_DIR, 'config', song_file)
 # OSC-Settings
 ip = "127.0.0.1"
 SONG_ADVANCE_ADDRESS = '/advance'
+SONG_RACK_ADDRESS = '/rack'
+SONG_MIDICC_ADDRESS = '/control'
+SONG_QUITTUNG_ADDRESS = '/quittung'
 SONG_BEAT_ADDRESS = '/beat'
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
 SONG_SERVER_PORT = 5020
@@ -45,4 +48,3 @@ category_to_note = {
 }
 note_durations = [0.25, 0.5, 1.0, 1.5, 2.0, 2.5, 4.0, 5.0]
 rack_chains = [3, 6, 8]
-CHAIN_DURATION = 5 # specifies how many utterances are needed to change the tonality

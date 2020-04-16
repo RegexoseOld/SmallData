@@ -2,7 +2,7 @@ import pickle
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from collections import Counter
-import time
+import threading
 
 from config import settings
 from song.song_machine import State
@@ -48,11 +48,12 @@ class BeatAdvanceManager:
 
 
 class SongServer:
-    def __init__(self, osculator_client, display_client, machine, beat_manager):
+    def __init__(self, osculator_client, display_client, machine, beat_manager, tonality):
         self.osculator_client = osculator_client
         self.display_client = display_client
         self.song_machine = machine
         self.beat_manager = beat_manager
+        self.tonality = tonality
 
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
@@ -66,7 +67,6 @@ class SongServer:
 
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (1, 1.0))
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (1, 0.0))
-        self.tonality = Tonality(self.song_machine.parser.categories)
         self._send_init_to_display()
 
     def interpreter_handler(self, _, content):
@@ -74,7 +74,7 @@ class SongServer:
             return
 
         osc_map = pickle.loads(content)
-        self.send_FX()
+        self.send_fx()
 
         self.tonality.update_tonality(osc_map['cat'])
         note = settings.category_to_note[osc_map['cat']]
@@ -94,16 +94,18 @@ class SongServer:
                 self.song_machine.release_lock()
                 self._send_partinfo_to_display()
 
-    def send_FX(self):
+    def send_fx(self):
         print("chain: {}\nctrl_val: {}".format(self.tonality.chain, self.tonality.ctrl_val))
-        self.osculator_client.send_message('/rack', self.tonality.chain[0])
-        self.osculator_client.send_message('/control{}'.format(self.tonality.chain[1]),  self.tonality.ctrl_val)
+        self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain[0])
+        self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.chain[1]),
+                                           self.tonality.ctrl_val)
 
     def send_quittung(self, note, velo, dura):
-        self.osculator_client.send_message('/quittung', (note, velo, 1.0))
-        time.sleep(dura)
-        self.osculator_client.send_message('/quittung', (note, velo, 0.0))
+        self.osculator_client.send_message(settings.SONG_QUITTUNG_ADDRESS, (note, velo, 1.0))
+        threading.Timer(dura, self.note_off, (note, velo, )).start()
 
+    def note_off(self, note, velo):
+        self.osculator_client.send_message(settings.SONG_QUITTUNG_ADDRESS, (note, velo, 0.0))
 
     def _send_part(self, counter):
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
@@ -141,11 +143,7 @@ class Tonality:
     '''
 
     tonality_counter = Counter()
-    FX_KEY = 'Clean'
-    ctrl_val = 0
-    last_cats = []
-    last_value = 0
-    most_common = ''
+    chain_duration = 5  # specifies how many utterances are needed to change the tonality
     tonality_lock = False
 
     category_to_chain = {
@@ -166,9 +164,13 @@ class Tonality:
     }
 
     def __init__(self, categories):
-        # self.tonality_counter = {categories[i]: 0 for i in range(len(categories))}
         self.tonality_counter = Counter(categories)
+        self.FX_KEY = 'Clean'
         self.chain = self.chain_controls[self.FX_KEY]
+        self.ctrl_val = 0
+        self.last_cats = []
+        self.last_value = 0
+        self.most_common = ''
 
     def update_tonality(self, cat):
         # print("tonalities: ", self.tonality_counter)
@@ -186,17 +188,19 @@ class Tonality:
         if sum(self.tonality_counter.values()) > 10:
             # print("cat {}   locked?: {} most common: {}".format(cat, self.tonality_lock, self.most_common))
             if not self.tonality_lock:
+                # self.most_common = self.tonality_counter.most_common(1)[0][0]
                 self.most_common = [x for x,_ in self.tonality_counter.most_common(1)]
                 self.most_common = self.most_common[0]
                 # print("most common: ", self.most_common)
                 self.FX_KEY = self.category_to_chain[self.most_common][0]
                 self.tonality_lock = True
-            if cat not in self.last_cats and self.tonality_counter[cat] % settings.CHAIN_DURATION == 0:
+            if cat not in self.last_cats and self.tonality_counter[cat] % self.chain_duration == 0:
                 self.last_cats.append(cat)
             elif len(self.last_cats) == len(self.tonality_counter):
                 print("\t RESET FX")
                 self.tonality_lock = False
                 self.last_cats = []
+
         self.chain = self.chain_controls[self.FX_KEY]
         self.last_value = self.chain[2]
         self.ctrl_val = self.last_value + self.category_to_chain[cat][1]
