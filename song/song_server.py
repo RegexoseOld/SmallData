@@ -95,7 +95,7 @@ class SongServer:
                 self._send_partinfo_to_display()
 
     def send_fx(self):
-        print("chain: {}\nctrl_val: {}".format(self.tonality.chain, self.tonality.ctrl_val))
+        # print("chain: {}\nctrl_val: {}".format(self.tonality.chain, self.tonality.ctrl_val))
         self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain[0])
         self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.chain[1]),
                                            self.tonality.ctrl_val)
@@ -173,9 +173,9 @@ class Tonality:
         self.most_common = ''
 
     def update_tonality(self, cat):
-        # print("tonalities: ", self.tonality_counter)
         self.tonality_counter[cat] += 1
         self.calculate_rack_values(cat)
+        print("tonalities: ", self.tonality_counter)
 
     def calculate_rack_values(self, cat):
         '''
@@ -188,10 +188,7 @@ class Tonality:
         if sum(self.tonality_counter.values()) > 10:
             # print("cat {}   locked?: {} most common: {}".format(cat, self.tonality_lock, self.most_common))
             if not self.tonality_lock:
-                # self.most_common = self.tonality_counter.most_common(1)[0][0]
-                self.most_common = [x for x,_ in self.tonality_counter.most_common(1)]
-                self.most_common = self.most_common[0]
-                # print("most common: ", self.most_common)
+                self.most_common = self.tonality_counter.most_common(1)[0][0]
                 self.FX_KEY = self.category_to_chain[self.most_common][0]
                 self.tonality_lock = True
             if cat not in self.last_cats and self.tonality_counter[cat] % self.chain_duration == 0:
@@ -204,5 +201,3 @@ class Tonality:
         self.chain = self.chain_controls[self.FX_KEY]
         self.last_value = self.chain[2]
         self.ctrl_val = self.last_value + self.category_to_chain[cat][1]
-        # print("self.chain: {} self.ctrl_val: {}". format(self.chain, self.ctrl_val))
-        return self.chain, self.ctrl_val
