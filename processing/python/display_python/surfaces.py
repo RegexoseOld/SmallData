@@ -2,14 +2,22 @@ from collections import OrderedDict
 from linebreak import linebreak
 import math
 
+color_scheme = {'dissence': (181, 180, 179),
+                'insinuation': (30, 101, 109),
+                'lecture': (241, 243, 206),
+                'praise': (246, 41, 0),
+                'concession': (0, 41, 60)
+                }
 
 class SurfaceBase:
+    
     def __init__(self, name, pos_x, pos_y, s_width, s_height):
         self.name = name
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.subsurfaces = OrderedDict()
         self.__create_surface(s_width, s_height)
+        categories = [x for x in list(color_scheme.keys())]
         
     def __create_surface(self, w, h):
         self.surface = createGraphics(w, h)
@@ -147,8 +155,6 @@ class CategoryCounter(SurfaceBase):
     x_offset = 5
     text_height = 20
     
-    categories = ['praise', 'dissence', 'insinuation', 'lecture', 'concession']
-    
     def __init__(self, name, pos_x, pos_y, font):
         self.font = font
         s_width = self.bar_width * len(self.categories) + self.bar_distance * (len(self.categories) - 1) + \
@@ -197,6 +203,7 @@ class CategoryStar(SurfaceBase):
     # x and y coordinate of the center of the image
     __x = None
     __y = None
+    
 
     def reset(self):
         self.update({}.fromkeys(self.__directions, 0))
@@ -238,10 +245,11 @@ class CategoryStar(SurfaceBase):
             self.surface.textAlign(CENTER)
             self.surface.text(cat, self.__x + (x - self.__x) / 2, self.__y + (y - self.__y) / 2)
             self.surface.circle(x, y, self.marker_radius)
-            color = self.textcolor_active if is_active else self.textcolor_inactive
-            self.surface.fill(*color)
+            title_color = self.textcolor_active if is_active else self.textcolor_inactive
+            self.surface.fill(*title_color)
             self.surface.text(state_name, x, y)
-            self.surface.fill(255, 255, 255)
+            circle_color = color_scheme[cat]
+            self.surface.fill(*circle_color)
         self.surface.circle(self.__x, self.__y, self.marker_radius)
 
     def __create_directions(self, categories):
@@ -249,6 +257,7 @@ class CategoryStar(SurfaceBase):
         for idx, cat in enumerate(categories):
             x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(categories))
             y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(categories))
+            
             self.__directions[cat] = [x, y, False, 0, 'Inactive']
 
     def __show_success_message(self):
