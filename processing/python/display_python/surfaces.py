@@ -241,7 +241,6 @@ class CategoryStar(SurfaceBase):
     def __create_background(self):
         self.surface.strokeWeight(2)
         for cat, (x, y, is_active, limit, state_name, col) in self.__directions.items():
-            # print('col:  ', col)
             self.surface.stroke(0)
             self.surface.fill(*col)
             self.surface.line(self.__x, self.__y, x, y)
@@ -251,13 +250,11 @@ class CategoryStar(SurfaceBase):
             title_color = self.textcolor_active if is_active else self.textcolor_inactive
             self.surface.fill(*title_color)
             self.surface.text(state_name, x, y)
-            # self.surface.fill(*col)
         self.surface.circle(self.__x, self.__y, self.marker_radius)
 
     def __create_directions(self, categories):
         self.__x, self.__y = self.surface.width / 2, self.surface.height / 2
         for idx, cat in enumerate(categories):
-            print('cat create directions:  ', cat)
             circle_color = color_scheme[cat]
             x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(categories))
             y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(categories))
