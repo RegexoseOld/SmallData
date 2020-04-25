@@ -215,14 +215,19 @@ class CategoryStar(SurfaceBase):
 
             for cat, count in category_counter.items():
                 # color = self.linecolor_active if self.__directions[cat][2] else self.linecolor_inactive
-                line_color = color_scheme[cat]
-                self.surface.stroke(*line_color)
+                cat_color = color_scheme[cat]
+                self.surface.stroke(*cat_color)
                 self.surface.strokeWeight(7)
                 self.surface.line(self.__x,
                                   self.__y,
                                   self.__x + (self.__directions[cat][0]-self.__x) * count/self.max_count,
                                   self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
                                   )
+                x = self.__directions[cat][0]
+                y = self.__directions[cat][1]
+                inflate = count if count > 0 else 0.5
+                self.surface.fill(*cat_color)
+                self.surface.circle(x, y, self.marker_radius * inflate)
             if is_locked:
                 self.__show_success_message()
 
@@ -249,7 +254,7 @@ class CategoryStar(SurfaceBase):
             self.surface.line(self.__x, self.__y, x, y)
             self.surface.textAlign(CENTER)
             self.surface.text(cat, self.__x + (x - self.__x) / 2, self.__y + (y - self.__y) / 2)
-            self.surface.circle(x, y, self.marker_radius)
+            # self.surface.circle(x, y, self.marker_radius)
             title_color = self.textcolor_active if is_active else self.textcolor_inactive
             self.surface.fill(*title_color)
             self.surface.text(state_name, x, y)
