@@ -212,6 +212,7 @@ class CategoryStar(SurfaceBase):
         with self.surface.beginDraw():
             self.surface.background(222)
             self.__create_background()
+            cat_circles = {}
 
             for cat, count in category_counter.items():
                 # color = self.linecolor_active if self.__directions[cat][2] else self.linecolor_inactive
@@ -223,21 +224,25 @@ class CategoryStar(SurfaceBase):
                                   self.__x + (self.__directions[cat][0]-self.__x) * count/self.max_count,
                                   self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
                                   )
-                x = self.__directions[cat][0]
-                y = self.__directions[cat][1]
                 inflate = count if count > 0 else 0.5
-                self.surface.fill(*cat_color)
-                self.surface.circle(x, y, self.marker_radius * inflate)
+                self.__directions[cat][6] = inflate
             if is_locked:
                 self.__show_success_message()
+            self.handle_overlap()
+    
+    def handle_overlap(self):
+        for cat, (x, y, is_active, limit, state_name, col, inflate) in self.__directions.items():
+            with self.surface.beginDraw(): 
+                self.surface.fill(*col)
+                self.surface.circle(x, y, self.marker_radius * inflate)
 
     def update_targets(self, targets):
-        for cat, (x, y, is_active, limit, state_name, col) in self.__directions.items():
+        for cat, (x, y, is_active, limit, state_name, col, inflate) in self.__directions.items():
             col = color_scheme[cat]
             if cat in targets:
-                self.__directions[cat] = (x, y, True, targets[cat][0], targets[cat][1], col)
+                self.__directions[cat] = [x, y, True, targets[cat][0], targets[cat][1], col, 0.5]
             else:
-                self.__directions[cat] = (x, y, False, 0, 'Inactive',  col)
+                self.__directions[cat] = [x, y, False, 0, 'Inactive',  col, 0.5]
         print("update targets directions: " , self.__directions)
         self.reset()
 
@@ -248,13 +253,12 @@ class CategoryStar(SurfaceBase):
     def __create_background(self):
         self.surface.strokeWeight(2)
         # print("self.--directions: ", self.__directions)
-        for cat, (x, y, is_active, limit, state_name, col) in self.__directions.items():
+        for cat, (x, y, is_active, limit, state_name, col, inflate) in self.__directions.items():
             self.surface.stroke(0)
             self.surface.fill(*col)
             self.surface.line(self.__x, self.__y, x, y)
             self.surface.textAlign(CENTER)
             self.surface.text(cat, self.__x + (x - self.__x) / 2, self.__y + (y - self.__y) / 2)
-            # self.surface.circle(x, y, self.marker_radius)
             title_color = self.textcolor_active if is_active else self.textcolor_inactive
             self.surface.fill(*title_color)
             self.surface.text(state_name, x, y)
@@ -266,7 +270,7 @@ class CategoryStar(SurfaceBase):
             circle_color = color_scheme[cat]
             x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(categories))
             y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(categories))
-            self.__directions[cat] = [x, y, False, 0, 'Inactive', circle_color]
+            self.__directions[cat] = [x, y, False, 0, 'Inactive', circle_color, 0.5]
 
     def __show_success_message(self):
         self.surface.fill(*self.textcolor_warning)
