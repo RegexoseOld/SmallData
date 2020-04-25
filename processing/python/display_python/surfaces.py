@@ -101,7 +101,7 @@ class Beat:
         with self.surface.beginDraw():
             self.surface.background(222)
             self.surface.textFont(font)
-            self.surface.textSize(100)
+            self.surface.textSize(50)
             self.surface.fill(col)
             self.surface.textAlign(CENTER)
             self.surface.text(beatnum, self.surface.width / 2, self.surface.height * 3 / 5)
@@ -120,7 +120,7 @@ class Parts:
         with self.surface.beginDraw():
             self.surface.background(222)
             self.surface.textFont(font)
-            self.surface.textSize(20)
+            self.surface.textSize(12)
             self.surface.fill(0)
             self.surface.textAlign(CENTER)
             self.surface.text("current part:\n" + current, self.surface.width/2, self.surface.height/4)
@@ -228,10 +228,12 @@ class CategoryStar(SurfaceBase):
 
     def update_targets(self, targets):
         for cat, (x, y, is_active, limit, state_name, col) in self.__directions.items():
+            col = color_scheme[cat]
             if cat in targets:
-                self.__directions[cat] = (x, y, True, targets[cat][0], targets[cat][1])
+                self.__directions[cat] = (x, y, True, targets[cat][0], targets[cat][1], col)
             else:
-                self.__directions[cat] = (x, y, False, 0, 'Inactive')
+                self.__directions[cat] = (x, y, False, 0, 'Inactive',  col)
+        print("update targets directions: " , self.__directions)
         self.reset()
 
     def init_categories(self, categories):
@@ -240,6 +242,7 @@ class CategoryStar(SurfaceBase):
 
     def __create_background(self):
         self.surface.strokeWeight(2)
+        # print("self.--directions: ", self.__directions)
         for cat, (x, y, is_active, limit, state_name, col) in self.__directions.items():
             self.surface.stroke(0)
             self.surface.fill(*col)

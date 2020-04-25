@@ -50,11 +50,10 @@ def draw():
 def build_areas():
     global font
     y_spacing = height/100
-    x_spacing = width/100
-    AREAS["utterances"] = UtterancesArea("utterances", width/100, height/2 + y_spacing, width*8/13, height*7/16, font)
-    AREAS["part_info"] = PartArea("part_info", width *2/3, height/2 + y_spacing, width *4/13, height *7/16, font)
-    
-    AREAS["category_counter"] = CategoryStar("category_counter", 100, 20, 400, 400)
+    x_spacing = width/50
+    AREAS["utterances"] = UtterancesArea("utterances", width/100, y_spacing, width *6/13, height *9/10, font)
+    AREAS["part_info"] = PartArea("part_info", width *6/13 - x_spacing, height *7/8 - y_spacing, width/8, height/8, font)
+    AREAS["category_counter"] = CategoryStar("category_counter", width *6/13 + x_spacing, y_spacing, width/2, height * 9/10)
     return AREAS
 
 def stop():
