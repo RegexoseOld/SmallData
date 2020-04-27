@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from linebreak import linebreak
+from CircleClass import Circle
 import math
 
 color_scheme = {'dissence': (181, 180, 179),
@@ -212,7 +213,6 @@ class CategoryStar(SurfaceBase):
         with self.surface.beginDraw():
             self.surface.background(222)
             self.__create_background()
-            cat_circles = {}
 
             for cat, count in category_counter.items():
                 # color = self.linecolor_active if self.__directions[cat][2] else self.linecolor_inactive
@@ -221,29 +221,29 @@ class CategoryStar(SurfaceBase):
                 self.surface.strokeWeight(7)
                 self.surface.line(self.__x,
                                   self.__y,
-                                  self.__x + (self.__directions[cat][0]-self.__x) * count/self.max_count,
-                                  self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
+                                  self.__x + (self.__directions[cat].x-self.__x) * count/self.max_count,
+                                  self.__y + (self.__directions[cat].y-self.__y) * count/self.max_count
                                   )
+                self.surface.strokeWeight(1)
+                self.surface.stroke(0)
                 inflate = count if count > 0 else 0.5
-                self.__directions[cat][6] = inflate
+                self.__directions[cat].inflate = inflate
+                
             if is_locked:
                 self.__show_success_message()
-            self.handle_overlap()
-    
-    def handle_overlap(self):
-        for cat, (x, y, is_active, limit, state_name, col, inflate) in self.__directions.items():
-            with self.surface.beginDraw(): 
-                self.surface.fill(*col)
-                self.surface.circle(x, y, self.marker_radius * inflate)
+            for cat, cc in self.__directions.items():
+                cc.display(self.surface)
+                for i in list(self.__directions.values()):
+                    if cc != i and cc.intersects(i):
+                        cc.col = (cc.col, 25)
 
     def update_targets(self, targets):
-        for cat, (x, y, is_active, limit, state_name, col, inflate) in self.__directions.items():
-            col = color_scheme[cat]
+        for cat, cc in self.__directions.items():
+            # col = color_scheme[cat]
             if cat in targets:
-                self.__directions[cat] = [x, y, True, targets[cat][0], targets[cat][1], col, 0.5]
-            else:
-                self.__directions[cat] = [x, y, False, 0, 'Inactive',  col, 0.5]
-        print("update targets directions: " , self.__directions)
+                print('targets ', targets)
+                self.__directions[cat].state_name = targets[cat][1]
+            self.__directions[cat].inflate = 0.5
         self.reset()
 
     def init_categories(self, categories):
@@ -253,24 +253,27 @@ class CategoryStar(SurfaceBase):
     def __create_background(self):
         self.surface.strokeWeight(2)
         # print("self.--directions: ", self.__directions)
-        for cat, (x, y, is_active, limit, state_name, col, inflate) in self.__directions.items():
+        for cat, cc in self.__directions.items():
             self.surface.stroke(0)
-            self.surface.fill(*col)
-            self.surface.line(self.__x, self.__y, x, y)
+            self.surface.fill(*cc.col)
+            self.surface.line(self.__x, self.__y, cc.x, cc.y)
             self.surface.textAlign(CENTER)
-            self.surface.text(cat, self.__x + (x - self.__x) / 2, self.__y + (y - self.__y) / 2)
-            title_color = self.textcolor_active if is_active else self.textcolor_inactive
+            self.surface.text(cat, self.__x + (cc.x - self.__x) / 2, self.__y + (cc.y - self.__y) / 2)
+            title_color = self.textcolor_active if cc.is_active else self.textcolor_inactive
             self.surface.fill(*title_color)
-            self.surface.text(state_name, x, y)
+            self.surface.text(cc.state_name, cc.x, cc.y)
         self.surface.circle(self.__x, self.__y, self.marker_radius)
 
     def __create_directions(self, categories):
         self.__x, self.__y = self.surface.width / 2, self.surface.height / 2
         for idx, cat in enumerate(categories):
             circle_color = color_scheme[cat]
-            x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(categories))
-            y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(categories))
-            self.__directions[cat] = [x, y, False, 0, 'Inactive', circle_color, 0.5]
+            angle = idx * 2 * math.pi / len(categories)
+            x = self.__x + self.circle_radius * math.sin(angle)
+            y = self.__y + self.circle_radius * math.cos(angle)
+            
+            self.__directions[cat] = Circle(cat, x, y, angle, self.marker_radius, False, 0, 'Unknown', circle_color, 0.5)
+            # self.__directions[cat] = [x, y, False, 0, 'Inactive', circle_color, 0.5]
 
     def __show_success_message(self):
         self.surface.fill(*self.textcolor_warning)

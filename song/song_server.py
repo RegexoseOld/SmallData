@@ -135,6 +135,9 @@ class SongServer:
         self.display_client.send_message(settings.DISPLAY_INIT_ADDRESS,
                                          pickle.dumps(self.song_machine.parser.categories, protocol=2)
                                          )
+        self.display_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
+                                         pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
+                                         )
 
 class Tonality:
     '''
