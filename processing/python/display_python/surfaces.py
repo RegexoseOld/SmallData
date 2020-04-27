@@ -239,10 +239,10 @@ class CategoryStar(SurfaceBase):
 
     def update_targets(self, targets):
         for cat, cc in self.__directions.items():
-            # col = color_scheme[cat]
             if cat in targets:
-                print('targets ', targets)
-                self.__directions[cat].state_name = targets[cat][1]
+                self.__directions[cat].next_part_name = targets[cat][1]
+            else:
+                self.__directions[cat].next_part_name = 'not accessible now'
             self.__directions[cat].inflate = 0.5
         self.reset()
 
@@ -258,10 +258,8 @@ class CategoryStar(SurfaceBase):
             self.surface.fill(*cc.col)
             self.surface.line(self.__x, self.__y, cc.x, cc.y)
             self.surface.textAlign(CENTER)
-            self.surface.text(cat, self.__x + (cc.x - self.__x) / 2, self.__y + (cc.y - self.__y) / 2)
+            # self.surface.text(cat, self.__x + (cc.x - self.__x) / 2, self.__y + (cc.y - self.__y) / 2)
             title_color = self.textcolor_active if cc.is_active else self.textcolor_inactive
-            self.surface.fill(*title_color)
-            self.surface.text(cc.state_name, cc.x, cc.y)
         self.surface.circle(self.__x, self.__y, self.marker_radius)
 
     def __create_directions(self, categories):

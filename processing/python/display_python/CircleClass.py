@@ -10,7 +10,7 @@ class Circle:
         self.radius = radius
         self.is_active = is_active
         self.c_limit = count_limit
-        self.state_name = next_part_name
+        self.next_part_name = next_part_name
         self.col = col
         self.inflate = inflate
     
@@ -21,7 +21,7 @@ class Circle:
             surface.fill(*self.col)
             surface.circle(self.x, self.y, self.radius * self.inflate)
             surface.fill(0)
-            surface.text(self.state_name, x, y)
+            surface.text(self.next_part_name, x, y)
     
     def intersects(self, other):
         if dist(self.x, self.y, other.x, other.y) < (self.radius + other.radius):
