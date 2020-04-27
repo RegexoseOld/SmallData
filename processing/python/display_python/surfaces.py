@@ -257,9 +257,6 @@ class CategoryStar(SurfaceBase):
             self.surface.stroke(0)
             self.surface.fill(*cc.col)
             self.surface.line(self.__x, self.__y, cc.x, cc.y)
-            self.surface.textAlign(CENTER)
-            # self.surface.text(cat, self.__x + (cc.x - self.__x) / 2, self.__y + (cc.y - self.__y) / 2)
-            title_color = self.textcolor_active if cc.is_active else self.textcolor_inactive
         self.surface.circle(self.__x, self.__y, self.marker_radius)
 
     def __create_directions(self, categories):
