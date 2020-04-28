@@ -198,7 +198,8 @@ class CategoryStar(SurfaceBase):
     # a dictionary of type {categrory1: (x1, y1, is_active, limit, target_state), ...} that holds the
     #  - coordinates of the center of the correspponding circle
     #  - whether the target state is set (active)
-    #  - the
+    #  - REPLACED by CircleClass !!
+    #  - stored in :
     __directions = {}
 
     # x and y coordinate of the center of the image
@@ -215,7 +216,6 @@ class CategoryStar(SurfaceBase):
             self.__create_background()
 
             for cat, count in category_counter.items():
-                # color = self.linecolor_active if self.__directions[cat][2] else self.linecolor_inactive
                 cat_color = color_scheme[cat]
                 self.surface.stroke(*cat_color)
                 self.surface.strokeWeight(7)
@@ -227,26 +227,22 @@ class CategoryStar(SurfaceBase):
                 self.surface.strokeWeight(1)
                 self.surface.stroke(0)
                 cc = self.__directions[cat]
-                print('count: ', count)
-                cc.inflate = count if count != 0 else 1
-                
+                grow = (cc.max_radius - cc.radius) * count/self.max_count
+                cc.display(self.surface, grow)
                 
             if is_locked:
                 self.__show_success_message()
-        for cat, cc in self.__directions.items():
-            for i in list(self.__directions.values()):
-                if cc != i and cc.intersects(i):
-                    cc.tp = 25
-            cc.display(self.surface)
+
+            
             
 
     def update_targets(self, targets):
         for cat, cc in self.__directions.items():
             cc.radius = self.marker_radius # reset circle size
             if cat in targets:
-                self.__directions[cat].next_part_name = targets[cat][1]
+                self.__directions[cat].cat_target = targets[cat][1]
             else:
-                self.__directions[cat].next_part_name = 'not accessible now'
+                self.__directions[cat].cat_target = 'no part available'
         self.reset()
 
     def init_categories(self, categories):
@@ -258,9 +254,19 @@ class CategoryStar(SurfaceBase):
         # print("self.--directions: ", self.__directions)
         for cat, cc in self.__directions.items():
             self.surface.stroke(0)
-            self.surface.fill(*cc.col)
+            self.surface.fill(100, 150)
             self.surface.line(self.__x, self.__y, cc.x, cc.y)
         self.surface.circle(self.__x, self.__y, self.marker_radius)
+
+    def calc_max_radius(self, x, y):
+        if x < self.surface.width/2 and y < self.surface.height/2:
+            return min([y, x])
+        elif x < self.surface.width/2 and y > self.surface.height/2:
+            return min([x, self.surface.height - y])
+        elif x > self.surface.width/2 and y < self.surface.height/2:
+            return min([self.surface.width - x, y])
+        else:
+            return min([self.surface.width - x, self.surface.height -y])
 
     def __create_directions(self, categories):
         self.__x, self.__y = self.surface.width / 2, self.surface.height / 2
@@ -269,8 +275,8 @@ class CategoryStar(SurfaceBase):
             angle = idx * 2 * math.pi / len(categories)
             x = self.__x + self.circle_radius * math.sin(angle)
             y = self.__y + self.circle_radius * math.cos(angle)
-            max_radius = min([self.surface.height - y, self.surface.width - x])
-            self.__directions[cat] = Circle(cat, x, y, angle, self.marker_radius, max_radius, False, 0, 'Unknown', circle_color, 1)
+            max_radius = self.calc_max_radius(x, y)
+            self.__directions[cat] = Circle(cat, x, y, angle, self.marker_radius, max_radius, False, 0, 'Unknown', circle_color)
             # self.__directions[cat] = [x, y, False, 0, 'Inactive', circle_color, 0.5]
 
     def __show_success_message(self):

@@ -3,7 +3,7 @@
 class Circle:
     tp = 150 
     
-    def __init__(self, name, x, y, angle, radius, max_radius, is_active, count_limit, next_part_name, col, inflate):
+    def __init__(self, name, x, y, angle, radius, max_radius, is_active, count_limit, cat_target, col):
         self.name = name
         self.x = x
         self.y = y
@@ -12,26 +12,29 @@ class Circle:
         self.max_radius = max_radius
         self.is_active = is_active
         self.c_limit = count_limit
-        self.next_part_name = next_part_name
-        self.col = [c for c in col]
+        self.cat_target = cat_target
+        self.col = col
         self.col.append(self.tp)
-        self.inflate = inflate
     
-    def display(self, surface):
+    def display(self, surface, grow):
         x = self.x + self.radius * sin(self.angle)
-        y = self.y + 2 * self.radius * cos(self.angle)
-        self.radius = self.max_radius - (self.max_radius - self.radius) / self.inflate
+        y = self.y + self.radius * cos(self.angle)
         with surface.beginDraw(): 
-            print('self.col: ', self.col)
+            # print('max radius: ', self.max_radius)
             surface.fill(*self.col)
-            surface.circle(self.x, self.y, self.radius)
+            surface.circle(self.x, self.y, self.radius + grow)
+            surface.rectMode(CENTER)
+            surface.noFill()
+            surface.rect(x, y, textWidth(self.cat_target), 18)
             surface.fill(0)
-            surface.text(self.next_part_name, x, y)
+            surface.textAlign(CENTER)
+            surface.text(self.cat_target, x, y)
+    
     
     def intersects(self, other):
         # print("radiae: " , self.radius + other.radius)
         if dist(self.x, self.y, other.x, other.y) < (self.radius + other.radius):
-            print ("intersecting")
+            # print ("intersecting")
             self.col[3] = self.tp
             # print('self.col: ', self.col)
             return True
