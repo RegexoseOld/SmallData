@@ -3,11 +3,11 @@ from linebreak import linebreak
 from CircleClass import Circle
 import math
 
-color_scheme = {'dissence': (181, 180, 179),
-                'insinuation': (30, 101, 109),
-                'lecture': (241, 243, 206),
-                'praise': (246, 41, 0),
-                'concession': (0, 41, 60)
+color_scheme = {'dissence': [181, 180, 179],
+                'insinuation': [30, 101, 109],
+                'lecture': [241, 243, 206],
+                'praise': [246, 41, 0],
+                'concession': [0, 41, 60]
                 }
 
 class SurfaceBase:
@@ -148,41 +148,41 @@ class PartArea(SurfaceBase):
         self.add_subsurface("parts", current_next_surf)
         
 
-class CategoryCounter(SurfaceBase):
-    bar_width = 100
-    bar_distance = 5
-    height_per_count = 5
-    max_count = 10
-    x_offset = 5
-    text_height = 20
+# class CategoryCounter(SurfaceBase):
+#     bar_width = 100
+#     bar_distance = 5
+#     height_per_count = 5
+#     max_count = 10
+#     x_offset = 5
+#     text_height = 20
     
-    def __init__(self, name, pos_x, pos_y, font):
-        self.font = font
-        s_width = self.bar_width * len(self.categories) + self.bar_distance * (len(self.categories) - 1) + \
-                  2 * self.x_offset
-        s_height = self.height_per_count * self.max_count + self.text_height
-        SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
-        self.reset_counter()
+#     def __init__(self, name, pos_x, pos_y, font):
+#         self.font = font
+#         s_width = self.bar_width * len(self.categories) + self.bar_distance * (len(self.categories) - 1) + \
+#                   2 * self.x_offset
+#         s_height = self.height_per_count * self.max_count + self.text_height
+#         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
+#         self.reset_counter()
     
-    def reset_counter(self):
-        self.update_counter({}.fromkeys(self.categories, 0))
+#     def reset_counter(self):
+#         self.update_counter({}.fromkeys(self.categories, 0))
         
-    def add_locked(self):
-        with self.surface.beginDraw():
-            self.surface.text("Locked", 20, 20)
+#     def add_locked(self):
+#         with self.surface.beginDraw():
+#             self.surface.text("Locked", 20, 20)
     
-    def update_counter(self, category_counter):
-        with self.surface.beginDraw():
-            self.surface.background(222)
-            idx = 0
-            for cat, count in category_counter.items():
-                self.surface.rect(self.x_offset + idx * (self.bar_width + self.bar_distance), 
-                                  self.max_count*self.height_per_count, 
-                                  self.bar_width, 
-                                  -count*self.height_per_count)
-                self.surface.text(cat, self.x_offset + idx * (self.bar_width + self.bar_distance),
-                                  self.height_per_count * self.max_count + self.text_height / 2.)
-                idx += 1
+#     def update_counter(self, category_counter):
+#         with self.surface.beginDraw():
+#             self.surface.background(222)
+#             idx = 0
+#             for cat, count in category_counter.items():
+#                 self.surface.rect(self.x_offset + idx * (self.bar_width + self.bar_distance), 
+#                                   self.max_count*self.height_per_count, 
+#                                   self.bar_width, 
+#                                   -count*self.height_per_count)
+#                 self.surface.text('bubuman dwane', self.x_offset + idx * (self.bar_width + self.bar_distance),
+#                                   self.height_per_count * self.max_count + self.text_height / 2.)
+#                 idx += 1
 
 
 class CategoryStar(SurfaceBase):
@@ -226,24 +226,27 @@ class CategoryStar(SurfaceBase):
                                   )
                 self.surface.strokeWeight(1)
                 self.surface.stroke(0)
-                inflate = count if count > 0 else 0.5
-                self.__directions[cat].inflate = inflate
+                cc = self.__directions[cat]
+                print('count: ', count)
+                cc.inflate = count if count != 0 else 1
+                
                 
             if is_locked:
                 self.__show_success_message()
-            for cat, cc in self.__directions.items():
-                cc.display(self.surface)
-                for i in list(self.__directions.values()):
-                    if cc != i and cc.intersects(i):
-                        cc.col = (cc.col, 25)
+        for cat, cc in self.__directions.items():
+            for i in list(self.__directions.values()):
+                if cc != i and cc.intersects(i):
+                    cc.tp = 25
+            cc.display(self.surface)
+            
 
     def update_targets(self, targets):
         for cat, cc in self.__directions.items():
+            cc.radius = self.marker_radius # reset circle size
             if cat in targets:
                 self.__directions[cat].next_part_name = targets[cat][1]
             else:
                 self.__directions[cat].next_part_name = 'not accessible now'
-            self.__directions[cat].inflate = 0.5
         self.reset()
 
     def init_categories(self, categories):
@@ -266,8 +269,8 @@ class CategoryStar(SurfaceBase):
             angle = idx * 2 * math.pi / len(categories)
             x = self.__x + self.circle_radius * math.sin(angle)
             y = self.__y + self.circle_radius * math.cos(angle)
-            
-            self.__directions[cat] = Circle(cat, x, y, angle, self.marker_radius, False, 0, 'Unknown', circle_color, 0.5)
+            max_radius = min([self.surface.height - y, self.surface.width - x])
+            self.__directions[cat] = Circle(cat, x, y, angle, self.marker_radius, max_radius, False, 0, 'Unknown', circle_color, 1)
             # self.__directions[cat] = [x, y, False, 0, 'Inactive', circle_color, 0.5]
 
     def __show_success_message(self):
