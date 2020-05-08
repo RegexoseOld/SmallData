@@ -5,9 +5,9 @@ import math
 
 color_scheme = {'dissence': [181, 180, 179],
                 'insinuation': [30, 101, 109],
-                'lecture': [241, 243, 206],
+                'lecture': [30, 150, 109],
                 'praise': [246, 41, 0],
-                'concession': [0, 41, 60]
+                'concession': [241, 243, 150]
                 }
 
 class SurfaceBase:
@@ -40,18 +40,20 @@ class SurfaceBase:
 
 
 class UtteranceLine:
-    def __init__(self, s_width, s_height, utt, cat, font, pos_x):
+    def __init__(self, s_width, s_height, utt, cat, font, font_bold, pos_x):
         self.pos_x = pos_x
         self.pos_y = 0
         temp_utt_surface = linebreak(s_width * 2/3, s_height, utt, font, 17)
         temp_cat_surface = createGraphics(s_width * 1/3, temp_utt_surface.height)
         utt_cat_surface = createGraphics((temp_utt_surface.width + temp_cat_surface.width) - 10 , temp_utt_surface.height)
+        cat_backgr_col = color_scheme[cat]
         with temp_cat_surface.beginDraw():
-            temp_cat_surface.textFont(font)
+            temp_cat_surface.background(*cat_backgr_col)
+            temp_cat_surface.textFont(font_bold)
             temp_cat_surface.textSize(17)
-            temp_cat_surface.textAlign(LEFT, TOP)
+            temp_cat_surface.textAlign(CENTER)
             temp_cat_surface.fill(0)
-            temp_cat_surface.text(cat, 0, 0)
+            temp_cat_surface.text(cat, temp_cat_surface.width/2, temp_cat_surface.height/2)
         with utt_cat_surface.beginDraw():
             utt_cat_surface.background(222)
             utt_cat_surface.image(temp_utt_surface, 0, 0)
@@ -71,13 +73,14 @@ class UtteranceLine:
 
 
 class UtterancesArea(SurfaceBase):
-    def __init__(self, name, pos_x, pos_y, s_width, s_height, font):
+    def __init__(self, name, pos_x, pos_y, s_width, s_height, font, font_bold):
         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
         self.index = 0
         self.font = font
+        self.font_bold = font_bold
     
     def update_utts(self, utt, cat):
-        utt_cat_surf = UtteranceLine(self.surface.width, self.surface.height, utt, cat, self.font, self.pos_x)
+        utt_cat_surf = UtteranceLine(self.surface.width, self.surface.height, utt, cat, self.font, self.font_bold, self.pos_x)
         self.add_subsurface(self.index, utt_cat_surf)
         self.index += 1
                
