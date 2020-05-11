@@ -1,17 +1,17 @@
 {
   "states_to_notes": {
-    "Nummern":  "1",
-    "Amazonico":  "2",
-    "Salt":  "3",
-    "PadsOfRedemption":  "4",
-    "WannaBeInLA": "5",
-    "ArgosFarfish": "6",
-    "Constelacion": "7",
-    "Ewa": "8",
-    "Goofy": "9",
-    "TheTideIsHigh": "10",
-    "Schaufensterpuppen": "11",
-    "Back2Black": "12",
+    "Nummern":  "0",
+    "Amazonico":  "1",
+    "Salt":  "2",
+    "PadsOfRedemption":  "3",
+    "WannaBeInLA": "4",
+    "ArgosFarfish": "5",
+    "Constelacion": "6",
+    "Ewa": "7",
+    "Goofy": "8",
+    "TheTideIsHigh": "9",
+    "Schaufensterpuppen": "10",
+    "Back2Black": "11"
   },
   "first_state": "Nummern",
   "last_state": "Back2Black",
@@ -40,22 +40,22 @@
     [
       "PadsOfRedemption",
       "TheTideIsHigh",
-      "concession > 2"
+      "concession > 5"
     ],
     [
       "PadsOfRedemption",
       "Salt",
-      "lecture > 2"
+      "lecture > 6"
     ],
     [
       "PadsOfRedemption",
       "Constelacion",
-      "praise > 2"
+      "praise > 5"
     ],
     [
       "PadsOfRedemption",
       "Back2Black",
-      "dissence > 2"
+      "dissence > 5"
     ],
     [
       "Constelacion",
@@ -114,6 +114,26 @@
     ],
     [
       "TheTideIsHigh",
+      "ArgosFarfish",
+      "concession > 5"
+    ],
+      [
+      "Salt",
+      "PadsOfRedemption",
+      "dissence > 2"
+    ],
+    [
+      "Salt",
+      "TheTideIsHigh",
+      "lecture > 2"
+    ],
+    [
+      "Salt",
+      "Constelacion",
+      "insinuation > 2"
+    ],
+    [
+      "Salt",
       "ArgosFarfish",
       "concession > 5"
     ]
