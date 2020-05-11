@@ -1,90 +1,121 @@
 {
   "states_to_notes": {
-    "intro_beat":  "1",
-    "perc_solo":  "2",
-    "immerzu1":  "3",
-    "immerzu2":  "4",
-    "immerzu3": "5",
-    "immerzu4": "6",
-    "immerzu5": "7",
-    "immerzu6": "8",
-    "immerzu7": "9",
-    "immerzu8": "10",
-    "immersag1": "11",
-    "immersag2": "12",
-    "immersag3": "13",
-    "immersag4": "14",
-    "immersag5": "15",
-    "break1": "16",
-    "sprichmit1": "17",
-    "sprichmit2": "18",
-    "sprichmit3": "19",
-    "lassmich1": "20",
-    "bistdusicher": "21"
+    "Nummern":  "1",
+    "Amazonico":  "2",
+    "Salt":  "3",
+    "PadsOfRedemption":  "4",
+    "WannaBeInLA": "5",
+    "ArgosFarfish": "6",
+    "Constelacion": "7",
+    "Ewa": "8",
+    "Goofy": "9",
+    "TheTideIsHigh": "10",
+    "Schaufensterpuppen": "11",
+    "Back2Black": "12",
   },
-  "first_state": "intro_beat",
-  "last_state": "bistdusicher",
+  "first_state": "Nummern",
+  "last_state": "Back2Black",
   "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
   "transitions": [
     [
-      "intro_beat",
-      "perc_solo",
-      "praise > 2"
+      "Nummern",
+      "PadsOfRedemption",
+      "dissence > 2"
     ],
      [
-      "perc_solo",
-      "immerzu1",
-      "praise > 2"
+      "Nummern",
+      "Constelacion",
+      "concession > 2"
     ],
      [
-      "immerzu1",
-      "immersag1",
-      "praise > 2"
+      "Nummern",
+      "ArgosFarfish",
+      "insinuation > 2"
     ],
     [
-      "immersag1",
-      "immersag2",
+      "Nummern",
+      "Salt",
+      "lecture > 2"
+    ],
+    [
+      "PadsOfRedemption",
+      "TheTideIsHigh",
       "concession > 2"
     ],
     [
-      "immersag2",
-      "break1",
+      "PadsOfRedemption",
+      "Salt",
       "lecture > 2"
     ],
     [
-      "break1",
-      "immersag3",
+      "PadsOfRedemption",
+      "Constelacion",
       "praise > 2"
     ],
     [
-      "immersag3",
-      "immersag4",
-      "praise > 2"
-    ],
-    [
-      "immersag4",
-      "lassmich1",
+      "PadsOfRedemption",
+      "Back2Black",
       "dissence > 2"
     ],
     [
-      "lassmich1",
-      "sprichmit1",
-      "insinuation > 2"
+      "Constelacion",
+      "PadsOfRedemption",
+      "dissence > 3"
     ],
     [
-      "sprichmit1",
-      "lassmich1",
-      "insinuation > 2"
-    ],
-    [
-      "lassmich1",
-      "sprichmit3",
+      "Constelacion",
+      "TheTideIsHigh",
       "lecture > 2"
     ],
     [
-      "sprichmit3",
-      "bistdusicher",
-      "praise > 5"
+      "Constelacion",
+      "Nummern",
+      "insinuation > 2"
+    ],
+    [
+      "Constelacion",
+      "Salt",
+      "praise > 2"
+    ],
+    [
+      "ArgosFarfish",
+      "PadsOfRedemption",
+      "dissence > 2"
+    ],
+    [
+      "ArgosFarfish",
+      "Salt",
+      "lecture > 3"
+    ],
+    [
+      "ArgosFarfish",
+      "Constelacion",
+      "insinuation > 2"
+    ],
+    [
+      "ArgosFarfish",
+      "TheTideIsHigh",
+      "concession > 2"
+    ],
+      [
+      "TheTideIsHigh",
+      "PadsOfRedemption",
+      "dissence > 2"
+    ],
+    [
+      "TheTideIsHigh",
+      "Salt",
+      "lecture > 2"
+    ],
+    [
+      "TheTideIsHigh",
+      "Constelacion",
+      "insinuation > 2"
+    ],
+    [
+      "TheTideIsHigh",
+      "ArgosFarfish",
+      "concession > 5"
     ]
   ]
 }
