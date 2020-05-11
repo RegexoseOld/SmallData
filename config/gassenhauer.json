@@ -1,0 +1,90 @@
+{
+  "states_to_notes": {
+    "intro_beat":  "1",
+    "perc_solo":  "2",
+    "immerzu1":  "3",
+    "immerzu2":  "4",
+    "immerzu3": "5",
+    "immerzu4": "6",
+    "immerzu5": "7",
+    "immerzu6": "8",
+    "immerzu7": "9",
+    "immerzu8": "10",
+    "immersag1": "11",
+    "immersag2": "12",
+    "immersag3": "13",
+    "immersag4": "14",
+    "immersag5": "15",
+    "break1": "16",
+    "sprichmit1": "17",
+    "sprichmit2": "18",
+    "sprichmit3": "19",
+    "lassmich1": "20",
+    "bistdusicher": "21"
+  },
+  "first_state": "intro_beat",
+  "last_state": "bistdusicher",
+  "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
+  "transitions": [
+    [
+      "intro_beat",
+      "perc_solo",
+      "praise > 2"
+    ],
+     [
+      "perc_solo",
+      "immerzu1",
+      "praise > 2"
+    ],
+     [
+      "immerzu1",
+      "immersag1",
+      "praise > 2"
+    ],
+    [
+      "immersag1",
+      "immersag2",
+      "concession > 2"
+    ],
+    [
+      "immersag2",
+      "break1",
+      "lecture > 2"
+    ],
+    [
+      "break1",
+      "immersag3",
+      "praise > 2"
+    ],
+    [
+      "immersag3",
+      "immersag4",
+      "praise > 2"
+    ],
+    [
+      "immersag4",
+      "lassmich1",
+      "dissence > 2"
+    ],
+    [
+      "lassmich1",
+      "sprichmit1",
+      "insinuation > 2"
+    ],
+    [
+      "sprichmit1",
+      "lassmich1",
+      "insinuation > 2"
+    ],
+    [
+      "lassmich1",
+      "sprichmit3",
+      "lecture > 2"
+    ],
+    [
+      "sprichmit3",
+      "bistdusicher",
+      "praise > 5"
+    ]
+  ]
+}
