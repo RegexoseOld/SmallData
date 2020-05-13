@@ -20,27 +20,27 @@
     [
       "Nummern",
       "PadsOfRedemption",
-      "dissence > 2"
+      "dissence > 6"
     ],
      [
       "Nummern",
       "Constelacion",
-      "concession > 2"
+      "concession > 6"
     ],
      [
       "Nummern",
       "ArgosFarfish",
-      "insinuation > 2"
+      "insinuation > 6"
     ],
     [
       "Nummern",
       "Salt",
-      "lecture > 2"
+      "lecture > 6"
     ],
     [
       "PadsOfRedemption",
       "TheTideIsHigh",
-      "concession > 5"
+      "concession > 6"
     ],
     [
       "PadsOfRedemption",
@@ -50,92 +50,92 @@
     [
       "PadsOfRedemption",
       "Constelacion",
-      "praise > 5"
+      "praise > 6"
     ],
     [
       "PadsOfRedemption",
       "Back2Black",
-      "dissence > 5"
+      "dissence > 6"
     ],
     [
       "Constelacion",
       "PadsOfRedemption",
-      "dissence > 3"
+      "dissence > 6"
     ],
     [
       "Constelacion",
       "TheTideIsHigh",
-      "lecture > 2"
+      "lecture > 6"
     ],
     [
       "Constelacion",
       "Nummern",
-      "insinuation > 2"
+      "insinuation > 6"
     ],
     [
       "Constelacion",
       "Salt",
-      "praise > 2"
+      "praise > 6"
     ],
     [
       "ArgosFarfish",
       "PadsOfRedemption",
-      "dissence > 2"
+      "dissence > 6"
     ],
     [
       "ArgosFarfish",
       "Salt",
-      "lecture > 3"
+      "lecture > 6"
     ],
     [
       "ArgosFarfish",
       "Constelacion",
-      "insinuation > 2"
+      "insinuation > 6"
     ],
     [
       "ArgosFarfish",
       "TheTideIsHigh",
-      "concession > 2"
+      "concession > 6"
     ],
       [
       "TheTideIsHigh",
       "PadsOfRedemption",
-      "dissence > 2"
+      "dissence > 6"
     ],
     [
       "TheTideIsHigh",
       "Salt",
-      "lecture > 2"
+      "lecture > 6"
     ],
     [
       "TheTideIsHigh",
       "Constelacion",
-      "insinuation > 2"
+      "insinuation > 6"
     ],
     [
       "TheTideIsHigh",
       "ArgosFarfish",
-      "concession > 5"
+      "concession > 6"
     ],
       [
       "Salt",
       "PadsOfRedemption",
-      "dissence > 2"
+      "dissence > 6"
     ],
     [
       "Salt",
       "TheTideIsHigh",
-      "lecture > 2"
+      "lecture > 6"
     ],
     [
       "Salt",
       "Constelacion",
-      "insinuation > 2"
+      "insinuation > 6"
     ],
     [
       "Salt",
       "ArgosFarfish",
-      "concession > 5"
+      "concession > 6"
     ]
   ]
 }
