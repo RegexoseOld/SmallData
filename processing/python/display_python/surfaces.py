@@ -183,6 +183,7 @@ class CategoryStar(SurfaceBase):
 
             for cat, count in category_counter.items():
                 cat_color = color_scheme[cat]
+                print("cat color 186: ", cat_color)
                 self.surface.stroke(*cat_color)
                 self.surface.strokeWeight(7)
                 self.surface.line(self.__x,
