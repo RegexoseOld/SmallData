@@ -65,8 +65,8 @@ class SongServer:
             range(len(self.song_machine.parser.states)
                   ))}
 
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (1, 1.0))
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (1, 0.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 1.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 0.0))
         self._send_init_to_display()
 
     def interpreter_handler(self, _, content):
@@ -134,6 +134,9 @@ class SongServer:
     def _send_init_to_display(self):
         self.display_client.send_message(settings.DISPLAY_INIT_ADDRESS,
                                          pickle.dumps(self.song_machine.parser.categories, protocol=2)
+                                         )
+        self.display_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
+                                         pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
                                          )
 
 class Tonality:

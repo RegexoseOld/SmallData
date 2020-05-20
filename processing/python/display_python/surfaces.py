@@ -1,9 +1,17 @@
 from collections import OrderedDict
 from linebreak import linebreak
+from CircleClass import Circle
 import math
 
+color_scheme = {'dissence': [181, 180, 179],
+                'insinuation': [30, 101, 109],
+                'lecture': [30, 150, 109],
+                'praise': [246, 41, 0],
+                'concession': [241, 243, 150]
+                }
 
 class SurfaceBase:
+    
     def __init__(self, name, pos_x, pos_y, s_width, s_height):
         self.name = name
         self.pos_x = pos_x
@@ -31,18 +39,20 @@ class SurfaceBase:
 
 
 class UtteranceLine:
-    def __init__(self, s_width, s_height, utt, cat, font, pos_x):
+    def __init__(self, s_width, s_height, utt, cat, font, font_bold, pos_x):
         self.pos_x = pos_x
         self.pos_y = 0
         temp_utt_surface = linebreak(s_width * 2/3, s_height, utt, font, 17)
         temp_cat_surface = createGraphics(s_width * 1/3, temp_utt_surface.height)
         utt_cat_surface = createGraphics((temp_utt_surface.width + temp_cat_surface.width) - 10 , temp_utt_surface.height)
+        cat_backgr_col = color_scheme[cat]
         with temp_cat_surface.beginDraw():
-            temp_cat_surface.textFont(font)
+            temp_cat_surface.background(*cat_backgr_col)
+            temp_cat_surface.textFont(font_bold)
             temp_cat_surface.textSize(17)
-            temp_cat_surface.textAlign(LEFT, TOP)
+            temp_cat_surface.textAlign(CENTER)
             temp_cat_surface.fill(0)
-            temp_cat_surface.text(cat, 0, 0)
+            temp_cat_surface.text(cat, temp_cat_surface.width/2, temp_cat_surface.height/2)
         with utt_cat_surface.beginDraw():
             utt_cat_surface.background(222)
             utt_cat_surface.image(temp_utt_surface, 0, 0)
@@ -62,13 +72,14 @@ class UtteranceLine:
 
 
 class UtterancesArea(SurfaceBase):
-    def __init__(self, name, pos_x, pos_y, s_width, s_height, font):
+    def __init__(self, name, pos_x, pos_y, s_width, s_height, font, font_bold):
         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
         self.index = 0
         self.font = font
+        self.font_bold = font_bold
     
     def update_utts(self, utt, cat):
-        utt_cat_surf = UtteranceLine(self.surface.width, self.surface.height, utt, cat, self.font, self.pos_x)
+        utt_cat_surf = UtteranceLine(self.surface.width, self.surface.height, utt, cat, self.font, self.font_bold, self.pos_x)
         self.add_subsurface(self.index, utt_cat_surf)
         self.index += 1
                
@@ -93,7 +104,7 @@ class Beat:
         with self.surface.beginDraw():
             self.surface.background(222)
             self.surface.textFont(font)
-            self.surface.textSize(100)
+            self.surface.textSize(50)
             self.surface.fill(col)
             self.surface.textAlign(CENTER)
             self.surface.text(beatnum, self.surface.width / 2, self.surface.height * 3 / 5)
@@ -112,7 +123,7 @@ class Parts:
         with self.surface.beginDraw():
             self.surface.background(222)
             self.surface.textFont(font)
-            self.surface.textSize(20)
+            self.surface.textSize(12)
             self.surface.fill(0)
             self.surface.textAlign(CENTER)
             self.surface.text("current part:\n" + current, self.surface.width/2, self.surface.height/4)
@@ -139,45 +150,6 @@ class PartArea(SurfaceBase):
         self.add_subsurface("parts", current_next_surf)
         
 
-class CategoryCounter(SurfaceBase):
-    bar_width = 100
-    bar_distance = 5
-    height_per_count = 5
-    max_count = 10
-    x_offset = 5
-    text_height = 20
-    
-    categories = ['praise', 'dissence', 'insinuation', 'lecture', 'concession']
-    
-    def __init__(self, name, pos_x, pos_y, font):
-        self.font = font
-        s_width = self.bar_width * len(self.categories) + self.bar_distance * (len(self.categories) - 1) + \
-                  2 * self.x_offset
-        s_height = self.height_per_count * self.max_count + self.text_height
-        SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
-        self.reset_counter()
-    
-    def reset_counter(self):
-        self.update_counter({}.fromkeys(self.categories, 0))
-        
-    def add_locked(self):
-        with self.surface.beginDraw():
-            self.surface.text("Locked", 20, 20)
-    
-    def update_counter(self, category_counter):
-        with self.surface.beginDraw():
-            self.surface.background(222)
-            idx = 0
-            for cat, count in category_counter.items():
-                self.surface.rect(self.x_offset + idx * (self.bar_width + self.bar_distance), 
-                                  self.max_count*self.height_per_count, 
-                                  self.bar_width, 
-                                  -count*self.height_per_count)
-                self.surface.text(cat, self.x_offset + idx * (self.bar_width + self.bar_distance),
-                                  self.height_per_count * self.max_count + self.text_height / 2.)
-                idx += 1
-
-
 class CategoryStar(SurfaceBase):
     textcolor_active = 0, 0, 0
     textcolor_inactive = 200, 200, 200
@@ -191,12 +163,14 @@ class CategoryStar(SurfaceBase):
     # a dictionary of type {categrory1: (x1, y1, is_active, limit, target_state), ...} that holds the
     #  - coordinates of the center of the correspponding circle
     #  - whether the target state is set (active)
-    #  - the
+    #  - REPLACED by CircleClass !!
+    #  - stored in :
     __directions = {}
 
     # x and y coordinate of the center of the image
     __x = None
     __y = None
+    
 
     def reset(self):
         self.update({}.fromkeys(self.__directions, 0))
@@ -207,23 +181,31 @@ class CategoryStar(SurfaceBase):
             self.__create_background()
 
             for cat, count in category_counter.items():
-                color = self.linecolor_active if self.__directions[cat][2] else self.linecolor_inactive
-                self.surface.stroke(*color)
+                cat_color = color_scheme[cat]
+                print("cat color 186: ", cat_color)
+                self.surface.stroke(*cat_color)
                 self.surface.strokeWeight(7)
                 self.surface.line(self.__x,
                                   self.__y,
-                                  self.__x + (self.__directions[cat][0]-self.__x) * count/self.max_count,
-                                  self.__y + (self.__directions[cat][1]-self.__y) * count/self.max_count
+                                  self.__x + (self.__directions[cat].x-self.__x) * count/self.max_count,
+                                  self.__y + (self.__directions[cat].y-self.__y) * count/self.max_count
                                   )
+                self.surface.strokeWeight(1)
+                self.surface.stroke(0)
+                cc = self.__directions[cat]
+                grow = (cc.max_radius - cc.radius) * count/self.max_count
+                cc.display(self.surface, grow)
+                
             if is_locked:
                 self.__show_success_message()
 
     def update_targets(self, targets):
-        for cat, (x, y, is_active, limit, state_name) in self.__directions.items():
+        for cat, cc in self.__directions.items():
+            cc.radius = self.marker_radius # reset circle size
             if cat in targets:
-                self.__directions[cat] = (x, y, True, targets[cat][0], targets[cat][1])
+                self.__directions[cat].cat_target = targets[cat][1]
             else:
-                self.__directions[cat] = (x, y, False, 0, 'Inactive')
+                self.__directions[cat].cat_target = 'no part available'
         self.reset()
 
     def init_categories(self, categories):
@@ -232,24 +214,33 @@ class CategoryStar(SurfaceBase):
 
     def __create_background(self):
         self.surface.strokeWeight(2)
-        for cat, (x, y, is_active, limit, state_name) in self.__directions.items():
-            self.surface.stroke(0, 0, 0)
-            self.surface.line(self.__x, self.__y, x, y)
-            self.surface.textAlign(CENTER)
-            self.surface.text(cat, self.__x + (x - self.__x) / 2, self.__y + (y - self.__y) / 2)
-            self.surface.circle(x, y, self.marker_radius)
-            color = self.textcolor_active if is_active else self.textcolor_inactive
-            self.surface.fill(*color)
-            self.surface.text(state_name, x, y)
-            self.surface.fill(255, 255, 255)
+        # print("self.--directions: ", self.__directions)
+        for cat, cc in self.__directions.items():
+            self.surface.stroke(0)
+            self.surface.fill(100, 150)
+            self.surface.line(self.__x, self.__y, cc.x, cc.y)
         self.surface.circle(self.__x, self.__y, self.marker_radius)
+
+    def calc_max_radius(self, x, y):
+        if x < self.surface.width/2 and y < self.surface.height/2:
+            return min([y, x])
+        elif x < self.surface.width/2 and y > self.surface.height/2:
+            return min([x, self.surface.height - y])
+        elif x > self.surface.width/2 and y < self.surface.height/2:
+            return min([self.surface.width - x, y])
+        else:
+            return min([self.surface.width - x, self.surface.height -y])
 
     def __create_directions(self, categories):
         self.__x, self.__y = self.surface.width / 2, self.surface.height / 2
         for idx, cat in enumerate(categories):
-            x = self.__x + self.circle_radius * math.sin(idx * 2 * math.pi / len(categories))
-            y = self.__y + self.circle_radius * math.cos(idx * 2 * math.pi / len(categories))
-            self.__directions[cat] = [x, y, False, 0, 'Inactive']
+            circle_color = color_scheme[cat]
+            angle = idx * 2 * math.pi / len(categories)
+            x = self.__x + self.circle_radius * math.sin(angle)
+            y = self.__y + self.circle_radius * math.cos(angle)
+            max_radius = self.calc_max_radius(x, y)
+            self.__directions[cat] = Circle(cat, x, y, angle, self.marker_radius, max_radius, False, 0, 'Unknown', circle_color)
+            # self.__directions[cat] = [x, y, False, 0, 'Inactive', circle_color, 0.5]
 
     def __show_success_message(self):
         self.surface.fill(*self.textcolor_warning)

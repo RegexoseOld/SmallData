@@ -21,11 +21,11 @@ def send_to_music_server(utterance, category):
     osc_dict = {
         'text': utterance,
         'cat': category,
-        'level': random.randint(0, 10)
+        'f_dura': random.randint(0, 10)
     }
     osc_map = pickle.dumps(osc_dict)
     song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
-    display_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, [utterance, category])
+    # display_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, [utterance, category])
 
 
 class UtteranceView(viewsets.ModelViewSet):
