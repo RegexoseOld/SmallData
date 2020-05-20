@@ -18,7 +18,6 @@ class SurfaceBase:
         self.pos_y = pos_y
         self.subsurfaces = OrderedDict()
         self.__create_surface(s_width, s_height)
-        categories = [x for x in list(color_scheme.keys())]
         
     def __create_surface(self, w, h):
         self.surface = createGraphics(w, h)
@@ -199,9 +198,6 @@ class CategoryStar(SurfaceBase):
                 
             if is_locked:
                 self.__show_success_message()
-
-            
-            
 
     def update_targets(self, targets):
         for cat, cc in self.__directions.items():
