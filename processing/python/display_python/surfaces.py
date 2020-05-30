@@ -9,13 +9,13 @@ color_scheme = {'dissence': [181, 180, 179],
                 'praise': [246, 41, 0],
                 'concession': [241, 243, 150]
                 }
-
-class SurfaceBase:
     
+class SurfaceBase:
     def __init__(self, name, pos_x, pos_y, s_width, s_height):
         self.name = name
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.incoming = False  # utterance coming in
         self.subsurfaces = OrderedDict()
         self.__create_surface(s_width, s_height)
         
@@ -27,9 +27,12 @@ class SurfaceBase:
     
     def draw(self, surface=None):
         if surface:
+            print("name if surface: {}".format(self.name))
             with surface.beginDraw():
                 surface.image(self.surface, self.pos_x, self.pos_y)
         else:
+            if self.incoming:
+                print("name if no surface: {}, surface.height: {}".format(self.name, self.surface.height))
             image(self.surface, self.pos_x, self.pos_y)
         for subsurf in self.subsurfaces.values():
             subsurf.draw(self.surface)
@@ -39,24 +42,26 @@ class SurfaceBase:
 
 
 class UtteranceLine:
+    cat_surface = None
+    
     def __init__(self, s_width, s_height, utt, cat, font, font_bold, pos_x):
         self.pos_x = pos_x
         self.pos_y = 0
         temp_utt_surface = linebreak(s_width * 2/3, s_height, utt, font, 17)
-        temp_cat_surface = createGraphics(s_width * 1/3, temp_utt_surface.height)
-        utt_cat_surface = createGraphics((temp_utt_surface.width + temp_cat_surface.width) - 10 , temp_utt_surface.height)
+        self.cat_surface = createGraphics(s_width * 1/3, temp_utt_surface.height)
+        utt_cat_surface = createGraphics((temp_utt_surface.width + self.cat_surface.width) - 10 , temp_utt_surface.height)
         cat_backgr_col = color_scheme[cat]
-        with temp_cat_surface.beginDraw():
-            temp_cat_surface.background(*cat_backgr_col)
-            temp_cat_surface.textFont(font_bold)
-            temp_cat_surface.textSize(17)
-            temp_cat_surface.textAlign(CENTER)
-            temp_cat_surface.fill(0)
-            temp_cat_surface.text(cat, temp_cat_surface.width/2, temp_cat_surface.height/2)
+        with self.cat_surface.beginDraw():
+            self.cat_surface.background(*cat_backgr_col)
+            self.cat_surface.textFont(font_bold)
+            self.cat_surface.textSize(17)
+            self.cat_surface.textAlign(CENTER)
+            self.cat_surface.fill(0)
+            self.cat_surface.text(cat, self.cat_surface.width/2, self.cat_surface.height/2)
         with utt_cat_surface.beginDraw():
             utt_cat_surface.background(222)
             utt_cat_surface.image(temp_utt_surface, 0, 0)
-            utt_cat_surface.image(temp_cat_surface, temp_utt_surface.width + 10, 0)
+            utt_cat_surface.image(self.cat_surface, temp_utt_surface.width + 10, 0)
             utt_cat_surface.stroke(200)
             utt_cat_surface.strokeWeight(15)
             utt_cat_surface.line(0, utt_cat_surface.height, utt_cat_surface.width, utt_cat_surface.height)
@@ -68,19 +73,52 @@ class UtteranceLine:
     
     def draw(self, surface):
         with surface.beginDraw():
+            #mal mir auf der mutter-surface (utterancesArea) deine surface (self.surface)
             surface.image(self.surface, self.pos_x, self.pos_y) 
 
+class Alert(SurfaceBase):
+    circle_centers = {}
+    
+    def __init__(self, name, pos_x, pos_y, s_width, s_height):
+        SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
+        
+    def build_circle_centers(self, circle_dict):
+        for cat, cc in circle_dict.items():
+            self.circle_centers[cat] = [cc.x, cc.y]
+        print("circle centers: ", self.circle_centers)
+    
+    def updateSurface(self, cat, x, y, w, h):
+        print("\t\t{} {} {} {} {}".format(cat, x, y, w, h))
+        self.incoming = True
+        self.surface = createGraphics(w, h)
+        with self.surface.beginDraw():
+            self.surface.background(100)
+        self.pos_x = x
+        self.pos_y =  y
+        self.incoming = False
+    
+    def moveSurface(self, cat, x, y):
+        print("cat: {}  x {}  y {}".format(cat, self.circle_centers[cat][0],self.circle_centers[cat][1]))
+        self.pos_x = self.circle_centers[cat][0]
+        self.pos_y =  self.circle_centers[cat][1]
 
+        
 class UtterancesArea(SurfaceBase):
+    alert = None
+    
     def __init__(self, name, pos_x, pos_y, s_width, s_height, font, font_bold):
         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
         self.index = 0
         self.font = font
         self.font_bold = font_bold
+        self.alert = {}
     
     def update_utts(self, utt, cat):
-        utt_cat_surf = UtteranceLine(self.surface.width, self.surface.height, utt, cat, self.font, self.font_bold, self.pos_x)
-        self.add_subsurface(self.index, utt_cat_surf)
+        self.incoming = True
+        utt_cat = UtteranceLine(self.surface.width, self.surface.height, utt, cat, self.font, self.font_bold, self.pos_x)
+        self.alert = {}
+        self.update_alert(cat, self.pos_x + (utt_cat.surface.width - utt_cat.cat_surface.width), self.pos_y, utt_cat.cat_surface.width , utt_cat.cat_surface.height)
+        self.add_subsurface(self.index, utt_cat)
         self.index += 1
                
         pos_y = 0
@@ -93,6 +131,11 @@ class UtterancesArea(SurfaceBase):
     
         if pos_y > self.surface.height:
             self.subsurfaces.popitem(last=False)  
+        
+        self.incoming = False
+        
+    def update_alert(self, cat, alert_x, alert_y, alert_width, alert_height):
+        self.alert[cat] = [alert_x, alert_y, alert_width, alert_height]
 
 
 class Beat:
@@ -148,7 +191,6 @@ class PartArea(SurfaceBase):
         current_next_surf = Parts(self.surface.width/2, self.surface.height, current, next, self.font, col)
         self.add_subsurface("beat", beat_surf)
         self.add_subsurface("parts", current_next_surf)
-        
 
 class CategoryStar(SurfaceBase):
     textcolor_active = 0, 0, 0
@@ -166,6 +208,7 @@ class CategoryStar(SurfaceBase):
     #  - REPLACED by CircleClass !!
     #  - stored in :
     __directions = {}
+    directions = {}
 
     # x and y coordinate of the center of the image
     __x = None
@@ -174,15 +217,14 @@ class CategoryStar(SurfaceBase):
 
     def reset(self):
         self.update({}.fromkeys(self.__directions, 0))
+        
 
     def update(self, category_counter, is_locked=False):
         with self.surface.beginDraw():
             self.surface.background(222)
             self.__create_background()
-
             for cat, count in category_counter.items():
                 cat_color = color_scheme[cat]
-                print("cat color 186: ", cat_color)
                 self.surface.stroke(*cat_color)
                 self.surface.strokeWeight(7)
                 self.surface.line(self.__x,
@@ -192,9 +234,17 @@ class CategoryStar(SurfaceBase):
                                   )
                 self.surface.strokeWeight(1)
                 self.surface.stroke(0)
+                self.surface.fill(0)
                 cc = self.__directions[cat]
+                # print("cc {}    c limit: {} ".format(cc.name, cc.c_limit))
                 grow = (cc.max_radius - cc.radius) * count/self.max_count
+                remaining_utts = self.__directions[cat].c_limit - count
+                goal = self.__directions[cat].cat_target
+                # print("remain {}    goal: {} ".format(remaining_utts, goal))
+                # TODO: warum wird nur 'concession' gemalt?
+                self.surface.text("noch {} x {}\nbis {}".format(remaining_utts, cat, goal), cc.x, cc.y + 40 )
                 cc.display(self.surface, grow)
+               
                 
             if is_locked:
                 self.__show_success_message()
@@ -203,6 +253,7 @@ class CategoryStar(SurfaceBase):
         for cat, cc in self.__directions.items():
             cc.radius = self.marker_radius # reset circle size
             if cat in targets:
+                self.__directions[cat].c_limit = targets[cat][0]
                 self.__directions[cat].cat_target = targets[cat][1]
             else:
                 self.__directions[cat].cat_target = 'no part available'
@@ -239,9 +290,10 @@ class CategoryStar(SurfaceBase):
             x = self.__x + self.circle_radius * math.sin(angle)
             y = self.__y + self.circle_radius * math.cos(angle)
             max_radius = self.calc_max_radius(x, y)
+            # print("cat: {}  x {}  y {}".format(cat, x,y))
             self.__directions[cat] = Circle(cat, x, y, angle, self.marker_radius, max_radius, False, 0, 'Unknown', circle_color)
-            # self.__directions[cat] = [x, y, False, 0, 'Inactive', circle_color, 0.5]
-
+        self.directions = self.__directions # bei x die breite der utt_surf addieren
+    
     def __show_success_message(self):
         self.surface.fill(*self.textcolor_warning)
         self.surface.text("YEAH!", 20, 20)

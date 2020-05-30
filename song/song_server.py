@@ -178,7 +178,7 @@ class Tonality:
     def update_tonality(self, cat):
         self.tonality_counter[cat] += 1
         self.calculate_rack_values(cat)
-        print("tonalities: ", self.tonality_counter)
+        # print("tonalities: ", self.tonality_counter)
 
     def calculate_rack_values(self, cat):
         '''
