@@ -15,6 +15,7 @@ class SurfaceBase:
         self.name = name
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.s_width = s_width
         self.incoming = False  # utterance coming in
         self.subsurfaces = OrderedDict()
         self.__create_surface(s_width, s_height)
@@ -31,8 +32,6 @@ class SurfaceBase:
             with surface.beginDraw():
                 surface.image(self.surface, self.pos_x, self.pos_y)
         else:
-            if self.incoming:
-                print("name if no surface: {}, surface.height: {}".format(self.name, self.surface.height))
             image(self.surface, self.pos_x, self.pos_y)
         for subsurf in self.subsurfaces.values():
             subsurf.draw(self.surface)
@@ -78,6 +77,14 @@ class UtteranceLine:
 
 class Alert(SurfaceBase):
     circle_centers = {}
+    i = 0
+    a = 0
+    start_x = 0
+    start_y = 0
+    goal_x = 0
+    goal_y = 0
+    alert_positions = []
+    col = color(0)
     
     def __init__(self, name, pos_x, pos_y, s_width, s_height):
         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
@@ -85,26 +92,37 @@ class Alert(SurfaceBase):
     def build_circle_centers(self, circle_dict):
         for cat, cc in circle_dict.items():
             self.circle_centers[cat] = [cc.x, cc.y]
-        print("circle centers: ", self.circle_centers)
     
-    def updateSurface(self, cat, x, y, w, h):
-        print("\t\t{} {} {} {} {}".format(cat, x, y, w, h))
+    def updateSurface(self, cat, utt):
         self.incoming = True
-        self.surface = createGraphics(w, h)
-        with self.surface.beginDraw():
-            self.surface.background(100)
-        self.pos_x = x
-        self.pos_y =  y
-        self.incoming = False
+        self.surface = createGraphics(utt.alert[cat][2], utt.alert[cat][3])
+        self.start_x = utt.first_utt[0]
+        self.start_y = utt.first_utt[1]
+        self.goal_x = self.circle_centers[cat][0] + utt.s_width
+        self.goal_y = self.circle_centers[cat][1]
+        self.col = color_scheme[cat]
+        self.calculate_alert_positions()
     
-    def moveSurface(self, cat, x, y):
-        print("cat: {}  x {}  y {}".format(cat, self.circle_centers[cat][0],self.circle_centers[cat][1]))
-        self.pos_x = self.circle_centers[cat][0]
-        self.pos_y =  self.circle_centers[cat][1]
+    def draw(self):
+        if len(self.alert_positions) > 0 and self.i < len(self.alert_positions):
+            with self.surface.beginDraw():
+                self.surface.background(*self.col)
+            image(self.surface, self.alert_positions[self.i][0], self.alert_positions[self.i][1])
+            self.i += 1
+            if self.i == len(self.alert_positions):
+                background(200)
+         
+        else: 
+            self.alert_positions = []
+            self.i = 0                 
+    
+    def calculate_alert_positions(self):
+        for i in range(10):
+            self.alert_positions.append([lerp(self.start_x, self.goal_x, i/10.0), lerp(self.start_y, self.goal_y, i/10.0), lerp(0, 255, i/10.0)])
 
-        
 class UtterancesArea(SurfaceBase):
     alert = None
+    first_utt = []
     
     def __init__(self, name, pos_x, pos_y, s_width, s_height, font, font_bold):
         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
@@ -117,7 +135,8 @@ class UtterancesArea(SurfaceBase):
         self.incoming = True
         utt_cat = UtteranceLine(self.surface.width, self.surface.height, utt, cat, self.font, self.font_bold, self.pos_x)
         self.alert = {}
-        self.update_alert(cat, self.pos_x + (utt_cat.surface.width - utt_cat.cat_surface.width), self.pos_y, utt_cat.cat_surface.width , utt_cat.cat_surface.height)
+        self.first_utt = [self.pos_x + (utt_cat.surface.width - utt_cat.cat_surface.width), self.pos_y]
+        self.update_alert(cat, self.first_utt[0], self.first_utt[1], utt_cat.cat_surface.width , utt_cat.cat_surface.height)
         self.add_subsurface(self.index, utt_cat)
         self.index += 1
                
