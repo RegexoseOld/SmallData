@@ -46,7 +46,7 @@ class UtteranceLine:
     def __init__(self, s_width, s_height, utt, cat, font, font_bold, pos_x):
         self.pos_x = pos_x
         self.pos_y = 0
-        temp_utt_surface = linebreak(s_width * 2/3, s_height, utt, font, 17)
+        temp_utt_surface = linebreak(s_width * 2/3, s_height, utt, font, 17, None)
         self.cat_surface = createGraphics(s_width * 1/3, temp_utt_surface.height)
         utt_cat_surface = createGraphics((temp_utt_surface.width + self.cat_surface.width) - 10 , temp_utt_surface.height)
         cat_backgr_col = color_scheme[cat]
@@ -77,48 +77,61 @@ class UtteranceLine:
 
 class Alert(SurfaceBase):
     circle_centers = {}
+    notify_info = {}
     i = 0
     a = 0
     start_x = 0
     start_y = 0
     goal_x = 0
     goal_y = 0
-    alert_positions = []
+    circle_feed_positions = []
     col = color(0)
     
-    def __init__(self, name, pos_x, pos_y, s_width, s_height):
+    def __init__(self, name, pos_x, pos_y, s_width, s_height, font):
         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
+        self.font = font
+        self.circle_feed_surface = createGraphics(s_width, s_height)
         
     def build_circle_centers(self, circle_dict):
         for cat, cc in circle_dict.items():
             self.circle_centers[cat] = [cc.x, cc.y]
     
-    def updateSurface(self, cat, utt):
+    def updateCirclefeed(self, cat, utt):
         self.incoming = True
-        self.surface = createGraphics(utt.alert[cat][2], utt.alert[cat][3])
+        self.circle_feed_surface = createGraphics(utt.alert[cat][2], utt.alert[cat][3])
         self.start_x = utt.first_utt[0]
         self.start_y = utt.first_utt[1]
         self.goal_x = self.circle_centers[cat][0] + utt.s_width
         self.goal_y = self.circle_centers[cat][1]
         self.col = color_scheme[cat]
-        self.calculate_alert_positions()
-    
+        self.calculate_circle_feed_positions()
+        
+    def updateNotify(self, cat, counter):
+        
+        self.notify_info[cat] = counter.directions[cat].c_limit - counter.category_counter[cat]
+        alert_text = "Noch {} x {} bis {}".format(self.notify_info[cat], cat, counter.directions[cat].cat_target)
+        alert_surf = linebreak(self.surface.width, self.surface.height, alert_text, self.font, 20, color_scheme[cat])
+        with self.surface.beginDraw():
+            self.surface.image(alert_surf, 0, 0)
+        print("notify: ", self.notify_info)
+        
     def draw(self):
-        if len(self.alert_positions) > 0 and self.i < len(self.alert_positions):
-            with self.surface.beginDraw():
-                self.surface.background(*self.col)
-            image(self.surface, self.alert_positions[self.i][0], self.alert_positions[self.i][1])
+        if len(self.circle_feed_positions) > 0 and self.i < len(self.circle_feed_positions):
+            with self.circle_feed_surface.beginDraw():
+                self.circle_feed_surface.background(*self.col)
+            image(self.circle_feed_surface, self.circle_feed_positions[self.i][0], self.circle_feed_positions[self.i][1])
             self.i += 1
-            if self.i == len(self.alert_positions):
-                background(200)
-         
+            if self.i == len(self.circle_feed_positions):
+                background(255)
+        elif keyPressed:
+           image(self.surface, self.pos_x, self.pos_y)
         else: 
-            self.alert_positions = []
+            self.circle_feed_positions = []
             self.i = 0                 
     
-    def calculate_alert_positions(self):
+    def calculate_circle_feed_positions(self):
         for i in range(10):
-            self.alert_positions.append([lerp(self.start_x, self.goal_x, i/10.0), lerp(self.start_y, self.goal_y, i/10.0), lerp(0, 255, i/10.0)])
+            self.circle_feed_positions.append([lerp(self.start_x, self.goal_x, i/10.0), lerp(self.start_y, self.goal_y, i/10.0), lerp(0, 255, i/10.0)])
 
 class UtterancesArea(SurfaceBase):
     alert = None
@@ -228,6 +241,7 @@ class CategoryStar(SurfaceBase):
     #  - stored in :
     __directions = {}
     directions = {}
+    category_counter = {}
 
     # x and y coordinate of the center of the image
     __x = None
@@ -243,6 +257,7 @@ class CategoryStar(SurfaceBase):
             self.surface.background(222)
             self.__create_background()
             for cat, count in category_counter.items():
+                self.category_counter[cat] = count
                 cat_color = color_scheme[cat]
                 self.surface.stroke(*cat_color)
                 self.surface.strokeWeight(7)
@@ -257,14 +272,8 @@ class CategoryStar(SurfaceBase):
                 cc = self.__directions[cat]
                 # print("cc {}    c limit: {} ".format(cc.name, cc.c_limit))
                 grow = (cc.max_radius - cc.radius) * count/self.max_count
-                remaining_utts = self.__directions[cat].c_limit - count
-                goal = self.__directions[cat].cat_target
-                # print("remain {}    goal: {} ".format(remaining_utts, goal))
-                # TODO: warum wird nur 'concession' gemalt?
-                self.surface.text("noch {} x {}\nbis {}".format(remaining_utts, cat, goal), cc.x, cc.y + 40 )
                 cc.display(self.surface, grow)
                
-                
             if is_locked:
                 self.__show_success_message()
 

@@ -11,7 +11,9 @@ def alert_update(cat):
     global utt_width, a
     alert = AREAS['alert']
     utt = AREAS['utterances']
-    alert.updateSurface(cat, utt)
+    counter = AREAS['category_counter']
+    alert.updateCirclefeed(cat, utt)
+    alert.updateNotify(cat, counter)
 
 class Listen(OscEventListener):
     def oscEvent(self, m):
@@ -27,7 +29,7 @@ class Listen(OscEventListener):
             print("\tINCOMING")
             AREAS['utterances'].update_utts(content["text"], content["cat"])
             AREAS['category_counter'].update(content['category_counter'], content["is_locked"])
-            alert_update( content["cat"])
+            alert_update(content["cat"])
                 
         elif m.checkAddrPattern("/display_partinfo") == True:
             targets = pickle.loads(m.arguments()[0])
@@ -67,7 +69,7 @@ def build_areas():
     AREAS["utterances"] = UtterancesArea("utterances", width/100, y_spacing, utt_width, height *9/10, font, font_bold)
     AREAS["part_info"] = PartArea("part_info", width *6/13 - x_spacing, height *7/8 - y_spacing, width/8, height/8, font)
     AREAS["category_counter"] = CategoryStar("category_counter", utt_width + x_spacing, y_spacing, width/2, height * 9/10)
-    AREAS["alert"] = Alert("alert", width *3/13 - x_spacing, height *2/8 - y_spacing, width/8, height/8)
+    AREAS["alert"] = Alert("alert", width *3/13 - x_spacing, height *2/8 - y_spacing, width/8, height/8, font)
     return AREAS
 
 def stop():
