@@ -3,13 +3,13 @@ from linebreak import linebreak
 from CircleClass import Circle
 import math
 
-color_scheme = {'dissence': [181, 180, 179],
-                'insinuation': [30, 101, 109],
-                'lecture': [30, 150, 109],
-                'praise': [246, 41, 0],
-                'concession': [241, 243, 150]
+color_scheme = {'dissence': (181, 180, 179),
+                'insinuation': (30, 101, 109),
+                'lecture': (30, 150, 109),
+                'praise': (246, 41, 0),
+                'concession': (241, 243, 150)
                 }
-    
+
 class SurfaceBase:
     def __init__(self, name, pos_x, pos_y, s_width, s_height):
         self.name = name
@@ -75,6 +75,8 @@ class UtteranceLine:
             #mal mir auf der mutter-surface (utterancesArea) deine surface (self.surface)
             surface.image(self.surface, self.pos_x, self.pos_y) 
 
+
+
 class Alert(SurfaceBase):
     circle_centers = {}
     notify_info = {}
@@ -107,11 +109,17 @@ class Alert(SurfaceBase):
         self.calculate_circle_feed_positions()
         
     def updateNotify(self, cat, counter):
-        
         self.notify_info[cat] = counter.directions[cat].c_limit - counter.category_counter[cat]
-        alert_text = "Noch {} x {} bis {}".format(self.notify_info[cat], cat, counter.directions[cat].cat_target)
+        if counter.directions[cat].c_limit > 0 and self.notify_info[cat] >= 0:
+            print("cat, c_limit {} {} aktuell: {}\n".format(cat, counter.directions[cat].c_limit, counter.category_counter[cat]))
+            alert_text = "Noch {} x {} bis {}".format(self.notify_info[cat], cat, counter.directions[cat].cat_target)
+        elif counter.directions[cat].c_limit > 0 and self.notify_info[cat] < 0:
+            alert_text = "YEAH"
+        else:
+            alert_text = "Dies ist eine Uebung"
         alert_surf = linebreak(self.surface.width, self.surface.height, alert_text, self.font, 20, color_scheme[cat])
         with self.surface.beginDraw():
+            self.surface.background(*color_scheme[cat])
             self.surface.image(alert_surf, 0, 0)
         print("notify: ", self.notify_info)
         
@@ -169,7 +177,6 @@ class UtterancesArea(SurfaceBase):
     def update_alert(self, cat, alert_x, alert_y, alert_width, alert_height):
         self.alert[cat] = [alert_x, alert_y, alert_width, alert_height]
 
-
 class Beat:
     def __init__(self, s_width, s_height, beatnum, col, font):
         self.surface = createGraphics(s_width, s_height)
@@ -224,6 +231,7 @@ class PartArea(SurfaceBase):
         self.add_subsurface("beat", beat_surf)
         self.add_subsurface("parts", current_next_surf)
 
+
 class CategoryStar(SurfaceBase):
     textcolor_active = 0, 0, 0
     textcolor_inactive = 200, 200, 200
@@ -251,7 +259,6 @@ class CategoryStar(SurfaceBase):
     def reset(self):
         self.update({}.fromkeys(self.__directions, 0))
         
-
     def update(self, category_counter, is_locked=False):
         with self.surface.beginDraw():
             self.surface.background(222)
@@ -293,7 +300,6 @@ class CategoryStar(SurfaceBase):
 
     def __create_background(self):
         self.surface.strokeWeight(2)
-        # print("self.--directions: ", self.__directions)
         for cat, cc in self.__directions.items():
             self.surface.stroke(0)
             self.surface.fill(100, 150)
@@ -313,7 +319,7 @@ class CategoryStar(SurfaceBase):
     def __create_directions(self, categories):
         self.__x, self.__y = self.surface.width / 2, self.surface.height / 2
         for idx, cat in enumerate(categories):
-            circle_color = color_scheme[cat]
+            circle_color = list(color_scheme[cat]) # list: Circle Class adds a alpha channel
             angle = idx * 2 * math.pi / len(categories)
             x = self.__x + self.circle_radius * math.sin(angle)
             y = self.__y + self.circle_radius * math.cos(angle)
@@ -321,6 +327,7 @@ class CategoryStar(SurfaceBase):
             # print("cat: {}  x {}  y {}".format(cat, x,y))
             self.__directions[cat] = Circle(cat, x, y, angle, self.marker_radius, max_radius, False, 0, 'Unknown', circle_color)
         self.directions = self.__directions # bei x die breite der utt_surf addieren
+        
     
     def __show_success_message(self):
         self.surface.fill(*self.textcolor_warning)

@@ -26,7 +26,7 @@ class Listen(OscEventListener):
             AREAS['part_info'].update_parts(current_part_name, next_part_name, current_beat, change_color)
         elif m.checkAddrPattern("/display_input") == True:
             content = pickle.loads(m.arguments()[0])
-            print("\tINCOMING")
+            print("\tINCOMING :", content["cat"])
             AREAS['utterances'].update_utts(content["text"], content["cat"])
             AREAS['category_counter'].update(content['category_counter'], content["is_locked"])
             alert_update(content["cat"])
@@ -69,7 +69,7 @@ def build_areas():
     AREAS["utterances"] = UtterancesArea("utterances", width/100, y_spacing, utt_width, height *9/10, font, font_bold)
     AREAS["part_info"] = PartArea("part_info", width *6/13 - x_spacing, height *7/8 - y_spacing, width/8, height/8, font)
     AREAS["category_counter"] = CategoryStar("category_counter", utt_width + x_spacing, y_spacing, width/2, height * 9/10)
-    AREAS["alert"] = Alert("alert", width *3/13 - x_spacing, height *2/8 - y_spacing, width/8, height/8, font)
+    AREAS["alert"] = Alert("alert", width *3/5, height/3,  width/4, height/4, font)
     return AREAS
 
 def stop():

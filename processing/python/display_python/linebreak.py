@@ -4,9 +4,8 @@ def linebreak(s_width, s_height, break_text, font, font_size, bg_color):
     char_index = 0
     scalar = 0.8
     line_spacing = 8
-    if  bg_color == None:
-        bg_color = (0,0)
-
+    print("bg_color: " , bg_color)
+    
     # get height of font
     textSize(font_size)
     font_height = textAscent() * scalar
@@ -42,6 +41,9 @@ def linebreak(s_width, s_height, break_text, font, font_size, bg_color):
     # create another surface with the height of the text
     new_surface = createGraphics(s_width, int(y)+ 10)
     with new_surface.beginDraw():
-        new_surface.background(*bg_color)
-        new_surface.image(temp_surface, 0, 0)
+        if  bg_color == None:
+            new_surface.image(temp_surface, 0, 0)  
+        else: 
+            new_surface.background(*bg_color)
+            new_surface.image(temp_surface, 0, 0)
     return new_surface
