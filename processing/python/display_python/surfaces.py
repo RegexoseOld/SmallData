@@ -116,11 +116,12 @@ class Alert(SurfaceBase):
         elif counter.directions[cat].c_limit > 0 and self.notify_info[cat] < 0:
             alert_text = "YEAH"
         else:
-            alert_text = "Dies ist eine Uebung"
-        alert_surf = linebreak(self.surface.width, self.surface.height, alert_text, self.font, 20, color_scheme[cat])
+            alert_text = "{} hat keinen Effekt auf Song".format(cat)
+        alert_surf = linebreak(self.surface.width -20, self.surface.height -20, alert_text, self.font, 20, color_scheme[cat])
         with self.surface.beginDraw():
             self.surface.background(*color_scheme[cat])
-            self.surface.image(alert_surf, 0, 0)
+            self.surface.imageMode(CENTER)
+            self.surface.image(alert_surf, self.surface.width/2, self.surface.height/2)
         print("notify: ", self.notify_info)
         
     def draw(self):
