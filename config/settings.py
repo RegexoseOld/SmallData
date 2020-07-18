@@ -15,6 +15,7 @@ SONG_ADVANCE_ADDRESS = '/advance'
 SONG_RACK_ADDRESS = '/rack'
 SONG_MIDICC_ADDRESS = '/control'
 SONG_QUITTUNG_ADDRESS = '/quittung'
+SONG_ARP_ADDRESS = '/arp'
 SONG_BEAT_ADDRESS = '/beat'
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
 SONG_SERVER_PORT = 5020
@@ -48,3 +49,21 @@ category_to_note = {
 }
 note_durations = [0.25, 0.5, 1.0, 1.5, 2.0, 2.5, 4.0, 5.0]
 rack_chains = [3, 6, 8]
+
+category_to_arpeggiator = {
+    # category has fixed values for all relevant controllers of Arpeggiator as defined in arp_controls
+    'praise': [100, 20, 100, 100, 115],
+    'lecture': [108, 10, 120, 108, 115],
+    'insinuation': [115, 120, 108, 50, 100],
+    'dissence': [110, 70, 110, 25, 115],
+    'concession': [50, 5, 40, 110, 90],
+}
+
+arp_controls = {
+    # each control has a ccnr from  30 onwards see ccnrs of chain_controls
+    'Rate': 31,
+    'Gate': 32,
+    'Steps': 33,
+    'Distance': 34,
+    'Decay': 35
+}
