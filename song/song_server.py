@@ -80,6 +80,7 @@ class SongServer:
         note = settings.category_to_note[osc_map['cat']]
         dura = osc_map['f_dura']
         self.send_quittung(note, 100, dura)
+        self.send_arp(osc_map['cat'])
 
         if self.song_machine.update_state(osc_map['cat']):  # True if state is changed
             self.beat_manager.update_next_part(self.song_machine.current_state)
@@ -106,6 +107,11 @@ class SongServer:
 
     def note_off(self, note, velo):
         self.osculator_client.send_message(settings.SONG_QUITTUNG_ADDRESS, (note, velo, 0.0))
+
+    def send_arp(self, cat):
+        for i, ccnr in enumerate(settings.arp_controls.values()):
+            self.osculator_client.send_message(settings.SONG_ARP_ADDRESS + str(ccnr), (settings.category_to_arpeggiator[cat][i]))
+            # print('ccnr {}\t value {}'.format(ccnr, settings.category_to_arpeggiator[cat][i]))
 
     def _send_part(self, counter):
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
