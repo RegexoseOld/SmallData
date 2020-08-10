@@ -30,13 +30,3 @@ class Circle:
             surface.textAlign(CENTER)
             surface.text(self.cat_target, x, y)
     
-    
-    def intersects(self, other):
-        # print("radiae: " , self.radius + other.radius)
-        if dist(self.x, self.y, other.x, other.y) < (self.radius + other.radius):
-            # print ("intersecting")
-            self.col[3] = self.tp
-            # print('self.col: ', self.col)
-            return True
-        else:
-            return False
