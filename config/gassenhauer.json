@@ -15,7 +15,7 @@
   },
   "first_state": "Nummern",
   "last_state": "Back2Black",
-  "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
+  "categories": ["praise", "insinuation", "dissence",  "lecture", "concession"],
   "transitions": [
     [
       "Nummern",

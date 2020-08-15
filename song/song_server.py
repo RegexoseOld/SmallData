@@ -54,6 +54,7 @@ class SongServer:
         self.song_machine = machine
         self.beat_manager = beat_manager
         self.tonality = tonality
+        self.build_quittung_dict()
 
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
@@ -69,6 +70,17 @@ class SongServer:
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 0.0))
         self._send_init_to_display()
 
+    def build_quittung_dict(self):
+        index = 0
+        for key in self.song_machine.parser.states.keys():
+            cat_to_note = {}
+            for cat in self.song_machine.parser.categories:
+                cat_to_note[cat] = settings.category_to_samplenotes[cat][index]
+            settings.category_to_quittung[key] = cat_to_note
+            if key in self.song_machine.parser.categories:
+                index += 1
+        print('cat_to_sample: ', settings.category_to_quittung)
+
     def interpreter_handler(self, _, content):
         if self.song_machine.is_locked():
             return
@@ -77,7 +89,8 @@ class SongServer:
         self.send_fx()
 
         self.tonality.update_tonality(osc_map['cat'])
-        note = settings.category_to_note[osc_map['cat']]
+
+        note = settings.category_to_quittung[self.beat_manager.current_part.name][osc_map['cat']]
         dura = osc_map['f_dura']
         self.send_quittung(note, 100, dura)
         self.send_arp(osc_map['cat'])

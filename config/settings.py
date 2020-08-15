@@ -6,7 +6,7 @@ BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 DATA_DIR = path.join(BASE_DIR, 'webserver/model_data')
 
 # Song settings
-song_file = "NagelGold.json"
+song_file = "bossa_slapstick.json"
 song_path = path.join(BASE_DIR, 'config', song_file)
 
 # OSC-Settings
@@ -40,13 +40,16 @@ note_to_beat = {
     127: '8',
     'first_count_in_bar': '1'
 }
-category_to_note = {
-    'praise': 64,
-    'lecture': 110,
-    'insinuation': 90,
-    'dissence': 40,
-    'concession': 51
+category_to_samplenotes = {
+    'praise': [24, 27, 25, 26, 28],
+    'lecture': [11, 8, 9, 10, 9],
+    'insinuation': [13, 14, 15, 12, 17],
+    'dissence': [22, 18, 20, 19, 21],
+    'concession': [32, 33, 34, 31, 35]
 }
+
+category_to_quittung = {}
+
 note_durations = [0.25, 0.5, 1.0, 1.5, 2.0, 2.5, 4.0, 5.0]
 rack_chains = [3, 6, 8]
 
