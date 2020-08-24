@@ -48,6 +48,8 @@ class BeatAdvanceManager:
 
 
 class SongServer:
+    category_to_quittung = {}
+
     def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager, tonality):
         self.osculator_client = osculator_client
         self.audience_client = audience_client
@@ -77,10 +79,10 @@ class SongServer:
             cat_to_note = {}
             for cat in self.song_machine.parser.categories:
                 cat_to_note[cat] = settings.category_to_samplenotes[cat][index]
-            settings.category_to_quittung[key] = cat_to_note
+            self.category_to_quittung[key] = cat_to_note
             if key in self.song_machine.parser.categories:
                 index += 1
-        print('cat_to_sample: ', settings.category_to_quittung)
+        print('cat_to_sample: ', self.category_to_quittung)
 
     def interpreter_handler(self, _, content):
         if self.song_machine.is_locked():
@@ -91,7 +93,7 @@ class SongServer:
 
         self.tonality.update_tonality(osc_map['cat'])
 
-        note = settings.category_to_quittung[self.beat_manager.current_part.name][osc_map['cat']]
+        note = self.category_to_quittung[self.beat_manager.current_part.name][osc_map['cat']]
         self.send_quittung(note, osc_map['cat'])
         self.send_arp(osc_map['cat'])
 

@@ -48,8 +48,6 @@ category_to_samplenotes = {
     'concession': [30, 31, 32, 29, 33]
 }
 
-category_to_quittung = {}
-
 rack_chains = [3, 6, 8]
 
 category_to_arpeggiator = {
