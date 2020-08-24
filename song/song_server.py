@@ -130,11 +130,12 @@ class SongServer:
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
 
         if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_WARNING):
+            print("next_part.note", next_part.note)
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 1.0))
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 0.0))
 
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
-        # print('SongerServer. sending: ', message)
+        print('SongerServer. sending: ', message)
         self.display_client.send_message(settings.SONG_BEAT_ADDRESS, message)
 
     def _send_utterance_to_display(self, input_dict):
@@ -197,7 +198,7 @@ class Tonality:
     def update_tonality(self, cat):
         self.tonality_counter[cat] += 1
         self.calculate_rack_values(cat)
-        print("tonalities: ", self.tonality_counter)
+        # print("tonalities: ", self.tonality_counter)
 
     def calculate_rack_values(self, cat):
         '''

@@ -107,7 +107,7 @@ class Alert(SurfaceBase):
         self.calculate_circle_feed_positions()
         
     def updateNotify(self, cat, counter):
-        print('counter.category_counter: ', counter.category_counter)
+        # print('110 counter.category_counter: ', counter.category_counter)
         self.notify_info[cat] = counter.directions[cat].c_limit - counter.category_counter[cat]
         if counter.directions[cat].c_limit > 0 and self.notify_info[cat] >= 0:
             print("cat, c_limit {} {} aktuell: {}\n".format(cat, counter.directions[cat].c_limit, counter.category_counter[cat]))
@@ -121,7 +121,7 @@ class Alert(SurfaceBase):
             self.surface.background(*color_scheme[cat])
             self.surface.imageMode(CENTER)
             self.surface.image(alert_surf, self.surface.width/2, self.surface.height/2)
-        print("notify: ", self.notify_info)
+        # print("notify: ", self.notify_info)
         
     def draw(self):
         if len(self.circle_feed_positions) > 0 and self.i < len(self.circle_feed_positions):
@@ -155,6 +155,7 @@ class UtterancesArea(SurfaceBase):
     
     def update_utts(self, utt, cat):
         self.incoming = True
+        # print("utt  {}   cat   {}".format(utt,cat))
         utt_cat = UtteranceLine(self.surface.width, self.surface.height, utt, cat, self.font, self.font_bold, self.pos_x)
         self.alert = {}
         self.first_utt = [self.pos_x + (utt_cat.surface.width - utt_cat.cat_surface.width), self.pos_y]
