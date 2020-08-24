@@ -27,7 +27,7 @@ def run_mock():
         osc_map = pickle.dumps(osc_dict)
         song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
         time.sleep(random.uniform(0.7, 5.0))
-
+        
 
 if __name__ == "__main__":
     run_mock()

@@ -26,12 +26,13 @@ class Listen(OscEventListener):
             AREAS['part_info'].update_parts(current_part_name, next_part_name, current_beat, change_color)
         elif m.checkAddrPattern("/display_input") == True:
             content = pickle.loads(m.arguments()[0])
-            
+            print("\tINCOMING :", content["cat"])
             AREAS['utterances'].update_utts(content["text"], content["cat"])
             AREAS['category_counter'].update(content['category_counter'], content["is_locked"])
             alert_update(content["cat"])
         elif m.checkAddrPattern("/display_partinfo") == True:
             targets = pickle.loads(m.arguments()[0])
+            print("targets: ", targets)
             AREAS['category_counter'].update_targets(targets)
             
         elif m.checkAddrPattern("/display_init") == True:
@@ -42,7 +43,9 @@ class Listen(OscEventListener):
 def setup():
     size(1200, 850)
     background(200)
-    global font, font_bold
+    global font, font_bold, utt_width
+    utt_width = width * 6/13
+
     font_size = 14
     font = createFont( "Helvetica", font_size, True)
     font_bold = createFont("Helvetica-Bold", font_size, True)
@@ -59,12 +62,13 @@ def draw():
         area.draw()
 
 def build_areas():
-    global font
+    global font, utt_width
     y_spacing = height/100
     x_spacing = width/50
-    AREAS["utterances"] = UtterancesArea("utterances", width/100, y_spacing, width *6/13, height *9/10, font, font_bold)
-    AREAS["part_info"] = PartArea("part_info", width *6/13 - x_spacing, height *3/8 - y_spacing, width/3, height/3, font)
-    AREAS["category_counter"] = CategoryStar("category_counter", width *6/13 + x_spacing, y_spacing, width/2, height * 9/10)
+
+    AREAS["utterances"] = UtterancesArea("utterances", width/100, y_spacing, utt_width, height *9/10, font, font_bold)
+    AREAS["part_info"] = PartArea("part_info", width *6/13 - x_spacing, height *7/8 - y_spacing, width/8, height/8, font)
+    AREAS["category_counter"] = CategoryStar("category_counter", utt_width + x_spacing, y_spacing, width/2, height * 9/10)
     AREAS["alert"] = Alert("alert", width *3/5, height/3,  width/4, height/4, font)
     return AREAS
 

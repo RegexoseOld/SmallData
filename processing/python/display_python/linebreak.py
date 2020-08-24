@@ -3,7 +3,6 @@ def linebreak(s_width, s_height, break_text, font, font_size, bg_color):
     char_index = 0
     scalar = 0.8
     line_spacing = 8
-    # print("bg_color: " , bg_color)
     
     # get height of font
     textSize(font_size)
