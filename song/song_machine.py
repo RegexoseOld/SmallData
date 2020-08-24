@@ -2,24 +2,30 @@ import json
 
 
 class Transition:
+    SIGN = '>'
     source_name = ''
     target_name = ''
-    condition = None
+    category = ''
+    limit = 0
 
     def __init__(self, transition_array):
         self.source_name = transition_array[0]
         self.target_name = transition_array[1]
-        self.condition = self._parse_condition_string(transition_array[2])
+        self.__parse_condition_string(transition_array[2])
 
-    @staticmethod
-    def _parse_condition_string(cond_string):
+    def __parse_condition_string(self, cond_string):
+        category, limit = cond_string.split(self.SIGN)
+        self.category = category.strip()
+        self.limit = int(limit.strip())
+
+    def condition(self, cat_counter):
+        return cat_counter[self.category] > self.limit
+
+    def get_readable(self):
         """
-        convert the condition-string (as contained in the song.json) to a callable
-        :param cond_string:
-        :return: callable. returns true if the category-counter fulfills the condition
+        :return: a triple with (category, limit, target_name)
         """
-        category, condition, count = cond_string.split(" ")
-        return lambda cat_counter: cat_counter[category] > int(count)
+        return self.category, self.limit, self.target_name
 
 
 class State:
@@ -37,6 +43,13 @@ class State:
 
     def add_transition(self, transition):
         self.transitions.append(transition)
+
+    def get_targets(self):
+        targets = {}
+        for trans in self.transitions:
+            triple = trans.get_readable()
+            targets[triple[0]] = (triple[1], triple[2])
+        return targets
 
     def test_transitions(self, category_counter):
         """
@@ -67,26 +80,33 @@ class SongMachine:
     def _reset_counter(self, categories):
         self.category_counter = {}.fromkeys(categories, 0) if categories else {}
 
-    def set_lock(self):
-        self.__lock = True
-
     def release_lock(self):
+        self._reset_counter(self.category_counter.keys())
         self.__lock = False
 
     def is_locked(self):
         return self.__lock
 
     def update_state(self, category):
+        """
+        :param category:
+        :return: Boolean, True if state is changed
+        """
         self.category_counter[category] += 1
-
         next_state_name = self.current_state.test_transitions(self.category_counter)
 
-        if next_state_name != self.current_state.name:
+        if next_state_name == self.current_state.name:
+            # no state change
+            return False
+        else:
+            # state change
+            self.__lock = True
             self.current_state = self.parser.states[next_state_name]
-            self._reset_counter(self.category_counter.keys())
 
             if self.current_state == self.last_state:
                 print("The END")
+
+            return True
 
 
 class SongParser:
@@ -205,7 +225,7 @@ if __name__ == '__main__':
     sys.path.append(path.dirname(path.dirname(__file__)))
     from config import settings
 
-    song_machine = create_instance(path.join(settings.song_path))
+    song_machine = create_instance(settings.song_path)
 
     print(song_machine.current_state)
     song_machine.update_state("Lob")

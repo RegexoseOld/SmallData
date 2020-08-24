@@ -1,0 +1,85 @@
+{
+  "states_to_notes": {
+    "intro":  "0",
+    "dissence":  "2",
+    "lecture":  "3",
+    "praise": "4",
+    "insinuation": "5",
+    "concession": "6"
+  },
+  "first_state": "dissence",
+  "last_state": "intro",
+  "categories": ["praise", "insinuation", "dissence",  "lecture", "concession"],
+  "transitions": [
+    [
+      "intro",
+      "dissence",
+      "praise > 2"
+    ],
+     [
+      "dissence",
+      "lecture",
+      "insinuation > 3"
+    ],
+    [
+      "dissence",
+      "concession",
+      "lecture > 4"
+    ],
+    [
+      "dissence",
+      "insinuation",
+      "concession > 3"
+    ],
+    [
+      "dissence",
+      "intro",
+      "dissence > 2"
+    ],
+    [
+      "lecture",
+      "concession",
+      "insinuation > 4"
+    ],
+    [
+      "lecture",
+      "insinuation",
+      "concession > 4"
+    ],
+    [
+      "lecture",
+      "dissence",
+      "dissence > 2"
+    ],
+    [
+      "concession",
+      "lecture",
+      "insinuation > 3"
+    ],
+    [
+      "concession",
+      "insinuation",
+      "lecture > 2"
+    ],
+    [
+      "concession",
+      "dissence",
+      "dissence > 2"
+    ],
+    [
+      "insinuation",
+      "lecture",
+      "insinuation > 3"
+    ],
+    [
+      "insinuation",
+      "insinuation",
+      "lecture > 2"
+    ],
+    [
+      "insinuation",
+      "dissence",
+      "dissence > 2"
+    ]
+  ]
+}

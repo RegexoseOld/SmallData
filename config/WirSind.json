@@ -8,7 +8,7 @@
   },
   "first_state": "Hippie-Solo",
   "last_state": "Break-Full",
-  "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
+  "categories": ["praise", "insinuation", "dissence",  "lecture", "concession"],
   "transitions": [
     [
       "Afro-Slim",
