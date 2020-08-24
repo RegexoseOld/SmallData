@@ -4,7 +4,6 @@ from config import settings
 
 
 notes = list(settings.note_to_beat.keys())
-processing_client = SimpleUDPClient(settings.ip, settings.PROCESSING_PORT)
 song_client = SimpleUDPClient(settings.ip, settings.SONG_SERVER_PORT)
 
 

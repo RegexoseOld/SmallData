@@ -51,7 +51,7 @@ def setup():
     font_bold = createFont("Helvetica-Bold", font_size, True)
     global osc, loc
     AREAS = build_areas()
-    osc = OscP5(this, 5040)
+    osc = OscP5(this, 5040) the AUDIENCE_PORT
     loc = NetAddress('127.0.0.1', 5040) # send to self
     global listener
     listener = Listen()

@@ -17,7 +17,7 @@ class Listen(OscEventListener):
             next_part_name = "".join([str(i) for i in list(m.arguments()[3])])
             AREAS['part_info'].update_parts(current_part_name, next_part_name, current_beat, change_color)
 def setup():
-    size(1200, 850)
+    size(400, 350)
     background(200)
     global font, font_bold, utt_width
     utt_width = width * 6/13
@@ -27,8 +27,8 @@ def setup():
     font_bold = createFont("Helvetica-Bold", font_size, True)
     global osc, loc
     AREAS = build_areas()
-    osc = OscP5(this, 5040)
-    loc = NetAddress('127.0.0.1', 5040) # send to self
+    osc = OscP5(this, 5050)  # the PERFORMER_PORT
+    loc = NetAddress('127.0.0.1', 5050) # send to self
     global listener
     listener = Listen()
     osc.addListener(listener) # assigning a listener to class Listen
