@@ -156,7 +156,7 @@ class SongServer:
         self.audience_client.send_message(settings.DISPLAY_INIT_ADDRESS,
                                           pickle.dumps(self.song_machine.parser.categories, protocol=2)
                                           )
-        self.performer_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
+        self.audience_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
                                           pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
                                           )
 

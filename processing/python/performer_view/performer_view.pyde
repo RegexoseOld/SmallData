@@ -16,11 +16,11 @@ class Listen(OscEventListener):
             current_part_name = "".join([str(i) for i in list(m.arguments()[2])])
             next_part_name = "".join([str(i) for i in list(m.arguments()[3])])
             AREAS['part_info'].update_parts(current_part_name, next_part_name, current_beat, change_color)
+            
 def setup():
     size(400, 350)
     background(200)
-    global font, font_bold, utt_width
-    utt_width = width * 6/13
+    global font, font_bold
 
     font_size = 14
     font = createFont( "Helvetica", font_size, True)
@@ -38,7 +38,7 @@ def draw():
         area.draw()
 
 def build_areas():
-    global font, utt_width
+    global font
     y_spacing = height/100
     x_spacing = width/50
 
