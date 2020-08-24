@@ -6,7 +6,7 @@ from config import settings
 from song import song_machine
 
 song_client = SimpleUDPClient(settings.ip, settings.SONG_SERVER_PORT)
-processing_client = SimpleUDPClient(settings.ip, settings.PROCESSING_PORT)
+processing_client = SimpleUDPClient(settings.ip, settings.AUDIENCE_PORT)
 texts = ['Dies ist der nullte Kommentar von Mock_Interpreter_Client',
          'Dies ist der erste Kommentar',
          'der zweite Kommentar',
@@ -25,8 +25,8 @@ def run_mock():
                     }
         osc_map = pickle.dumps(osc_dict)
         song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
-        time.sleep(2)
-
+        time.sleep(random.uniform(0.7, 5.0))
+        
 
 if __name__ == "__main__":
     run_mock()
