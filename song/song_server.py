@@ -91,8 +91,7 @@ class SongServer:
         self.tonality.update_tonality(osc_map['cat'])
 
         note = settings.category_to_quittung[self.beat_manager.current_part.name][osc_map['cat']]
-        dura = osc_map['f_dura']
-        self.send_quittung(note, 100, dura)
+        self.send_quittung(note, osc_map['cat'])
         self.send_arp(osc_map['cat'])
 
         if self.song_machine.update_state(osc_map['cat']):  # True if state is changed
@@ -114,12 +113,10 @@ class SongServer:
         self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.chain[1]),
                                            self.tonality.ctrl_val)
 
-    def send_quittung(self, note, velo, dura):
-        self.osculator_client.send_message(settings.SONG_QUITTUNG_ADDRESS, (note, velo, 1.0))
-        threading.Timer(dura, self.note_off, (note, velo, )).start()
+    def send_quittung(self, note, cat):
+        self.osculator_client.send_message('/q_{}'.format(cat), (note, 1.0))
+        self.osculator_client.send_message('/q_{}'.format(cat), (note, 0.0))
 
-    def note_off(self, note, velo):
-        self.osculator_client.send_message(settings.SONG_QUITTUNG_ADDRESS, (note, velo, 0.0))
 
     def send_arp(self, cat):
         for i, ccnr in enumerate(settings.arp_controls.values()):
