@@ -1,145 +1,84 @@
 {
   "states_to_notes": {
-    "intro_beat":  "0",
-    "bossa_cognac":  "1",
-    "immerzu_machsdu":  "4",
-    "recht_hat_nur_er": "14",
-    "bisdusicher": "20",
-    "verwaehlt": "17",
-    "verstehe_er_doch": "3"
+    "intro":  "0",
+    "dissence":  "2",
+    "lecture":  "3",
+    "praise": "4",
+    "insinuation": "5",
+    "concession": "6"
   },
-  "first_state": "intro_beat",
-  "last_state": "verstehe_er_doch",
-  "categories": ["praise", "lecture", "dissence", "insinuation", "concession"],
+  "first_state": "dissence",
+  "last_state": "intro",
+  "categories": ["praise", "insinuation", "dissence",  "lecture", "concession"],
   "transitions": [
     [
-      "intro_beat",
-      "bossa_cognac",
+      "intro",
+      "dissence",
       "praise > 2"
     ],
      [
-      "bossa_cognac",
-      "immerzu_machsdu",
+      "dissence",
+      "lecture",
       "insinuation > 3"
     ],
-     [
-      "bossa_cognac",
-      "recht_hat_nur_er",
-      "praise > 3"
-    ],
     [
-      "bossa_cognac",
-      "bisdusicher",
+      "dissence",
+      "concession",
       "lecture > 4"
     ],
     [
-      "bossa_cognac",
-      "verwaehlt",
+      "dissence",
+      "insinuation",
       "concession > 3"
     ],
     [
-      "bossa_cognac",
-      "intro_beat",
+      "dissence",
+      "intro",
       "dissence > 2"
     ],
-     [
-      "immerzu_machsdu",
-      "recht_hat_nur_er",
-      "praise > 3"
-    ],
     [
-      "immerzu_machsdu",
-      "bisdusicher",
+      "lecture",
+      "concession",
       "insinuation > 4"
     ],
     [
-      "immerzu_machsdu",
-      "verwaehlt",
+      "lecture",
+      "insinuation",
       "concession > 4"
     ],
     [
-      "immerzu_machsdu",
-      "verstehe_er_doch",
-      "lecture > 4"
-    ],
-    [
-      "immerzu_machsdu",
-      "bossa_cognac",
+      "lecture",
+      "dissence",
       "dissence > 2"
     ],
     [
-      "recht_hat_nur_er",
-      "immerzu_machsdu",
+      "concession",
+      "lecture",
       "insinuation > 3"
     ],
     [
-      "recht_hat_nur_er",
-      "bisdusicher",
-      "lecture > 4"
-    ],
-    [
-      "recht_hat_nur_er",
-      "verwaehlt",
-      "concession > 2"
-    ],
-    [
-      "recht_hat_nur_er",
-      "verstehe_er_doch",
-      "praise > 4"
-    ],
-    [
-      "recht_hat_nur_er",
-      "bossa_cognac",
-      "dissence > 2"
-    ],
-    [
-      "bisdusicher",
-      "immerzu_machsdu",
-      "insinuation > 3"
-    ],
-    [
-      "bisdusicher",
-      "recht_hat_nur_er",
-      "concession > 3"
-    ],
-    [
-      "bisdusicher",
-      "verwaehlt",
+      "concession",
+      "insinuation",
       "lecture > 2"
     ],
     [
-      "bisdusicher",
-      "verstehe_er_doch",
-      "praise > 4"
-    ],
-    [
-      "bisdusicher",
-      "bossa_cognac",
+      "concession",
+      "dissence",
       "dissence > 2"
     ],
     [
-      "verwaehlt",
-      "immerzu_machsdu",
+      "insinuation",
+      "lecture",
       "insinuation > 3"
     ],
     [
-      "verwaehlt",
-      "recht_hat_nur_er",
-      "concession > 3"
-    ],
-    [
-      "verwaehlt",
-      "verwaehlt",
+      "insinuation",
+      "insinuation",
       "lecture > 2"
     ],
     [
-      "verwaehlt",
-      "verstehe_er_doch",
-      "praise > 3"
-    ],
-    [
-      "verwaehlt",
-      "bossa_cognac",
+      "insinuation",
+      "dissence",
       "dissence > 2"
     ]
   ]

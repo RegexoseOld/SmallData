@@ -54,6 +54,7 @@ class SongServer:
         self.song_machine = machine
         self.beat_manager = beat_manager
         self.tonality = tonality
+        self.build_quittung_dict()
 
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
@@ -69,6 +70,17 @@ class SongServer:
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 0.0))
         self._send_init_to_display()
 
+    def build_quittung_dict(self):
+        index = 0
+        for key in self.song_machine.parser.states.keys():
+            cat_to_note = {}
+            for cat in self.song_machine.parser.categories:
+                cat_to_note[cat] = settings.category_to_samplenotes[cat][index]
+            settings.category_to_quittung[key] = cat_to_note
+            if key in self.song_machine.parser.categories:
+                index += 1
+        print('cat_to_sample: ', settings.category_to_quittung)
+
     def interpreter_handler(self, _, content):
         if self.song_machine.is_locked():
             return
@@ -77,9 +89,11 @@ class SongServer:
         self.send_fx()
 
         self.tonality.update_tonality(osc_map['cat'])
-        note = settings.category_to_note[osc_map['cat']]
+
+        note = settings.category_to_quittung[self.beat_manager.current_part.name][osc_map['cat']]
         dura = osc_map['f_dura']
         self.send_quittung(note, 100, dura)
+        self.send_arp(osc_map['cat'])
 
         if self.song_machine.update_state(osc_map['cat']):  # True if state is changed
             self.beat_manager.update_next_part(self.song_machine.current_state)
@@ -107,15 +121,21 @@ class SongServer:
     def note_off(self, note, velo):
         self.osculator_client.send_message(settings.SONG_QUITTUNG_ADDRESS, (note, velo, 0.0))
 
+    def send_arp(self, cat):
+        for i, ccnr in enumerate(settings.arp_controls.values()):
+            self.osculator_client.send_message(settings.SONG_ARP_ADDRESS + str(ccnr), (settings.category_to_arpeggiator[cat][i]))
+            # print('ccnr {}\t value {}'.format(ccnr, settings.category_to_arpeggiator[cat][i]))
+
     def _send_part(self, counter):
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
 
         if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_WARNING):
+            print("next_part.note", next_part.note)
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 1.0))
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 0.0))
 
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
-        # print('SongerServer. sending: ', message)
+        print('SongerServer. sending: ', message)
         self.display_client.send_message(settings.SONG_BEAT_ADDRESS, message)
 
     def _send_utterance_to_display(self, input_dict):
