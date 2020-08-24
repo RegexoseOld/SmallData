@@ -25,7 +25,8 @@ DISPLAY_UTTERANCE_ADDRESS = "/display_input"
 DISPLAY_PARTINFO_ADDRESS = "/display_partinfo"
 DISPLAY_INIT_ADDRESS = "/display_init"
 DISPLAY_PORT = 5030
-PROCESSING_PORT = 5040
+AUDIENCE_PORT = 5040
+PERFORMER_PORT = 5050
 
 
 # MIDI-note-to-beat-counter-conversion (for Ableton)

@@ -48,9 +48,10 @@ class BeatAdvanceManager:
 
 
 class SongServer:
-    def __init__(self, osculator_client, display_client, machine, beat_manager, tonality):
+    def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager, tonality):
         self.osculator_client = osculator_client
-        self.display_client = display_client
+        self.audience_client = audience_client
+        self.performer_client = performer_client
         self.song_machine = machine
         self.beat_manager = beat_manager
         self.tonality = tonality
@@ -136,7 +137,7 @@ class SongServer:
 
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
         print('SongerServer. sending: ', message)
-        self.display_client.send_message(settings.SONG_BEAT_ADDRESS, message)
+        self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
 
     def _send_utterance_to_display(self, input_dict):
         print(self.song_machine.category_counter, isinstance(self.song_machine.category_counter, dict))
@@ -144,20 +145,20 @@ class SongServer:
         input_dict['is_locked'] = self.song_machine.is_locked()
 
         content = pickle.dumps(input_dict, protocol=2)
-        self.display_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, content)
+        self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, content)
 
     def _send_partinfo_to_display(self):
-        self.display_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
-                                         pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
-                                         )
+        self.performer_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
+                                           pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
+                                           )
 
     def _send_init_to_display(self):
-        self.display_client.send_message(settings.DISPLAY_INIT_ADDRESS,
-                                         pickle.dumps(self.song_machine.parser.categories, protocol=2)
-                                         )
-        self.display_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
-                                         pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
-                                         )
+        self.audience_client.send_message(settings.DISPLAY_INIT_ADDRESS,
+                                          pickle.dumps(self.song_machine.parser.categories, protocol=2)
+                                          )
+        self.audience_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
+                                          pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
+                                          )
 
 class Tonality:
     '''

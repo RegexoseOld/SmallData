@@ -42,16 +42,17 @@ elif args.app == 'song':
     from song.song_server import SongServer, BeatAdvanceManager, Tonality
 
     oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
-    disp_client = udp_client.SimpleUDPClient(settings.ip, settings.PROCESSING_PORT)
+    audience_client = udp_client.SimpleUDPClient(settings.ip, settings.AUDIENCE_PORT)
+    performer_client = udp_client.SimpleUDPClient(settings.ip, settings.PERFORMER_PORT)
 
     machine_instance = song_machine.create_instance(settings.song_path)
     tonality = Tonality(machine_instance.parser.categories)
     beat_manager = BeatAdvanceManager(machine_instance.parser.first_state_name)
 
-    song_server = SongServer(oscul_client, disp_client, machine_instance, beat_manager, tonality)
+    song_server = SongServer(oscul_client, audience_client, performer_client, machine_instance, beat_manager, tonality)
     song_parts = list(machine_instance.parser.states.keys())
-    [disp_client.send_message('/parts', part) for part in song_parts]
-    disp_client.send_message('/parts', 'all_sent')
+    [audience_client.send_message('/parts', part) for part in song_parts]
+    audience_client.send_message('/parts', 'all_sent')
     song_server.server.serve_forever()
 elif args.app == 'frontend':
     os.chdir('frontend')

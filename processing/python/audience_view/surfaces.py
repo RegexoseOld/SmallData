@@ -246,60 +246,6 @@ class UtterancesArea(SurfaceBase):
     def update_alert(self, cat, alert_x, alert_y, alert_width, alert_height):
         self.alert[cat] = [alert_x, alert_y, alert_width, alert_height]
 
-class Beat:
-    def __init__(self, s_width, s_height, beatnum, col, font):
-        self.surface = createGraphics(s_width, s_height)
-        self.update_beatnum(beatnum, font, col)
-    
-    def update_beatnum(self, beatnum, font, col):
-        with self.surface.beginDraw():
-            self.surface.background(222)
-            self.surface.textFont(font)
-            self.surface.textSize(50)
-            self.surface.fill(col)
-            self.surface.textAlign(CENTER)
-            self.surface.text(beatnum, self.surface.width / 2, self.surface.height * 3 / 5)
-        
-    def draw(self, surface):
-        with surface.beginDraw():
-            surface.image(self.surface, self.surface.width * 4 / 5, 0)
-
-
-class Parts:
-    def __init__(self, s_width, s_height, current, next, font, col):
-        self.surface = createGraphics(s_width, s_height)
-        self.update_parts(current, next, font, col)
-    
-    def update_parts(self, current, next, font, col):
-        with self.surface.beginDraw():
-            self.surface.background(222)
-            self.surface.textFont(font)
-            self.surface.textSize(12)
-            self.surface.fill(0)
-            self.surface.textAlign(CENTER)
-            self.surface.text("current part:\n" + current, self.surface.width/2, self.surface.height/4)
-            self.surface.text("next part:\n" + next, self.surface.width/2, self.surface.height*3/4)
-    
-    def draw(self, surface):
-        with surface.beginDraw():
-            surface.image(self.surface, 0, 0) 
-    
-    
-class PartArea(SurfaceBase):
-    def __init__(self, name, pos_x, pos_y, s_width, s_height, font):
-        SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
-        self.font = font
-    
-    def update_parts(self, current, next, beatnum, change):
-        if change == "True":
-            col = color(250, 0, 20)
-        else: 
-            col = color(10, 250, 0)
-        beat_surf = Beat(self.surface.width/2, self.surface.height, beatnum, col, self.font)
-        current_next_surf = Parts(self.surface.width/2, self.surface.height, current, next, self.font, col)
-        self.add_subsurface("beat", beat_surf)
-        self.add_subsurface("parts", current_next_surf)
-
 
 class CategoryStar(SurfaceBase):
     textcolor_active = 0, 0, 0
