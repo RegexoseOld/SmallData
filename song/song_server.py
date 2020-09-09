@@ -69,8 +69,10 @@ class SongServer:
             range(len(self.song_machine.parser.states)
                   ))}
 
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 1.0))
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (0, 0.0))
+        first_state = self.song_machine.parser.states[self.song_machine.parser.first_state_name]
+
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_state.note, 1.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_state.note, 0.0))
         self._send_init_to_display()
 
     def build_quittung_dict(self):
