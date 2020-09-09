@@ -133,7 +133,7 @@ class SongParser:
 
     def _create_states(self):
         for state_name, note in self.data[self.NAME_STATES_TO_NOTES].items():
-            self.states[state_name] = State(state_name, note)
+            self.states[state_name] = State(state_name, int(note))
         self.first_state_name = self.data[self.NAME_FIRST_STATE]
         self.last_state_name = self.data[self.NAME_LAST_STATE]
 

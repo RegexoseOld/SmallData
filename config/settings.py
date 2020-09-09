@@ -14,7 +14,6 @@ ip = "127.0.0.1"
 SONG_ADVANCE_ADDRESS = '/advance'
 SONG_RACK_ADDRESS = '/rack'
 SONG_MIDICC_ADDRESS = '/control'
-SONG_QUITTUNG_ADDRESS = '/quittung'
 SONG_ARP_ADDRESS = '/arp'
 SONG_BEAT_ADDRESS = '/beat'
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
@@ -42,16 +41,13 @@ note_to_beat = {
     'first_count_in_bar': '1'
 }
 category_to_samplenotes = {
-    'praise': [24, 27, 25, 26, 28],
-    'lecture': [11, 8, 9, 10, 9],
-    'insinuation': [13, 14, 15, 12, 17],
-    'dissence': [22, 18, 20, 19, 21],
-    'concession': [32, 33, 34, 31, 35]
+    'praise': [29, 32, 30, 31, 33],
+    'lecture': [29, 30, 31, 32, 33],
+    'insinuation': [30, 31, 32, 29, 34],
+    'dissence': [33, 29, 31, 30, 32],
+    'concession': [30, 31, 32, 29, 33]
 }
 
-category_to_quittung = {}
-
-note_durations = [0.25, 0.5, 1.0, 1.5, 2.0, 2.5, 4.0, 5.0]
 rack_chains = [3, 6, 8]
 
 category_to_arpeggiator = {

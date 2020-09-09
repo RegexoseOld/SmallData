@@ -22,7 +22,6 @@ def run_mock():
     while True:
         osc_dict = {'text': random.sample(texts, 1)[0],
                     'cat': random.sample(categories, 1)[0],
-                    'f_dura': random.sample(settings.note_durations,1)[0]
                     }
         osc_map = pickle.dumps(osc_dict)
         song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
