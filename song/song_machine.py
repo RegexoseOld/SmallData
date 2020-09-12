@@ -21,6 +21,7 @@ class Transition:
     #     self.limit = int(limit.strip())
 
     def condition(self, cat_counter):
+        # print(" {}  >  {}".format(cat_counter[self.target_cat], self.target_limit))
         return cat_counter[self.target_cat] > self.target_limit
 
     def get_readable(self):
@@ -107,7 +108,7 @@ class SongMachine:
         else:
             # state change
             self.__lock = True
-            self.current_state = self.parser.states[next_state_name]
+            self.current_state = self.parser.song_parts[next_state_name]
 
             if self.current_state == self.last_state:
                 print("The END")
@@ -159,6 +160,7 @@ class SongParser:
                 if not part_name == part:
                     transition = Transition(part, part_name, associated_category, limit)
                     self.song_parts[transition.source_name].add_transition(transition)
+            print("transitions: ", self.song_parts[part].transitions)
 
 
 class SongValidator(object):

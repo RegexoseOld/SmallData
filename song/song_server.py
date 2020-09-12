@@ -99,6 +99,7 @@ class SongServer:
         self.send_arp(osc_map['cat'])
 
         if self.song_machine.update_state(osc_map['cat']):  # True if state is changed
+            print("change,  ")
             self.beat_manager.update_next_part(self.song_machine.current_state)
 
         self._send_utterance_to_display(osc_map)
