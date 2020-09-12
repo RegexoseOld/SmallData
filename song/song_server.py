@@ -48,7 +48,6 @@ class BeatAdvanceManager:
 
 
 class SongServer:
-    category_to_quittung = {}
 
     def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager, tonality):
         self.osculator_client = osculator_client
@@ -57,7 +56,7 @@ class SongServer:
         self.song_machine = machine
         self.beat_manager = beat_manager
         self.tonality = tonality
-        self.build_quittung_dict()
+        # self.build_quittung_dict()
 
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
@@ -65,26 +64,27 @@ class SongServer:
         self.server = ThreadingOSCUDPServer((settings.ip, settings.SONG_SERVER_PORT), dispatcher)
 
         self.song_scenes = {k: v for k, v in zip(
-            self.song_machine.parser.states,
-            range(len(self.song_machine.parser.states)
+            self.song_machine.parser.song_parts,
+            range(len(self.song_machine.parser.song_parts)
                   ))}
 
-        first_state = self.song_machine.parser.states[self.song_machine.parser.first_state_name]
+        first_state = self.song_machine.parser.song_parts[self.song_machine.parser.first_state_name]
 
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_state.note, 1.0))
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_state.note, 0.0))
         self._send_init_to_display()
 
-    def build_quittung_dict(self):
-        index = 0
-        for key in self.song_machine.parser.states.keys():
-            cat_to_note = {}
-            for cat in self.song_machine.parser.categories:
-                cat_to_note[cat] = settings.category_to_samplenotes[cat][index]
-            self.category_to_quittung[key] = cat_to_note
-            if key in self.song_machine.parser.categories:
-                index += 1
-        print('cat_to_sample: ', self.category_to_quittung)
+
+    # def build_quittung_dict(self):
+    #     index = 0
+    #     for key in self.song_machine.parser.states.keys():
+    #         cat_to_note = {}
+    #         for cat in self.song_machine.parser.categories:
+    #             cat_to_note[cat] = settings.category_to_samplenotes[cat][index]
+    #         self.category_to_quittung[key] = cat_to_note
+    #         if key in self.song_machine.parser.categories:
+    #             index += 1
+    #     print('cat_to_sample: ', self.category_to_quittung)
 
     def interpreter_handler(self, _, content):
         if self.song_machine.is_locked():
@@ -92,10 +92,9 @@ class SongServer:
 
         osc_map = pickle.loads(content)
         self.send_fx()
-
+        current_part = self.beat_manager.current_part.name
         self.tonality.update_tonality(osc_map['cat'])
-
-        note = self.category_to_quittung[self.beat_manager.current_part.name][osc_map['cat']]
+        note = self.song_machine.parser.song_parts[current_part].receipts[osc_map['cat']]
         self.send_quittung(note, osc_map['cat'])
         self.send_arp(osc_map['cat'])
 

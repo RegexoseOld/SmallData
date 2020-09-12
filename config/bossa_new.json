@@ -1,0 +1,73 @@
+{
+  "max_num_utterances": 100,
+  "first_part" : "sei auf der Hut",
+  "categories": ["praise", "insinuation", "dissence",  "lecture", "concession"],
+  "states": [
+    {
+      "name": "sei auf der Hut",
+      "category": "dissence",
+      "note": 2,
+      "receipts": {
+        "praise": 29,
+        "insinuation": 30,
+        "dissence": 33,
+        "lecture": 29,
+        "concession": 30
+      },
+      "limit": 5
+    },
+    {
+      "name": "er will es verstehen?",
+      "category": "lecture",
+      "note": 3,
+      "receipts": {
+        "praise": 32,
+        "insinuation": 31,
+        "dissence": 29,
+        "lecture": 30,
+        "concession": 31
+      },
+      "limit": 5
+    },
+    {
+      "name": "du bist jetzt mal ruhig",
+      "category": "praise",
+      "note": 4,
+      "receipts": {
+        "praise": 30,
+        "insinuation": 32,
+        "dissence": 31,
+        "lecture": 31,
+        "concession": 32
+      },
+      "limit": 5
+    },
+    {
+      "name": "gute tasse tee",
+      "category": "insinuation",
+      "note": 5,
+      "receipts": {
+        "praise": 31,
+        "insinuation": 29,
+        "dissence": 30,
+        "lecture": 32,
+        "concession": 29
+      },
+      "limit": 5
+    },
+    {
+      "name": "hervorzustechen",
+      "category": "concession",
+      "note": 6,
+      "receipts": {
+        "praise": 33,
+        "insinuation": 34,
+        "dissence": 32,
+        "lecture": 33,
+        "concession": 29
+      },
+      "limit": 5
+    }
+  ]
+}
+
