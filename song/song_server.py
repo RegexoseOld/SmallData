@@ -56,7 +56,6 @@ class SongServer:
         self.song_machine = machine
         self.beat_manager = beat_manager
         self.tonality = tonality
-        # self.build_quittung_dict()
 
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
@@ -74,32 +73,19 @@ class SongServer:
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_state.note, 0.0))
         self._send_init_to_display()
 
-
-    # def build_quittung_dict(self):
-    #     index = 0
-    #     for key in self.song_machine.parser.states.keys():
-    #         cat_to_note = {}
-    #         for cat in self.song_machine.parser.categories:
-    #             cat_to_note[cat] = settings.category_to_samplenotes[cat][index]
-    #         self.category_to_quittung[key] = cat_to_note
-    #         if key in self.song_machine.parser.categories:
-    #             index += 1
-    #     print('cat_to_sample: ', self.category_to_quittung)
-
     def interpreter_handler(self, _, content):
         if self.song_machine.is_locked():
             return
 
         osc_map = pickle.loads(content)
         self.send_fx()
-        current_part = self.beat_manager.current_part.name
         self.tonality.update_tonality(osc_map['cat'])
+        current_part = self.beat_manager.current_part.name
         note = self.song_machine.parser.song_parts[current_part].receipts[osc_map['cat']]
         self.send_quittung(note, osc_map['cat'])
         self.send_arp(osc_map['cat'])
 
         if self.song_machine.update_state(osc_map['cat']):  # True if state is changed
-            print("change,  ")
             self.beat_manager.update_next_part(self.song_machine.current_state)
 
         self._send_utterance_to_display(osc_map)
@@ -113,7 +99,6 @@ class SongServer:
                 self._send_partinfo_to_display()
 
     def send_fx(self):
-        # print("chain: {}\nctrl_val: {}".format(self.tonality.chain, self.tonality.ctrl_val))
         self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain[0])
         self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.chain[1]),
                                            self.tonality.ctrl_val)

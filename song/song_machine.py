@@ -13,15 +13,8 @@ class Transition:
         self.target_name = part_name
         self.target_cat = category
         self.target_limit = limit
-    #     self.__parse_condition_string()
-    #
-    # def __parse_condition_string(self, cond_string):
-    #     category, limit = cond_string.split(self.SIGN)
-    #     self.category = category.strip()
-    #     self.limit = int(limit.strip())
 
     def condition(self, cat_counter):
-        # print(" {}  >  {}".format(cat_counter[self.target_cat], self.target_limit))
         return cat_counter[self.target_cat] > self.target_limit
 
     def get_readable(self):
@@ -81,7 +74,6 @@ class SongMachine:
     def __init__(self, parser):
         self.parser = parser
         self.current_state = self.parser.song_parts[self.parser.first_state_name]
-        # self.last_state = self.parser.song_parts[self.parser.last_state_name]
         self._reset_counter(parser.categories)
 
     def _reset_counter(self, categories):
@@ -109,10 +101,6 @@ class SongMachine:
             # state change
             self.__lock = True
             self.current_state = self.parser.song_parts[next_state_name]
-
-            if self.current_state == self.last_state:
-                print("The END")
-
             return True
 
 
@@ -160,8 +148,6 @@ class SongParser:
                 if not part_name == part:
                     transition = Transition(part, part_name, associated_category, limit)
                     self.song_parts[transition.source_name].add_transition(transition)
-            print("transitions: ", self.song_parts[part].transitions)
-
 
 class SongValidator(object):
     data = {}
@@ -199,25 +185,6 @@ class SongValidator(object):
         corresponding fields of the json
         :return:
         """
-        # for idx, transition in enumerate(self.data[SongParser.NAME_TRANSITIONS]):
-        #     if len(transition) != 3:
-        #         self.errors.append("Transition `{}` has the wrong length".format(idx))
-        #     else:
-        #         if transition[0] not in self.data[SongParser.NAME_STATES_TO_NOTES]:
-        #             self.errors.append(
-        #                 "Source state `{}` listed in transition `{}` is not contained in `states`".format(
-        #                     transition[0], idx)
-        #             )
-        #         if transition[1] not in self.data[SongParser.NAME_STATES_TO_NOTES]:
-        #             self.errors.append(
-        #                 "Target state `{}` listed in transition `{}` is not contained in `states`".format(
-        #                     transition[1], idx))
-        #         cond_array = transition[2].split(" ")
-        #         if len(cond_array) != 3:
-        #             self.errors.append("Wrong format of condition in transition `{}`".format(idx))
-        #         if cond_array[0] not in self.data[SongParser.NAME_CATEGORIES]:
-        #             self.errors.append("Category `{}` of condition `{}` not contained in categories".format(
-        #                 cond_array[0], idx))
         part_names = []
         for d in self.data[SongParser.STATES]:
             part_names.append(d["name"])
@@ -225,11 +192,6 @@ class SongValidator(object):
             self.errors.append(
                 "First state (`{}`) is not contained in `states`".format(self.data[SongParser.NAME_FIRST_PART])
             )
-        # if self.data[SongParser.NAME_LAST_STATE] not in self.data[SongParser.NAME_STATES_TO_NOTES]:
-        #     self.errors.append(
-        #         "Last state (`{}`) is not contained in `states`".format(self.data[SongParser.NAME_LAST_STATE])
-        #     )
-
 
 def create_instance(path_to_song_file):
     with open(path_to_song_file, 'r') as f:
