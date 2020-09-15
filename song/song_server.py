@@ -85,7 +85,7 @@ class SongServer:
         if self.song_machine.update_part(osc_map['cat']):  # True if part is changed
             self.beat_manager.update_next_part(self.song_machine.current_part)
 
-        self._send_utterance_to_display(osc_map)
+        self._send_utterance_to_audience(osc_map)
 
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
@@ -93,7 +93,7 @@ class SongServer:
             self._send_part(counter)
             if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_NORMAL) and self.song_machine.is_locked():
                 self.song_machine.release_lock()
-                self._send_partinfo_to_display()
+                self._send_partinfo_to_displays()
 
     def send_fx(self):
         self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain[0])
@@ -104,7 +104,6 @@ class SongServer:
         self.osculator_client.send_message('/q_{}'.format(cat), (note, 1.0))
         self.osculator_client.send_message('/q_{}'.format(cat), (note, 0.0))
 
-
     def send_arp(self, cat):
         for i, ccnr in enumerate(settings.arp_controls.values()):
             self.osculator_client.send_message(settings.SONG_ARP_ADDRESS + str(ccnr), (settings.category_to_arpeggiator[cat][i]))
@@ -112,7 +111,6 @@ class SongServer:
 
     def _send_part(self, counter):
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
-
         if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_WARNING):
             print("next_part.note", next_part.note)
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 1.0))
@@ -122,7 +120,7 @@ class SongServer:
         print('SongerServer. sending: ', message)
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
 
-    def _send_utterance_to_display(self, input_dict):
+    def _send_utterance_to_audience(self, input_dict):
         print(self.song_machine.category_counter, isinstance(self.song_machine.category_counter, dict))
         input_dict['category_counter'] = self.song_machine.category_counter
         input_dict['is_locked'] = self.song_machine.is_locked()
@@ -130,10 +128,13 @@ class SongServer:
         content = pickle.dumps(input_dict, protocol=2)
         self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, content)
 
-    def _send_partinfo_to_display(self):
+    def _send_partinfo_to_displays(self):
         self.performer_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
                                            pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
                                            )
+        self.audience_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
+                                          pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
+                                          )
 
     def _send_init_to_display(self):
         self.audience_client.send_message(settings.DISPLAY_INIT_ADDRESS,

@@ -28,7 +28,7 @@ def setup():
     global osc, loc
     AREAS = build_areas()
     osc = OscP5(this, 5050)  # the PERFORMER_PORT
-    loc = NetAddress('127.0.0.1', 5050) # send to self
+    loc = NetAddress('192.168.1.156', 5050) # send to self
     global listener
     listener = Listen()
     osc.addListener(listener) # assigning a listener to class Listen
