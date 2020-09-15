@@ -6,11 +6,11 @@ BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 DATA_DIR = path.join(BASE_DIR, 'webserver/model_data')
 
 # Song settings
-song_file = "bossa_slapstick.json"
+song_file = "bossa_new.json"
 song_path = path.join(BASE_DIR, 'config', song_file)
 
 # OSC-Settings
-ip = "127.0.0.1"
+ip = "192.168.1.156"
 SONG_ADVANCE_ADDRESS = '/advance'
 SONG_RACK_ADDRESS = '/rack'
 SONG_MIDICC_ADDRESS = '/control'
