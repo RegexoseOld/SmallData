@@ -47,7 +47,7 @@ elif args.app == 'song':
 
     machine_instance = song_machine.create_instance(settings.song_path)
     tonality = Tonality(machine_instance.parser.categories)
-    beat_manager = BeatAdvanceManager(machine_instance.parser.first_state_name)
+    beat_manager = BeatAdvanceManager(machine_instance.current_part)
 
     song_server = SongServer(oscul_client, audience_client, performer_client, machine_instance, beat_manager, tonality)
     song_parts = list(machine_instance.parser.song_parts.keys())

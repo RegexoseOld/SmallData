@@ -4,7 +4,6 @@ from pythonosc.dispatcher import Dispatcher
 from collections import Counter
 
 from config import settings
-from song.song_machine import Part
 
 
 class BeatAdvanceManager:
@@ -15,10 +14,10 @@ class BeatAdvanceManager:
     STATE_PREPARE = 1
     STATE_WARNING = 2
 
-    def __init__(self, first_part_name):
+    def __init__(self, first_part):
         self.state = self.STATE_NORMAL
-        self.next_part = Part(first_part_name, 0)
-        self.current_part = Part(first_part_name, 0)
+        self.next_part = first_part
+        self.current_part = first_part
         self.__counter = 0
 
     def update_next_part(self, part):
