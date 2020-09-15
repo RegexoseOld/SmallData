@@ -2,10 +2,9 @@ import pickle
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from collections import Counter
-import threading
 
 from config import settings
-from song.song_machine import State
+from song.song_machine import Part
 
 
 class BeatAdvanceManager:
@@ -18,8 +17,8 @@ class BeatAdvanceManager:
 
     def __init__(self, first_part_name):
         self.state = self.STATE_NORMAL
-        self.next_part = State(first_part_name, 0)
-        self.current_part = State(first_part_name, 0)
+        self.next_part = Part(first_part_name, 0)
+        self.current_part = Part(first_part_name, 0)
         self.__counter = 0
 
     def update_next_part(self, part):
@@ -67,10 +66,10 @@ class SongServer:
             range(len(self.song_machine.parser.song_parts)
                   ))}
 
-        first_state = self.song_machine.parser.song_parts[self.song_machine.parser.first_state_name]
+        first_part = self.song_machine.parser.song_parts[self.song_machine.parser.first_part_name]
 
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_state.note, 1.0))
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_state.note, 0.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_part.note, 1.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_part.note, 0.0))
         self._send_init_to_display()
 
     def interpreter_handler(self, _, content):
@@ -85,8 +84,8 @@ class SongServer:
         self.send_quittung(note, osc_map['cat'])
         self.send_arp(osc_map['cat'])
 
-        if self.song_machine.update_state(osc_map['cat']):  # True if state is changed
-            self.beat_manager.update_next_part(self.song_machine.current_state)
+        if self.song_machine.update_part(osc_map['cat']):  # True if part is changed
+            self.beat_manager.update_next_part(self.song_machine.current_part)
 
         self._send_utterance_to_display(osc_map)
 
@@ -135,7 +134,7 @@ class SongServer:
 
     def _send_partinfo_to_display(self):
         self.performer_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
-                                           pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
+                                           pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
                                            )
 
     def _send_init_to_display(self):
@@ -143,7 +142,7 @@ class SongServer:
                                           pickle.dumps(self.song_machine.parser.categories, protocol=2)
                                           )
         self.audience_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
-                                          pickle.dumps(self.song_machine.current_state.get_targets(), protocol=2)
+                                          pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
                                           )
 
 class Tonality:

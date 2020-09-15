@@ -2,7 +2,7 @@
   "max_num_utterances": 100,
   "first_part" : "sei auf der Hut",
   "categories": ["praise", "insinuation", "dissence",  "lecture", "concession"],
-  "states": [
+  "parts": [
     {
       "name": "sei auf der Hut",
       "category": "dissence",
