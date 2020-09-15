@@ -185,6 +185,7 @@ class SongValidator(object):
                 "First part (`{}`) is not contained in `parts`".format(self.data[SongParser.NAME_FIRST_PART])
             )
 
+
 def create_instance(path_to_song_file):
     with open(path_to_song_file, 'r') as f:
         json_data = json.load(f)

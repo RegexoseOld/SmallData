@@ -46,7 +46,6 @@ class BeatAdvanceManager:
 
 
 class SongServer:
-
     def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager, tonality):
         self.osculator_client = osculator_client
         self.audience_client = audience_client
