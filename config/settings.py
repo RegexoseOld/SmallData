@@ -41,30 +41,3 @@ note_to_beat = {
     127: '8',
     'first_count_in_bar': '1'
 }
-category_to_samplenotes = {
-    'praise': [29, 32, 30, 31, 33],
-    'lecture': [29, 30, 31, 32, 33],
-    'insinuation': [30, 31, 32, 29, 34],
-    'dissence': [33, 29, 31, 30, 32],
-    'concession': [30, 31, 32, 29, 33]
-}
-
-rack_chains = [3, 6, 8]
-
-category_to_arpeggiator = {
-    # category has fixed values for all relevant controllers of Arpeggiator as defined in arp_controls
-    'praise': [100, 20, 100, 100, 115],
-    'lecture': [108, 10, 120, 108, 115],
-    'insinuation': [115, 120, 108, 50, 100],
-    'dissence': [110, 70, 110, 25, 115],
-    'concession': [50, 5, 40, 110, 90],
-}
-
-arp_controls = {
-    # each control has a ccnr from  30 onwards see ccnrs of chain_controls
-    'Rate': 31,
-    'Gate': 32,
-    'Steps': 33,
-    'Distance': 34,
-    'Decay': 35
-}
