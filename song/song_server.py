@@ -64,10 +64,8 @@ class SongServer:
             range(len(self.song_machine.parser.song_parts)
                   ))}
 
-        first_part = self.song_machine.parser.song_parts[self.song_machine.parser.first_part_name]
-
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_part.note, 1.0))
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (first_part.note, 0.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_intro, 1.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_intro, 0.0))
         self._send_init_to_display()
 
     def interpreter_handler(self, _, content):
