@@ -20,7 +20,7 @@ class Listen(OscEventListener):
         global loc, osc
         if m.checkAddrPattern("/display_input") == True:
             content = pickle.loads(m.arguments()[0])
-            print("\tINCOMING :", content["cat"])
+            print("\tINCOMING :", content)
             AREAS['utterances'].update_utts(content["text"], content["cat"])
             AREAS['category_counter'].update(content['category_counter'], content["is_locked"])
             #alert_update(content["cat"])
