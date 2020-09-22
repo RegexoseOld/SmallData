@@ -92,7 +92,7 @@ class DisplayServer:
 
     async def init_main(self):
         dispatcher = Dispatcher()
-        dispatcher.map(settings.DISPLAY_TARGET_ADDRESS, self.message_handler)
+        dispatcher.map(settings.DISPLAY_UTTERANCE_ADDRESS, self.message_handler)
         dispatcher.map(settings.OSCULATOR_TARGET_ADDRESS, self.beat_handler)
         dispatcher.map(settings.SONG_ADVANCE_ADDRESS, self.part_handler)
 

@@ -1,13 +1,21 @@
 from collections import OrderedDict
-from linebreak import linebreak
+import math
 
-# AREAS = {}
+color_scheme = {'dissence': (181, 180, 179),
+                'insinuation': (30, 101, 109),
+                'lecture': (30, 150, 109),
+                'praise': (246, 41, 0),
+                'concession': (241, 243, 150)
+                }
 
 class SurfaceBase:
     def __init__(self, name, pos_x, pos_y, s_width, s_height):
         self.name = name
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.s_width = s_width
+
+        self.incoming = False  # utterance coming in
         self.subsurfaces = OrderedDict()
         self.__create_surface(s_width, s_height)
         
@@ -19,6 +27,7 @@ class SurfaceBase:
     
     def draw(self, surface=None):
         if surface:
+            print("name if surface: {}".format(self.name))
             with surface.beginDraw():
                 surface.image(self.surface, self.pos_x, self.pos_y)
         else:
@@ -28,60 +37,7 @@ class SurfaceBase:
         
     def add_subsurface(self, name, area):
         self.subsurfaces[name] = area
-        
-class UtteranceLine:
-    def __init__(self, s_width, s_height, utt, cat, font, pos_x):
-        self.pos_x = pos_x
-        self.pos_y = 0
-        temp_utt_surface = linebreak(s_width * 2/3, s_height, utt, font, 17)
-        temp_cat_surface = createGraphics(s_width * 1/3, temp_utt_surface.height)
-        utt_cat_surface = createGraphics((temp_utt_surface.width + temp_cat_surface.width) - 10 , temp_utt_surface.height)
-        with temp_cat_surface.beginDraw():
-            temp_cat_surface.textFont(font)
-            temp_cat_surface.textSize(17)
-            temp_cat_surface.textAlign(LEFT, TOP)
-            temp_cat_surface.fill(0)
-            temp_cat_surface.text(cat, 0, 0)
-        with utt_cat_surface.beginDraw():
-            utt_cat_surface.background(222)
-            utt_cat_surface.image(temp_utt_surface, 0, 0)
-            utt_cat_surface.image(temp_cat_surface, temp_utt_surface.width + 10 , 0)
-            utt_cat_surface.stroke(200)
-            utt_cat_surface.strokeWeight(15)
-            utt_cat_surface.line(0, utt_cat_surface.height, utt_cat_surface.width, utt_cat_surface.height)
-            utt_cat_surface.line(temp_utt_surface.width, 0, temp_utt_surface.width, utt_cat_surface.height)
-        self.surface = utt_cat_surface
-        
-    def set_pos_y(self, pos):
-        self.pos_y = pos
-    
-    def draw(self, surface):
-        with surface.beginDraw():
-            surface.image(self.surface, self.pos_x, self.pos_y) 
 
-class UtterancesArea(SurfaceBase):
-    def __init__(self, name, pos_x, pos_y, s_width, s_height, font):
-        SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
-        self.index = 0
-        self.font = font
-    
-    def update_utts(self, utt, cat):
-        utt_cat_surf = UtteranceLine(self.surface.width, self.surface.height, utt, cat, self.font, self.pos_x)
-        self.add_subsurface(self.index, utt_cat_surf)
-        self.index += 1
-               
-        pos_y = 0
-        self.iterate = True
-        surfaces_to_iterate = reversed(list(self.subsurfaces.values()))
-        for utt_line in surfaces_to_iterate:
-            utt_line.set_pos_y(pos_y)
-            if pos_y >= self.surface.height:
-                break 
-            pos_y += utt_line.surface.height
-    
-        if pos_y > self.surface.height:
-            self.subsurfaces.popitem(last=False)  
-             
 class Beat:
     def __init__(self, s_width, s_height, beatnum, col, font):
         self.surface = createGraphics(s_width, s_height)
@@ -91,15 +47,16 @@ class Beat:
         with self.surface.beginDraw():
             self.surface.background(222)
             self.surface.textFont(font)
-            self.surface.textSize(100)
+            self.surface.textSize(50)
             self.surface.fill(col)
             self.surface.textAlign(CENTER)
-            self.surface.text(beatnum, self.surface.width/2, self.surface.height * 3/5)
+            self.surface.text(beatnum, self.surface.width / 2, self.surface.height * 3 / 5)
         
     def draw(self, surface):
         with surface.beginDraw():
-            surface.image(self.surface, self.surface.width *4/5, 0) 
-    
+            surface.image(self.surface, self.surface.width * 4 / 5, 0)
+
+
 class Parts:
     def __init__(self, s_width, s_height, current, next, font, col):
         self.surface = createGraphics(s_width, s_height)
@@ -109,7 +66,7 @@ class Parts:
         with self.surface.beginDraw():
             self.surface.background(222)
             self.surface.textFont(font)
-            self.surface.textSize(20)
+            self.surface.textSize(12)
             self.surface.fill(0)
             self.surface.textAlign(CENTER)
             self.surface.text("current part:\n" + current, self.surface.width/2, self.surface.height/4)
@@ -134,4 +91,3 @@ class PartArea(SurfaceBase):
         current_next_surf = Parts(self.surface.width/2, self.surface.height, current, next, self.font, col)
         self.add_subsurface("beat", beat_surf)
         self.add_subsurface("parts", current_next_surf)
-   

@@ -39,18 +39,20 @@ if args.app == 'backend':
 elif args.app == 'song':
     from pythonosc import udp_client
     from song import song_machine
-    from song.song_server import SongServer, BeatAdvanceManager
+    from song.song_server import SongServer, BeatAdvanceManager, Tonality
 
     oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
-    disp_client = udp_client.SimpleUDPClient(settings.ip, settings.PROCESSING_PORT)
+    audience_client = udp_client.SimpleUDPClient(settings.ip, settings.AUDIENCE_PORT)
+    performer_client = udp_client.SimpleUDPClient(settings.ip, settings.PERFORMER_PORT)
 
     machine_instance = song_machine.create_instance(settings.song_path)
-    beat_manager = BeatAdvanceManager(machine_instance.parser.first_state_name)
+    tonality = Tonality(machine_instance.parser.categories)
+    beat_manager = BeatAdvanceManager(machine_instance.current_part)
 
-    song_server = SongServer(oscul_client, disp_client, machine_instance, beat_manager)
-    song_parts = list(machine_instance.parser.states.keys())
-    [disp_client.send_message('/parts', part) for part in song_parts]
-    disp_client.send_message('/parts', 'all_sent')
+    song_server = SongServer(oscul_client, audience_client, performer_client, machine_instance, beat_manager, tonality)
+    song_parts = list(machine_instance.parser.song_parts.keys())
+    [audience_client.send_message('/parts', part) for part in song_parts]
+    audience_client.send_message('/parts', 'all_sent')
     song_server.server.serve_forever()
 elif args.app == 'frontend':
     os.chdir('frontend')

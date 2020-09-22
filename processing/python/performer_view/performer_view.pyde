@@ -1,5 +1,6 @@
 from surfaces import *
-import getpass
+import pickle
+
 
 add_library('oscP5') 
 addr = "?"
@@ -15,21 +16,19 @@ class Listen(OscEventListener):
             current_part_name = "".join([str(i) for i in list(m.arguments()[2])])
             next_part_name = "".join([str(i) for i in list(m.arguments()[3])])
             AREAS['part_info'].update_parts(current_part_name, next_part_name, current_beat, change_color)
-        elif m.checkAddrPattern("/display_input") == True:
-            utterance = "".join([str(i) for i in list(m.arguments()[0])])
-            category = "".join([str(i) for i in list(m.arguments()[1])])
-            AREAS['utterances'].update_utts(utterance, category)
-
+            
 def setup():
-    size(1200, 850)
+    size(400, 350)
     background(200)
-    global font
+    global font, font_bold
+
     font_size = 14
-    font = createFont( "Helvetica Neue", font_size, True)
+    font = createFont( "Helvetica", font_size, True)
+    font_bold = createFont("Helvetica-Bold", font_size, True)
     global osc, loc
     AREAS = build_areas()
-    osc = OscP5(this, 5040)
-    loc = NetAddress('127.0.0.1', 5040) # send to self
+    osc = OscP5(this, 5050)  # the PERFORMER_PORT
+    loc = NetAddress('192.168.1.156', 5050) # send to self
     global listener
     listener = Listen()
     osc.addListener(listener) # assigning a listener to class Listen
@@ -41,9 +40,9 @@ def draw():
 def build_areas():
     global font
     y_spacing = height/100
-    x_spacing = width/100
-    AREAS["utterances"] = UtterancesArea("utterances", width/100, height/2 + y_spacing, width*8/13, height*7/16, font)
-    AREAS["part_info"] = PartArea("part_info", width *2/3, height/2 + y_spacing, width *4/13, height *7/16, font)
+    x_spacing = width/50
+
+    AREAS["part_info"] = PartArea("part_info", x_spacing, y_spacing, width - 2*x_spacing, height - 2*y_spacing, font)
     return AREAS
 
 def stop():

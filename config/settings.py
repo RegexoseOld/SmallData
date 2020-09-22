@@ -1,24 +1,32 @@
 from os import path
 
+
 #  Directories
 BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
 DATA_DIR = path.join(BASE_DIR, 'webserver/model_data')
 
 # Song settings
-song_file = 'WirSind.json'
+song_file = "bossa_new.json"
 song_path = path.join(BASE_DIR, 'config', song_file)
+note_intro = 0
 
 # OSC-Settings
-ip = "127.0.0.1"
+ip = "192.168.1.156"
 SONG_ADVANCE_ADDRESS = '/advance'
+SONG_RACK_ADDRESS = '/rack'
+SONG_MIDICC_ADDRESS = '/control'
+SONG_ARP_ADDRESS = '/arp'
 SONG_BEAT_ADDRESS = '/beat'
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"
 SONG_SERVER_PORT = 5020
 OSCULATOR_PORT = 5010
 OSCULATOR_TARGET_ADDRESS = "/osculator_input"
-DISPLAY_TARGET_ADDRESS = "/display_input"
+DISPLAY_UTTERANCE_ADDRESS = "/display_input"
+DISPLAY_PARTINFO_ADDRESS = "/display_partinfo"
+DISPLAY_INIT_ADDRESS = "/display_init"
 DISPLAY_PORT = 5030
-PROCESSING_PORT = 5040
+AUDIENCE_PORT = 5040
+PERFORMER_PORT = 5050
 
 
 # MIDI-note-to-beat-counter-conversion (for Ableton)
