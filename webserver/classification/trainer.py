@@ -1,10 +1,10 @@
-'''
+"""
 creates two pickle files.
 1) single word vector classifier
 2) regex mapping.
+"""
 
 
-'''
 import os
 import spacy
 import joblib
@@ -104,7 +104,7 @@ def vectorize_corpus(texts, vectorizer, categories=None):
 
 
 def read_trainingdata_textfiles(trainingdata_path):
-    '''
+    """
     Reads all trainingdata texfiles in a directory. The textfiles can contain single words and regular expressions.
     Every line containing more than one word ist considered a regular expression
     lines starting with "[" are ignored.
@@ -123,7 +123,7 @@ def read_trainingdata_textfiles(trainingdata_path):
                                           One with regexes as keys and categories as values
 
     all umlauts are replaced and words are lowercases.
-    '''
+    """
     keywords_to_cat = defaultdict(list)
     regexes = {}
 
@@ -146,7 +146,6 @@ def read_trainingdata_textfiles(trainingdata_path):
 
 def read_trainingdata_utterances(df, min_wc=1, max_wc=np.Inf):
     print('\nReading trainingdata')
-    df = df.drop_duplicates(['utterance'])  # avoid duplication
     x = []
     y = []
 
@@ -163,11 +162,11 @@ def read_trainingdata_utterances(df, min_wc=1, max_wc=np.Inf):
 
 
 def transform_keywords_to_trainingdata(keywords_to_cat):
-    '''
+    """
     Transforms a dictionary mapping keywords to categories into two lists that can be used
     to train sklearn SGDClassifier objects. Words are transformed into Word2Vec Vectors using
     a gensim model trained on the german Wikipedia
-    '''
+    """
     x, y = [], []
     # print('139 keywords2cat: ', keywords_to_cat)
 
@@ -228,20 +227,21 @@ def load_training_files(path_to_td):
                 new_df = pd.read_csv(path_to_file, delimiter='\t')
                 validate_df(new_df)
                 df = df.append(new_df, ignore_index=True)
-    return df
+
+    return df.drop_duplicates(['utterance'])  # avoid duplication
 
 
 if __name__ == '__main__':
     data_path = '../model_data'
 
-    regexes = load_regexes(os.path.join(data_path, 'TrainingData_regex.xlsx'))
+    regs = load_regexes(os.path.join(data_path, 'TrainingData_regex.xlsx'))
 
     df_ml = load_training_files(data_path)
 
-    sentences, categories = read_trainingdata_utterances(df_ml)
+    sentences, cats = read_trainingdata_utterances(df_ml)
 
-    x, y = vectorize_corpus(sentences, sentence_to_vec_german_model, categories=categories)
-    clf = train_clf(x, y)
+    vects, cats = vectorize_corpus(sentences, sentence_to_vec_german_model, categories=cats)
+    model = train_clf(vects, cats)
 
-    joblib.dump(regexes, os.path.join(data_path, 'regex_mapping.pkl'))
-    joblib.dump(clf, os.path.join(data_path, 'sgd_clf.pkl'))
+    joblib.dump(regs, os.path.join(data_path, 'regex_mapping.pkl'))
+    joblib.dump(model, os.path.join(data_path, 'sgd_clf.pkl'))
