@@ -207,6 +207,15 @@ def load_regexes(file_path):
     return dict(zip(expressions, df.Effekt))
 
 
+def validate_df(frame):
+    header = ['user', 'topic', 'link', 'utterance', 'category']
+    header.sort()
+    frame_header = frame.columns.to_list()
+    frame_header.sort()
+    if header != frame_header:
+        raise Exception('Frame has wrong header: {}'.format(frame_header))
+
+
 def load_training_files(path_to_td):
     df = pd.DataFrame()
     data_composers = ['Boris', 'Pelle']
@@ -216,9 +225,9 @@ def load_training_files(path_to_td):
             if re.search(pattern.format(composer), file):
                 path_to_file = os.path.abspath(os.path.join(path_to_td, file))
                 print('Loading', path_to_file)
-                df = df.append(
-                    pd.read_csv(path_to_file, delimiter='\t'),
-                    ignore_index=True)
+                new_df = pd.read_csv(path_to_file, delimiter='\t')
+                validate_df(new_df)
+                df = df.append(new_df, ignore_index=True)
     return df
 
 
@@ -227,7 +236,7 @@ if __name__ == '__main__':
 
     regexes = load_regexes(os.path.join(data_path, 'TrainingData_regex.xlsx'))
 
-    df_ml = pd.read_excel(os.path.join(data_path, 'TrainingData_ml.xlsx')).rename(columns={'Effekt': 'category'})
+    df_ml = load_training_files(data_path)
 
     sentences, categories = read_trainingdata_utterances(df_ml)
 
