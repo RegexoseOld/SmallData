@@ -85,6 +85,7 @@ def vectorize_corpus(texts, vectorizer, categories=None):
                         with the cats of the texts removed that have not been vectorized
     :return: an array of vectors. WARNING: if a text cannot be vectorized, it is removed from the corpus!
     """
+    print("Vectorizing Corpus ...")
     if categories is not None and len(texts) != len(categories):
         raise Exception('category and texts input must be of the same shape')
 
@@ -145,7 +146,7 @@ def read_trainingdata_textfiles(trainingdata_path):
 
 
 def read_trainingdata_utterances(df, min_wc=1, max_wc=np.Inf):
-    print('\nReading trainingdata')
+    print('Converting trainingdata...')
     x = []
     y = []
 
@@ -185,7 +186,7 @@ def transform_keywords_to_trainingdata(keywords_to_cat):
 def train_clf(x, y):
     clf = None
     best = 0
-    print('\nTraining SGD Classifier')
+    print('\nTraining SGD Classifier...')
     for i in range(200):
         temp_clf = SGDClassifier(tol=1e-3, max_iter=1000, random_state=i, loss='modified_huber')
         # print('x: {}\ny: {} '.format(x, y))
@@ -206,13 +207,17 @@ def load_regexes(file_path):
     return dict(zip(expressions, df.Effekt))
 
 
-def validate_df(frame):
+def validate_df_header(frame):
     header = ['user', 'topic', 'link', 'utterance', 'category']
     header.sort()
     frame_header = frame.columns.to_list()
     frame_header.sort()
     if header != frame_header:
         raise Exception('Frame has wrong header: {}'.format(frame_header))
+
+
+def clean_category_string(cat):
+    return cat.lower().strip()
 
 
 def load_training_files(path_to_td):
@@ -225,7 +230,8 @@ def load_training_files(path_to_td):
                 path_to_file = os.path.abspath(os.path.join(path_to_td, file))
                 print('Loading', path_to_file)
                 new_df = pd.read_csv(path_to_file, delimiter='\t')
-                validate_df(new_df)
+                validate_df_header(new_df)
+                new_df['category'] = list(map(clean_category_string, new_df['category']))
                 df = df.append(new_df, ignore_index=True)
 
     return df.drop_duplicates(['utterance'])  # avoid duplication
