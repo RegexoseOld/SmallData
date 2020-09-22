@@ -10,6 +10,7 @@ import spacy
 import joblib
 import gensim
 import gensim.parsing.preprocessing as gsp
+import re
 
 import numpy as np
 import pandas as pd
@@ -204,6 +205,21 @@ def load_regexes(file_path):
     df = pd.read_excel(file_path)
     expressions = map(clean_string, df.utterance)
     return dict(zip(expressions, df.Effekt))
+
+
+def load_training_files(path_to_td):
+    df = pd.DataFrame()
+    data_composers = ['Boris', 'Pelle']
+    pattern = 'TrainingData{}[0-9][0-9].tsv'
+    for file in os.listdir(path_to_td):
+        for composer in data_composers:
+            if re.search(pattern.format(composer), file):
+                path_to_file = os.path.abspath(os.path.join(path_to_td, file))
+                print('Loading', path_to_file)
+                df = df.append(
+                    pd.read_csv(path_to_file, delimiter='\t'),
+                    ignore_index=True)
+    return df
 
 
 if __name__ == '__main__':
