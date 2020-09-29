@@ -132,8 +132,6 @@ class SongServer:
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
 
     def _send_utterance_to_audience(self, input_dict):
-        # print(self.song_machine.category_counter, isinstance(self.song_machine.category_counter, dict))
-        print(input_dict)
         input_dict['category_counter'] = self.song_machine.category_counter
         input_dict['is_locked'] = self.song_machine.is_locked()
 
