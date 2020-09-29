@@ -46,6 +46,8 @@ class BeatAdvanceManager:
 
 
 class SongServer:
+    received_utts = 0
+
     def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager, tonality):
         self.osculator_client = osculator_client
         self.audience_client = audience_client
@@ -71,18 +73,35 @@ class SongServer:
     def interpreter_handler(self, _, content):
         if self.song_machine.is_locked():
             return
+        elif self.received_utts >= self.song_machine.parser.max_utterances:
+            end_message = "Von  {} moeglichen Meinungen sind abgegeben worden".format(self.song_machine.parser.max_utterances)
+            self.end_of_song(end_message)
+        else:
+            print("utterances received: ", self.received_utts)
 
-        osc_map = pickle.loads(content)
-        self.send_fx()
-        self.tonality.update_tonality(osc_map['cat'])
-        current_part = self.beat_manager.current_part.name
-        note = self.song_machine.parser.song_parts[current_part].receipts[osc_map['cat']]
-        self.send_quittung(note, osc_map['cat'])
+            osc_map = pickle.loads(content)
+            self.send_fx()
+            self.tonality.update_tonality(osc_map['cat'])
+            current_part = self.beat_manager.current_part.name
+            note = self.song_machine.parser.song_parts[current_part].receipts[osc_map['cat']]
+            self.send_quittung(note, osc_map['cat'])
 
-        if self.song_machine.update_part(osc_map['cat']):  # True if part is changed
-            self.beat_manager.update_next_part(self.song_machine.current_part)
+            if self.song_machine.update_part(osc_map['cat']):  # True if part is changed
+                self.beat_manager.update_next_part(self.song_machine.current_part)
 
-        self._send_utterance_to_audience(osc_map)
+            self._send_utterance_to_audience(osc_map)
+        self.received_utts += 1
+
+    def end_of_song(self, end_message):
+        input_dict = {'text': end_message,
+                      'cat': str(self.received_utts)}
+        if self.received_utts == self.song_machine.parser.max_utterances:
+            self._send_utterance_to_audience(input_dict)
+
+            self.song_machine.set_lock()
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_end, 1.0))
+            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_end, 0.0))
+
 
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
@@ -113,7 +132,6 @@ class SongServer:
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
 
     def _send_utterance_to_audience(self, input_dict):
-        print(self.song_machine.category_counter, isinstance(self.song_machine.category_counter, dict))
         input_dict['category_counter'] = self.song_machine.category_counter
         input_dict['is_locked'] = self.song_machine.is_locked()
 

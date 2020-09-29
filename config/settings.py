@@ -9,6 +9,7 @@ DATA_DIR = path.join(BASE_DIR, 'webserver/model_data')
 song_file = "bossa_new.json"
 song_path = path.join(BASE_DIR, 'config', song_file)
 note_intro = 0
+note_end = 12
 
 # OSC-Settings
 ip = "192.168.1.156"

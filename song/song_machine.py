@@ -78,7 +78,10 @@ class SongMachine:
 
     def release_lock(self):
         self._reset_counter(self.category_counter.keys())
-        self.__lock = False
+        self.set_lock(False)
+
+    def set_lock(self, value=True):
+        self.__lock = value
 
     def is_locked(self):
         return self.__lock
@@ -96,7 +99,7 @@ class SongMachine:
             return False
         else:
             # part change
-            self.__lock = True
+            self.set_lock()
             self.current_part = self.parser.song_parts[next_part_name]
             return True
 
@@ -117,8 +120,10 @@ class SongParser:
     def __init__(self, validated_data):
         self.data = validated_data
 
+
     def parse(self):
         self.categories = self.data[self.NAME_CATEGORIES]
+        self.max_utterances = self.data[self.MAX_UTTERANCES]
         self._create_parts()
         self._add_transitions()
 
