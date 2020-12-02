@@ -114,3 +114,5 @@ webserver/model_data/german.model
 
 # preliminary xlsx-Files
 *.xlsx#
+webserver/model_data/TrainingData_ml.xlsx
+*.xlsx
