@@ -91,17 +91,19 @@ def vectorize_corpus(texts, vectorizer, categories=None):
 
     vectors = []
     return_cats = []
+    return_texts = []
     for idx, text in enumerate(texts):
         vect = vectorizer(text)
         if isinstance(vect, np.ndarray):
             vectors.append(vect)
+            return_texts.append(text)
             if categories is not None:
                 return_cats.append(categories[idx])
 
     if categories:
-        return np.asarray(vectors), np.asarray(return_cats)
+        return np.asarray(return_texts), np.asarray(vectors), np.asarray(return_cats)
     else:
-        return np.asarray(vectors)
+        return np.asarray(return_texts), np.asarray(vectors)
 
 
 def read_trainingdata_textfiles(trainingdata_path):
@@ -220,9 +222,11 @@ def clean_category_string(cat):
     return cat.lower().strip()
 
 
-def load_training_files(path_to_td):
+def load_training_files(path_to_td, data_composers, categories_to_consider, min_word_count=2):
+    col = ['utterance', 'category']
+
     df = pd.DataFrame()
-    data_composers = ['Boris', 'Pelle']
+
     pattern = 'TrainingData{}[0-9][0-9].tsv'
     for file in os.listdir(path_to_td):
         for composer in data_composers:
@@ -234,7 +238,18 @@ def load_training_files(path_to_td):
                 new_df['category'] = list(map(clean_category_string, new_df['category']))
                 df = df.append(new_df, ignore_index=True)
 
-    return df.drop_duplicates(['utterance'])  # avoid duplication
+    df = df[col]
+    df.columns = col
+    df = df[pd.notnull(df['utterance'])]
+    df.drop_duplicates(['utterance'])  # avoid duplication
+
+    df['word_count'] = list(map(lambda x: len(x.split(' ')), df['utterance']))
+    df = df[df['word_count'] >= min_word_count]  # filter for minimal word count
+
+    df = df[df['category'].isin(categories_to_consider)]
+    df['category_id'] = [categories_to_consider.index(cat) for cat in df.category]
+
+    return df
 
 
 if __name__ == '__main__':
@@ -242,7 +257,7 @@ if __name__ == '__main__':
 
     regs = load_regexes(os.path.join(data_path, 'TrainingData_regex.xlsx'))
 
-    df_ml = load_training_files(data_path)
+    df_ml = load_training_files(data_path, ['Boris', 'Pelle'])
 
     sentences, cats = read_trainingdata_utterances(df_ml)
 
