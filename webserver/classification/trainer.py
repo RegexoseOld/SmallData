@@ -222,21 +222,19 @@ def clean_category_string(cat):
     return cat.lower().strip()
 
 
-def load_training_files(path_to_td, data_composers, categories_to_consider, min_word_count=2):
+def load_training_files(path_to_td, td_file_pattern, categories_to_consider, min_word_count=2):
     col = ['utterance', 'category']
 
     df = pd.DataFrame()
 
-    pattern = 'TrainingData{}[0-9][0-9].tsv'
     for file in os.listdir(path_to_td):
-        for composer in data_composers:
-            if re.search(pattern.format(composer), file):
-                path_to_file = os.path.abspath(os.path.join(path_to_td, file))
-                print('Loading', path_to_file)
-                new_df = pd.read_csv(path_to_file, delimiter='\t')
-                validate_df_header(new_df)
-                new_df['category'] = list(map(clean_category_string, new_df['category']))
-                df = df.append(new_df, ignore_index=True)
+        if re.search(td_file_pattern, file):
+            path_to_file = os.path.abspath(os.path.join(path_to_td, file))
+            print('Loading', path_to_file)
+            new_df = pd.read_csv(path_to_file, delimiter='\t')
+            validate_df_header(new_df)
+            new_df['category'] = list(map(clean_category_string, new_df['category']))
+            df = df.append(new_df, ignore_index=True)
 
     df = df[col]
     df.columns = col
@@ -257,7 +255,8 @@ if __name__ == '__main__':
 
     regs = load_regexes(os.path.join(data_path, 'TrainingData_regex.xlsx'))
 
-    df_ml = load_training_files(data_path, ['Boris', 'Pelle'])
+    pattern = 'TrainingData(Boris|Pelle)[0-9][0-9].tsv'
+    df_ml = load_training_files(data_path, pattern)
 
     sentences, cats = read_trainingdata_utterances(df_ml)
 
