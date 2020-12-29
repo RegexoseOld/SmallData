@@ -116,3 +116,4 @@ webserver/model_data/german.model
 *.xlsx#
 webserver/model_data/TrainingData_ml.xlsx
 *.xlsx
+/germanetTutorials
