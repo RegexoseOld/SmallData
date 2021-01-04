@@ -112,6 +112,7 @@ class SongServer:
                 self._send_partinfo_to_displays()
 
     def send_fx(self):
+        print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], self.tonality.ctrl_val ))
         self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain[0])
         self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.chain[1]),
                                            self.tonality.ctrl_val)
@@ -173,7 +174,8 @@ class Tonality:
         'concession': ['Delay', 2]
     }
     chain_controls = {
-        # every chain has a chain_value, a ccnr and a standard ctrl_value
+        # every chain refers to a LIVE FX Bus  with a Audio Effekt Rack
+        # the Rack has a value for the Chain Selector, a ccnr (for Osculator) and a standard ctrl_value
         'FreqShift' : [15, 10, 65],
         'Vocoder': [32, 15, 95],
         'Distortion': [60, 20, 25],
@@ -185,7 +187,7 @@ class Tonality:
         self.tonality_counter = Counter(categories)
         self.FX_KEY = 'Clean'
         self.chain = self.chain_controls[self.FX_KEY]
-        self.ctrl_val = 0
+        self.ctrl_val = 0 # the value being sent with SongServer.send_fx is calculated with calculate_rack_values
         self.last_cats = []
         self.last_value = 0
         self.most_common = ''
