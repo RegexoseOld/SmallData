@@ -47,12 +47,12 @@ elif args.app == 'song':
     performer_client = udp_client.SimpleUDPClient(settings.ip, settings.PERFORMER_PORT)
 
     machine_instance = song_machine.create_instance(settings.song_path)
-    tonality = Tonality(machine_instance.parser.categories)
-    synth_feedback = SynthFeedback(machine_instance.parser.categories)
+    synth_feedback = SynthFeedback()
+    tonality = Tonality(machine_instance.parser.categories, synth_feedback)
     beat_manager = BeatAdvanceManager(machine_instance.current_part)
 
     song_server = SongServer(oscul_client, audience_client, performer_client, machine_instance, beat_manager,
-                             tonality, synth_feedback)
+                             tonality)
     song_parts = list(machine_instance.parser.song_parts.keys())
     [audience_client.send_message('/parts', part) for part in song_parts]
     audience_client.send_message('/parts', 'all_sent')
