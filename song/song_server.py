@@ -79,7 +79,7 @@ class SongServer:
         else:
             print("utterances received: ", self.received_utts)
             osc_map = pickle.loads(content)
-            cat =  osc_map['cat']
+            cat = osc_map['cat']
             self.send_fx()
             self.tonality.update_tonality(cat)
             current_part = self.beat_manager.current_part.name

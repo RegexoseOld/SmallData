@@ -25,7 +25,7 @@ class Tonality:
     chain_controls = {
         # every chain refers to a LIVE FX Bus  with a Audio Effekt Rack
         # the Rack has a value for the Chain Selector, a ccnr (for Osculator) and a standard ctrl_value
-        'FreqShift' : [15, 10, 65],
+        'FreqShift': [15, 10, 65],
         'Vocoder': [32, 15, 95],
         'Distortion': [60, 20, 25],
         'Delay': [90, 25, 65],
@@ -76,7 +76,7 @@ class Tonality:
         self.synth.calculate_synth_message(cat, self.most_common, self.category_to_chain[cat][1])
 
 
-class SynthFeedback():
+class SynthFeedback:
     '''
     this calculates controller values for LIVE MIDI Slots with Synthesizers
     an incoming category defines the slot for the synth to be manipulated
@@ -106,7 +106,6 @@ class SynthFeedback():
         'concession': ['c4', synth_controls]
     }
 
-
     def __init__(self):
         self.ctrl_message = [v[1] for v in self.synth_controls.values()]
 
@@ -127,5 +126,3 @@ class SynthFeedback():
     def reset_synth(self):
         for val in self.cat2synth.values():
             val[1] = self.synth_controls
-
-
