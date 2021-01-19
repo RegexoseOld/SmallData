@@ -69,17 +69,18 @@ class SongServer:
         self._send_init_to_display()
 
     def interpreter_handler(self, _, content):
+
         if self.song_machine.is_locked():
             return
         elif self.received_utts >= self.song_machine.parser.max_utterances:
-            end_message = "Von  {} moeglichen Meinungen sind abgegeben worden"\
+            end_message = "Von  {} moeglichen Meinungen sind abgegeben worden" \
                 .format(self.song_machine.parser.max_utterances)
             self.end_of_song(end_message)
         else:
-            # print("utterances received: ", self.received_utts)
+            print("utterances received: ", self.received_utts)
             osc_map = pickle.loads(content)
-            self.send_fx()
             cat =  osc_map['cat']
+            self.send_fx()
             self.tonality.update_tonality(cat)
             current_part = self.beat_manager.current_part.name
             note = self.song_machine.parser.song_parts[current_part].receipts[cat]
