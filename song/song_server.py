@@ -1,4 +1,6 @@
 import pickle
+import json
+import os
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from collections import Counter
@@ -134,9 +136,8 @@ class SongServer:
     def _send_utterance_to_audience(self, input_dict):
         input_dict['category_counter'] = self.song_machine.category_counter
         input_dict['is_locked'] = self.song_machine.is_locked()
-
-        content = pickle.dumps(input_dict, protocol=2)
-        self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, content)
+        data = json.dumps(input_dict)
+        self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, data)
 
     def _send_partinfo_to_displays(self):
         self.performer_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
