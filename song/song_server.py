@@ -83,10 +83,9 @@ class SongServer:
             self.send_fx()
             self.tonality.update_tonality(cat)
             current_part = self.beat_manager.current_part.name
-            note = self.song_machine.parser.song_parts[current_part].receipts[cat]
+            fb_note = self.song_machine.parser.song_parts[current_part].receipts["fb_note"]
             controllers = self.tonality.synth.ctrl_message
-            print("SongServer-controllers: ", controllers)
-            self.send_quittung(note, cat, controllers)
+            self.send_quittung(fb_note, cat, controllers)
 
             if self.song_machine.update_part(cat):  # True if part is changed
                 self.beat_manager.update_next_part(self.song_machine.current_part)
