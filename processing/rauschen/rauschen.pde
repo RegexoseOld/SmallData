@@ -20,6 +20,7 @@ String incomingText; // a mock for incoming OSC text
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
 boolean messageIn = false;
 StringDict shapeMapping = new StringDict(); // mapping to attribute categories to SVG filenames
+PGraphics infoSurf;
 
 void setup(){
   size(1200, 900, P3D);
@@ -32,6 +33,7 @@ void setup(){
   mH = new MessageHighlight(20, width/30, height/2, width *5/9, height/2,  messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
   margin1 = new Margin(mH.surf1.width, mH.surf1.height, 0.1);
   pickIncoming();
+  infoSurf = createGraphics(width, height/10);
   frameRate(30);
 }
 
@@ -47,6 +49,7 @@ void draw() {
      utt.draw();
     utt.matchInput(incomingText);
   }
+  
   if (messageLock) {
       if (margin1.outMargin(mH)) {
         // println("out of margin:  " + mH.tWidth);
@@ -65,6 +68,15 @@ void draw() {
          // println("inside  margin:  " + mH.tWidth);
       }
   } 
+  infoSurf.beginDraw();
+  infoSurf.background(222);
+  PFont font = createFont(fontlist[15], 22);
+  infoSurf.textFont(font);
+  infoSurf.fill(20);
+  infoSurf.text(incomingText, 0,0, infoSurf.width, infoSurf.height);
+  infoSurf.endDraw();
+  image(infoSurf, 0, height-infoSurf.height);
+  
 }
 
 void oscEvent(OscMessage m) {
@@ -76,9 +88,12 @@ void oscEvent(OscMessage m) {
       incomingUtt = parseJSONObject((String) m.arguments()[0]);
       String text = incomingUtt.getString("text");
       String cat = incomingUtt.getString("cat");
-      JSONObject counter = incomingUtt.getJSONObject("category_counter");
-      boolean is_locked = incomingUtt.getBoolean("is_locked");
-      println("text :   " + text + "\ncat:   " + cat );
+      // JSONObject counter = incomingUtt.getJSONObject("category_counter");
+      // boolean is_locked = incomingUtt.getBoolean("is_locked");
+      //println("text :   " + text + "\ncat:   " + cat );
+      PShape shape = loadShape(shapeMapping.get(cat));
+      DisplayTD utt = new DisplayTD(text, cat, shape, true);
+      utts.add(utt);
       incomingText = text;
       mH.incoming = text;
       messageIn = true;
@@ -112,12 +127,12 @@ void buildUtts(int amount) {
       String utterance = row.getString("utterance");
       String category = row.getString("category").toLowerCase();
       printArray("shapeMapping  " + shapeMapping);
-      println("    shapeMapping.get(" + category + ")   "  + shapeMapping.get(category));
+      println("utt:   " + utterance + "   shapeMapping.get(" + category + "):"); 
+      println("\n" + shapeMapping.get(category));
       PShape shape = loadShape(shapeMapping.get(category));
-      DisplayTD utt = new DisplayTD(utterance, category, shape);
+      DisplayTD utt = new DisplayTD(utterance, category, shape, false);
       utts.add(utt);
     }
-   
 }
 
 // mock for incoming String messages. 
