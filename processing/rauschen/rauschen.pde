@@ -81,18 +81,16 @@ void draw() {
 }
 
 void oscEvent(OscMessage m) {
-  //print("### received an osc message.");
-  //print(" addrpattern: "+m.addrPattern());
-  //println(" typetag: "+m.typetag());
   if (m.checkAddrPattern("/display_input") == true) {
-      // println("\tINCOMING :" + m.arguments()[0]);
+      println("\tINCOMING :" + m.arguments()[0]);
       incomingUtt = parseJSONObject((String) m.arguments()[0]);
       String text = incomingUtt.getString("text");
       String cat = incomingUtt.getString("cat");
-      // JSONObject counter = incomingUtt.getJSONObject("category_counter");
+      JSONObject counter = incomingUtt.getJSONObject("category_counter");
       // boolean is_locked = incomingUtt.getBoolean("is_locked");
-      //println("text :   " + text + "\ncat:   " + cat );
+      println("counter: " + counter);
       PShape shape = loadShape(shapeMapping.get(cat));
+      shape.scale(counter.getInt(cat));
       DisplayTD utt = new DisplayTD(text, cat, shape, true);
       utts.add(utt);
       incomingText = text;

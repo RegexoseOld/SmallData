@@ -13,7 +13,7 @@ class MessageHighlight {
   PFont font;
   float tSize, tWidth, tHeight; // current Size of message
   boolean stopGrow;
-  int growMargin, alpha, col;
+  int growMargin, col;
 
    MessageHighlight(float m, float x1, float y1, float x2, float y2, PFont font) {
     mass = m;
@@ -67,7 +67,6 @@ class MessageHighlight {
       surfaces[i].endDraw();
       image(surfaces[i], positions[i].x, positions[i].y); 
     }
-  
   }
   
   void applyForce(PVector force) {
@@ -75,7 +74,6 @@ class MessageHighlight {
     //println("force: " + force + "   mass: " + mass + "  f:   " + f);
     acceleration.add(f); 
   }
-  
   
   void calculateTSize(float w, float h, String text2fit) {
     HashMap<String, Integer> tempDict = new HashMap<String, Integer>();
