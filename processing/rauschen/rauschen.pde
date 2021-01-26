@@ -1,6 +1,7 @@
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Map;
+import java.util.Iterator; 
 import oscP5.*;
 import netP5.*;
   
@@ -29,7 +30,7 @@ void setup(){
   messageFont = createFont(fontlist[39], 50, true);
   oscP5 = new OscP5(this, 5040); //Audience Port
   loc = new NetAddress("192.168.1.187", 5040); // send to self
-  buildUtts(40); //<>//
+  buildUtts(50); //<>//
   mH = new MessageHighlight(20, width/30, height/2, width *5/9, height/2,  messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
   margin1 = new Margin(mH.surf1.width, mH.surf1.height, 0.1);
   pickIncoming();
@@ -42,7 +43,6 @@ void draw() {
     background(222);
     messageIn = !messageIn;
   }
-  
   for (int i=0; i<utts.size(); i++) {
     DisplayTD utt = utts.get(i);
     // println("aktuelle utt:    " + utt.utt);
@@ -64,8 +64,6 @@ void draw() {
          PVector gravity = new PVector(0, 0.9 * mH.mass);
          mH.applyForce(gravity);
          mH.update();
-         // mH.displayRect(); 
-         // println("inside  margin:  " + mH.tWidth);
       }
   } 
   infoSurf.beginDraw();
@@ -78,26 +76,6 @@ void draw() {
   infoSurf.endDraw();
   image(infoSurf, 0, height-infoSurf.height);
   
-}
-
-void oscEvent(OscMessage m) {
-  if (m.checkAddrPattern("/display_input") == true) {
-      println("\tINCOMING :" + m.arguments()[0]);
-      incomingUtt = parseJSONObject((String) m.arguments()[0]);
-      String text = incomingUtt.getString("text");
-      String cat = incomingUtt.getString("cat");
-      JSONObject counter = incomingUtt.getJSONObject("category_counter");
-      // boolean is_locked = incomingUtt.getBoolean("is_locked");
-      println("counter: " + counter);
-      PShape shape = loadShape(shapeMapping.get(cat));
-      shape.scale(counter.getInt(cat));
-      DisplayTD utt = new DisplayTD(text, cat, shape, true);
-      utts.add(utt);
-      incomingText = text;
-      mH.incoming = text;
-      messageIn = true;
-  }
-  /* print the address pattern and the typetag of the received OscMessage */
 }
 
 void createScheduleTimer(final float ms) {
@@ -125,24 +103,11 @@ void buildUtts(int amount) {
       JSONObject row = TD.getJSONObject(str(index));
       String utterance = row.getString("utterance");
       String category = row.getString("category").toLowerCase();
-      printArray("shapeMapping  " + shapeMapping);
+      printArray("category  " + category);
       println("utt:   " + utterance + "   shapeMapping.get(" + category + "):"); 
       println("\n" + shapeMapping.get(category));
       PShape shape = loadShape(shapeMapping.get(category));
-      DisplayTD utt = new DisplayTD(utterance, category, shape, false);
+      DisplayTD utt = new DisplayTD(utterance, category, shape, 5, false);
       utts.add(utt);
     }
-}
-
-// mock for incoming String messages. 
-void pickIncoming() {
-  if (!messageLock) {
-  int index = int(random(TD.size()));
-  JSONObject row = TD.getJSONObject(str(index));
-  String utterance = row.getString("utterance");
-  incomingText = utterance;
-  mH.incoming = incomingText;
-  // println("new incoming: " + incomingText);
-  background(222);
-  }
 }

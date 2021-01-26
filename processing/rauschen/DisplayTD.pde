@@ -5,12 +5,14 @@ class DisplayTD {
   PShape shape;
   color shapeColor; 
   boolean isShape;
+  float shapeSize;
   
-  DisplayTD(String utterance, String category, PShape shape, boolean isShape) {
+  DisplayTD(String utterance, String category, PShape shape, float sSize, boolean isShape) {
     this.utt = utterance;
     this.cat = category.toLowerCase();
     this.isShape = isShape;
     this.shape = shape;
+    this.shapeSize = sSize;
     findColor(this.cat);
     this.x = int(random(width));
     this.y = int(random(height));
@@ -25,14 +27,16 @@ class DisplayTD {
     fill(int(random(240)), int(random(0, 80)));
     pushMatrix();
     rotate(this.angle);
-    textAlign(CENTER, CENTER);
-    textSize(random(40));
-    text(this.utt, this.x, this.y);
     if (this.isShape) {
       this.shape.disableStyle();
       fill(shapeColor);
-      float shapeSize = random(35);
-      shape(this.shape, this.x, this.y, shapeSize, shapeSize);
+      // float shapeSize = random(35);
+      shape(this.shape, this.x, this.y, this.shapeSize, this.shapeSize);
+    } else if (!this.isShape) {
+     
+      textAlign(CENTER, CENTER);
+      textSize(random(40));
+      text(this.utt, this.x, this.y);
     }
     moveText();
     popMatrix();
