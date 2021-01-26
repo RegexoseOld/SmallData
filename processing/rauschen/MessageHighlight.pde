@@ -7,13 +7,13 @@ class MessageHighlight {
   PGraphics[] surfaces = new PGraphics[2]; // arrays to iterate in displayText
   PVector[] positions = new PVector[2];
   PVector position1, position2, velocity, acceleration;
-  String incoming, related, cat;
+  String incoming, related;
   HashMap<String, Integer> utterDict = new HashMap<String, Integer>();
   float mass;  
   PFont font;
   float tSize, tWidth, tHeight; // current Size of message
   boolean stopGrow;
-  int growMargin;
+  int growMargin, alpha, col;
 
    MessageHighlight(float m, float x1, float y1, float x2, float y2, PFont font) {
     mass = m;
@@ -24,11 +24,11 @@ class MessageHighlight {
     buildSurfaces();
     growMargin = 200;
     textFont(font);
+    this.col = 200;
     this.tSize = 10.0;
     this.tWidth = 20.0;
     this.tHeight = 10.0;
     this.incoming = "";
-    this.cat = "";
     this.related = "";
     this.stopGrow = true;
   }
@@ -49,18 +49,18 @@ class MessageHighlight {
       calculateTSize(this.tWidth, this.tHeight, this.incoming);
     }
     for (int i=0; i<surfaces.length; i++) {
-      // println("i: " + i + " this.tSize: " + this.tSize + " utterdict:   " + utterDict);
+      // println("i: " + i + " this.tSize: " + this.tSize ;
       surfaces[i].beginDraw();
       surfaces[i].clear();
-      surfaces[i].fill(180);
-      surfaces[i].noStroke();
-      surfaces[i].rect(0, 0, this.tWidth, this.tHeight);
+      //surfaces[i].fill(180);
+      //surfaces[i].noStroke();
+      //surfaces[i].rect(0, 0, this.tWidth, this.tHeight);
       for (Map.Entry me : utterDict.entrySet()) {
         String bit = (String) me.getKey();
         int bitY = (int) me.getValue();
         // println("bit: " + bit + "  bitY: " + bitY + " this.tSize: " + this.tSize);
         surfaces[i].rectMode(CORNER);
-        surfaces[i].fill(10);
+        surfaces[i].fill(this.col);
         surfaces[i].textSize(this.tSize);
         surfaces[i].text(bit, 10 , bitY);
       }
@@ -113,7 +113,8 @@ class MessageHighlight {
     if (this.tWidth > this.surf1.width -50 && !stopGrow) {
       println("checkEdge:  " + this.tWidth);
       this.stopGrow = true;
-      createScheduleTimer(5000.0); // stops growing but displays for 5 more seconds
+      this.col = 15;
+      createScheduleTimer(3000.0); // stops growing but displays for 5 more seconds
       }
   }
   
@@ -122,6 +123,7 @@ class MessageHighlight {
     this.tWidth = 20.0;
     this.tHeight = 10.0;
     this.stopGrow = false;
+    this.col= 250;
     this.velocity.mult(0);
     this.acceleration.mult(0);
     // println("reset   velo:   " + this.velocity + "  acceleration:   " + this.acceleration);
@@ -167,18 +169,3 @@ class Margin {
     return drag;
   }
 }
-
-// alter Code ab Z. 90
-// int x = 0;
-// float tracking = 1.0; //space between letters ;
-// for (int i=0; i<text2fit.length(); i++) {
-//        textFont(this.font, tSize);
-//        char letter = text2fit.charAt(i);
-//        float letterwidth = textWidth(letter) + tracking;
-        
-//        if (x + letterwidth > w) {
-//          x = 0;
-//          y += spacing;
-//        } 
-//        x += letterwidth;
-//      }

@@ -33,7 +33,7 @@ void setup(){
   mH = new MessageHighlight(20, width/30, height/2, width *5/9, height/2,  messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
   margin1 = new Margin(mH.surf1.width, mH.surf1.height, 0.1);
   pickIncoming();
-  infoSurf = createGraphics(width, height/10);
+  infoSurf = createGraphics(width, height/15);
   frameRate(30);
 }
 
@@ -47,7 +47,7 @@ void draw() {
     DisplayTD utt = utts.get(i);
     // println("aktuelle utt:    " + utt.utt);
      utt.draw();
-    utt.matchInput(incomingText);
+     utt.matchInput(incomingText);
   }
   
   if (messageLock) {
@@ -73,7 +73,8 @@ void draw() {
   PFont font = createFont(fontlist[15], 22);
   infoSurf.textFont(font);
   infoSurf.fill(20);
-  infoSurf.text(incomingText, 0,0, infoSurf.width, infoSurf.height);
+  infoSurf.rectMode(CORNER);
+  infoSurf.text(incomingText, 0, infoSurf.height/2, infoSurf.width, infoSurf.height);
   infoSurf.endDraw();
   image(infoSurf, 0, height-infoSurf.height);
   

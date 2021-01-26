@@ -22,7 +22,7 @@ class DisplayTD {
   
   void draw() {
     textFont(this.font);
-    fill(int(random(240)), int(random(0, 125)));
+    fill(int(random(240)), int(random(0, 80)));
     pushMatrix();
     rotate(this.angle);
     textAlign(CENTER, CENTER);
