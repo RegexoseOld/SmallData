@@ -73,8 +73,8 @@ class SongServer:
         if self.song_machine.is_locked():
             return
         elif self.received_utts >= self.song_machine.parser.max_utterances:
-            end_message = "Von  {} moeglichen Meinungen sind abgegeben worden" \
-                .format(self.song_machine.parser.max_utterances)
+            end_message = "Von  {} moeglichen Meinungen sind {} abgegeben worden" \
+                .format(self.song_machine.parser.max_utterances, self.received_utts)
             self.end_of_song(end_message)
         else:
             print("utterances received: ", self.received_utts)
@@ -84,6 +84,7 @@ class SongServer:
             self.tonality.update_tonality(cat)
             current_part = self.beat_manager.current_part.name
             fb_note = self.song_machine.parser.song_parts[current_part].receipts["fb_note"]
+
             controllers = self.tonality.synth.ctrl_message
             self.send_quittung(fb_note, cat, controllers)
 
@@ -129,6 +130,7 @@ class SongServer:
             # print("next_part.note", next_part.note)
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 1.0))
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 0.0))
+            self.tonality.synth.reset_synth()
 
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
         # print('SongerServer. sending: ', message)

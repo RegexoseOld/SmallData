@@ -8,7 +8,7 @@
       "category": "praise",
       "note": 1,
       "receipts": {
-        "praise": 29,
+        "fb_note": 29,
         "insinuation": 30,
         "dissence": 31,
         "lecture": 32,
@@ -21,7 +21,7 @@
       "category": "dissence",
       "note": 2,
       "receipts": {
-        "praise": 29,
+        "fb_note": 29,
         "insinuation": 30,
         "dissence": 31,
         "lecture": 32,
@@ -34,7 +34,7 @@
       "category": "concession",
       "note": 3,
       "receipts": {
-        "praise": 29,
+        "fb_note": 29,
         "insinuation": 30,
         "dissence": 31,
         "lecture": 32,
@@ -47,7 +47,7 @@
       "category": "insinuation",
       "note": 4,
       "receipts": {
-        "praise": 29,
+        "fb_note": 29,
         "insinuation": 30,
         "dissence": 31,
         "lecture": 32,
@@ -60,7 +60,7 @@
       "category": "lecture",
       "note": 5,
       "receipts": {
-        "praise": 29,
+        "fb_note": 29,
         "insinuation": 30,
         "dissence": 31,
         "lecture": 32,

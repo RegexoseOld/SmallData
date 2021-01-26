@@ -1,7 +1,6 @@
 from collections import Counter
 import copy
 
-
 class Tonality:
     '''
     idea of tonality counter combined with rules for FX chains and Sample Triggering in
@@ -73,56 +72,43 @@ class Tonality:
         self.chain = self.chain_controls[self.FX_KEY]
         self.last_value = self.chain[2]
         self.ctrl_val = self.last_value + self.category_to_chain[cat][1]
-        self.synth.calculate_synth_message(cat, self.most_common, self.category_to_chain[cat][1])
+        self.synth.calculate_synth_message(self.most_common)
 
 
 class SynthFeedback:
     '''
     this calculates controller values for LIVE MIDI Slots with Synthesizers
     an incoming category defines the slot for the synth to be manipulated
-    every synth has 5 ccnr with standard values
+    every synth has 5 ccnr with standard value
     the values for each controller deviate from the last value according to the Tonality.ctrl_val
     '''
     tonality_counter = Counter()
-    synth_controls = {
-        # every control refers to a LIVE MIDI Track with a loaded Synth
-        # the Synth has a value for the ccnr (for Osculator) and a standard ctrl_value
-        # most synth makro controllers have values from 0-100, some -100-100 or 0.1 - 1.0
-        # ideally the values can be transformed by Osculators value mapping
-        # default values start at 0
-        'c0': [5, 20],
-        'c1': [10, 20],
-        'c2': [15, 20],
-        'c3': [20, 20],
-        'c4': [25, 20]
-    }
-    cat2synth = {
-        # 1st value points to the controller that is altered according to a incoming cat
-        # important to store the values of the different synths
-        'praise': ['c0', synth_controls],
-        'lecture': ['c1', synth_controls],
-        'insinuation': ['c2', synth_controls],
-        'dissence': ['c3', synth_controls],
-        'concession': ['c4', synth_controls]
-    }
+    category = 'reset'
+    synth_controls = {}
+    # every control refers to a LIVE MIDI Track with a loaded Synth
+    # the Synth has a value for the ccnr (for Osculator) and a standard ctrl_value
+    # most synth makro controllers have values from 0-100, some -100-100 or 0.1 - 1.0
+    # ideally the values can be transformed by Osculators value mapping
+    # default values start at 0
 
-    def __init__(self):
-        self.ctrl_message = [v[1] for v in self.synth_controls.values()]
+    cat2synth = {}
+    # 1st value points to the controller that is altered according to a incoming cat
+    # important to store the values of the different synths
 
-    def calculate_synth_message(self, cat, most_common, chnge_val):
-        findctrl, s_controls = self.cat2synth[most_common][0], copy.deepcopy(self.cat2synth[cat][1])
-        print('cat:  {}  most common {} ch val  {}'.format(cat, most_common, chnge_val))
 
-        for k, val in s_controls.items():
-            # i decide to change the cntrl of the current most_common
-            if k == findctrl and (val[1] >= chnge_val):
-                print('cat:  {}   k:  {}  val[1] {} most_common {}'.format(cat, k, val[1], most_common))
-                val[1] += chnge_val
+    def __init__(self, synth_fb):
+        self.cat2synth = synth_fb
+        self.synth_controls = copy.deepcopy(self.cat2synth[self.category])
+        self.ctrl_message = self.calculate_synth_message('praise')
 
-        self.cat2synth[cat][1] = s_controls
-        self.ctrl_message = [v[1] for v in s_controls.values()]
-        return self.ctrl_message
+    def calculate_synth_message(self, cat):
+        s_controls = self.cat2synth[cat]
+        for k,v in self.synth_controls.items():
+            if 0 <= v + s_controls[k] <= 127:
+                self.synth_controls[k] += s_controls[k]
+        # print("controller : ", self.synth_controls.values())
+        return self.synth_controls.values()
 
     def reset_synth(self):
-        for val in self.cat2synth.values():
-            val[1] = self.synth_controls
+        self.synth_controls = self.cat2synth[self.category]
+        # print("reset synth : ", self.synth_controls)

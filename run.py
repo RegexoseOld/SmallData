@@ -47,7 +47,9 @@ elif args.app == 'song':
     performer_client = udp_client.SimpleUDPClient(settings.ip, settings.PERFORMER_PORT)
 
     machine_instance = song_machine.create_instance(settings.song_path)
-    synth_feedback = SynthFeedback()
+    synth_fb = machine_instance.parser.data[machine_instance.parser.SYNTH_CC]
+
+    synth_feedback = SynthFeedback(synth_fb)
     tonality = Tonality(machine_instance.parser.categories, synth_feedback)
     beat_manager = BeatAdvanceManager(machine_instance.current_part)
 
