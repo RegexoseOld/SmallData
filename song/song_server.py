@@ -122,7 +122,9 @@ class SongServer:
                                            self.tonality.ctrl_val)
 
     def send_quittung(self, note, cat, controllers):
+        self.osculator_client.send_message('/quitt', (60, 1.0))
         self.osculator_client.send_message('/q_{}'.format(cat), (note, 1.0))
+        self.osculator_client.send_message('/quitt', (60, 0.0))
         self.osculator_client.send_message('/q_{}'.format(cat), (note, 0.0))
         self.osculator_client.send_message('/mid_{}'.format(cat), controllers)
 

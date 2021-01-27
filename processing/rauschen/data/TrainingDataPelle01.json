@@ -25,7 +25,7 @@
         "topic": "politics",
         "link": "https://www.spiegel.de/politik/ausland/parteitag-der-republikaner-donald-trump-startet-seine-comeback-show-a-a320da42-99a5-4545-8679-05481eb11498#kommentare",
         "utterance": "Ach kommen sie sie wissen schon das die meisten Studien nur die Meinung ihrer Auftraggeber spiegeln.",
-        "category": "lecture\n"
+        "category": "lecture"
     },
     "4": {
         "user": "Unknown",
@@ -87,7 +87,7 @@
         "user": "2010ff",
         "topic": "politics",
         "link": "https://www.tagesspiegel.de/gesellschaft/medien/diskussion-um-afd-talks-mdr-kuendigt-hoecke-interview-an/26121396.html#kommentare",
-        "utterance": "Was f\u00fcr ein Quatsch !\n",
+        "utterance": "Was f\u00fcr ein Quatsch !",
         "category": "dissence"
     },
     "13": {
@@ -423,7 +423,7 @@
         "user": "Rotfuchs18",
         "topic": "politics",
         "link": "https://www.tagesspiegel.de/wissen/coronavirus-in-deutschland-und-der-welt-eu-will-sich-corona-impfstoff-von-moderna-sichern/25560996.html#kommentare",
-        "utterance": "Aber Ablenkung, die K\u00f6nigsdisziplin von Herrn S\u00f6der.\n",
+        "utterance": "Aber Ablenkung, die K\u00f6nigsdisziplin von Herrn S\u00f6der.",
         "category": "insinuation"
     },
     "61": {
@@ -658,7 +658,7 @@
         "category": "lecture"
     },
     "94": {
-        "user": "\nMichael J\u00e4ger",
+        "user": "Michael J\u00e4ger",
         "topic": "politics",
         "link": "https://www.freitag.de/autoren/maxpieper/keine-zeit-fuer-eile#comments",
         "utterance": "Ich glaube, Sie haben recht.",
@@ -854,7 +854,7 @@
         "category": "dissence"
     },
     "122": {
-        "user": "\nerftstadtboy ",
+        "user": "erftstadtboy ",
         "topic": "politics",
         "link": "https://www.freitag.de/autoren/der-freitag/und-das-eis-schmilzt-doch#comments",
         "utterance": "meine informationen sind da anders",
@@ -1015,7 +1015,7 @@
         "category": "praise"
     },
     "145": {
-        "user": "\nsivispacemparabellum",
+        "user": "sivispacemparabellum",
         "topic": "Sports",
         "link": "https://www.kampfkunst-board.info/forum/showthread.php?190386-Want-To-Get-Better-At&s=2dbe7ddd22b71d7d054102db91182c52",
         "utterance": "Wirklich guter Beitrag. Entspricht meiner Erfahrung als Trainer. ",
@@ -1337,7 +1337,7 @@
         "category": "Praise"
     },
     "191": {
-        "user": "R.B.C.\n",
+        "user": "R.B.C.",
         "topic": "politics",
         "link": "https://www.zeit.de/wissen/gesundheit/2020-08/coronavirus-infektionszahlen-regeln-feiern-veranstaltungen-gruppen-massnahmen-ansteckung#comments",
         "utterance": "Es ist doch klar im Text erkl\u00e4rt, dass das gerade nicht der Fall ist. ",
@@ -1358,7 +1358,7 @@
         "category": "dissence"
     },
     "194": {
-        "user": "P_S\n",
+        "user": "P_S",
         "topic": "politics",
         "link": "https://www.zeit.de/wissen/gesundheit/2020-08/coronavirus-infektionszahlen-regeln-feiern-veranstaltungen-gruppen-massnahmen-ansteckung#comments",
         "utterance": "NEIN! Ist es eben nicht!",
@@ -1435,7 +1435,7 @@
         "category": "dissence"
     },
     "205": {
-        "user": "zipit\n",
+        "user": "zipit",
         "topic": "politics",
         "link": "https://www.zeit.de/wissen/gesundheit/2020-08/coronavirus-infektionszahlen-regeln-feiern-veranstaltungen-gruppen-massnahmen-ansteckung#comments",
         "utterance": "Naja, die Zahlen stimmen schon, auch ihr Link zeigt, dass in KW34 von 875.524 Getesteten 8.407 positiv getestet wurden",
@@ -1491,21 +1491,21 @@
         "category": "lecture"
     },
     "213": {
-        "user": "J\u00fcrgen Schwarz\n",
+        "user": "J\u00fcrgen Schwarz",
         "topic": "politics",
         "link": "https://www.zeit.de/wissen/gesundheit/2020-08/coronavirus-infektionszahlen-regeln-feiern-veranstaltungen-gruppen-massnahmen-ansteckung#comments",
         "utterance": "Danke f\u00fcr den Link. Sehr aufschlussreich.",
         "category": "praise"
     },
     "214": {
-        "user": "rednaxelar\n",
+        "user": "rednaxelar",
         "topic": "politics",
         "link": "https://www.zeit.de/wissen/gesundheit/2020-08/coronavirus-infektionszahlen-regeln-feiern-veranstaltungen-gruppen-massnahmen-ansteckung#comments",
         "utterance": "Warum kann man nicht einfach mal zugeben, dass man falsch gelesen hat?",
         "category": "dissence"
     },
     "215": {
-        "user": "Gero William\n",
+        "user": "Gero William",
         "topic": "politics",
         "link": "https://www.zeit.de/wissen/gesundheit/2020-08/coronavirus-infektionszahlen-regeln-feiern-veranstaltungen-gruppen-massnahmen-ansteckung#comments",
         "utterance": "Die Anzahl der falsch positiven Tests liegt bei ca. 1 %",
@@ -1526,7 +1526,7 @@
         "category": "insinuation"
     },
     "218": {
-        "user": "deBorn\n",
+        "user": "deBorn",
         "topic": "politics",
         "link": "https://www.zeit.de/wirtschaft/2020-08/corona-digitalisierung-umfrage-kpmg-unternehmen-homeoffice-arbeitsplatz?page=3#comments",
         "utterance": "Wir werden einen deutlichen Stellenabbauch erleben und entsprechend auch weniger B\u00fcrofl\u00e4che ben\u00f6tigen.",
@@ -1554,7 +1554,7 @@
         "category": "praise"
     },
     "222": {
-        "user": "\njkdberlin ",
+        "user": "jkdberlin ",
         "topic": "Sports",
         "link": "https://www.kampfkunst-board.info/forum/showthread.php?190148-UFC-Fight-Island",
         "utterance": "Beides f\u00fcr mich. Einerseits bei dem bisher bekannten Vorgehen sicher der stereotype Kapitalismus, andererseits aber auch Innovation und Problem-L\u00f6sungs-Gedanken.",
@@ -1568,28 +1568,28 @@
         "category": "concession"
     },
     "224": {
-        "user": "\nangHell",
+        "user": "angHell",
         "topic": "Sports",
         "link": "https://www.kampfkunst-board.info/forum/showthread.php?190148-UFC-Fight-Island",
         "utterance": "Ich denke sie haben schon ein ganz gutes Konzept. ",
         "category": "concession"
     },
     "225": {
-        "user": "\nmarq ",
+        "user": "marq ",
         "topic": "Sports",
         "link": "https://www.kampfkunst-board.info/forum/showthread.php?190148-UFC-Fight-Island",
         "utterance": "die meisten vertragsfighter der ufc verdienen weniger als das j\u00e4hrliche durchschnittseinkommen der us bev\u00f6lkerung.",
         "category": "insinuation"
     },
     "226": {
-        "user": "\nperiod ",
+        "user": "period ",
         "topic": "Sports",
         "link": "https://www.kampfkunst-board.info/forum/showthread.php?190148-UFC-Fight-Island&goto=nextoldest",
         "utterance": "Gegenprognose: die UFC w\u00e4chst weiter, auch wenns den kleineren Verb\u00e4nden vielleicht an den Kragen geht.",
         "category": "insinuation"
     },
     "227": {
-        "user": "\nperiod ",
+        "user": "period ",
         "topic": "Sports",
         "link": "https://www.kampfkunst-board.info/forum/showthread.php?190148-UFC-Fight-Island&goto=nextoldest",
         "utterance": "So gesehen - ja. Meine Prognose war ja auch prim\u00e4r auf Nationen ausgerichtet",
@@ -1607,7 +1607,7 @@
         "topic": "politics",
         "link": "https://www.faz.net/aktuell/politik/testkapazitaeten-spahns-zickzackkurs-bei-den-corona-tests-16920380-p2.html#lesermeinungen",
         "utterance": "Trial-and-error ist im Technikbereich bei komplexen Dingen \u00fcblich.",
-        "category": "lecture\n"
+        "category": "lecture"
     },
     "230": {
         "user": "Bernd Schneider ",
@@ -1858,7 +1858,7 @@
         "user": "Undine",
         "topic": "news",
         "link": "https://www.tagesspiegel.de/berlin/scharfe-kritik-an-innensenator-geisel-das-sind-die-reaktionen-auf-das-verbot-des-querdenker-protests/26129142.html#kommentare",
-        "utterance": "Wichtiger w\u00e4re es deshalb die Gesundheits\u00e4mter und Laborkapazit\u00e4ten auszubauen.\u00a0\n",
+        "utterance": "Wichtiger w\u00e4re es deshalb die Gesundheits\u00e4mter und Laborkapazit\u00e4ten auszubauen.\u00a0",
         "category": "lecture"
     },
     "266": {
@@ -1907,7 +1907,7 @@
         "user": "johanna",
         "topic": "politics",
         "link": "https://www.tagesspiegel.de/politik/der-beschluss-von-union-und-spd-zum-wahlrecht-so-macht-sich-der-bundestag-zur-lachnummer/26127910.html#kommentare",
-        "utterance": "Was die in meinen Augen sind, kann ich hier nicht schreiben, das verst\u00f6\u00dft gegen die Regeln.\nPfui!",
+        "utterance": "Was die in meinen Augen sind, kann ich hier nicht schreiben, das verst\u00f6\u00dft gegen die Regeln.Pfui!",
         "category": "dissence"
     },
     "273": {
@@ -1977,7 +1977,7 @@
         "user": "marq ",
         "topic": "Sports",
         "link": "https://www.kampfkunst-board.info/forum/showthread.php?190119-Connor-geht-in-Rente&goto=nextoldest",
-        "utterance": "flying uwe geht ein pers\u00f6nliches risiko ein, um sein gesch\u00e4ft auszubauen, dazu hilft ihm jeder klick und die erweiterung der zielgruppen...\n",
+        "utterance": "flying uwe geht ein pers\u00f6nliches risiko ein, um sein gesch\u00e4ft auszubauen, dazu hilft ihm jeder klick und die erweiterung der zielgruppen...",
         "category": "insinuation"
     },
     "283": {
@@ -2201,7 +2201,7 @@
         "user": "Gisela Fitz",
         "topic": "politics",
         "link": "https://deutsch.rt.com/meinung/105791-medien-als-waffe-und-heuchelei-westens-bei-regimewechsel-weissrussland/",
-        "utterance": "ann w\u00fcrde der weissrussischen Bev\u00f6lkerung unmissverst\u00e4ndlich klar -\u00a0\nwas es bedeutet\u00a0\u00a0von bunten Irren regiert zu werden",
+        "utterance": "ann w\u00fcrde der weissrussischen Bev\u00f6lkerung unmissverst\u00e4ndlich klar -\u00a0was es bedeutet\u00a0\u00a0von bunten Irren regiert zu werden",
         "category": "insinuation"
     },
     "315": {
@@ -3143,7 +3143,7 @@
         "category": "dissence"
     },
     "449": {
-        "user": "FreierRomanist\n",
+        "user": "FreierRomanist",
         "topic": "politics",
         "link": "https://www.zeit.de/gesellschaft/zeitgeschehen/2020-08/streit-um-corona-demo-polizei-legt-beschwerde-ein#comments",
         "utterance": "Sie haben anscheinend keine Ahnung vom Rechtsstaat.",
@@ -3171,7 +3171,7 @@
         "category": "insinuation"
     },
     "453": {
-        "user": "kreisender Kreisel\n",
+        "user": "kreisender Kreisel",
         "topic": "politics",
         "link": "https://www.zeit.de/gesellschaft/zeitgeschehen/2020-08/streit-um-corona-demo-polizei-legt-beschwerde-ein#comments",
         "utterance": "Der Begriff Sippenhaft sagt Ihnen etwas? ",
@@ -3185,7 +3185,7 @@
         "category": "insinuation"
     },
     "455": {
-        "user": "vasili\n",
+        "user": "vasili",
         "topic": "politics",
         "link": "https://www.zeit.de/gesellschaft/zeitgeschehen/2020-08/streit-um-corona-demo-polizei-legt-beschwerde-ein#comments",
         "utterance": "Normaler Vorgang in einer Demokratie. ",
@@ -3374,7 +3374,7 @@
         "category": "dissence"
     },
     "482": {
-        "user": "smartpatrol\n",
+        "user": "smartpatrol",
         "topic": "politics",
         "link": "https://www.zeit.de/gesellschaft/zeitgeschehen/2020-08/corona-demonstration-berlin-rechte-ausschreitungen-kommentar#comments",
         "utterance": "Das darf man auf keinen Fall kleinreden.",
@@ -3388,14 +3388,14 @@
         "category": "Praise"
     },
     "484": {
-        "user": "W.- K.\n",
+        "user": "W.- K.",
         "topic": "politics",
         "link": "https://www.zeit.de/gesellschaft/zeitgeschehen/2020-08/corona-demonstration-berlin-rechte-ausschreitungen-kommentar#comments",
         "utterance": "F\u00fcr die und diese F\u00e4lle gibt es den Artikel 18 im Grundgesetz.",
         "category": "lecture"
     },
     "485": {
-        "user": "heuscher\n",
+        "user": "heuscher",
         "topic": "politics",
         "link": "https://www.zeit.de/gesellschaft/zeitgeschehen/2020-08/corona-demonstration-berlin-rechte-ausschreitungen-kommentar#comments",
         "utterance": "Wie naiv gehts noch?",
