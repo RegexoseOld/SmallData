@@ -153,10 +153,12 @@ class SongServer:
                                           )
 
     def _send_init_to_display(self):
-        self.audience_client.send_message(settings.DISPLAY_INIT_ADDRESS,
-                                          pickle.dumps(self.song_machine.parser.categories, protocol=2)
-                                          )
-        self.audience_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
-                                          pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
-                                          )
+        category_dict = {idx: i for idx, i in enumerate(self.song_machine.parser.categories)}
+        data = {"max_utts": self.song_machine.parser.max_utterances,
+                "categories": category_dict}
+        data_init = json.dumps(data)
+        self.audience_client.send_message(settings.DISPLAY_INIT_ADDRESS, data_init)
+        # self.audience_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
+                                          # pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
+                                          # )
 

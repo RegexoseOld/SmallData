@@ -81,8 +81,9 @@ elif args.app == 'display':
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(display_server.init_main())
 elif args.app == 'interpreter':
-    from mocks import mock_interpreter_client
-    mock_interpreter_client.run_mock()
+    # from mocks import mock_interpreter_client
+    from mocks import mock_interpreter_keyboard
+    mock_interpreter_keyboard.run_mock()
 elif args.app == 'osculator':
     from mocks import beat_mock
     beat_mock.run_mock()

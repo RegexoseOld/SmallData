@@ -12,28 +12,37 @@ void oscEvent(OscMessage m) {
       PShape shape = loadShape(shapeMapping.get(cat));
       float shapeSize = float(counter.getInt(cat)) * 10;
       DisplayTD utt = new DisplayTD(text, cat, shape, shapeSize, true);
-      //utts.add(utt);
       updateUtts(utt);
       incomingText = text;
+      incomingCat = cat;
       mH.incoming = text;
+      uttCount += 1;
+      println("inc:  " + prgIncrement + "   uttcount:   " + uttCount);
       messageIn = true;
+  } else if (m.checkAddrPattern("/display_init") == true) {
+      println("\tINCOMING :" + m.arguments()[0]);
+      JSONObject data = parseJSONObject((String) m.arguments()[0]);
+      int max_utt = data.getInt("max_utts");
+      JSONObject cats = data.getJSONObject("categories");
+      printArray("max_utts:  " + max_utt);
+      maxUtts = max_utt;
+      prgIncrement = width/maxUtts;
   }
-  /* print the address pattern and the typetag of the received OscMessage */
 }
 
 void updateUtts(DisplayTD newUtt) {
-  // println("Utts before: " + utts.size());
+  // replace one utt with noShape with newUtt (hasShape)
   Iterator itr = utts.iterator();
   while (itr.hasNext()) {
     DisplayTD utt = (DisplayTD)itr.next();
     if (utt.isShape != true) itr.remove();
-    break;
+    break; // just remove one utt
   }
   utts.add(newUtt);
-  for (DisplayTD utt : utts) {
-    if (utt.isShape) {println("has shape: " + utt.utt); }
-    else {println("no shape;   " + utt.utt);}
-  }
+  //for (DisplayTD utt : utts) {
+  //  if (utt.isShape) {println("has shape: " + utt.utt); }
+  //  else {println("no shape;   " + utt.utt);}
+  //}
 
 } 
 

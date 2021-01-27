@@ -17,14 +17,17 @@ String[] fontlist;
 PFont messageFont;
 JSONObject TD; // TrainingData is stored here
 JSONObject incomingUtt; 
-String incomingText; // a mock for incoming OSC text
+String incomingText, incomingCat; // a mock for incoming OSC text
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
 boolean messageIn = false;
 StringDict shapeMapping = new StringDict(); // mapping to attribute categories to SVG filenames
 PGraphics infoSurf;
+int maxUtts = 1;
+float prgIncrement;
+int uttCount = 0; 
 
 void setup(){
-  size(1200, 900, P3D);
+  size(1500, 1200);
   TD = loadJSONObject("TrainingDataPelle01.json"); //<>//
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 50, true);
@@ -33,8 +36,8 @@ void setup(){
   buildUtts(50); //<>//
   mH = new MessageHighlight(20, width/30, height/2, width *5/9, height/2,  messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
   margin1 = new Margin(mH.surf1.width, mH.surf1.height, 0.1);
-  pickIncoming();
-  infoSurf = createGraphics(width, height/15);
+  pickIncoming(); // pick first utt
+  infoSurf = createGraphics(width, height/15); // todo make a progress bar for counted incoming Messages %  total Messages
   frameRate(30);
 }
 
@@ -68,11 +71,14 @@ void draw() {
   } 
   infoSurf.beginDraw();
   infoSurf.background(222);
-  PFont font = createFont(fontlist[15], 22);
+  PFont font = createFont(fontlist[25], 25);
   infoSurf.textFont(font);
   infoSurf.fill(20);
   infoSurf.rectMode(CORNER);
-  infoSurf.text(incomingText, 0, infoSurf.height/2, infoSurf.width, infoSurf.height);
+  // progress bar for remaining Timer
+  infoSurf.text(incomingText + "\t     " + incomingCat , 0, infoSurf.height/2, infoSurf.width, infoSurf.height);
+  fill(189, 10, 10, 150);
+  infoSurf.rect(0, 0, uttCount * prgIncrement, infoSurf.height/4);
   infoSurf.endDraw();
   image(infoSurf, 0, height-infoSurf.height);
   
@@ -103,9 +109,9 @@ void buildUtts(int amount) {
       JSONObject row = TD.getJSONObject(str(index));
       String utterance = row.getString("utterance");
       String category = row.getString("category").toLowerCase();
-      printArray("category  " + category);
-      println("utt:   " + utterance + "   shapeMapping.get(" + category + "):"); 
-      println("\n" + shapeMapping.get(category));
+      printArray("category  " + category + "  utt  " + utterance);
+      // println("utt:   " + utterance + "   shapeMapping.get(" + category + "):"); 
+      // println("\n" + shapeMapping.get(category));
       PShape shape = loadShape(shapeMapping.get(category));
       DisplayTD utt = new DisplayTD(utterance, category, shape, 5, false);
       utts.add(utt);
