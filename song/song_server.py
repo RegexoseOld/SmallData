@@ -68,6 +68,7 @@ class SongServer:
 
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_intro, 1.0))
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_intro, 0.0))
+        self.osculator_client.send_message('/mid_{}'.format('praise'), self.tonality.synth.ctrl_message)
         self._send_init_to_display()
 
     def interpreter_handler(self, _, content):
@@ -82,12 +83,17 @@ class SongServer:
             print("utterances received: ", self.received_utts)
             osc_map = pickle.loads(content)
             cat = osc_map['cat']
+            if cat == 'reset':
+                controllers = self.tonality.synth.calculate_synth_message(cat)
+                cat = self.tonality.most_common
+            else:
+                self.tonality.update_tonality(cat)
+                controllers = self.tonality.synth.ctrl_message
+
+            print("cat {}  controllers  {}".format(cat, controllers))
             self.send_fx()
-            self.tonality.update_tonality(cat)
             current_part = self.beat_manager.current_part.name
             fb_note = self.song_machine.parser.song_parts[current_part].receipts["fb_note"]
-
-            controllers = self.tonality.synth.ctrl_message
             self.send_quittung(fb_note, cat, controllers)
 
             if self.song_machine.update_part(cat):  # True if part is changed

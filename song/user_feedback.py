@@ -99,16 +99,24 @@ class SynthFeedback:
     def __init__(self, synth_fb):
         self.cat2synth = synth_fb
         self.synth_controls = copy.deepcopy(self.cat2synth[self.category])
-        self.ctrl_message = self.calculate_synth_message('praise')
+        self.ctrl_message = self.calculate_synth_message(self.category)
 
     def calculate_synth_message(self, cat):
-        s_controls = self.cat2synth[cat]
-        for k,v in self.synth_controls.items():
-            if 0 <= v + s_controls[k] <= 127:
-                self.synth_controls[k] += s_controls[k]
-        # print("controller : ", self.synth_controls.values())
-        return self.synth_controls.values()
+        # absolute values from cat2synth
+        controllers = list(self.cat2synth[cat].values())
+        print("controllers:  {}  most common {} ".format(controllers, cat))
+        self.ctrl_message = controllers
+        # for k,v in self.synth_controls.items():
+        #     if 0 <= v + s_controls[k] <= 127:
+        #         print("changed cc {} from {} to {} : ".format(k, v, v + s_controls[k]))
+        #         # v += s_controls[k]
+        #         self.synth_controls[k] = v + s_controls[k]
+        #     else:
+        #         print("not possible: value {} + change {} = {}".format(v, s_controls[k], v + s_controls[k]))
+        #
+        # print("synth_controls.values(): ", self.synth_controls.values())
+        return controllers
 
     def reset_synth(self):
-        self.synth_controls = self.cat2synth[self.category]
+        self.synth_controls = list(self.cat2synth[self.category].values())
         # print("reset synth : ", self.synth_controls)

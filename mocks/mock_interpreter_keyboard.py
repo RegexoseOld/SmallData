@@ -38,9 +38,12 @@ def run_mock():
     categories = list(machine.category_counter.keys())
 
     while True:
-        key = input('Biite cat auswaehlen (1-5)')
-        if key in ['1', '2', '3', '4', '5']:
-            cat = categories[int(key)-1]
+        key = input('Bitte cat auswaehlen (1-5)')
+        if key in ['1', '2', '3', '4', '5', 'r']:
+            if not key == 'r':
+                cat = categories[int(key)-1]
+            else:
+                cat = 'reset'
             print('sending ', cat)
             osc_dict = {'text': random.sample(texts, 1)[0],
                         'cat': cat,
