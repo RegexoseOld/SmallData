@@ -1,9 +1,17 @@
 import pickle
 import json
-import os
+import pyttsx3
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from config import settings
+
+
+def speak(words):
+    engine = pyttsx3.init()
+    engine.setProperty('rate', 20)
+    engine.say(words)
+    engine.startLoop(True)
+
 
 class BeatAdvanceManager:
     """ A simple state machine. Machine starts in 'normal' state. When the next part is changed,
@@ -81,8 +89,11 @@ class SongServer:
             self.end_of_song(end_message)
         else:
             print("utterances received: ", self.received_utts)
+
             osc_map = pickle.loads(content)
             cat = osc_map['cat']
+            utt = osc_map['text']
+            speak(utt)
             if cat == 'reset':
                 controllers = self.tonality.synth.calculate_synth_message(cat)
                 cat = self.tonality.most_common
