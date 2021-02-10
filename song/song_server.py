@@ -9,6 +9,7 @@ from config import settings
 def speak(words):
     engine = pyttsx3.init()
     engine.setProperty('rate', 20)
+    engine.setProperty('volume', 0.1)
     engine.say(words)
     engine.startLoop(True)
 
