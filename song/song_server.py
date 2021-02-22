@@ -3,7 +3,9 @@ import json
 import pyttsx3
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
+from timer import RepeatTimer
 from config import settings
+
 
 
 def speak(words):
@@ -64,6 +66,8 @@ class SongServer:
         self.song_machine = machine
         self.beat_manager = beat_manager
         self.tonality = tonality
+        self.timer = RepeatTimer(0.2, self.fade, args=(10, 0.1, ))
+        self.timer.start()
 
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
@@ -104,6 +108,7 @@ class SongServer:
                 controllers = self.tonality.synth.ctrl_message
 
             # print("cat {}  controllers  {}".format(cat, controllers))
+
             self.send_fx()
             current_part = self.beat_manager.current_part.name
             fb_note = self.song_machine.parser.song_parts[current_part].receipts["fb_note"]
@@ -133,6 +138,11 @@ class SongServer:
                     and self.song_machine.is_locked():
                 self.song_machine.release_lock()
                 self._send_partinfo_to_displays()
+
+    def fade(self, val, increment):
+        val -= increment
+        self.send_fx()
+
 
     def send_fx(self):
         print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], self.tonality.ctrl_val))
