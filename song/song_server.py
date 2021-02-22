@@ -83,6 +83,7 @@ class SongServer:
     def interpreter_handler(self, _, content):
 
         if self.song_machine.is_locked():
+            print("machine locked")
             return
         elif self.received_utts >= self.song_machine.parser.max_utterances:
             end_message = "Von  {} moeglichen Meinungen sind {} abgegeben worden" \
@@ -102,7 +103,7 @@ class SongServer:
                 self.tonality.update_tonality(cat)
                 controllers = self.tonality.synth.ctrl_message
 
-            print("cat {}  controllers  {}".format(cat, controllers))
+            # print("cat {}  controllers  {}".format(cat, controllers))
             self.send_fx()
             current_part = self.beat_manager.current_part.name
             fb_note = self.song_machine.parser.song_parts[current_part].receipts["fb_note"]
@@ -134,7 +135,7 @@ class SongServer:
                 self._send_partinfo_to_displays()
 
     def send_fx(self):
-        # print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], self.tonality.ctrl_val ))
+        print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], self.tonality.ctrl_val))
         self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain[0])
         self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.chain[1]),
                                            self.tonality.ctrl_val)
