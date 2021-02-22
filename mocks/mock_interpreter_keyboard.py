@@ -38,13 +38,21 @@ def run_mock():
     categories = list(machine.category_counter.keys())
 
     while True:
-        osc_dict = {'text': random.sample(texts, 1)[0],
-                    'cat': random.sample(categories, 1)[0],
-                    }
-        osc_map = pickle.dumps(osc_dict)
-        song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
-        time.sleep(random.uniform(0.7, 5.0))
-        
+        key = input('Bitte cat auswaehlen (1-5)')
+        if key in ['1', '2', '3', '4', '5', 'r']:
+            if not key == 'r':
+                cat = categories[int(key)-1]
+            else:
+                cat = 'reset'
+            print('sending ', cat)
+            osc_dict = {'text': random.sample(texts, 1)[0],
+                        'cat': cat,
+                        }
+            osc_map = pickle.dumps(osc_dict)
+            song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
+        else:
+            print('wrong key: ', key)
+
 
 if __name__ == "__main__":
     run_mock()

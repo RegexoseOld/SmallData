@@ -1,5 +1,5 @@
 {
-  "max_num_utterances": 50,
+  "max_num_utterances": 500,
   "first_part" : "sei auf der Hut",
   "categories": ["praise", "insinuation", "dissence",  "lecture", "concession"],
   "parts": [
@@ -8,66 +8,91 @@
       "category": "dissence",
       "note": 2,
       "receipts": {
-        "praise": 29,
-        "insinuation": 30,
-        "dissence": 33,
-        "lecture": 29,
-        "concession": 30
+        "fb_note": 29
       },
-      "limit": 5
+      "limit": 1
     },
     {
       "name": "er will es verstehen?",
       "category": "lecture",
       "note": 3,
       "receipts": {
-        "praise": 32,
-        "insinuation": 31,
-        "dissence": 29,
-        "lecture": 30,
-        "concession": 31
+         "fb_note": 30
       },
-      "limit": 5
+      "limit": 1
     },
     {
       "name": "du bist jetzt mal ruhig",
       "category": "praise",
       "note": 4,
       "receipts": {
-        "praise": 30,
-        "insinuation": 32,
-        "dissence": 31,
-        "lecture": 31,
-        "concession": 32
+        "fb_note": 31
       },
-      "limit": 5
+      "limit": 1
     },
     {
       "name": "gute tasse tee",
       "category": "insinuation",
       "note": 5,
       "receipts": {
-        "praise": 31,
-        "insinuation": 29,
-        "dissence": 30,
-        "lecture": 32,
-        "concession": 29
+       "fb_note": 32
       },
-      "limit": 5
+      "limit": 1
     },
     {
       "name": "hervorzustechen",
       "category": "concession",
       "note": 6,
       "receipts": {
-        "praise": 33,
-        "insinuation": 34,
-        "dissence": 32,
-        "lecture": 33,
-        "concession": 29
+        "fb_note": 33
       },
-      "limit": 5
+      "limit": 1
     }
-  ]
+  ],
+  "synth_fb":
+  {
+    "reset": {
+        "5": 40,
+        "10": 40,
+        "15": 40,
+        "20" : 30,
+        "25": 30
+      },
+    "insinuation": {
+        "5": 95,
+        "10": 120,
+        "15": 100,
+        "20": 35,
+        "25": 80
+      } ,
+    "dissence": {
+        "5": 95,
+        "10": 110,
+        "15": 100,
+        "20": 80,
+        "25": 80
+      },
+    "praise": {
+        "5": 25,
+        "10": 100,
+        "15": 72,
+        "20": 15,
+        "25": 8
+      },
+    "lecture": {
+        "5": 20,
+        "10": 100,
+        "15": 75,
+        "20": 50,
+        "25": 50
+      },
+    "concession": {
+        "5": 20,
+        "10": 66,
+        "15": 99,
+        "20": 5,
+        "25": 12
+      }
+  }
 }
 
