@@ -35,13 +35,14 @@ void setup(){
   loc = new NetAddress("192.168.1.187", 5040); // send to self
   buildUtts(50); //<>//
   mH = new MessageHighlight(20, width/30, height/2, width *5/9, height/2,  messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
-  margin1 = new Margin(mH.surf1.width, mH.surf1.height, 0.1);
+  margin1 = new Margin(mH.surf1.width, mH.surf1.height, 0.05);
   pickIncoming(); // pick first utt
   infoSurf = createGraphics(width, height/15); // todo make a progress bar for counted incoming Messages %  total Messages
   frameRate(30);
 }
 
 void draw() {
+  if (frameCount%50 == 0) {pickIncoming();}
   if (messageIn) {
     background(222);
     messageIn = !messageIn;
@@ -89,7 +90,7 @@ void createScheduleTimer(final float ms) {
   t.schedule(new TimerTask() {
     public void run() {
       messageLock = false;
-      // pickIncoming();
+      pickIncoming();
       println("   dong   " + nf(ms, 0, 2));
     }
   }

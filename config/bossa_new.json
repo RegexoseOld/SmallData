@@ -1,5 +1,5 @@
 {
-  "max_num_utterances": 100,
+  "max_num_utterances": 500,
   "first_part" : "sei auf der Hut",
   "categories": ["praise", "insinuation", "dissence",  "lecture", "concession"],
   "parts": [
