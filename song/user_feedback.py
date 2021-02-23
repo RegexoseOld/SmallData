@@ -19,8 +19,8 @@ class Tonality:
         'praise': ['Delay', 65, 5],
         'lecture': ['Vocoder', 95, 8],
         'insinuation': ['FreqShift', 65, -7],
-        'dissence': ['Distortion', 25, -5],
-        'concession': ['Clean',65,  2]
+        'dissence': ['Distortion', 60, -5],
+        'concession': ['Tremolo',105,  2]
     }
     chain_controls = {
         # every chain refers to a LIVE FX Bus  with a Audio Effekt Rack
@@ -28,9 +28,10 @@ class Tonality:
         # manipulated
         'FreqShift': [15, 10, 65],
         'Vocoder': [32, 15, 95],
-        'Distortion': [60, 20, 25],
+        'Distortion': [60, 20, 60],
         'Delay': [90, 25, 65],
-        'Clean': [115, 0, 0]
+        'Tremolo': [110, 5, 105],
+        'Clean': [120, 0, 0]
     }
 
     def __init__(self, categories, synth):
