@@ -3,7 +3,8 @@ import json
 import pyttsx3
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
-from timer import RepeatTimer
+from song.timer import RepeatTimer
+import threading
 from config import settings
 
 
@@ -57,6 +58,9 @@ class BeatAdvanceManager:
 
 class SongServer:
     received_utts = 0
+    timer = None
+    timer_lock = False
+    val = 0
 
     def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager,
                  tonality):
@@ -66,8 +70,6 @@ class SongServer:
         self.song_machine = machine
         self.beat_manager = beat_manager
         self.tonality = tonality
-        self.timer = RepeatTimer(0.2, self.fade, args=(10, 0.1, ))
-        self.timer.start()
 
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
@@ -85,7 +87,7 @@ class SongServer:
         self._send_init_to_display()
 
     def interpreter_handler(self, _, content):
-
+        self.received_utts += 1
         if self.song_machine.is_locked():
             print("machine locked")
             return
@@ -108,8 +110,8 @@ class SongServer:
                 controllers = self.tonality.synth.ctrl_message
 
             # print("cat {}  controllers  {}".format(cat, controllers))
-
-            self.send_fx()
+            self.val = self.tonality.chain[2]
+            self.send_fx(self.val)
             current_part = self.beat_manager.current_part.name
             fb_note = self.song_machine.parser.song_parts[current_part].receipts["fb_note"]
             self.send_quittung(fb_note, cat, controllers)
@@ -118,7 +120,7 @@ class SongServer:
                 self.beat_manager.update_next_part(self.song_machine.current_part)
 
             self._send_utterance_to_audience(osc_map)
-        self.received_utts += 1
+
 
     def end_of_song(self, end_message):
         input_dict = {'text': end_message,
@@ -140,15 +142,29 @@ class SongServer:
                 self._send_partinfo_to_displays()
 
     def fade(self, val, increment):
-        val -= increment
-        self.send_fx()
+        # print("increment", abs(val/increment))
+        if self.val >= 0:
+            self.val -= abs(val/increment)
+            self.send_fx(self.val)
+        else:
+            self.timer.cancel()
+            self.timer_lock = False
+            print("fade lock?  ", self.timer_lock)
+            print("closing Thread", threading.enumerate())
 
 
-    def send_fx(self):
-        print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], self.tonality.ctrl_val))
+
+    def send_fx(self, val):
+        print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], val))
         self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain[0])
         self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.chain[1]),
-                                           self.tonality.ctrl_val)
+                                           val)
+        print("send_fx lock?  ", self.timer_lock)
+        if not self.timer_lock:
+            print("new thread! ", threading.enumerate())
+            self.timer = RepeatTimer(0.5, self.fade, args=(val, 20,))
+            self.timer.start()
+            self.timer_lock = True
 
     def send_quittung(self, note, cat, controllers):
         self.osculator_client.send_message('/quitt', (60, 1.0))

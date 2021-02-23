@@ -12,7 +12,7 @@ class Tonality:
 
     chain_duration = 5  # specifies how many utterances are needed to change the tonality
     tonality_lock = False
-    min_utts = 5
+    min_utts = 1
 
     category_to_chain = {
         # every category points to a FX Chain, init value and a increment value
@@ -38,7 +38,7 @@ class Tonality:
         self.synth = synth
         self.FX_KEY = 'Clean'
         self.chain = self.chain_controls[self.FX_KEY]
-        self.ctrl_val = 0 # the value being sent with SongServer.send_fx is calculated with calculate_rack_values
+        self.ctrl_val = 10 # the value being sent with SongServer.send_fx is calculated with calculate_rack_values
         self.last_cats = []
         self.last_value = 0
         self.most_common = 'concession'
@@ -82,8 +82,8 @@ class Tonality:
         self.ctrl_val = self.last_value + self.category_to_chain[cat][2]  # make new actual ctrl_value
         self.chain_controls[self.FX_KEY][2] = self.ctrl_val   # update chain_controls
         self.chain = self.chain_controls[self.FX_KEY] # self.chain ist aktuelle chain für fx_send
-        print("chain: " , self.chain)
-        print('actueller wert {}  last value {}  most common {}'.format(self.ctrl_val, self.last_value, self.most_common))
+        # print("chain: " , self.chain)
+        # print('actueller wert {}  last value {}  most common {}'.format(self.ctrl_val, self.last_value, self.most_common))
         self.synth.calculate_synth_message(self.most_common) # update Synth_controls
 
     def reset_tonality(self):

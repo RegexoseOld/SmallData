@@ -15,5 +15,5 @@ def f(msg):
     print('val', val)
 
 
-timer = RepeatTimer(0.5, f, args=(val, ))
-timer.start()
+# timer = RepeatTimer(0.5, f, args=(val, ))
+# timer.start()
