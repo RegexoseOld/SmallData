@@ -9,10 +9,12 @@ from config import settings
 
 
 
-def speak(words):
+def speak(words, voice_id):
     engine = pyttsx3.init()
+    sound = engine.getProperty('voices')
     engine.setProperty('rate', 20)
     engine.setProperty('volume', 0.1)
+    engine.setProperty('voice', sound[voice_id % len(sound)].id)
     engine.say(words)
     engine.startLoop(True)
 
@@ -101,7 +103,7 @@ class SongServer:
             osc_map = pickle.loads(content)
             cat = osc_map['cat']
             utt = osc_map['text']
-            speak(utt)
+            speak(utt, self.received_utts)
             if cat == 'reset':
                 controllers = self.tonality.synth.calculate_synth_message(cat)
                 cat = self.tonality.most_common
@@ -149,20 +151,17 @@ class SongServer:
         else:
             self.timer.cancel()
             self.timer_lock = False
-            print("fade lock?  ", self.timer_lock)
             print("closing Thread", threading.enumerate())
 
 
 
     def send_fx(self, val):
-        print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], val))
+        # print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], val))
         self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain[0])
         self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.chain[1]),
                                            val)
-        print("send_fx lock?  ", self.timer_lock)
         if not self.timer_lock:
-            print("new thread! ", threading.enumerate())
-            self.timer = RepeatTimer(0.5, self.fade, args=(val, 20,))
+            self.timer = RepeatTimer(0.5, self.fade, args=(val, 10,))
             self.timer.start()
             self.timer_lock = True
 
