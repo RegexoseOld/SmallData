@@ -9,12 +9,10 @@ from config import settings
 
 
 
-def speak(words, voice_id):
+def speak(words):
     engine = pyttsx3.init()
-    sound = engine.getProperty('voices')
     engine.setProperty('rate', 20)
-    engine.setProperty('volume', 0.1)
-    engine.setProperty('voice', sound[voice_id % len(sound)].id)
+    engine.setProperty('volume', 0.2)
     engine.say(words)
     engine.startLoop(True)
 
@@ -103,7 +101,7 @@ class SongServer:
             osc_map = pickle.loads(content)
             cat = osc_map['cat']
             utt = osc_map['text']
-            speak(utt, self.received_utts)
+            speak(utt)
             if cat == 'reset':
                 controllers = self.tonality.synth.calculate_synth_message(cat)
                 cat = self.tonality.most_common
