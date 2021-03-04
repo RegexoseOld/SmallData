@@ -35,7 +35,9 @@ class MessageHighlight {
   
   void buildSurfaces() {
     surf1 = createGraphics(width *3/7, height/3);
+    surf1.smooth();
     surf2 = createGraphics(width *3/7, height/3);
+    surf2.smooth();
     surf3 = createGraphics(width/5, height/5);
     surfaces[0] = surf1;
     surfaces[1] = surf2;
@@ -60,7 +62,7 @@ class MessageHighlight {
         int bitY = (int) me.getValue();
         // println("bit: " + bit + "  bitY: " + bitY + " this.tSize: " + this.tSize);
         surfaces[i].rectMode(CORNER);
-        surfaces[i].fill(this.col);
+        surfaces[i].fill(this.col, 150);
         surfaces[i].textSize(this.tSize);
         surfaces[i].text(bit, 10 , bitY);
       }
@@ -109,7 +111,7 @@ class MessageHighlight {
   
   void checkEdge() {
     if (this.tWidth > this.surf1.width -50 && !stopGrow) {
-      println("checkEdge:  " + this.tWidth);
+      // println("checkEdge:  " + this.tWidth);
       this.stopGrow = true;
       this.col = 15;
       createScheduleTimer(3000.0); // stops growing but displays for 5 more seconds

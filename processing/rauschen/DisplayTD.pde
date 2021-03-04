@@ -6,7 +6,7 @@ class DisplayTD {
   color shapeColor; 
   boolean isShape;
   float shapeSize;
-  
+
   DisplayTD(String utterance, String category, PShape shape, float sSize, boolean isShape) {
     this.utt = utterance;
     this.cat = category.toLowerCase();
@@ -21,7 +21,7 @@ class DisplayTD {
     this.fontName = fontlist[int(random(fontlist.length))];
     this.font = createFont(this.fontName, font_size, true);
   }
-  
+
   void draw() {
     textFont(this.font);
     fill(int(random(240)), int(random(0, 80)));
@@ -33,7 +33,6 @@ class DisplayTD {
       // float shapeSize = random(35);
       shape(this.shape, this.x, this.y, this.shapeSize, this.shapeSize);
     } else if (!this.isShape) {
-     
       textAlign(CENTER, CENTER);
       textSize(random(40));
       text(this.utt, this.x, this.y);
@@ -41,8 +40,8 @@ class DisplayTD {
     moveText();
     popMatrix();
   }
-  
-  void moveText(){
+
+  void moveText() {
     if (this.x < width && this.y < height) {
       this.x +=10;
       this.y +=10;
@@ -52,30 +51,34 @@ class DisplayTD {
     }
     this.angle+=1;
   }
-  
+
   void matchInput(String incoming) {
-    
-      if(this.utt.equals(incoming) && !messageLock) {
-        messageLock = true;
-        mH.reset();
-        mH.related = this.utt; 
-        println("matched!  " + incoming + "    with   " + this.utt);
-        // pMillis = millis();
-      }
-  }
-  
-  void findColor(String cat) {
-    switch(cat) {
-      case "praise" : shapeColor = color(171, 138, 132, 175);
-      break;
-      case "dissence" : shapeColor = color(181, 201, 187, 125);
-      break;
-      case "insinuation" : shapeColor = color(120, 145, 148, 125);
-      break;
-      case "lecture" : shapeColor = color(109, 133, 124, 125);
-      break;
-      case "concession" : shapeColor = color(198, 199, 177, 180);
+
+    if (this.utt.equals(incoming) && !messageLock) {
+      messageLock = true;
+      mH.reset();
+      mH.related = this.utt; 
+      println("matched!  " + incoming + "    with   " + this.utt);
+      // pMillis = millis();
     }
   }
 
+  void findColor(String cat) {
+    switch(cat) {
+    case "praise" : 
+      shapeColor = color(171, 138, 132, 175);
+      break;
+    case "dissence" : 
+      shapeColor = color(181, 201, 187, 125);
+      break;
+    case "insinuation" : 
+      shapeColor = color(120, 145, 148, 125);
+      break;
+    case "lecture" : 
+      shapeColor = color(109, 133, 124, 125);
+      break;
+    case "concession" : 
+      shapeColor = color(198, 199, 177, 180);
+    }
+  }
 }

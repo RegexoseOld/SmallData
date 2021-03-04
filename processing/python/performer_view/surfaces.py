@@ -66,7 +66,7 @@ class Parts:
         with self.surface.beginDraw():
             self.surface.background(222)
             self.surface.textFont(font)
-            self.surface.textSize(12)
+            self.surface.textSize(25)
             self.surface.fill(0)
             self.surface.textAlign(CENTER)
             self.surface.text("current part:\n" + current, self.surface.width/2, self.surface.height/4)

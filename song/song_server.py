@@ -1,6 +1,7 @@
 import pickle
 import json
 import pyttsx3
+from song.tts import TTSThread, Voice
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from song.timer import RepeatTimer
@@ -8,14 +9,12 @@ import threading
 from config import settings
 
 
-
 def speak(words):
     engine = pyttsx3.init()
-    engine.setProperty('rate', 20)
-    engine.setProperty('volume', 0.2)
+    volume = engine.getProperty('volume')
+    engine.setProperty('volume', volume / 5)
     engine.say(words)
     engine.startLoop(True)
-
 
 class BeatAdvanceManager:
     """ A simple state machine. Machine starts in 'normal' state. When the next part is changed,
@@ -61,6 +60,7 @@ class SongServer:
     timer = None
     timer_lock = False
     val = 0
+    # voice = Voice()
 
     def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager,
                  tonality):
@@ -149,9 +149,7 @@ class SongServer:
         else:
             self.timer.cancel()
             self.timer_lock = False
-            print("closing Thread", threading.enumerate())
-
-
+            print("closing fader Thread", threading.enumerate())
 
     def send_fx(self, val):
         # print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], val))

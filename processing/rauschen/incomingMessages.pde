@@ -17,16 +17,17 @@ void oscEvent(OscMessage m) {
       incomingCat = cat;
       mH.incoming = text;
       uttCount += 1;
-      println("inc:  " + prgIncrement + "   uttcount:   " + uttCount);
+      println("increment:  " + prgIncrement + "   uttcount:   " + uttCount);
       messageIn = true;
   } else if (m.checkAddrPattern("/display_init") == true) {
       println("\tINCOMING :" + m.arguments()[0]);
       JSONObject data = parseJSONObject((String) m.arguments()[0]);
       int max_utt = data.getInt("max_utts");
       JSONObject cats = data.getJSONObject("categories");
-      printArray("max_utts:  " + max_utt);
+      // printArray("max_utts:  " + max_utt);
       maxUtts = max_utt;
       prgIncrement = width/maxUtts;
+      println("increment:  " + prgIncrement);
   }
 }
 

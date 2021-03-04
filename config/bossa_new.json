@@ -10,7 +10,7 @@
       "receipts": {
         "fb_note": 29
       },
-      "limit": 1
+      "limit": 5
     },
     {
       "name": "er will es verstehen?",
@@ -19,7 +19,7 @@
       "receipts": {
          "fb_note": 30
       },
-      "limit": 1
+      "limit": 5
     },
     {
       "name": "du bist jetzt mal ruhig",
@@ -28,7 +28,7 @@
       "receipts": {
         "fb_note": 31
       },
-      "limit": 1
+      "limit": 5
     },
     {
       "name": "gute tasse tee",
@@ -37,7 +37,7 @@
       "receipts": {
        "fb_note": 32
       },
-      "limit": 1
+      "limit": 5
     },
     {
       "name": "hervorzustechen",
@@ -46,7 +46,7 @@
       "receipts": {
         "fb_note": 33
       },
-      "limit": 1
+      "limit": 5
     }
   ],
   "synth_fb":

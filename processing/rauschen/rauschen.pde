@@ -38,11 +38,12 @@ void setup(){
   margin1 = new Margin(mH.surf1.width, mH.surf1.height, 0.05);
   pickIncoming(); // pick first utt
   infoSurf = createGraphics(width, height/15); // todo make a progress bar for counted incoming Messages %  total Messages
-  frameRate(30);
+  prgIncrement = 1.2;
+  frameRate(20);
 }
 
 void draw() {
-  if (frameCount%50 == 0) {pickIncoming();}
+  // if (frameCount%40 == 0) {pickIncoming();} automatische messages werden ausgesucht
   if (messageIn) {
     background(222);
     messageIn = !messageIn;
@@ -72,12 +73,12 @@ void draw() {
   } 
   infoSurf.beginDraw();
   infoSurf.background(222);
-  PFont font = createFont(fontlist[25], 25);
+  PFont font = createFont(fontlist[25], 20, true);
   infoSurf.textFont(font);
-  infoSurf.fill(20);
+  infoSurf.fill(20, 200);
   infoSurf.rectMode(CORNER);
   // progress bar for remaining Timer
-  infoSurf.text(incomingText + "\t     " + incomingCat , 0, infoSurf.height/2, infoSurf.width, infoSurf.height);
+  infoSurf.text(incomingText + "\t     " + incomingCat , 0, infoSurf.height/4, infoSurf.width, infoSurf.height);
   fill(189, 10, 10, 150);
   infoSurf.rect(0, 0, uttCount * prgIncrement, infoSurf.height/4);
   infoSurf.endDraw();
@@ -90,8 +91,8 @@ void createScheduleTimer(final float ms) {
   t.schedule(new TimerTask() {
     public void run() {
       messageLock = false;
-      pickIncoming();
-      println("   dong   " + nf(ms, 0, 2));
+      // pickIncoming();
+      // println("   dong   " + nf(ms, 0, 2));
     }
   }
   , (long) (ms));
@@ -110,7 +111,7 @@ void buildUtts(int amount) {
       JSONObject row = TD.getJSONObject(str(index));
       String utterance = row.getString("utterance");
       String category = row.getString("category").toLowerCase();
-      printArray("category  " + category + "  utt  " + utterance);
+      // printArray("category  " + category + "  utt  " + utterance);
       // println("utt:   " + utterance + "   shapeMapping.get(" + category + "):"); 
       // println("\n" + shapeMapping.get(category));
       PShape shape = loadShape(shapeMapping.get(category));

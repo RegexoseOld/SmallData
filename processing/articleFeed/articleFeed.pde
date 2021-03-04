@@ -11,7 +11,7 @@ int i;
 
 
 void setup() {
-  size(1200, 900);
+  size(900, 400);
   fontlist =  PFont.list();
   font = createFont(fontlist[50], 20);
   article = new StringList();
@@ -36,7 +36,7 @@ void draw() {
     textFont(font, 25);
     textAlign(LEFT, TOP);
     fill(0, 120);
-    text(line, 20, height/2, width -20, height/3);
+    text(line, 20, height/4, width -20, height/3);
     i++;
   }
 }
