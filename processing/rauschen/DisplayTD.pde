@@ -1,21 +1,24 @@
 class DisplayTD {
   PFont font;
-  int x, y, angle, font_size;
+  int font_size, index;
+  float x, y, sX, sY, angle;
   String utt, cat, fontName;
   PShape shape;
+  RShape area;
   color shapeColor; 
-  boolean isShape;
+  boolean isShape, matched;
   float shapeSize;
 
-  DisplayTD(String utterance, String category, PShape shape, float sSize, boolean isShape) {
+  DisplayTD(int index, String utterance, String category, PShape shape, float sSize, boolean isShape) {
+    this.index = index;
     this.utt = utterance;
     this.cat = category.toLowerCase();
     this.isShape = isShape;
+    this.matched = false; // should be checked only once between to incoming messages: line 70
     this.shape = shape;
     this.shapeSize = sSize;
-    findColor(this.cat);
-    this.x = int(random(width));
-    this.y = int(random(height));
+    attributeUtt(this.cat);
+    findArea();
     this.font_size = 25;
     this.angle = int(random(TWO_PI));
     this.fontName = fontlist[int(random(fontlist.length))];
@@ -24,46 +27,55 @@ class DisplayTD {
 
   void draw() {
     textFont(this.font);
-    fill(int(random(240)), int(random(0, 80)));
+    fill(this.shapeColor, int(random(0, 80)));
     pushMatrix();
+    translate(this.x, this.y);
     rotate(this.angle);
     if (this.isShape) {
       this.shape.disableStyle();
       fill(shapeColor);
-      // float shapeSize = random(35);
-      shape(this.shape, this.x, this.y, this.shapeSize, this.shapeSize);
+      shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
     } else if (!this.isShape) {
       textAlign(CENTER, CENTER);
       textSize(random(40));
-      text(this.utt, this.x, this.y);
+      text(this.utt, 0, 0);
     }
     moveText();
     popMatrix();
   }
 
+  void findArea() {
+    for (Area a : areas.areas) {
+      if (a.name.equals(this.cat)) {
+        this.area = a.rS;
+        RPoint center = area.getCenter();
+        float aW = area.getWidth();
+        float aH = area.getHeight();
+        this.x = random(center.x - aW/3, center.x + aW/3);
+        this.y = random(center.y - aH/3, center.y + aH/3);
+        // println("   cat   " + this.cat + " x  " + this.x + "   y  " + this.y);
+      }
+    }
+  }
+
   void moveText() {
     if (this.x < width && this.y < height) {
-      this.x +=10;
-      this.y +=10;
-    } else {
-      this.x = int(random(width));
-      this.y = int(random(height));
-    }
-    this.angle+=1;
+      this.x += random(-10,10);;
+      this.y += random(-8,8);
+    } 
+    this.angle += random(-0.05, 0.05);
   }
 
   void matchInput(String incoming) {
-
-    if (this.utt.equals(incoming) && !messageLock) {
+    if (this.utt.equals(incoming) && !messageLock && !this.matched && !mFade) {
       messageLock = true;
       mH.reset();
-      mH.related = this.utt; 
-      println("matched!  " + incoming + "    with   " + this.utt);
-      // pMillis = millis();
+      this.matched = true;
+      // println("matched!  " + incoming + "    with   " + this.utt);
     }
   }
 
-  void findColor(String cat) {
+  void attributeUtt(String cat) {
     switch(cat) {
     case "praise" : 
       shapeColor = color(171, 138, 132, 175);

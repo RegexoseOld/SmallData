@@ -1,8 +1,9 @@
 
 
-StringList lineBreak(String s, float maxWidth, float tSize) {
+StringList lineBreak(String s, float maxWidth, float tSize, PFont font) {
   // Make an empty ArrayList
   StringList a = new StringList();
+  textFont(font);
   textSize(tSize);
   float w = 0;    // Accumulate width of chars
   int i = 0;      // Count through chars
