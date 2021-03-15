@@ -13,8 +13,8 @@ from config import settings
 
 clf = Classifier(settings.DATA_DIR)
 #   Client for a simple Feedback from Ableton Live
-song_client = MusicClient('127.0.0.1', settings.SONG_SERVER_PORT)
-display_client = MusicClient('127.0.0.1', settings.AUDIENCE_PORT)
+song_client = MusicClient(settings.ip, settings.SONG_SERVER_PORT)
+display_client = MusicClient(settings.ip, settings.AUDIENCE_PORT)
 
 
 def send_to_music_server(utterance, category):
@@ -53,7 +53,7 @@ class UtteranceView(viewsets.ModelViewSet):
         super(UtteranceView, self).perform_create(serializer)
         print('cat: {}\ntext {}'.format(category.name, text))
 
-        send_to_music_server(text, category.name)
+        send_to_music_server(text.encode("utf-8"), category.name)
 
 
 class CategoryView(viewsets.ModelViewSet):

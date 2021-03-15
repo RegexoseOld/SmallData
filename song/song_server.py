@@ -1,10 +1,19 @@
 import pickle
+import json
+import pyttsx3
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
-from collections import Counter
-
+from song.timer import RepeatTimer
+import threading
 from config import settings
 
+
+def speak(words):
+    engine = pyttsx3.init()
+    volume = engine.getProperty('volume')
+    engine.setProperty('volume', volume / 5)
+    engine.say(words)
+    engine.startLoop(True)
 
 class BeatAdvanceManager:
     """ A simple state machine. Machine starts in 'normal' state. When the next part is changed,
@@ -47,8 +56,12 @@ class BeatAdvanceManager:
 
 class SongServer:
     received_utts = 0
+    timer = None
+    timer_lock = False
+    rack_fade_val = 0
 
-    def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager, tonality):
+    def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager,
+                 tonality):
         self.osculator_client = osculator_client
         self.audience_client = audience_client
         self.performer_client = performer_client
@@ -59,6 +72,7 @@ class SongServer:
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
         dispatcher.map(settings.SONG_BEAT_ADDRESS, self.beat_handler)
+        dispatcher.map(settings.SONG_SYNTH_RESET_ADDRESS, self.reset_handler)
         self.server = ThreadingOSCUDPServer((settings.ip, settings.SONG_SERVER_PORT), dispatcher)
 
         self.song_scenes = {k: v for k, v in zip(
@@ -68,29 +82,44 @@ class SongServer:
 
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_intro, 1.0))
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_intro, 0.0))
+        self.osculator_client.send_message('/mid_{}'.format('praise'), self.tonality.synth.ctrl_message)
         self._send_init_to_display()
 
     def interpreter_handler(self, _, content):
+        self.received_utts += 1
         if self.song_machine.is_locked():
+            print("machine locked")
             return
         elif self.received_utts >= self.song_machine.parser.max_utterances:
-            end_message = "Von  {} moeglichen Meinungen sind abgegeben worden".format(self.song_machine.parser.max_utterances)
+            end_message = "Von  {} moeglichen Meinungen sind {} abgegeben worden" \
+                .format(self.song_machine.parser.max_utterances, self.received_utts)
             self.end_of_song(end_message)
         else:
             print("utterances received: ", self.received_utts)
 
             osc_map = pickle.loads(content)
-            self.send_fx()
-            self.tonality.update_tonality(osc_map['cat'])
+            cat = osc_map['cat']
+            utt = osc_map['text']
+            speak(utt)
+            self.tonality.update_tonality(cat)
+            controllers = self.tonality.synth.ctrl_message
+            # print("cat {}  controllers  {}".format(cat, controllers))
+            self.send_fx(self.tonality.ctrl_val)
             current_part = self.beat_manager.current_part.name
-            note = self.song_machine.parser.song_parts[current_part].receipts[osc_map['cat']]
-            self.send_quittung(note, osc_map['cat'])
+            fb_note = self.song_machine.parser.song_parts[current_part].fb_note
+            self.send_quittung(fb_note, cat, controllers)
 
-            if self.song_machine.update_part(osc_map['cat']):  # True if part is changed
+            if self.song_machine.update_part(cat):  # True if part is changed
                 self.beat_manager.update_next_part(self.song_machine.current_part)
 
             self._send_utterance_to_audience(osc_map)
-        self.received_utts += 1
+
+    def reset_handler(self, _, content):
+        # resets both FX chain and synth controllers
+        self.tonality.reset_tonality()
+        self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain_value)
+        self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.ccnr),
+                                           self.tonality.synth.reset_values[str(self.tonality.ccnr)])
 
     def end_of_song(self, end_message):
         input_dict = {'text': end_message,
@@ -102,41 +131,59 @@ class SongServer:
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_end, 1.0))
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_end, 0.0))
 
-
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
         if self.beat_manager.update_beat_counter(counter):
             self._send_part(counter)
-            if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_NORMAL) and self.song_machine.is_locked():
+            if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_NORMAL) \
+                    and self.song_machine.is_locked():
                 self.song_machine.release_lock()
                 self._send_partinfo_to_displays()
 
-    def send_fx(self):
-        self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain[0])
-        self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.chain[1]),
-                                           self.tonality.ctrl_val)
+    def fade(self, val, increment):
+        if self.rack_fade_val >= 0:
+            self.rack_fade_val -= abs(val/increment)
+            self.send_fx(self.rack_fade_val)
+        else:
+            self.timer.cancel()
+            self.timer_lock = False
+            print("closing fader Thread", threading.enumerate())
 
-    def send_quittung(self, note, cat):
+    def send_fx(self, val):
+        # print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], val))
+        self.rack_fade_val = val
+        self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain_value)
+        self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.ccnr),
+                                           val)
+        if not self.timer_lock:
+            self.timer = RepeatTimer(0.5, self.fade, args=(val, 10,))
+            self.timer.start()
+            self.timer_lock = True
+
+    def send_quittung(self, note, cat, controllers):
+        self.osculator_client.send_message('/quitt', (60, 1.0))
         self.osculator_client.send_message('/q_{}'.format(cat), (note, 1.0))
+        self.osculator_client.send_message('/quitt', (60, 0.0))
         self.osculator_client.send_message('/q_{}'.format(cat), (note, 0.0))
+        self.osculator_client.send_message('/mid_{}'.format(cat), controllers)
 
     def _send_part(self, counter):
         next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
         if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_WARNING):
-            print("next_part.note", next_part.note)
+            # print("next_part.note", next_part.note)
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 1.0))
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 0.0))
+            self.tonality.synth.reset_synth()
 
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
-        print('SongerServer. sending: ', message)
+        # print('SongerServer. sending: ', message)
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
 
     def _send_utterance_to_audience(self, input_dict):
         input_dict['category_counter'] = self.song_machine.category_counter
         input_dict['is_locked'] = self.song_machine.is_locked()
-
-        content = pickle.dumps(input_dict, protocol=2)
-        self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, content)
+        data = json.dumps(input_dict)
+        self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, data)
 
     def _send_partinfo_to_displays(self):
         self.performer_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
@@ -147,75 +194,12 @@ class SongServer:
                                           )
 
     def _send_init_to_display(self):
-        self.audience_client.send_message(settings.DISPLAY_INIT_ADDRESS,
-                                          pickle.dumps(self.song_machine.parser.categories, protocol=2)
-                                          )
-        self.audience_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
-                                          pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
-                                          )
+        category_dict = {idx: i for idx, i in enumerate(self.song_machine.parser.categories)}
+        data = {"max_utts": self.song_machine.parser.max_utterances,
+                "categories": category_dict}
+        data_init = json.dumps(data)
+        self.audience_client.send_message(settings.DISPLAY_INIT_ADDRESS, data_init)
+        # self.audience_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
+                                          # pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
+                                          # )
 
-class Tonality:
-    '''
-    idea of tonality counter combined with rules for FX chains and Sample Triggering in
-    Ableton Live
-    '''
-
-    tonality_counter = Counter()
-    chain_duration = 5  # specifies how many utterances are needed to change the tonality
-    tonality_lock = False
-
-    category_to_chain = {
-        # every category points to a FX Chain and a ctrl value
-        'praise': ['Delay', 5],
-        'lecture': ['Vocoder', 8],
-        'insinuation': ['FreqShift', -7],
-        'dissence': ['Distortion', -5],
-        'concession': ['Delay', 2]
-    }
-    chain_controls = {
-        # every chain has a chain_value, a ccnr and a standard ctrl_value
-        'FreqShift' : [15, 10, 65],
-        'Vocoder': [32, 15, 95],
-        'Distortion': [60, 20, 25],
-        'Delay': [90, 25, 65],
-        'Clean': [115, 0, 0]
-    }
-
-    def __init__(self, categories):
-        self.tonality_counter = Counter(categories)
-        self.FX_KEY = 'Clean'
-        self.chain = self.chain_controls[self.FX_KEY]
-        self.ctrl_val = 0
-        self.last_cats = []
-        self.last_value = 0
-        self.most_common = ''
-
-    def update_tonality(self, cat):
-        self.tonality_counter[cat] += 1
-        self.calculate_rack_values(cat)
-        # print("tonalities: ", self.tonality_counter)
-
-    def calculate_rack_values(self, cat):
-        '''
-        1. after 10 utterances, the most_common category defines the FX chain
-        2. only if all other categories have had at least had 5 updates (self.last_cats), a new FX_kEY is
-        generated by the most_common category at that moment
-        3. the self.ctrl_value is calculated as a deviation from a standard value defined in self.chain_controls
-        '''
-        #  an FX chain is selected, if more than 10 entries have occured
-        if sum(self.tonality_counter.values()) > 10:
-            # print("cat {}   locked?: {} most common: {}".format(cat, self.tonality_lock, self.most_common))
-            if not self.tonality_lock:
-                self.most_common = self.tonality_counter.most_common(1)[0][0]
-                self.FX_KEY = self.category_to_chain[self.most_common][0]
-                self.tonality_lock = True
-            if cat not in self.last_cats and self.tonality_counter[cat] % self.chain_duration == 0:
-                self.last_cats.append(cat)
-            elif len(self.last_cats) == len(self.tonality_counter):
-                print("\t RESET FX")
-                self.tonality_lock = False
-                self.last_cats = []
-
-        self.chain = self.chain_controls[self.FX_KEY]
-        self.last_value = self.chain[2]
-        self.ctrl_val = self.last_value + self.category_to_chain[cat][1]

@@ -12,10 +12,11 @@ note_intro = 0
 note_end = 12
 
 # OSC-Settings
-ip = "192.168.1.156"
+ip = "127.0.0.1"
 SONG_ADVANCE_ADDRESS = '/advance'
 SONG_RACK_ADDRESS = '/rack'
 SONG_MIDICC_ADDRESS = '/control'
+SONG_SYNTH_RESET_ADDRESS = '/reset'
 SONG_ARP_ADDRESS = '/arp'
 SONG_BEAT_ADDRESS = '/beat'
 INTERPRETER_TARGET_ADDRESS = "/interpreter_input"

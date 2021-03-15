@@ -39,17 +39,22 @@ if args.app == 'backend':
 elif args.app == 'song':
     from pythonosc import udp_client
     from song import song_machine
-    from song.song_server import SongServer, BeatAdvanceManager, Tonality
+    from song.song_server import SongServer, BeatAdvanceManager
+    from song.user_feedback import Tonality, SynthFeedback
 
     oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
     audience_client = udp_client.SimpleUDPClient(settings.ip, settings.AUDIENCE_PORT)
     performer_client = udp_client.SimpleUDPClient(settings.ip, settings.PERFORMER_PORT)
 
     machine_instance = song_machine.create_instance(settings.song_path)
-    tonality = Tonality(machine_instance.parser.categories)
+    synth_fb = machine_instance.parser.data[machine_instance.parser.SYNTH_CC]
+
+    synth_feedback = SynthFeedback(synth_fb)
+    tonality = Tonality(synth_feedback)
     beat_manager = BeatAdvanceManager(machine_instance.current_part)
 
-    song_server = SongServer(oscul_client, audience_client, performer_client, machine_instance, beat_manager, tonality)
+    song_server = SongServer(oscul_client, audience_client, performer_client, machine_instance, beat_manager,
+                             tonality)
     song_parts = list(machine_instance.parser.song_parts.keys())
     [audience_client.send_message('/parts', part) for part in song_parts]
     audience_client.send_message('/parts', 'all_sent')
@@ -76,8 +81,9 @@ elif args.app == 'display':
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(display_server.init_main())
 elif args.app == 'interpreter':
-    from mocks import mock_interpreter_client
-    mock_interpreter_client.run_mock()
+    # from mocks import mock_interpreter_client
+    from mocks import mock_interpreter_keyboard, mock_interpreter_client
+    mock_interpreter_keyboard.run_mock()
 elif args.app == 'osculator':
     from mocks import beat_mock
     beat_mock.run_mock()

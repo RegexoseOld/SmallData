@@ -28,12 +28,12 @@ class Part:
     name = ''
     note = 0
     transitions = []
-    receipts = {}
+    fb_note = 0
 
-    def __init__(self, name, note, receipts):
+    def __init__(self, name, note, fb_note):
         self.name = name
         self.note = note
-        self.receipts = receipts
+        self.fb_note = fb_note
         self.transitions = []
 
     def __str__(self):
@@ -109,10 +109,12 @@ class SongParser:
     NAME_CATEGORIES = "categories"
     PARTS = "parts"
     NAME_FIRST_PART = "first_part"
+    SYNTH_CC =  "synth_fb"
 
     data = {}
     song_parts = {}
     categories = []
+    synth_fb = {}
 
     first_part_name = ''
     max_utterances = 0
@@ -124,6 +126,7 @@ class SongParser:
     def parse(self):
         self.categories = self.data[self.NAME_CATEGORIES]
         self.max_utterances = self.data[self.MAX_UTTERANCES]
+        self.synth_fb = self.data[self.SYNTH_CC]
         self._create_parts()
         self._add_transitions()
 
@@ -131,8 +134,8 @@ class SongParser:
         for part_dict in self.data[self.PARTS]:
             part_name = part_dict["name"]
             note = part_dict["note"]
-            receipts = part_dict["receipts"]
-            self.song_parts[part_name] = Part(part_name, int(note), receipts)
+            fb_note = part_dict["fb_note"]
+            self.song_parts[part_name] = Part(part_name, int(note), fb_note)
         self.first_part_name = self.data[self.NAME_FIRST_PART]
 
     def _add_transitions(self):
@@ -144,6 +147,9 @@ class SongParser:
                 if not part_name == part:
                     transition = Transition(part, part_name, associated_category, limit)
                     self.song_parts[transition.source_name].add_transition(transition)
+
+
+
 
 
 class SongValidator(object):

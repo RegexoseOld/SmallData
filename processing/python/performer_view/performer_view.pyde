@@ -22,7 +22,7 @@ def setup():
     background(200)
     global font, font_bold
 
-    font_size = 14
+    font_size = 25
     font = createFont( "Helvetica", font_size, True)
     font_bold = createFont("Helvetica-Bold", font_size, True)
     global osc, loc
