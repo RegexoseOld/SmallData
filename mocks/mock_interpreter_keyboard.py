@@ -42,14 +42,14 @@ def run_mock():
         if key in ['1', '2', '3', '4', '5', 'r']:
             if not key == 'r':
                 cat = categories[int(key)-1]
+                osc_dict = {'text': random.sample(texts, 1)[0],
+                            'cat': cat,
+                            }
+                osc_map = pickle.dumps(osc_dict)
+                song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
             else:
                 cat = 'reset'
-            print('sending ', cat)
-            osc_dict = {'text': random.sample(texts, 1)[0],
-                        'cat': cat,
-                        }
-            osc_map = pickle.dumps(osc_dict)
-            song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
+                song_client.send_message(settings.SONG_SYNTH_RESET_ADDRESS, cat)
         else:
             print('wrong key: ', key)
 

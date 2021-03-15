@@ -50,7 +50,7 @@ elif args.app == 'song':
     synth_fb = machine_instance.parser.data[machine_instance.parser.SYNTH_CC]
 
     synth_feedback = SynthFeedback(synth_fb)
-    tonality = Tonality(machine_instance.parser.categories, synth_feedback)
+    tonality = Tonality(synth_feedback)
     beat_manager = BeatAdvanceManager(machine_instance.current_part)
 
     song_server = SongServer(oscul_client, audience_client, performer_client, machine_instance, beat_manager,
@@ -83,7 +83,7 @@ elif args.app == 'display':
 elif args.app == 'interpreter':
     # from mocks import mock_interpreter_client
     from mocks import mock_interpreter_keyboard, mock_interpreter_client
-    mock_interpreter_client.run_mock()
+    mock_interpreter_keyboard.run_mock()
 elif args.app == 'osculator':
     from mocks import beat_mock
     beat_mock.run_mock()

@@ -7,45 +7,35 @@
       "name": "sei auf der Hut",
       "category": "dissence",
       "note": 2,
-      "receipts": {
-        "fb_note": 29
-      },
+      "fb_note": 2,
       "limit": 5
     },
     {
       "name": "er will es verstehen?",
       "category": "lecture",
       "note": 3,
-      "receipts": {
-         "fb_note": 30
-      },
+      "fb_note": 30,
       "limit": 5
     },
     {
       "name": "du bist jetzt mal ruhig",
       "category": "praise",
       "note": 4,
-      "receipts": {
-        "fb_note": 31
-      },
+      "fb_note": 31,
       "limit": 5
     },
     {
       "name": "gute tasse tee",
       "category": "insinuation",
       "note": 5,
-      "receipts": {
-       "fb_note": 32
-      },
+      "fb_note": 32,
       "limit": 5
     },
     {
       "name": "hervorzustechen",
       "category": "concession",
       "note": 6,
-      "receipts": {
-        "fb_note": 33
-      },
+      "fb_note": 33,
       "limit": 5
     }
   ],

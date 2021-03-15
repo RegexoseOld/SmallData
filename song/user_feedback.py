@@ -13,6 +13,9 @@ class Tonality:
     chain_duration = 5  # specifies how many utterances are needed to change the tonality
     tonality_lock = False
     min_utts = 1
+    chain_value = 127
+    ccnr = 0
+    ctrl_val = 10 # # the value being sent with SongServer.send_fx is calculated with calculate_rack_values
 
     category_to_chain = {
         # every category points to a FX Chain, init value and a increment value
@@ -34,12 +37,10 @@ class Tonality:
         'Clean': [120, 0, 0]
     }
 
-    def __init__(self, categories, synth):
-        # self.tonality_counter = Counter(categories)
+    def __init__(self, synth):
         self.synth = synth
         self.FX_KEY = 'Clean'
         self.chain = self.chain_controls[self.FX_KEY]
-        self.ctrl_val = 10 # the value being sent with SongServer.send_fx is calculated with calculate_rack_values
         self.last_cats = []
         self.last_value = 0
         self.most_common = 'concession'
@@ -79,12 +80,12 @@ class Tonality:
                 self.tonality_lock = False
                 self.last_cats = []
 
+        self.chain_value = self.chain_controls[self.FX_KEY][0]
+        self.ccnr = self.chain_controls[self.FX_KEY][1] # the actual ccnr
         self.last_value = self.chain_controls[self.FX_KEY][2] # restore last value of that chain
         self.ctrl_val = self.last_value + self.category_to_chain[cat][2]  # make new actual ctrl_value
         self.chain_controls[self.FX_KEY][2] = self.ctrl_val   # update chain_controls
-        self.chain = self.chain_controls[self.FX_KEY] # self.chain ist aktuelle chain für fx_send
-        # print("chain: " , self.chain)
-        # print('actueller wert {}  last value {}  most common {}'.format(self.ctrl_val, self.last_value, self.most_common))
+        # self.chain = self.chain_controls[self.FX_KEY] # self.chain ist aktuelle chain für fx_send
         self.synth.calculate_synth_message(self.most_common) # update Synth_controls
 
     def reset_tonality(self):
@@ -92,6 +93,7 @@ class Tonality:
             init_value = v[1]
             chain_key = v[0]
             self.chain_controls[chain_key][2]= init_value
+        self.chain_value = 127
         print("resetted: ", self.chain_controls)
 
     def fade(self):
@@ -106,13 +108,13 @@ class SynthFeedback:
     the values for each controller deviate from the last value according to the Tonality.ctrl_val
     '''
     category = 'reset'
-    synth_controls = {}
+    synth_controls = []
     # every control refers to a LIVE MIDI Track with a loaded Synth
     # the Synth has a value for the ccnr (for Osculator) and a standard ctrl_value
     # most synth makro controllers have values from 0-100, some -100-100 or 0.1 - 1.0
     # ideally the values can be transformed by Osculators value mapping
     # default values start at 0
-
+    reset_values = {}
     cat2synth = {}
     # 1st value points to the controller that is altered according to a incoming cat
     # important to store the values of the different synths
@@ -121,24 +123,18 @@ class SynthFeedback:
     def __init__(self, synth_fb):
         self.cat2synth = synth_fb
         self.synth_controls = copy.deepcopy(self.cat2synth[self.category])
+        self.reset_values = self.cat2synth["reset"]
+        print("reset values init", self.reset_values)
         self.ctrl_message = self.calculate_synth_message(self.category)
 
     def calculate_synth_message(self, cat):
         # absolute values from cat2synth
+        self.category = cat
         controllers = list(self.cat2synth[cat].values())
         # print("controllers:  {}  most common {} ".format(controllers, cat))
         self.ctrl_message = controllers
-        # for k,v in self.synth_controls.items():
-        #     if 0 <= v + s_controls[k] <= 127:
-        #         print("changed cc {} from {} to {} : ".format(k, v, v + s_controls[k]))
-        #         # v += s_controls[k]
-        #         self.synth_controls[k] = v + s_controls[k]
-        #     else:
-        #         print("not possible: value {} + change {} = {}".format(v, s_controls[k], v + s_controls[k]))
-        #
-        # print("synth_controls.values(): ", self.synth_controls.values())
         return controllers
 
     def reset_synth(self):
-        self.synth_controls = list(self.cat2synth[self.category].values())
+        self.synth_controls = list(self.cat2synth['reset'].values())
         # print("reset synth : ", self.synth_controls)

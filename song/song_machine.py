@@ -28,12 +28,12 @@ class Part:
     name = ''
     note = 0
     transitions = []
-    receipts = {}
+    fb_note = 0
 
-    def __init__(self, name, note, receipts):
+    def __init__(self, name, note, fb_note):
         self.name = name
         self.note = note
-        self.receipts = receipts
+        self.fb_note = fb_note
         self.transitions = []
 
     def __str__(self):
@@ -134,8 +134,8 @@ class SongParser:
         for part_dict in self.data[self.PARTS]:
             part_name = part_dict["name"]
             note = part_dict["note"]
-            receipts = part_dict["receipts"]
-            self.song_parts[part_name] = Part(part_name, int(note), receipts)
+            fb_note = part_dict["fb_note"]
+            self.song_parts[part_name] = Part(part_name, int(note), fb_note)
         self.first_part_name = self.data[self.NAME_FIRST_PART]
 
     def _add_transitions(self):

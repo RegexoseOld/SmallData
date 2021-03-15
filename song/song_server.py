@@ -1,7 +1,6 @@
 import pickle
 import json
 import pyttsx3
-from song.tts import TTSThread, Voice
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from song.timer import RepeatTimer
@@ -59,8 +58,7 @@ class SongServer:
     received_utts = 0
     timer = None
     timer_lock = False
-    val = 0
-    # voice = Voice()
+    rack_fade_val = 0
 
     def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager,
                  tonality):
@@ -74,6 +72,7 @@ class SongServer:
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
         dispatcher.map(settings.SONG_BEAT_ADDRESS, self.beat_handler)
+        dispatcher.map(settings.SONG_SYNTH_RESET_ADDRESS, self.reset_handler)
         self.server = ThreadingOSCUDPServer((settings.ip, settings.SONG_SERVER_PORT), dispatcher)
 
         self.song_scenes = {k: v for k, v in zip(
@@ -102,18 +101,12 @@ class SongServer:
             cat = osc_map['cat']
             utt = osc_map['text']
             speak(utt)
-            if cat == 'reset':
-                controllers = self.tonality.synth.calculate_synth_message(cat)
-                cat = self.tonality.most_common
-            else:
-                self.tonality.update_tonality(cat)
-                controllers = self.tonality.synth.ctrl_message
-
+            self.tonality.update_tonality(cat)
+            controllers = self.tonality.synth.ctrl_message
             # print("cat {}  controllers  {}".format(cat, controllers))
-            self.val = self.tonality.chain[2]
-            self.send_fx(self.val)
+            self.send_fx(self.tonality.ctrl_val)
             current_part = self.beat_manager.current_part.name
-            fb_note = self.song_machine.parser.song_parts[current_part].receipts["fb_note"]
+            fb_note = self.song_machine.parser.song_parts[current_part].fb_note
             self.send_quittung(fb_note, cat, controllers)
 
             if self.song_machine.update_part(cat):  # True if part is changed
@@ -121,6 +114,12 @@ class SongServer:
 
             self._send_utterance_to_audience(osc_map)
 
+    def reset_handler(self, _, content):
+        # resets both FX chain and synth controllers
+        self.tonality.reset_tonality()
+        self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain_value)
+        self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.ccnr),
+                                           self.tonality.synth.reset_values[str(self.tonality.ccnr)])
 
     def end_of_song(self, end_message):
         input_dict = {'text': end_message,
@@ -142,10 +141,9 @@ class SongServer:
                 self._send_partinfo_to_displays()
 
     def fade(self, val, increment):
-        # print("increment", abs(val/increment))
-        if self.val >= 0:
-            self.val -= abs(val/increment)
-            self.send_fx(self.val)
+        if self.rack_fade_val >= 0:
+            self.rack_fade_val -= abs(val/increment)
+            self.send_fx(self.rack_fade_val)
         else:
             self.timer.cancel()
             self.timer_lock = False
@@ -153,8 +151,9 @@ class SongServer:
 
     def send_fx(self, val):
         # print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], val))
-        self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain[0])
-        self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.chain[1]),
+        self.rack_fade_val = val
+        self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain_value)
+        self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.ccnr),
                                            val)
         if not self.timer_lock:
             self.timer = RepeatTimer(0.5, self.fade, args=(val, 10,))
