@@ -1,6 +1,7 @@
 import java.util.Timer;   //<>//
 import java.util.TimerTask;
 import java.util.Map;
+import java.util.List;
 import java.util.Iterator; 
 import geomerative.*;
 import oscP5.*;
@@ -83,6 +84,7 @@ void draw() {
       PVector gravity = new PVector(0, 0.6 * mH.mass);
       mH.applyForce(gravity);
       mH.update();
+      mH.displayText();
     }
   }
   if (mFade) {

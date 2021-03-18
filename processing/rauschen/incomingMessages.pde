@@ -25,7 +25,7 @@ void oscEvent(OscMessage m) {
       }
       
     }
-    mH.incoming = incomingText;
+    mH.newMessage(incomingText);
     uttCount += 1;
     // println("increment:  " + prgIncrement + "   uttcount:   " + uttCount);
   } else if (m.checkAddrPattern("/display_init") == true) {

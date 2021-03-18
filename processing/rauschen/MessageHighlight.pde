@@ -8,12 +8,13 @@ class MessageHighlight {
   PVector[] positions = new PVector[2];
   PVector position1, position2, velocity, acceleration;
   String incoming;
-  HashMap<String, Integer> utterDict = new HashMap<String, Integer>();
+  ArrayList<SingleLine> singleList;
+  ArrayList<ArrayList<SingleLine>> collection;
   float mass;  
   PFont font;
-  float tSize, tWidth, tHeight, alpha; // current Size of message
+  float tSize, lowLineY, tWidth, tHeight; // current Size of message
   boolean stopGrow;
-  int growMargin;
+  int growMargin, alpha;
   color col;
 
   MessageHighlight(float m, float x1, float y1, float x2, float y2, PFont font) {
@@ -23,15 +24,18 @@ class MessageHighlight {
     velocity = new PVector(0, 0);
     acceleration = new PVector(0, 0);
     buildSurfaces();
+    singleList = new ArrayList<SingleLine>();
+    collection = new ArrayList<ArrayList<SingleLine>>();
     growMargin = 200;
     this.font = font;
     this.alpha = 255;
     this.col = color(255, this.alpha);
     this.tSize = 10.0;
-    this.tWidth = 20.0; // starting point for font calculation
-    this.tHeight = 10.0;
+    this.tWidth = surf1.width/6; // starting point for font calculation
+    this.tHeight = surf1.height/6;
+    this.lowLineY = 0;
     this.incoming = "";
-    this.stopGrow = true;
+    this.stopGrow = false;
   }
 
   void buildSurfaces() {
@@ -47,6 +51,11 @@ class MessageHighlight {
     positions[1] = position2;
   }
 
+  void newMessage(String m) {
+    this.incoming = m;
+    // collection.clear();
+  }
+
   void displayText() {
     if (!stopGrow) {
       calculateTSize(this.tWidth, this.tHeight, this.incoming);
@@ -56,15 +65,16 @@ class MessageHighlight {
       surfaces[i].beginDraw();
       surfaces[i].clear();
       surfaces[i].textFont(this.font);
-      for (Map.Entry me : utterDict.entrySet()) {
-        String bit = (String) me.getKey();
-        int bitY = (int) me.getValue();
-        // println("bit: " + bit + "  bitY: " + bitY + " this.tSize: " + this.tSize);
+      //for (Map.Entry me : utterDict.entrySet()) {
+      //  String bit = (String) me.getKey();
+      //  int bitY = (int) me.getValue();
+      // println("bit: " + bit + "  bitY: " + bitY + " this.tSize: " + this.tSize);
+
+      for (SingleLine l : singleList) {  // should be last set of lines
         surfaces[i].rectMode(CORNER);
-        surfaces[i].fill(this.col);
+        surfaces[i].fill(l.col);
         surfaces[i].textSize(this.tSize);
-        surfaces[i].tint(255, this.alpha);
-        surfaces[i].text(bit, 10, bitY);
+        surfaces[i].text(l.line, 10, l.yPos);
       }
       surfaces[i].endDraw();
       image(surfaces[i], positions[i].x, positions[i].y);
@@ -78,21 +88,36 @@ class MessageHighlight {
   }
 
   void calculateTSize(float w, float h, String text2fit) {
-    HashMap<String, Integer> tempDict = new HashMap<String, Integer>();
+    println("\ncalculate size");
+    ArrayList<SingleLine> tempsingle = new ArrayList<SingleLine>();
+    ArrayList<ArrayList<SingleLine>> tempCollection = new ArrayList<ArrayList<SingleLine>>();    
     StringList textBreak = lineBreak(text2fit, w, this.tSize, this.font);
-    float spacing = textAscent(); // font Height
-    int y = 0;   
-    // fontSize should grow while there is enough vertical space (y)
-    while (y < h ) {
+    println("h   " + h);
+    float spacing = textAscent() * 1.5; // font Height
+    float y = spacing ;   
+    // check if lines will fit the height
+    println("height check  " + (h - spacing) + " vs " + (textBreak.size() * spacing));
+    if (h - spacing >= (textBreak.size() * spacing) ) {
+      // make SingleLine Object to store the in singleList
       for (int i=0; i<textBreak.size(); i++) {
-        y += ceil(spacing) * 1.5; 
-        tempDict.putIfAbsent(textBreak.get(i), y);
+        SingleLine sl = new SingleLine(textBreak.get(i), y);
+        // println("line   " + sl.line + "   yPos   " + sl.yPos);
+        tempsingle.add(sl);
+        y += spacing;
       }
       this.tSize += 1;
-      textSize(tSize);
-      spacing = textAscent();
     }
-    utterDict = tempDict;
+    tempCollection.add(tempsingle);
+    collection = tempCollection;
+    singleList = tempsingle;
+    //for (int i=0; i<collection.size(); i++) {
+    //  ArrayList<SingleLine> sing = collection.get(i);
+    //  singleList = sing;
+    //  for (SingleLine l : sing) {
+    //    println("line   " + l.line + "   yPos   " + l.yPos);
+    //  }
+    //}
+    print("collection size: " + collection.size() + "   tSize  " + this.tSize);
   }
 
   void update() {
@@ -102,15 +127,21 @@ class MessageHighlight {
     if (this.tWidth < surf1.width) {
       this.tWidth +=  velocity.y;   
       this.tHeight += velocity.y *5/9;
-      // println("update  tWidth: " + this.tWidth + "  surf1.width " + surf1.width);
+      // println("update  tWidth: " + this.tWidth + "  height " + this.tHeight);
     } 
     if (mFade) {
       if (this.tSize + velocity.y > 0) {
-        this.tSize += velocity.y;
-        this.col = currentCol;
-        // println("tSize  " + tSize + " velo  " + velocity.y);
+        this.tSize += velocity.y; 
+        this.alpha -= 20;
+        for (List<SingleLine> s : collection) {
+          // println("s exists?  " + s);
+          for (SingleLine line : s) {
+            line.updateCol(this.alpha);
+            this.col = currentCol;
+          }
+        }
       } else {
-         mFade = false;
+        mFade = false;
       }
     }
     // We must clear acceleration each frame
@@ -121,21 +152,53 @@ class MessageHighlight {
     if (this.tWidth > this.surf1.width -50 && !stopGrow) {
       // println("checkEdge:  " + this.tWidth);
       this.stopGrow = true;
-      this.col = color(20);
+      List<SingleLine> lastEntry = collection.get(collection.size()-1);
+      for (SingleLine l : lastEntry) {
+        l.setDark();
+      }
       createScheduleTimer(1500.0); // stops growing but displays for 3 more seconds
     }
   }
 
 
   void reset() {
-    this.tSize = 15.0;
-    this.tWidth = 20.0;
-    this.tHeight = 10.0;
+    this.tSize = 10.0;
+    this.tWidth = surf1.width/6;
+    this.tHeight = surf1.height/6;
     this.stopGrow = false;
     this.col= 250;
     this.velocity.mult(0);
     this.acceleration.mult(0);
     // println("reset   velo:   " + this.velocity + "  acceleration:   " + this.acceleration);
+  }
+}
+
+
+
+class SingleLine {
+  String line;
+  float yPos, r, g, b, a;
+  color col;
+
+  SingleLine(String _l, float _y) {
+    line = _l;
+    yPos = _y;
+    makeColor();
+  }
+
+  void makeColor() {
+    int r = (currentCol >> 16) & 0xFF;
+    int g = (currentCol >> 8) & 0xFF;
+    int b = currentCol & 0xFF;
+    int a = (currentCol >> 24) & 0xFF;
+    col = color(r, g, b, a);
+  }
+
+  void updateCol(int alpha) {
+    col = color(r, g, b, alpha);
+  }
+  void setDark() {
+    col = color(0, 0, 0, a);
   }
 }
 
