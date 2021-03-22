@@ -11,7 +11,7 @@ class MessageHighlight {
   ArrayList<SingleLine> singleList;
   float mass;  
   PFont font;
-  float velocity, acceleration,tSize, tWidth, tHeight; // current Size of message
+  float velocity, acceleration, tSize, tWidth, tHeight; // current Size of message
   boolean stopGrow;
   int growMargin, alpha;
   color col;
@@ -40,7 +40,7 @@ class MessageHighlight {
     surf1.smooth();
     surf2 = createGraphics(width *3/7, height/3);
     surf2.smooth();
-    surf3 = createGraphics(surf1.width, surf1.height/4);
+    surf3 = createGraphics(surf1.width *2, 50);
     surf3.smooth();
     surfaces[0] = surf1;
     surfaces[1] = surf2;
@@ -75,6 +75,15 @@ class MessageHighlight {
       surfaces[i].endDraw();
       image(surfaces[i], positions[i].x, positions[i].y);
     }
+    surf3.beginDraw();
+    surf3.background(222);
+    surf3.textFont(this.font, 25);
+    surf3.fill(250, 15, 34);
+    surf3.textAlign(CENTER, CENTER);
+    surf3.text("diese utterance ist verwandt mit: ", surf3.width/2, surf3.height/2);
+    surf3.endDraw();
+    image(surf3, positions[0].x, positions[0].y - 100);
+    
   }
 
   void applyForce(float force) {
@@ -125,7 +134,7 @@ class MessageHighlight {
       }
     }
     // We must clear acceleration each frame
-    acceleration =0;
+    acceleration = 0;
   }
 
   void checkEdge() {
@@ -135,7 +144,7 @@ class MessageHighlight {
       for (SingleLine l : singleList) {
         l.setDark();
       }
-      createScheduleTimer(1500.0); // stops growing but displays for 3 more seconds
+      createScheduleTimer(3000.0); // stops growing but displays for 3 more seconds
     }
   }
 
