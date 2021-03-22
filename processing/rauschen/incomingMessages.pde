@@ -48,7 +48,7 @@ void updateUtts() {
   }
   utts.add(incomingUtt);
   updateUtts = false;
-  println(" still  updating2?   " + updateUtts + " " + frameCount);
+  // println(" still  updating2?   " + updateUtts + " " + frameCount);
 } 
 
 // mock for incoming String messages. 

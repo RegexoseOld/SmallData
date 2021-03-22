@@ -6,13 +6,12 @@ class MessageHighlight {
   PGraphics surf1, surf2, surf3;
   PGraphics[] surfaces = new PGraphics[2]; // arrays to iterate in displayText
   PVector[] positions = new PVector[2];
-  PVector position1, position2, velocity, acceleration;
+  PVector position1, position2;
   String incoming;
   ArrayList<SingleLine> singleList;
-  ArrayList<ArrayList<SingleLine>> collection;
   float mass;  
   PFont font;
-  float tSize, lowLineY, tWidth, tHeight; // current Size of message
+  float velocity, acceleration,tSize, tWidth, tHeight; // current Size of message
   boolean stopGrow;
   int growMargin, alpha;
   color col;
@@ -21,11 +20,10 @@ class MessageHighlight {
     mass = m;
     position1 = new PVector(x1, y1);
     position2 = new PVector(x2, y2);
-    velocity = new PVector(0, 0);
-    acceleration = new PVector(0, 0);
+    velocity = 0;
+    acceleration = 0;
     buildSurfaces();
     singleList = new ArrayList<SingleLine>();
-    collection = new ArrayList<ArrayList<SingleLine>>();
     growMargin = 200;
     this.font = font;
     this.alpha = 125;
@@ -33,7 +31,6 @@ class MessageHighlight {
     this.tSize = 10.0;
     this.tWidth = surf1.width/6; // starting point for font calculation
     this.tHeight = surf1.height/6;
-    this.lowLineY = 0;
     this.incoming = "";
     this.stopGrow = false;
   }
@@ -63,7 +60,12 @@ class MessageHighlight {
     for (int i=0; i<surfaces.length; i++) {
       // println("i: " + i + " this.tSize: " + this.tSize) ;
       surfaces[i].beginDraw();
-      surfaces[i].clear();
+      if (mFade) {
+        surfaces[i].background(222);
+        //surfaces[i].clear();
+      } else {
+        surfaces[i].clear();
+      }
       for (SingleLine l : singleList) {
         surfaces[i].rectMode(CORNER);
         surfaces[i].textFont(this.font, this.tSize);
@@ -75,29 +77,8 @@ class MessageHighlight {
     }
   }
 
-  void fadeDisplay() {
-    for (int i=0; i<surfaces.length; i++) {
-      // println("i: " + i + " this.tSize: " + this.tSize) ;
-      surfaces[i].beginDraw();
-      surfaces[i].clear();
-      // draw all lines again with increasing transparency
-      for (ArrayList<SingleLine> s : collection) {
-        for (SingleLine l : singleList) {
-          surfaces[i].textFont(this.font, this.tSize);
-          surfaces[i].rectMode(CORNER);
-          surfaces[i].fill(l.col);
-          surfaces[i].text(l.line, 10, l.yPos);
-        }
-      }
-      surfaces[i].endDraw();
-      image(surfaces[i], positions[i].x, positions[i].y);
-    }
-  }
-
-  void applyForce(PVector force) {
-    PVector f = PVector.div(force, mass);
-    // println("force: " + force + "   mass: " + mass + "  f:   " + f);
-    acceleration.add(f);
+  void applyForce(float force) {
+    acceleration += force/mass;
   }
 
   void calculateTSize(float w, float h, String text2fit) {
@@ -105,7 +86,6 @@ class MessageHighlight {
     // make temp objects to fill until right fontsize is found
     // all tempsingle Arrays can later be manipulated with their alpha color
     ArrayList<SingleLine> tempsingle = new ArrayList<SingleLine>();
-    ArrayList<ArrayList<SingleLine>> tempCollection = new ArrayList<ArrayList<SingleLine>>();    
     StringList textBreak = lineBreak(text2fit, w, this.tSize, this.font);
     float spacing = textAscent() * 1.5; // font Height
     float y = spacing ;   
@@ -120,47 +100,39 @@ class MessageHighlight {
       }
       this.tSize += 1;
     }
-    tempCollection.add(tempsingle);
-    collection = tempCollection;
     singleList = tempsingle;
-    // print("collection size: " + collection.size() + "   tSize  " + this.tSize);
   }
 
   void update() {
     // Velocity changes according to acceleration
-    velocity.add(acceleration);
+    velocity += acceleration;
     // size changes by velocity1
     if (this.tWidth < surf1.width) {
-      this.tWidth +=  velocity.y;   
-      this.tHeight += velocity.y *5/9;
+      this.tWidth +=  velocity;   
+      this.tHeight += velocity *5/9;
       // println("update  tWidth: " + this.tWidth + "  height " + this.tHeight);
     } 
     if (mFade) {
-      if (this.tSize >= velocity.y || this.alpha >= 10) {
-        this.tSize += velocity.y; 
+      if (this.tSize > abs(velocity) && this.alpha >= 10) {
+        this.tSize += velocity; 
         this.alpha -= 10;
-        println("fade  alpha  " + this.alpha);
-        for (ArrayList<SingleLine> s : collection) {
-          for (SingleLine line : s) {
-            line.updateCol(this.alpha);
-            //this.col = currentCol;
-          }
+        for (SingleLine line : singleList) {
+          line.updateCol(this.alpha);
         }
-        fadeDisplay();
       } else {
         mFade = false;
+        messageLock = false;
       }
     }
     // We must clear acceleration each frame
-    acceleration.mult(0);
+    acceleration =0;
   }
 
   void checkEdge() {
     if (this.tWidth > this.surf1.width -50 && !stopGrow) {
       // println("checkEdge:  " + this.tWidth);
       this.stopGrow = true;
-      ArrayList<SingleLine> lastEntry = collection.get(collection.size()-1);
-      for (SingleLine l : lastEntry) {
+      for (SingleLine l : singleList) {
         l.setDark();
       }
       createScheduleTimer(1500.0); // stops growing but displays for 3 more seconds
@@ -175,8 +147,8 @@ class MessageHighlight {
     this.alpha = 255;
     this.stopGrow = false;
     this.col= 250;
-    this.velocity.mult(0);
-    this.acceleration.mult(0);
+    this.velocity = 0;
+    this.acceleration = 0;
     // println("reset   velo:   " + this.velocity + "  acceleration:   " + this.acceleration);
   }
 }
@@ -204,7 +176,7 @@ class SingleLine {
     col = color(r, g, b, alpha);
   }
   void setDark() {
-    col = color(0, 0, 0, 50);
+    col = color(0, 0, 0, 10);
   }
 }
 
@@ -221,7 +193,7 @@ class Margin {
     c = c_;
   }
 
-  // Is the width of the messageRect within  the Margin?
+  // Is the width of the messageRect within the Margin?
   boolean outMargin(MessageHighlight mH) {
     float l = mH.tWidth;
     if (l > w - mH.growMargin) {
@@ -232,17 +204,17 @@ class Margin {
   }
 
   // Calculate drag force
-  PVector drag(MessageHighlight mH) {
+  float drag(MessageHighlight mH) {
     // Magnitude is coefficient * speed squared
-    float speed = mH.velocity.mag();
+    float speed = mH.velocity;
     float dragMagnitude = c * speed * speed;
 
     // Direction is inverse of velocity
-    PVector drag = mH.velocity.copy();
+    PVector drag =  new PVector(mH.velocity, 0) ;
     drag.mult(-1);
 
-    // Scale according to magnitude
+//    // Scale according to magnitude
     drag.setMag(dragMagnitude);
-    return drag;
+    return drag.x;
   }
 }

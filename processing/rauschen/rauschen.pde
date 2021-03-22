@@ -75,20 +75,20 @@ void draw() {
   if (messageLock) {
     if (margin1.outMargin(mH)) {
       // println("out of margin:  " + mH.tWidth);
-      PVector drag = margin1.drag(mH);
+      float drag = margin1.drag(mH);
       mH.applyForce(drag);
       mH.update();
       mH.checkEdge(); 
       mH.displayText();
     } else {
-      PVector gravity = new PVector(0, 2 * mH.mass);
+      float gravity = 2 * mH.mass;
       mH.applyForce(gravity);
       mH.update();
       mH.displayText();
     }
   }
   if (mFade) {
-    PVector gravity = new PVector (0, - mH.mass *2);
+    float gravity = - mH.mass *2;
     mH.applyForce(gravity);
     mH.update();
     mH.displayText();
@@ -111,7 +111,6 @@ void createScheduleTimer(final float ms) {
   messageLock = true;
   t.schedule(new TimerTask() {
     public void run() {
-      messageLock = false;
       mFade = true;
     }
   }
