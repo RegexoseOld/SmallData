@@ -48,7 +48,7 @@ void setup() {
   RG.setPolygonizer(RG.ADAPTATIVE);
   areas = new Areas(cats);
   buildUtts(50);
-  mH = new MessageHighlight(20, width/30, height/2, width *5/9, height/2, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
+  mH = new MessageHighlight(40, width/30, height/2, width *5/9, height/2, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
   margin1 = new Margin(mH.surf1.width, mH.surf1.height, 0.05);
   pickIncoming(); // pick first utt
   infoSurf = createGraphics(width, height/15);
@@ -81,14 +81,14 @@ void draw() {
       mH.checkEdge(); 
       mH.displayText();
     } else {
-      PVector gravity = new PVector(0, 0.6 * mH.mass);
+      PVector gravity = new PVector(0, 2 * mH.mass);
       mH.applyForce(gravity);
       mH.update();
       mH.displayText();
     }
   }
   if (mFade) {
-    PVector gravity = new PVector (0, - mH.mass);
+    PVector gravity = new PVector (0, - mH.mass *2);
     mH.applyForce(gravity);
     mH.update();
     mH.displayText();

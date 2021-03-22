@@ -28,7 +28,7 @@ class MessageHighlight {
     collection = new ArrayList<ArrayList<SingleLine>>();
     growMargin = 200;
     this.font = font;
-    this.alpha = 255;
+    this.alpha = 125;
     this.col = color(255, this.alpha);
     this.tSize = 10.0;
     this.tWidth = surf1.width/6; // starting point for font calculation
@@ -64,17 +64,30 @@ class MessageHighlight {
       // println("i: " + i + " this.tSize: " + this.tSize) ;
       surfaces[i].beginDraw();
       surfaces[i].clear();
-      surfaces[i].textFont(this.font);
-      //for (Map.Entry me : utterDict.entrySet()) {
-      //  String bit = (String) me.getKey();
-      //  int bitY = (int) me.getValue();
-      // println("bit: " + bit + "  bitY: " + bitY + " this.tSize: " + this.tSize);
-
-      for (SingleLine l : singleList) {  // should be last set of lines
+      for (SingleLine l : singleList) {
         surfaces[i].rectMode(CORNER);
+        surfaces[i].textFont(this.font, this.tSize);
         surfaces[i].fill(l.col);
-        surfaces[i].textSize(this.tSize);
         surfaces[i].text(l.line, 10, l.yPos);
+      }
+      surfaces[i].endDraw();
+      image(surfaces[i], positions[i].x, positions[i].y);
+    }
+  }
+
+  void fadeDisplay() {
+    for (int i=0; i<surfaces.length; i++) {
+      // println("i: " + i + " this.tSize: " + this.tSize) ;
+      surfaces[i].beginDraw();
+      surfaces[i].clear();
+      // draw all lines again with increasing transparency
+      for (ArrayList<SingleLine> s : collection) {
+        for (SingleLine l : singleList) {
+          surfaces[i].textFont(this.font, this.tSize);
+          surfaces[i].rectMode(CORNER);
+          surfaces[i].fill(l.col);
+          surfaces[i].text(l.line, 10, l.yPos);
+        }
       }
       surfaces[i].endDraw();
       image(surfaces[i], positions[i].x, positions[i].y);
@@ -88,20 +101,20 @@ class MessageHighlight {
   }
 
   void calculateTSize(float w, float h, String text2fit) {
-    println("\ncalculate size");
+    // println("\ncalculate size");
+    // make temp objects to fill until right fontsize is found
+    // all tempsingle Arrays can later be manipulated with their alpha color
     ArrayList<SingleLine> tempsingle = new ArrayList<SingleLine>();
     ArrayList<ArrayList<SingleLine>> tempCollection = new ArrayList<ArrayList<SingleLine>>();    
     StringList textBreak = lineBreak(text2fit, w, this.tSize, this.font);
-    println("h   " + h);
     float spacing = textAscent() * 1.5; // font Height
     float y = spacing ;   
     // check if lines will fit the height
-    println("height check  " + (h - spacing) + " vs " + (textBreak.size() * spacing));
+    //println("height check  " + (h - spacing) + " vs " + (textBreak.size() * spacing));
     if (h - spacing >= (textBreak.size() * spacing) ) {
       // make SingleLine Object to store the in singleList
       for (int i=0; i<textBreak.size(); i++) {
         SingleLine sl = new SingleLine(textBreak.get(i), y);
-        // println("line   " + sl.line + "   yPos   " + sl.yPos);
         tempsingle.add(sl);
         y += spacing;
       }
@@ -110,14 +123,7 @@ class MessageHighlight {
     tempCollection.add(tempsingle);
     collection = tempCollection;
     singleList = tempsingle;
-    //for (int i=0; i<collection.size(); i++) {
-    //  ArrayList<SingleLine> sing = collection.get(i);
-    //  singleList = sing;
-    //  for (SingleLine l : sing) {
-    //    println("line   " + l.line + "   yPos   " + l.yPos);
-    //  }
-    //}
-    print("collection size: " + collection.size() + "   tSize  " + this.tSize);
+    // print("collection size: " + collection.size() + "   tSize  " + this.tSize);
   }
 
   void update() {
@@ -130,16 +136,17 @@ class MessageHighlight {
       // println("update  tWidth: " + this.tWidth + "  height " + this.tHeight);
     } 
     if (mFade) {
-      if (this.tSize + velocity.y > 0) {
+      if (this.tSize >= velocity.y || this.alpha >= 10) {
         this.tSize += velocity.y; 
-        this.alpha -= 20;
-        for (List<SingleLine> s : collection) {
-          // println("s exists?  " + s);
+        this.alpha -= 10;
+        println("fade  alpha  " + this.alpha);
+        for (ArrayList<SingleLine> s : collection) {
           for (SingleLine line : s) {
             line.updateCol(this.alpha);
-            this.col = currentCol;
+            //this.col = currentCol;
           }
         }
+        fadeDisplay();
       } else {
         mFade = false;
       }
@@ -152,7 +159,7 @@ class MessageHighlight {
     if (this.tWidth > this.surf1.width -50 && !stopGrow) {
       // println("checkEdge:  " + this.tWidth);
       this.stopGrow = true;
-      List<SingleLine> lastEntry = collection.get(collection.size()-1);
+      ArrayList<SingleLine> lastEntry = collection.get(collection.size()-1);
       for (SingleLine l : lastEntry) {
         l.setDark();
       }
@@ -165,6 +172,7 @@ class MessageHighlight {
     this.tSize = 10.0;
     this.tWidth = surf1.width/6;
     this.tHeight = surf1.height/6;
+    this.alpha = 255;
     this.stopGrow = false;
     this.col= 250;
     this.velocity.mult(0);
@@ -172,8 +180,6 @@ class MessageHighlight {
     // println("reset   velo:   " + this.velocity + "  acceleration:   " + this.acceleration);
   }
 }
-
-
 
 class SingleLine {
   String line;
@@ -198,7 +204,7 @@ class SingleLine {
     col = color(r, g, b, alpha);
   }
   void setDark() {
-    col = color(0, 0, 0, a);
+    col = color(0, 0, 0, 50);
   }
 }
 

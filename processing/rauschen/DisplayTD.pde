@@ -74,7 +74,7 @@ class DisplayTD {
       // println("matched!  " + incoming + "    with   " + this.utt);
     }
   }
-
+ // ToDO discrete function for category based mapping
   void attributeUtt(String cat) {
     switch(cat) {
     case "praise" : 

@@ -21,7 +21,7 @@ StringList lineBreak(String s, float maxWidth, float tSize, PFont font) {
     if (w > maxWidth) {  // Have we reached the end of a line?
     if (rememberSpace == 0) {rememberSpace = i;}
       String sub = s.substring(0, rememberSpace); // Make a substring. 
-      println("i  " + i + "  sub   " + sub + "remember   " + rememberSpace);
+      // println("i  " + i + "  sub   " + sub + "remember   " + rememberSpace);
       // Chop off space at beginning
       if (sub.length() > 0 && sub.charAt(0) == ' ') {
         sub = sub.substring(1, sub.length());
@@ -42,6 +42,6 @@ StringList lineBreak(String s, float maxWidth, float tSize, PFont font) {
     // println("last line   " + s);
   }
   a.append(s);
-  println("linebreak size   " + a.size());
+  // println("linebreak size   " + a.size());
   return a;
 }
