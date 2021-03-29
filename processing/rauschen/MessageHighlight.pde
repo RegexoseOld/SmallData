@@ -3,49 +3,34 @@ class MessageHighlight {
   show incoming Texts on surf1 and surf2
    
    */
-  PGraphics surf1, surf2, surf3;
   PGraphics[] surfaces = new PGraphics[2]; // arrays to iterate in displayText
-  PVector[] positions = new PVector[2];
-  PVector position1, position2;
-  String incoming;
-  ArrayList<SingleLine> singleList;
+  String incoming, related;
+  ArrayList<SingleLine> incList, relList;
   float mass;  
   PFont font;
-  float velocity, acceleration, tSize, tWidth, tHeight; // current Size of message
+  float velocity, acceleration, tSize, tWidth, tHeight, angle; // current Size of message
   boolean stopGrow;
   int growMargin, alpha;
   color col;
 
-  MessageHighlight(float m, float x1, float y1, float x2, float y2, PFont font) {
+  MessageHighlight(float m, PFont font) {
     mass = m;
-    position1 = new PVector(x1, y1);
-    position2 = new PVector(x2, y2);
     velocity = 0;
     acceleration = 0;
     buildSurfaces();
-    singleList = new ArrayList<SingleLine>();
+    incList = new ArrayList<SingleLine>();
+    relList = new ArrayList<SingleLine>();
     growMargin = 200;
+    angle = 0;
     this.font = font;
     this.alpha = 125;
     this.col = color(255, this.alpha);
     this.tSize = 10.0;
-    this.tWidth = surf1.width/6; // starting point for font calculation
-    this.tHeight = surf1.height/6;
+    this.tWidth = incSurf.w/6; // starting point for font calculation
+    this.tHeight = incSurf.h/6;
     this.incoming = "";
+    this.related = "";
     this.stopGrow = false;
-  }
-
-  void buildSurfaces() {
-    surf1 = createGraphics(width *3/7, height/3);
-    surf1.smooth();
-    surf2 = createGraphics(width *3/7, height/3);
-    surf2.smooth();
-    surf3 = createGraphics(surf1.width *2, 50);
-    surf3.smooth();
-    surfaces[0] = surf1;
-    surfaces[1] = surf2;
-    positions[0] = position1;
-    positions[1] = position2;
   }
 
   void newMessage(String m) {
@@ -55,42 +40,65 @@ class MessageHighlight {
 
   void displayText() {
     if (!stopGrow) {
-      calculateTSize(this.tWidth, this.tHeight, this.incoming);
+      calculateTSize(this.tWidth, this.tHeight, this.incoming, "incomingSurf");
+      calculateTSize(this.tWidth, this.tHeight, this.related, "matchSurf");
     }
-    for (int i=0; i<surfaces.length; i++) {
-      // println("i: " + i + " this.tSize: " + this.tSize) ;
-      surfaces[i].beginDraw();
-      if (mFade) {
-        surfaces[i].background(222);
-        //surfaces[i].clear();
+    for (int i=0; i<1; i++) {
+      Surface s = surfs[i];
+      ArrayList<SingleLine> list = new ArrayList<SingleLine>();
+      if (i == 0) { 
+        list = incList;
+      } else if (i == 1) {
+        list = relList;
+      }
+      s.displayUtt(list, this.tSize);
+    }
+  }
+
+  void fade () {
+    for (int i=0; i<2; i++) {
+      Surface surf = surfs[i];
+      fadeGraphics(surf.s, 2);
+      ArrayList<SingleLine> list = new ArrayList<SingleLine>();
+      if (i == 0) {
+        list = incList;
       } else {
-        surfaces[i].clear();
+        list= relList;
       }
-      for (SingleLine l : singleList) {
-        surfaces[i].rectMode(CORNER);
-        surfaces[i].textFont(this.font, this.tSize);
-        surfaces[i].fill(l.col);
-        surfaces[i].text(l.line, 10, l.yPos);
-      }
-      surfaces[i].endDraw();
-      image(surfaces[i], positions[i].x, positions[i].y);
+      surf.displayUtt(list, this.tSize);
+
+      //surf.s.translate(s.width/2, s.height/2);
+      //surf.s.rotate(angle)
     }
-    surf3.beginDraw();
-    surf3.background(222);
-    surf3.textFont(this.font, 25);
-    surf3.fill(250, 15, 34);
-    surf3.textAlign(CENTER, CENTER);
-    surf3.text("diese utterance ist verwandt mit: ", surf3.width/2, surf3.height/2);
-    surf3.endDraw();
-    image(surf3, positions[0].x, positions[0].y - 100);
-    
+    angle += 0.1;
+  }
+
+  void fadeGraphics(PGraphics c, int fadeAmount) {
+    c.beginDraw();
+    c.loadPixels();
+
+    // iterate over pixels
+    for (int i =0; i<c.pixels.length; i++) {
+
+      // get alpha value
+      int alpha = (c.pixels[i] >> 24) & 0xFF ;
+
+      // reduce alpha value
+      alpha = max(0, alpha-fadeAmount);
+
+      // assign color with new alpha-value
+      c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
+    }
+
+    c.updatePixels();
+    c.endDraw();
   }
 
   void applyForce(float force) {
     acceleration += force/mass;
   }
 
-  void calculateTSize(float w, float h, String text2fit) {
+  void calculateTSize(float w, float h, String text2fit, String messType) {
     // println("\ncalculate size");
     // make temp objects to fill until right fontsize is found
     // all tempsingle Arrays can later be manipulated with their alpha color
@@ -109,14 +117,18 @@ class MessageHighlight {
       }
       this.tSize += 1;
     }
-    singleList = tempsingle;
+    if (messType.equals("incomingSurf")) {
+      incList = tempsingle;
+    } else if (messType.equals("matchSurf")) {
+      relList = tempsingle;
+    }
   }
 
   void update() {
     // Velocity changes according to acceleration
     velocity += acceleration;
     // size changes by velocity1
-    if (this.tWidth < surf1.width) {
+    if (this.tWidth < incSurf.w) {
       this.tWidth +=  velocity;   
       this.tHeight += velocity *5/9;
       // println("update  tWidth: " + this.tWidth + "  height " + this.tHeight);
@@ -125,12 +137,14 @@ class MessageHighlight {
       if (this.tSize > abs(velocity) && this.alpha >= 10) {
         this.tSize += velocity; 
         this.alpha -= 10;
-        for (SingleLine line : singleList) {
+        for (SingleLine line : incList) {
           line.updateCol(this.alpha);
-        }
+        } 
+        fade();
       } else {
         mFade = false;
         messageLock = false;
+        reset();
       }
     }
     // We must clear acceleration each frame
@@ -138,10 +152,13 @@ class MessageHighlight {
   }
 
   void checkEdge() {
-    if (this.tWidth > this.surf1.width -50 && !stopGrow) {
+    if (this.tWidth > incSurf.w -50 && !stopGrow) {
       // println("checkEdge:  " + this.tWidth);
       this.stopGrow = true;
-      for (SingleLine l : singleList) {
+      for (SingleLine l : incList) {
+        l.setDark();
+      }
+      for (SingleLine l : relList) {
         l.setDark();
       }
       createScheduleTimer(3000.0); // stops growing but displays for 3 more seconds
@@ -151,13 +168,20 @@ class MessageHighlight {
 
   void reset() {
     this.tSize = 10.0;
-    this.tWidth = surf1.width/6;
-    this.tHeight = surf1.height/6;
+    this.tWidth = incSurf.w/6;
+    this.tHeight = incSurf.h/6;
     this.alpha = 255;
     this.stopGrow = false;
     this.col= 250;
     this.velocity = 0;
     this.acceleration = 0;
+    //for (int i=0; i< surfaces.length; i++) {
+    //  PGraphics s = surfaces[i];
+    //  s.beginDraw();
+    //  s.background(222);
+    //  s.endDraw();
+    //  image(s, positions[i].x, positions[i].y);
+
     // println("reset   velo:   " + this.velocity + "  acceleration:   " + this.acceleration);
   }
 }
@@ -222,7 +246,7 @@ class Margin {
     PVector drag =  new PVector(mH.velocity, 0) ;
     drag.mult(-1);
 
-//    // Scale according to magnitude
+    //    // Scale according to magnitude
     drag.setMag(dragMagnitude);
     return drag.x;
   }

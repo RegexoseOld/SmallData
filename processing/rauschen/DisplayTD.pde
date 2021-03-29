@@ -69,7 +69,7 @@ class DisplayTD {
   void matchInput(String incoming) {
     if (this.utt.equals(incoming) && !messageLock && !this.matched && !mFade) {
       messageLock = true;
-      mH.reset();
+      mH.related = this.utt;
       this.matched = true;
       // println("matched!  " + incoming + "    with   " + this.utt);
     }

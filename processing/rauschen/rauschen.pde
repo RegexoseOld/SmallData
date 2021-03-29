@@ -12,6 +12,8 @@ NetAddress loc;
 
 final Timer t = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
+Surface incSurf, matchSurf, titleSurf1, titleSurf2, infoSurf;
+Surface[] surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
 Areas areas;
@@ -20,7 +22,7 @@ MessageHighlight mH; // Environment for growing Text display
 Margin margin1; // works with mH to define when growing Text is visible
 String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
-PFont messageFont;
+PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
 JSONObject oscTextIn; 
 String incomingText, incomingCat; // a mock for incoming OSC text
@@ -30,17 +32,17 @@ boolean messageIn = false; // background reset
 boolean updateUtts = false;
 boolean mFade;
 StringDict shapeMapping = new StringDict(); // mapping to attribute categories to SVG filenames
-PGraphics infoSurf;
 int maxUtts = 1;
 float prgIncrement;
 int uttCount = 0; 
-int currIdx;
 
 void setup() {
   size(1500, 1200);
   TD = loadJSONObject("TrainingDataPelle01.json");
+  surfs = new Surface[5];
   fontlist = PFont.list();
-  messageFont = createFont(fontlist[39], 50, true);
+  messageFont = createFont(fontlist[39], 30, true);
+  infoFont = createFont(fontlist[25], 20, true);
   oscP5 = new OscP5(this, 5040); //Audience Port
   loc = new NetAddress("127.0.0.1", 5040); // send to self
   RG.init(this);
@@ -48,12 +50,10 @@ void setup() {
   RG.setPolygonizer(RG.ADAPTATIVE);
   areas = new Areas(cats);
   buildUtts(50);
-  mH = new MessageHighlight(40, width/30, height/2, width *5/9, height/2, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
-  margin1 = new Margin(mH.surf1.width, mH.surf1.height, 0.05);
+  mH = new MessageHighlight(40, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
+  margin1 = new Margin(incSurf.w, incSurf.h, 0.05);
   pickIncoming(); // pick first utt
-  infoSurf = createGraphics(width, height/15);
   prgIncrement = 1.2;
-  currIdx = 0;
   mFade = false;
   frameRate(20);
 }
@@ -72,6 +72,12 @@ void draw() {
     utt.matchInput(incomingText);
 
   }
+  
+  for (Surface surf : surfs) {
+    surf.display(surf.name);
+    image(surf.s, surf.pos.x, surf.pos.y);
+  }
+  
   if (messageLock) {
     if (margin1.outMargin(mH)) {
       // println("out of margin:  " + mH.tWidth);
@@ -93,18 +99,6 @@ void draw() {
     mH.update();
     mH.displayText();
   } 
-  infoSurf.beginDraw();
-  infoSurf.background(222);
-  PFont font = createFont(fontlist[25], 20, true);
-  infoSurf.textFont(font);
-  infoSurf.fill(20, 200);
-  infoSurf.rectMode(CORNER);
-  // progress bar for remaining Timer
-  infoSurf.text(incomingText + "\t     " + incomingCat, 0, infoSurf.height/4, infoSurf.width, infoSurf.height);
-  fill(189, 10, 10, 150);
-  infoSurf.rect(0, 0, uttCount * prgIncrement, infoSurf.height/4);
-  infoSurf.endDraw();
-  image(infoSurf, 0, height-infoSurf.height);
 }
 
 void createScheduleTimer(final float ms) {
