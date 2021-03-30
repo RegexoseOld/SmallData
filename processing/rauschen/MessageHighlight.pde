@@ -43,7 +43,7 @@ class MessageHighlight {
       calculateTSize(this.tWidth, this.tHeight, this.incoming, "incomingSurf");
       calculateTSize(this.tWidth, this.tHeight, this.related, "matchSurf");
     }
-    for (int i=0; i<1; i++) {
+    for (int i=0; i<2; i++) {
       Surface s = surfs[i];
       ArrayList<SingleLine> list = new ArrayList<SingleLine>();
       if (i == 0) { 
@@ -55,23 +55,6 @@ class MessageHighlight {
     }
   }
 
-  void fade () {
-    for (int i=0; i<2; i++) {
-      Surface surf = surfs[i];
-      fadeGraphics(surf.s, 2);
-      ArrayList<SingleLine> list = new ArrayList<SingleLine>();
-      if (i == 0) {
-        list = incList;
-      } else {
-        list= relList;
-      }
-      surf.displayUtt(list, this.tSize);
-
-      //surf.s.translate(s.width/2, s.height/2);
-      //surf.s.rotate(angle)
-    }
-    angle += 0.1;
-  }
 
   void fadeGraphics(PGraphics c, int fadeAmount) {
     c.beginDraw();
@@ -79,17 +62,13 @@ class MessageHighlight {
 
     // iterate over pixels
     for (int i =0; i<c.pixels.length; i++) {
-
       // get alpha value
       int alpha = (c.pixels[i] >> 24) & 0xFF ;
-
       // reduce alpha value
       alpha = max(0, alpha-fadeAmount);
-
       // assign color with new alpha-value
       c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
     }
-
     c.updatePixels();
     c.endDraw();
   }
@@ -134,13 +113,12 @@ class MessageHighlight {
       // println("update  tWidth: " + this.tWidth + "  height " + this.tHeight);
     } 
     if (mFade) {
-      if (this.tSize > abs(velocity) && this.alpha >= 10) {
+      if (this.tSize > abs(velocity)) {
         this.tSize += velocity; 
-        this.alpha -= 10;
-        for (SingleLine line : incList) {
-          line.updateCol(this.alpha);
+        for (int i=0; i<4; i++) {
+          Surface surf = surfs[i];
+          fadeGraphics(surf.s, 10);
         } 
-        fade();
       } else {
         mFade = false;
         messageLock = false;

@@ -38,7 +38,7 @@ class Surface {
   void displayUtt(ArrayList<SingleLine> list, float size) {
     this.s.beginDraw();
     for (SingleLine sl : list) {
-      this.s.clear();
+      // this.s.clear();
       this.s.textFont(this.font, size);
       this.s.fill(sl.col);
       this.s.text(sl.line, 10, sl.yPos);
