@@ -81,6 +81,10 @@ void draw() {
 
   if (messageLock) {
     // einblenden der Surfaces
+    for (int i = 1; i<5; i++) {
+      Surface s = surfs[i];
+      s.visible = true;
+    }
     if (margin1.outMargin(mH)) {
       // println("out of margin:  " + mH.tWidth);
       float drag = margin1.drag(mH);
@@ -117,8 +121,8 @@ void copyBackground() {
   PImage currentbg1 = mainSurf.s.get(startX, startY, widthX, heightY);
   currentbg1.loadPixels();
   dupSurf1.s.loadPixels();
-  println("bg pix  " + currentbg1.pixels.length + "  dup pix   " + dupSurf1.s.pixels.length + "  area length " + areaLength);
-  println("bg w  " + currentbg1.width + "  bg h  " + currentbg1.height + " dup width  " + dupSurf1.w + "  dup height  " + dupSurf1.h);
+  //println("bg pix  " + currentbg1.pixels.length + "  dup pix   " + dupSurf1.s.pixels.length + "  area length " + areaLength);
+  //println("bg w  " + currentbg1.width + "  bg h  " + currentbg1.height + " dup width  " + dupSurf1.w + "  dup height  " + dupSurf1.h);
   arrayCopy(currentbg1.pixels, 0, dupSurf1.s.pixels, 0, areaLength);
   dupSurf1.s.updatePixels();
 

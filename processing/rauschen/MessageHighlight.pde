@@ -52,24 +52,6 @@ class MessageHighlight {
     }
   }
 
-
-  void fadeGraphics(PGraphics c, int fadeAmount) {
-    c.beginDraw();
-    c.loadPixels();
-
-    // iterate over pixels
-    for (int i =0; i<c.pixels.length; i++) {
-      // get alpha value
-      int alpha = (c.pixels[i] >> 24) & 0xFF ;
-      // reduce alpha value
-      alpha = max(0, alpha-fadeAmount);
-      // assign color with new alpha-value
-      c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
-    }
-    c.updatePixels();
-    c.endDraw();
-  }
-
   void applyForce(float force) {
     acceleration += force/mass;
   }
@@ -149,9 +131,6 @@ class MessageHighlight {
     c.endDraw();
   }
 
-  void applyForce(float force) {
-    acceleration += force/mass;
-  }
 
   void checkEdge() {
     if (this.tWidth > incSurf.w -50 && !stopGrow) {
