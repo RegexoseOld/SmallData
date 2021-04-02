@@ -39,64 +39,19 @@ class MessageHighlight {
   }
 
   void displayText() {
-    if (!stopGrow) {
-      calculateTSize(this.tWidth, this.tHeight, this.incoming, "incomingSurf");
-      calculateTSize(this.tWidth, this.tHeight, this.related, "matchSurf");
-    }
-    for (int i=0; i<1; i++) {
+
+    for (int i=1; i<=2; i++) {
       Surface s = surfs[i];
       ArrayList<SingleLine> list = new ArrayList<SingleLine>();
-      if (i == 0) { 
+      if (i == 1) { 
         list = incList;
-      } else if (i == 1) {
+      } else if (i == 2) {
         list = relList;
       }
       s.displayUtt(list, this.tSize);
     }
   }
 
-  void fade () {
-    for (int i=0; i<2; i++) {
-      Surface surf = surfs[i];
-      fadeGraphics(surf.s, 2);
-      ArrayList<SingleLine> list = new ArrayList<SingleLine>();
-      if (i == 0) {
-        list = incList;
-      } else {
-        list= relList;
-      }
-      surf.displayUtt(list, this.tSize);
-
-      //surf.s.translate(s.width/2, s.height/2);
-      //surf.s.rotate(angle)
-    }
-    angle += 0.1;
-  }
-
-  void fadeGraphics(PGraphics c, int fadeAmount) {
-    c.beginDraw();
-    c.loadPixels();
-
-    // iterate over pixels
-    for (int i =0; i<c.pixels.length; i++) {
-
-      // get alpha value
-      int alpha = (c.pixels[i] >> 24) & 0xFF ;
-
-      // reduce alpha value
-      alpha = max(0, alpha-fadeAmount);
-
-      // assign color with new alpha-value
-      c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
-    }
-
-    c.updatePixels();
-    c.endDraw();
-  }
-
-  void applyForce(float force) {
-    acceleration += force/mass;
-  }
 
   void calculateTSize(float w, float h, String text2fit, String messType) {
     // println("\ncalculate size");
@@ -130,17 +85,23 @@ class MessageHighlight {
     // size changes by velocity1
     if (this.tWidth < incSurf.w) {
       this.tWidth +=  velocity;   
-      this.tHeight += velocity *5/9;
+      this.tHeight += velocity *2/3;
       // println("update  tWidth: " + this.tWidth + "  height " + this.tHeight);
+      if (!stopGrow) {
+        calculateTSize(this.tWidth, this.tHeight, this.incoming, "incomingSurf");
+        calculateTSize(this.tWidth, this.tHeight, this.related, "matchSurf");
+      }
     } 
     if (mFade) {
-      if (this.tSize > abs(velocity) && this.alpha >= 10) {
+      // display dupSurfs to erase previously drawn text
+      // wann ist fade zu ende?
+      if (this.tSize > abs(velocity)) {
         this.tSize += velocity; 
-        this.alpha -= 10;
-        for (SingleLine line : incList) {
-          line.updateCol(this.alpha);
-        } 
-        fade();
+        for (int i=1; i<5; i++) {
+          Surface surf = surfs[i];
+          fadeGraphics(surf.s, 10);
+          // println("fading " + surf.name);
+        }
       } else {
         mFade = false;
         messageLock = false;
@@ -149,6 +110,26 @@ class MessageHighlight {
     }
     // We must clear acceleration each frame
     acceleration = 0;
+  }
+
+  void fadeGraphics(PGraphics c, int fadeAmount) {
+    c.beginDraw();
+    c.loadPixels();
+    // iterate over pixels
+    for (int i =0; i<c.pixels.length; i++) {
+      // get alpha value
+      int alpha = (c.pixels[i] >> 24) & 0xFF ;
+      // reduce alpha value
+      alpha = max(0, alpha-fadeAmount);
+      // assign color with new alpha-value
+      c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
+    }
+    c.updatePixels();
+    c.endDraw();
+  }
+
+  void applyForce(float force) {
+    acceleration += force/mass;
   }
 
   void checkEdge() {
@@ -175,13 +156,6 @@ class MessageHighlight {
     this.col= 250;
     this.velocity = 0;
     this.acceleration = 0;
-    //for (int i=0; i< surfaces.length; i++) {
-    //  PGraphics s = surfaces[i];
-    //  s.beginDraw();
-    //  s.background(222);
-    //  s.endDraw();
-    //  image(s, positions[i].x, positions[i].y);
-
     // println("reset   velo:   " + this.velocity + "  acceleration:   " + this.acceleration);
   }
 }
@@ -205,11 +179,11 @@ class SingleLine {
     col = color(r, g, b, a);
   }
 
-  void updateCol(int alpha) {
-    col = color(r, g, b, alpha);
-  }
+  //void updateCol(int alpha) {
+  //  col = color(r, g, b, alpha);
+  //}
   void setDark() {
-    col = color(0, 0, 0, 10);
+    col = color(0, 0, 0, 255);
   }
 }
 

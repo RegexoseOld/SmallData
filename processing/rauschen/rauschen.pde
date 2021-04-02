@@ -12,7 +12,7 @@ NetAddress loc;
 
 final Timer t = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
-Surface incSurf, matchSurf, titleSurf1, titleSurf2, infoSurf;
+Surface mainSurf, incSurf, matchSurf, titleSurf1, dupSurf1, dupSurf2, titleSurf2, infoSurf;
 Surface[] surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
@@ -37,9 +37,9 @@ float prgIncrement;
 int uttCount = 0; 
 
 void setup() {
-  size(1500, 1200);
+  size(1000, 700);
   TD = loadJSONObject("TrainingDataPelle01.json");
-  surfs = new Surface[5];
+  surfs = new Surface[8];
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[25], 20, true);
@@ -59,7 +59,9 @@ void setup() {
 }
 
 void draw() {
-  // if (frameCount%40 == 0) {pickIncoming();} automatische messages werden ausgesucht
+  //if (frameCount%80 == 0) {
+  //  pickIncoming(); //automatische messages werden ausgesucht
+  //} 
   if (messageIn) {
     background(222);
     messageIn = !messageIn;
@@ -70,15 +72,15 @@ void draw() {
     utt.draw();
     currentCol = utt.shapeColor;
     utt.matchInput(incomingText);
-
   }
-  
   for (Surface surf : surfs) {
-    surf.display(surf.name);
-    image(surf.s, surf.pos.x, surf.pos.y);
+    if (surf.visible) {
+      image(surf.s, surf.pos.x, surf.pos.y);
+    }
   }
-  
+
   if (messageLock) {
+    // einblenden der Surfaces
     if (margin1.outMargin(mH)) {
       // println("out of margin:  " + mH.tWidth);
       float drag = margin1.drag(mH);
@@ -94,11 +96,42 @@ void draw() {
     }
   }
   if (mFade) {
+    // ausblenden der surfaces
     float gravity = - mH.mass *2;
     mH.applyForce(gravity);
     mH.update();
+    copyBackground();
     mH.displayText();
-  } 
+  }
+}
+
+void copyBackground() {
+  // both areas of mainSurfaces are copied into dupSurf to replace the matching utt areas when mFade is active
+
+  int startX = int(titleSurf1.pos.x);
+  int widthX =  dupSurf1.w;
+  int startY = int(titleSurf1.pos.y);
+  int heightY = dupSurf1.h;
+  int areaLength = dupSurf1.w * dupSurf1.h;
+
+  PImage currentbg1 = mainSurf.s.get(startX, startY, widthX, heightY);
+  currentbg1.loadPixels();
+  dupSurf1.s.loadPixels();
+  println("bg pix  " + currentbg1.pixels.length + "  dup pix   " + dupSurf1.s.pixels.length + "  area length " + areaLength);
+  println("bg w  " + currentbg1.width + "  bg h  " + currentbg1.height + " dup width  " + dupSurf1.w + "  dup height  " + dupSurf1.h);
+  arrayCopy(currentbg1.pixels, 0, dupSurf1.s.pixels, 0, areaLength);
+  dupSurf1.s.updatePixels();
+
+  int startX2 = int(titleSurf2.pos.x);
+  int widthX2 = incSurf.w;
+  int startY2 = int(titleSurf2.pos.y);
+  int heightY2 =  dupSurf2.h;
+
+  PImage currentbg2 = mainSurf.s.get(startX2, startY2, widthX2, heightY2);
+  currentbg2.loadPixels();
+  dupSurf2.s.loadPixels();
+  arrayCopy(currentbg2.pixels, 0, dupSurf2.s.pixels, 0, areaLength);
+  dupSurf2.s.updatePixels();
 }
 
 void createScheduleTimer(final float ms) {

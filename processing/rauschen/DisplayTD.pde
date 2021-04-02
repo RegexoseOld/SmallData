@@ -26,22 +26,24 @@ class DisplayTD {
   }
 
   void draw() {
-    textFont(this.font);
-    fill(this.shapeColor, int(random(0, 80)));
-    pushMatrix();
-    translate(this.x, this.y);
-    rotate(this.angle);
+    mainSurf.s.beginDraw();
+    mainSurf.s.textFont(this.font);
+    mainSurf.s.fill(this.shapeColor, int(random(0, 80)));
+    mainSurf.s.pushMatrix();
+    mainSurf.s.translate(this.x, this.y);
+    mainSurf.s.rotate(this.angle);
     if (this.isShape) {
       this.shape.disableStyle();
-      fill(shapeColor);
-      shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
+      mainSurf.s.fill(shapeColor);
+      mainSurf.s.shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
     } else if (!this.isShape) {
-      textAlign(CENTER, CENTER);
-      textSize(random(40));
-      text(this.utt, 0, 0);
+      mainSurf.s.textAlign(CENTER, CENTER);
+      mainSurf.s.textSize(random(40));
+      mainSurf.s.text(this.utt, 0, 0);
     }
     moveText();
-    popMatrix();
+    mainSurf.s.popMatrix();
+    mainSurf.s.endDraw();
   }
 
   void findArea() {

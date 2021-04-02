@@ -5,10 +5,10 @@ class Surface {
   String name, message;
   int w, h;
   float  tSize;
-  boolean fixed;
+  boolean visible;
   color col;
 
-  Surface(String name, float _x, float _y, float _w, float _h, PFont _font, boolean _fixed) {
+  Surface(String name, float _x, float _y, float _w, float _h, PFont _font, boolean _visible) {
     this.name = name;
     this.pos = new PVector(_x, _y);
     w = int(_w);
@@ -16,9 +16,16 @@ class Surface {
     this.s = createGraphics(w, h);
     this.s.smooth();
     this.font = _font;
-    this.fixed = _fixed;
+    this.visible = _visible;
     this.message= "";
     this.tSize = 1;
+    setBackground(); 
+  }
+  
+  void setBackground() {
+    this.s.beginDraw();
+    this.s.background(222);
+    this.s.endDraw();
   }
 
   void updateMessage(String m, color c, float size) {
@@ -37,8 +44,8 @@ class Surface {
 
   void displayUtt(ArrayList<SingleLine> list, float size) {
     this.s.beginDraw();
+    this.s.clear();
     for (SingleLine sl : list) {
-      this.s.clear();
       this.s.textFont(this.font, size);
       this.s.fill(sl.col);
       this.s.text(sl.line, 10, sl.yPos);
@@ -73,16 +80,22 @@ class Surface {
 
 void buildSurfaces() {
   println("x " + width/30 + " y " + height/2 + " w " +  width *3/7 + " h " + height/5);
+  mainSurf = new Surface("main", 0, 0, width, height, messageFont, true);
   incSurf = new Surface("incomingSurf", width/30, height/2, width *3/7, height/5, messageFont, false);
   matchSurf = new Surface("matchSurf", width *5/9, height/2, width *3/7, height/5, messageFont, false);
-  titleSurf1 = new Surface("titleIncoming", incSurf.pos.x, incSurf.pos.y-80, incSurf.w, 50.0, messageFont, true);
-  titleSurf2 =  new Surface("titleMatch", matchSurf.pos.x, matchSurf.pos.y-80, matchSurf.w, 50.0, messageFont, true);
+  titleSurf1 = new Surface("titleIncoming", incSurf.pos.x, incSurf.pos.y-80, incSurf.w, 50.0, messageFont, false);
+  titleSurf2 =  new Surface("titleMatch", matchSurf.pos.x, matchSurf.pos.y-80, matchSurf.w, 50.0, messageFont, false);
+  dupSurf1 = new Surface("dup1", titleSurf1.pos.x, titleSurf1.pos.y, incSurf.w, incSurf.h + titleSurf1.h, messageFont, false);
+  dupSurf2 = new Surface("dup2", titleSurf2.pos.x, titleSurf2.pos.y, matchSurf.w, matchSurf.h + titleSurf2.h, messageFont, false);
   infoSurf = new Surface("infoSurf", 0, height-height/15, width, height/15, infoFont, true);
-  surfs[0] = incSurf;
-  surfs[1] = matchSurf;
-  surfs[2] = titleSurf1;
-  surfs[3] = titleSurf2;
-  surfs[4] = infoSurf;
+  surfs[0] = mainSurf;
+  surfs[1] = incSurf;
+  surfs[2] = matchSurf;
+  surfs[3] = titleSurf1;
+  surfs[4] = titleSurf2;
+  surfs[5] = infoSurf;
+  surfs[6] = dupSurf1;
+  surfs[7] = dupSurf2;
   titleSurf1.updateMessage("Dein Kommentar ähnelt...", color(0), 12);
   titleSurf2.updateMessage("...diesem hier", color(0), 12);
 }
