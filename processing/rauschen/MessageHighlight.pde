@@ -38,41 +38,18 @@ class MessageHighlight {
     // collection.clear();
   }
 
-  void displayText() {
-
-    for (int i=1; i<=2; i++) {
-      Surface s = surfs[i];
-      ArrayList<SingleLine> list = new ArrayList<SingleLine>();
-      if (i == 1) { 
-        list = incList;
-      } else if (i == 2) {
-        list = relList;
-      }
-      s.displayUtt(list, this.tSize);
-    }
-  }
-
-
-  void fadeGraphics(PGraphics c, int fadeAmount) {
-    c.beginDraw();
-    c.loadPixels();
-
-    // iterate over pixels
-    for (int i =0; i<c.pixels.length; i++) {
-      // get alpha value
-      int alpha = (c.pixels[i] >> 24) & 0xFF ;
-      // reduce alpha value
-      alpha = max(0, alpha-fadeAmount);
-      // assign color with new alpha-value
-      c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
-    }
-    c.updatePixels();
-    c.endDraw();
-  }
-
-  void applyForce(float force) {
-    acceleration += force/mass;
-  }
+  //void displayUtts() {
+  //  for (int i=1; i<=2; i++) {
+  //    Surface s = surfs[i];
+  //    ArrayList<SingleLine> list = new ArrayList<SingleLine>();
+  //    if (i == 1) { 
+  //      list = incList;
+  //    } else if (i == 2) {
+  //      list = relList;
+  //    }
+  //    s.displayUtt(list, this.tSize);
+  //  }
+  //}
 
   void calculateTSize(float w, float h, String text2fit, String messType) {
     // println("\ncalculate size");
@@ -94,35 +71,33 @@ class MessageHighlight {
       this.tSize += 1;
     }
     if (messType.equals("incomingSurf")) {
-      incList = tempsingle;
+      // incList = tempsingle;
+      Surface s = surfs[1];
+      s.uttLines = tempsingle;
+      s.tSize = this.tSize;
     } else if (messType.equals("matchSurf")) {
-      relList = tempsingle;
+      //relList = tempsingle;
+      Surface s = surfs[2];
+      s.uttLines = tempsingle;
+      s.tSize = this.tSize;
     }
   }
 
   void update() {
     // Velocity changes according to acceleration
     velocity += acceleration;
+    println("tSize  " + tSize + "  velocity  " + velocity);
+
     // size changes by velocity1
     if (this.tWidth < incSurf.w) {
       this.tWidth +=  velocity;   
       this.tHeight += velocity *2/3;
       // println("update  tWidth: " + this.tWidth + "  height " + this.tHeight);
-      if (!stopGrow) {
-        calculateTSize(this.tWidth, this.tHeight, this.incoming, "incomingSurf");
-        calculateTSize(this.tWidth, this.tHeight, this.related, "matchSurf");
-      }
     } 
     if (mFade) {
-      // display dupSurfs to erase previously drawn text
-      // wann ist fade zu ende?
+      println("mFade");
       if (this.tSize > abs(velocity)) {
-        this.tSize += velocity; 
-        for (int i=1; i<5; i++) {
-          Surface surf = surfs[i];
-          fadeGraphics(surf.s, 10);
-          // println("fading " + surf.name);
-        }
+        this.tSize += velocity;
       } else {
         mFade = false;
         messageLock = false;
@@ -133,40 +108,26 @@ class MessageHighlight {
     acceleration = 0;
   }
 
-  void fadeGraphics(PGraphics c, int fadeAmount) {
-    c.beginDraw();
-    c.loadPixels();
-    // iterate over pixels
-    for (int i =0; i<c.pixels.length; i++) {
-      // get alpha value
-      int alpha = (c.pixels[i] >> 24) & 0xFF ;
-      // reduce alpha value
-      alpha = max(0, alpha-fadeAmount);
-      // assign color with new alpha-value
-      c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
-    }
-    c.updatePixels();
-    c.endDraw();
-  }
-
   void applyForce(float force) {
     acceleration += force/mass;
   }
 
   void checkEdge() {
-    if (this.tWidth > incSurf.w -50 && !stopGrow) {
+    if (this.tWidth < incSurf.w -50 ) {
+      calculateTSize(this.tWidth, this.tHeight, this.incoming, "incomingSurf");
+      calculateTSize(this.tWidth, this.tHeight, this.related, "matchSurf");
+    } else if (!stopGrow) {
       // println("checkEdge:  " + this.tWidth);
       this.stopGrow = true;
-      for (SingleLine l : incList) {
-        l.setDark();
-      }
-      for (SingleLine l : relList) {
-        l.setDark();
+      for (int i = 1; i<=2; i++) {
+        Surface s = surfs[i];
+        for (SingleLine l : s.uttLines) {
+          l.setDark();
+        }
       }
       createScheduleTimer(3000.0); // stops growing but displays for 3 more seconds
     }
   }
-
 
   void reset() {
     this.tSize = 10.0;
@@ -177,7 +138,10 @@ class MessageHighlight {
     this.col= 250;
     this.velocity = 0;
     this.acceleration = 0;
-    // println("reset   velo:   " + this.velocity + "  acceleration:   " + this.acceleration);
+    for (int i=1; i<5; i++) {
+      Surface s = surfs[i];
+      s.visible = false;
+    }
   }
 }
 
@@ -200,49 +164,7 @@ class SingleLine {
     col = color(r, g, b, a);
   }
 
-  //void updateCol(int alpha) {
-  //  col = color(r, g, b, alpha);
-  //}
   void setDark() {
     col = color(0, 0, 0, 255);
-  }
-}
-
-class Margin {
-
-  // Margin is a rectangle
-  float x, y, w, h;
-  // Coefficient of drag
-  float c;
-
-  Margin(float w_, float h_, float c_) {
-    w = w_;
-    h = h_;
-    c = c_;
-  }
-
-  // Is the width of the messageRect within the Margin?
-  boolean outMargin(MessageHighlight mH) {
-    float l = mH.tWidth;
-    if (l > w - mH.growMargin) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  // Calculate drag force
-  float drag(MessageHighlight mH) {
-    // Magnitude is coefficient * speed squared
-    float speed = mH.velocity;
-    float dragMagnitude = c * speed * speed;
-
-    // Direction is inverse of velocity
-    PVector drag =  new PVector(mH.velocity, 0) ;
-    drag.mult(-1);
-
-    //    // Scale according to magnitude
-    drag.setMag(dragMagnitude);
-    return drag.x;
   }
 }

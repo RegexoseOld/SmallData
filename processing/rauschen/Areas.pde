@@ -30,7 +30,7 @@ class Area {
 
   Area(String name) {
     this.name = name; 
-    areaColor(this.name); 
+    this.col = attributeUtt(this.name); 
     this.rS = RG.loadShape("data/"+ name +".svg"); //<>//
     this.points = rS.getPoints();
     // println("loaded .... " + name);
@@ -55,24 +55,5 @@ class Area {
 
   void draw() {
     this.rS.draw();
-  }
-
-  void areaColor (String cat) {
-    switch(cat) {
-    case "praise" : 
-      this.col = color(171, 138, 132, 20); 
-      break; 
-    case "dissence" : 
-      this.col = color(181, 201, 187, 20); 
-      break; 
-    case "insinuation" : 
-      this.col = color(120, 145, 148, 20); 
-      break; 
-    case "lecture" : 
-      this.col = color(109, 133, 124, 20); 
-      break; 
-    case "concession" : 
-      this.col = color(198, 199, 177, 20);
-    }
   }
 }
