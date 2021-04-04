@@ -19,7 +19,6 @@ DisplayTD currentUtt;
 Areas areas;
 RShape area, newarea;
 MessageHighlight mH; // Environment for growing Text display
-Margin margin1; // works with mH to define when growing Text is visible
 String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 PFont messageFont, infoFont;
@@ -50,8 +49,8 @@ void setup() {
   RG.setPolygonizer(RG.ADAPTATIVE);
   areas = new Areas(cats);
   buildUtts(50);
-  mH = new MessageHighlight(40, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
-  margin1 = new Margin(incSurf.w, incSurf.h, 0.05);
+  mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
+  // margin1 = new Margin(incSurf.w, incSurf.h, 0.05);
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
   mFade = false;
@@ -73,70 +72,63 @@ void draw() {
     currentCol = utt.shapeColor;
     utt.matchInput(incomingText);
   }
-  for (Surface surf : surfs) {
-    if (surf.visible) {
-      image(surf.s, surf.pos.x, surf.pos.y);
-    }
-  }
 
   if (messageLock) {
     // einblenden der Surfaces
-    for (int i = 1; i<5; i++) {
+    for (int i=1; i<5; i++) {
       Surface s = surfs[i];
       s.visible = true;
     }
-    if (margin1.outMargin(mH)) {
-      // println("out of margin:  " + mH.tWidth);
-      float drag = margin1.drag(mH);
-      mH.applyForce(drag);
-      mH.update();
-      mH.checkEdge(); 
-      mH.displayText();
-    } else {
-      float gravity = 2 * mH.mass;
-      mH.applyForce(gravity);
-      mH.update();
-      mH.displayText();
-    }
+    
+    float gravity = 3 * mH.mass;
+    mH.applyForce(gravity);
+    mH.update();
+    mH.checkEdge(); 
+
   }
   if (mFade) {
     // ausblenden der surfaces
-    float gravity = - mH.mass *2;
+    float gravity = - mH.mass;
     mH.applyForce(gravity);
     mH.update();
-    copyBackground();
-    mH.displayText();
+  }
+
+  for (Surface surf : surfs) {
+    if (surf.visible) {
+      surf.display(surf.name);
+      image(surf.s, surf.pos.x, surf.pos.y);
+    }
   }
 }
 
-void copyBackground() {
-  // both areas of mainSurfaces are copied into dupSurf to replace the matching utt areas when mFade is active
+//void copyBackground() {
+//  // both areas of mainSurfaces are copied into dupSurf to replace the matching utt areas when mFade is active
 
-  int startX = int(titleSurf1.pos.x);
-  int widthX =  dupSurf1.w;
-  int startY = int(titleSurf1.pos.y);
-  int heightY = dupSurf1.h;
-  int areaLength = dupSurf1.w * dupSurf1.h;
+//  int startX = int(titleSurf1.pos.x);
+//  int widthX =  dupSurf1.w;
+//  int startY = int(titleSurf1.pos.y);
+//  int heightY = dupSurf1.h;
+//  int areaLength = dupSurf1.w * dupSurf1.h;
 
-  PImage currentbg1 = mainSurf.s.get(startX, startY, widthX, heightY);
-  currentbg1.loadPixels();
-  dupSurf1.s.loadPixels();
-  //println("bg pix  " + currentbg1.pixels.length + "  dup pix   " + dupSurf1.s.pixels.length + "  area length " + areaLength);
-  //println("bg w  " + currentbg1.width + "  bg h  " + currentbg1.height + " dup width  " + dupSurf1.w + "  dup height  " + dupSurf1.h);
-  arrayCopy(currentbg1.pixels, 0, dupSurf1.s.pixels, 0, areaLength);
-  dupSurf1.s.updatePixels();
+//  PImage currentbg1 = mainSurf.s.get(startX, startY, widthX, heightY);
+//  currentbg1.loadPixels();
+//  dupSurf1.s.loadPixels();
+//  println("bg pix  " + currentbg1.pixels.length + "  dup pix   " + dupSurf1.s.pixels.length + "  area length " + areaLength);
+//  println("bg w  " + currentbg1.width + "  bg h  " + currentbg1.height + " dup width  " + dupSurf1.w + "  dup height  " + dupSurf1.h);
+//  arrayCopy(currentbg1.pixels, 0, dupSurf1.s.pixels, 0, areaLength);
+//  dupSurf1.s.updatePixels();
 
-  int startX2 = int(titleSurf2.pos.x);
-  int widthX2 = incSurf.w;
-  int startY2 = int(titleSurf2.pos.y);
-  int heightY2 =  dupSurf2.h;
+//  int startX2 = int(titleSurf2.pos.x);
+//  int widthX2 = incSurf.w;
+//  int startY2 = int(titleSurf2.pos.y);
+//  int heightY2 =  dupSurf2.h;
 
-  PImage currentbg2 = mainSurf.s.get(startX2, startY2, widthX2, heightY2);
-  currentbg2.loadPixels();
-  dupSurf2.s.loadPixels();
-  arrayCopy(currentbg2.pixels, 0, dupSurf2.s.pixels, 0, areaLength);
-  dupSurf2.s.updatePixels();
-}
+//  PImage currentbg2 = mainSurf.s.get(startX2, startY2, widthX2, heightY2);
+//  currentbg2.loadPixels();
+//  dupSurf2.s.loadPixels();
+//  arrayCopy(currentbg2.pixels, 0, dupSurf2.s.pixels, 0, areaLength);
+//  dupSurf2.s.updatePixels();
+//}
 
 void createScheduleTimer(final float ms) {
   messageLock = true;
