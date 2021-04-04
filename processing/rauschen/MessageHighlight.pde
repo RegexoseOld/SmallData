@@ -5,26 +5,18 @@ class MessageHighlight {
    */
   PGraphics[] surfaces = new PGraphics[2]; // arrays to iterate in displayText
   String incoming, related;
-  ArrayList<SingleLine> incList, relList;
   float mass;  
   PFont font;
   float velocity, acceleration, tSize, tWidth, tHeight, angle; // current Size of message
   boolean stopGrow;
-  int growMargin, alpha;
-  color col;
 
   MessageHighlight(float m, PFont font) {
     mass = m;
     velocity = 0;
     acceleration = 0;
     buildSurfaces();
-    incList = new ArrayList<SingleLine>();
-    relList = new ArrayList<SingleLine>();
-    growMargin = 200;
     angle = 0;
     this.font = font;
-    this.alpha = 125;
-    this.col = color(255, this.alpha);
     this.tSize = 10.0;
     this.tWidth = incSurf.w/6; // starting point for font calculation
     this.tHeight = incSurf.h/6;
@@ -35,21 +27,7 @@ class MessageHighlight {
 
   void newMessage(String m) {
     this.incoming = m;
-    // collection.clear();
   }
-
-  //void displayUtts() {
-  //  for (int i=1; i<=2; i++) {
-  //    Surface s = surfs[i];
-  //    ArrayList<SingleLine> list = new ArrayList<SingleLine>();
-  //    if (i == 1) { 
-  //      list = incList;
-  //    } else if (i == 2) {
-  //      list = relList;
-  //    }
-  //    s.displayUtt(list, this.tSize);
-  //  }
-  //}
 
   void calculateTSize(float w, float h, String text2fit, String messType) {
     // println("\ncalculate size");
@@ -71,12 +49,10 @@ class MessageHighlight {
       this.tSize += 1;
     }
     if (messType.equals("incomingSurf")) {
-      // incList = tempsingle;
       Surface s = surfs[1];
       s.uttLines = tempsingle;
       s.tSize = this.tSize;
     } else if (messType.equals("matchSurf")) {
-      //relList = tempsingle;
       Surface s = surfs[2];
       s.uttLines = tempsingle;
       s.tSize = this.tSize;
@@ -87,7 +63,6 @@ class MessageHighlight {
     // Velocity changes according to acceleration
     velocity += acceleration;
     // println("tSize  " + tSize + "  velocity  " + velocity + "  accel  " + acceleration);
-
     // size changes by velocity1
     if (this.tWidth < incSurf.w) {
       this.tWidth +=  velocity;   
@@ -106,7 +81,6 @@ class MessageHighlight {
         Surface s = surfs[i];
         s.tSize = this.tSize;
       }
-      
     } else {
       mFade = false;
       messageLock = false;
@@ -142,7 +116,6 @@ class MessageHighlight {
     this.tHeight = incSurf.h/6;
     this.alpha = 255;
     this.stopGrow = false;
-    this.col= 250;
     this.velocity = 0;
     this.acceleration = 0;
     for (int i=1; i<5; i++) {

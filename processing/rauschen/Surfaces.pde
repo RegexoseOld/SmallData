@@ -50,12 +50,13 @@ class Surface {
       displayInfo();
     }
      if (mFade) {
-      fadeGraphics(this.s, 2);
+      fadeGraphics(this.s, this.name, 2);
     }
     
   }
 
-  void fadeGraphics(PGraphics c, int fadeAmount) {
+  void fadeGraphics(PGraphics c, String name, int fadeAmount) {
+    // println("fading   " + name);
     c.beginDraw();
     c.loadPixels();
     // iterate over pixels
