@@ -86,7 +86,7 @@ class MessageHighlight {
   void update() {
     // Velocity changes according to acceleration
     velocity += acceleration;
-    println("tSize  " + tSize + "  velocity  " + velocity);
+    // println("tSize  " + tSize + "  velocity  " + velocity + "  accel  " + acceleration);
 
     // size changes by velocity1
     if (this.tWidth < incSurf.w) {
@@ -94,17 +94,24 @@ class MessageHighlight {
       this.tHeight += velocity *2/3;
       // println("update  tWidth: " + this.tWidth + "  height " + this.tHeight);
     } 
-    if (mFade) {
-      println("mFade");
-      if (this.tSize > abs(velocity)) {
-        this.tSize += velocity;
-      } else {
-        mFade = false;
-        messageLock = false;
-        reset();
-      }
-    }
     // We must clear acceleration each frame
+    acceleration = 0;
+  }
+
+  void updateFade() {
+ 
+    if (this.tSize > abs(acceleration)) {
+      this.tSize += acceleration;
+      for (int i=1 ; i<=2; i++) {
+        Surface s = surfs[i];
+        s.tSize = this.tSize;
+      }
+      
+    } else {
+      mFade = false;
+      messageLock = false;
+      reset();
+    }
     acceleration = 0;
   }
 

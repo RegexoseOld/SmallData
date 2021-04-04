@@ -73,13 +73,12 @@ void draw() {
     utt.matchInput(incomingText);
   }
 
-  if (messageLock) {
+  if (messageLock && !mFade) {
     // einblenden der Surfaces
     for (int i=1; i<5; i++) {
       Surface s = surfs[i];
       s.visible = true;
     }
-    
     float gravity = 3 * mH.mass;
     mH.applyForce(gravity);
     mH.update();
@@ -88,9 +87,9 @@ void draw() {
   }
   if (mFade) {
     // ausblenden der surfaces
-    float gravity = - mH.mass;
+    float gravity = - 3 * mH.mass;
     mH.applyForce(gravity);
-    mH.update();
+    mH.updateFade();
   }
 
   for (Surface surf : surfs) {
