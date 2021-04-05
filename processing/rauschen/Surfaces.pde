@@ -1,4 +1,4 @@
-class Surface {
+class Surface { //<>//
   /*
   Surfaces haben verschiedene Funktionen
    permanent = main und infosurf, sind immer visible
@@ -37,13 +37,13 @@ class Surface {
       makeTitle();
     }
   }
-  
+
   void clearBackground() {
     this.s.beginDraw();
     this.s.background(222); 
     this.s.endDraw();
   }
-  
+
 
   void display(String name) {
     if (name.startsWith("match")) {
@@ -55,10 +55,13 @@ class Surface {
     if (name.startsWith("info")) {
       displayInfo();
     }
-     if (mFade) {
+    if (name.startsWith("counter")) {
+      displayCounter();
+    }
+
+    if (mFade) {
       fadeGraphics(this.s, this.name, 2);
     }
-    
   }
 
   void fadeGraphics(PGraphics c, String name, int fadeAmount) {
@@ -102,8 +105,31 @@ class Surface {
     this.s.endDraw();
   }
 
+  void displayCounter() {
+    this.s.beginDraw();  
+    this.s.background(222);
+    this.s.textFont(this.font, 10);
+    int yPos = 20;
+    for (int i=1; i<counter.size()+1; i++) {
+      String cat = cats[i-1];
+      float rectWidth = float(counter.getInt(cat));
+      this.s.rectMode(CENTER);
+      this.s.textAlign(LEFT, CENTER);
+      color fillcol = attributeUtt(cat);
+      int alpha = (fillcol >> 24) & 0xFF;
+      alpha = 255;
+      fillcol = alpha<<24 | fillcol & 0xFFFFFF ;
+      println("ypos  " + yPos *i);
+      this.s.fill(fillcol);
+      this.s.text(cat, 0, yPos*i);
+      this.s.noStroke();
+      this.s.rect(80, yPos * i, rectWidth, this.h/8);
+    }
+    this.s.endDraw();
+  }
+
   void makeTitle() {
-    this.s.beginDraw(); //<>//
+    this.s.beginDraw();
     // remove alpha color
     int alpha = (this.col >> 24) & 0xFF;
     alpha = 255;
@@ -127,12 +153,14 @@ void buildSurfaces() {
   dupSurf1 = new Surface("dup1", int(titleSurf1.pos.x), int(titleSurf1.pos.y), int(incSurf.w), int(incSurf.h + titleSurf1.h), messageFont, false, "");
   dupSurf2 = new Surface("dup2", int(titleSurf2.pos.x), int(titleSurf2.pos.y), matchSurf.w, matchSurf.h + titleSurf2.h, messageFont, false, "");
   infoSurf = new Surface("infoSurf", 0, height-height/12, width, height/12, infoFont, true, incomingText);
+  counterSurf = new Surface("counter", 0, height *3/4, width/8, height/6, infoFont, false, "categories");
   surfs[0] = mainSurf;
   surfs[1] = incSurf;
   surfs[2] = matchSurf;
   surfs[3] = titleSurf1;
   surfs[4] = titleSurf2;
   surfs[5] = infoSurf;
-  surfs[6] = dupSurf1;
-  surfs[7] = dupSurf2;
+  surfs[6] = counterSurf;
+  surfs[7] = dupSurf1;
+  surfs[8] = dupSurf2;
 }

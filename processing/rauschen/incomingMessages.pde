@@ -6,7 +6,9 @@ void oscEvent(OscMessage m) {
     oscTextIn = parseJSONObject((String) m.arguments()[0]);
     incomingText = oscTextIn.getString("text");
     incomingCat = oscTextIn.getString("cat");
-    JSONObject counter = oscTextIn.getJSONObject("category_counter");
+    counter = oscTextIn.getJSONObject("category_counter");
+    println("counter  " + counter);
+    surfs[6].visible = true;
     // boolean is_locked = incomingUtt.getBoolean("is_locked");
     messageIn = true;
     println("new utt: " + incomingText);

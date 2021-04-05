@@ -12,7 +12,7 @@ NetAddress loc;
 
 final Timer t = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
-Surface mainSurf, incSurf, matchSurf, titleSurf1, dupSurf1, dupSurf2, titleSurf2, infoSurf;
+Surface mainSurf, incSurf, matchSurf, titleSurf1, dupSurf1, dupSurf2, titleSurf2, infoSurf, counterSurf;
 Surface[] surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
@@ -23,7 +23,7 @@ String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
-JSONObject oscTextIn; 
+JSONObject oscTextIn, counter; 
 String incomingText, incomingCat; // a mock for incoming OSC text
 color currentCol;
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
@@ -38,7 +38,7 @@ int uttCount = 0;
 void setup() {
   size(1000, 700);
   TD = loadJSONObject("TrainingDataPelle01.json");
-  surfs = new Surface[8];
+  surfs = new Surface[9];
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[25], 20, true);
