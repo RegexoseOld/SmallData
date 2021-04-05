@@ -17,7 +17,7 @@ class DisplayTD {
     this.matched = false; // should be checked only once between to incoming messages: line 70
     this.shape = shape;
     this.shapeSize = sSize;
-    attributeUtt(this.cat);
+    shapeColor = attributeUtt(this.cat);
     findArea();
     this.font_size = 25;
     this.angle = int(random(TWO_PI));
@@ -26,22 +26,24 @@ class DisplayTD {
   }
 
   void draw() {
-    textFont(this.font);
-    fill(this.shapeColor, int(random(0, 80)));
-    pushMatrix();
-    translate(this.x, this.y);
-    rotate(this.angle);
+    mainSurf.s.beginDraw();
+    mainSurf.s.textFont(this.font);
+    mainSurf.s.fill(this.shapeColor, int(random(0, 80)));
+    mainSurf.s.pushMatrix();
+    mainSurf.s.translate(this.x, this.y);
+    mainSurf.s.rotate(this.angle);
     if (this.isShape) {
       this.shape.disableStyle();
-      fill(shapeColor);
-      shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
+      mainSurf.s.fill(shapeColor);
+      mainSurf.s.shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
     } else if (!this.isShape) {
-      textAlign(CENTER, CENTER);
-      textSize(random(40));
-      text(this.utt, 0, 0);
+      mainSurf.s.textAlign(CENTER, CENTER);
+      mainSurf.s.textSize(random(40));
+      mainSurf.s.text(this.utt, 0, 0);
     }
     moveText();
-    popMatrix();
+    mainSurf.s.popMatrix();
+    mainSurf.s.endDraw();
   }
 
   void findArea() {
@@ -60,8 +62,9 @@ class DisplayTD {
 
   void moveText() {
     if (this.x < width && this.y < height) {
-      this.x += random(-10,10);;
-      this.y += random(-8,8);
+      this.x += random(-10, 10);
+      ;
+      this.y += random(-8, 8);
     } 
     this.angle += random(-0.05, 0.05);
   }
@@ -69,28 +72,33 @@ class DisplayTD {
   void matchInput(String incoming) {
     if (this.utt.equals(incoming) && !messageLock && !this.matched && !mFade) {
       messageLock = true;
-      mH.reset();
+      mH.related = this.utt;
       this.matched = true;
+      titleSurf1.col = shapeColor;
+      titleSurf2.col = attributeUtt(cat);
       // println("matched!  " + incoming + "    with   " + this.utt);
     }
   }
+}
 
-  void attributeUtt(String cat) {
-    switch(cat) {
-    case "praise" : 
-      shapeColor = color(171, 138, 132, 175);
-      break;
-    case "dissence" : 
-      shapeColor = color(181, 201, 187, 125);
-      break;
-    case "insinuation" : 
-      shapeColor = color(120, 145, 148, 125);
-      break;
-    case "lecture" : 
-      shapeColor = color(109, 133, 124, 125);
-      break;
-    case "concession" : 
-      shapeColor = color(198, 199, 177, 180);
-    }
+
+color attributeUtt(String cat) {
+  color col = color(0);
+  switch(cat) {
+  case "praise" : 
+    col =  color(171, 138, 132, 175);
+    break;
+  case "dissence" : 
+    col = color(181, 201, 187, 125);
+    break;
+  case "insinuation" : 
+    col =  color(120, 145, 148, 125);
+    break;
+  case "lecture" : 
+    col = color(109, 133, 124, 125);
+    break;
+  case "concession" : 
+    col = color(198, 199, 177, 180);
   }
+  return col;
 }

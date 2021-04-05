@@ -6,7 +6,9 @@ void oscEvent(OscMessage m) {
     oscTextIn = parseJSONObject((String) m.arguments()[0]);
     incomingText = oscTextIn.getString("text");
     incomingCat = oscTextIn.getString("cat");
-    JSONObject counter = oscTextIn.getJSONObject("category_counter");
+    counter = oscTextIn.getJSONObject("category_counter");
+    println("counter  " + counter);
+    surfs[6].visible = true;
     // boolean is_locked = incomingUtt.getBoolean("is_locked");
     messageIn = true;
     println("new utt: " + incomingText);
@@ -25,7 +27,7 @@ void oscEvent(OscMessage m) {
       }
       
     }
-    mH.incoming = incomingText;
+    mH.newMessage(incomingText);
     uttCount += 1;
     // println("increment:  " + prgIncrement + "   uttcount:   " + uttCount);
   } else if (m.checkAddrPattern("/display_init") == true) {
@@ -48,7 +50,7 @@ void updateUtts() {
   }
   utts.add(incomingUtt);
   updateUtts = false;
-  println(" still  updating2?   " + updateUtts + " " + frameCount);
+  // println(" still  updating2?   " + updateUtts + " " + frameCount);
 } 
 
 // mock for incoming String messages. 
