@@ -16,12 +16,12 @@ class Surface {
   boolean visible, fade;
   color col;
 
-  Surface(String name, float _x, float _y, float _w, float _h, PFont _font, boolean _visible, String _message) {
+  Surface(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible, String _message) {
     this.name = name;
+    this.w = _w;
+    this.h = _h;
     this.pos = new PVector(_x, _y);
-    w = int(_w);
-    h = int(_h);
-    this.s = createGraphics(w, h);
+    this.s = createGraphics(_w, _h);
     this.s.smooth();
     this.uttLines = new ArrayList<SingleLine>();
     this.font = _font;
@@ -37,9 +37,15 @@ class Surface {
       makeTitle();
     }
   }
+  
+  void clearBackground() {
+    this.s.beginDraw();
+    this.s.background(222); 
+    this.s.endDraw();
+  }
+  
 
   void display(String name) {
-   
     if (name.startsWith("match")) {
       displayUtt();
     }
@@ -86,7 +92,7 @@ class Surface {
   void displayInfo() {
     this.s.beginDraw();
     this.s.background(222);
-    this.s.textFont(this.font);
+    this.s.textFont(this.font, 15);
     this.s.fill(20, 200);
     this.s.rectMode(CORNER);
     // progress bar for remaining Timer
@@ -97,7 +103,7 @@ class Surface {
   }
 
   void makeTitle() {
-    this.s.beginDraw();
+    this.s.beginDraw(); //<>//
     // remove alpha color
     int alpha = (this.col >> 24) & 0xFF;
     alpha = 255;
@@ -116,10 +122,10 @@ void buildSurfaces() {
   mainSurf = new Surface("main", 0, 0, width, height, messageFont, true, "");
   incSurf = new Surface("matchSurf1", width/30, height/2, width *3/7, height/5, messageFont, false, incomingText);
   matchSurf = new Surface("matchSurf2", width *5/9, height/2, width *3/7, height/5, messageFont, false, "");
-  titleSurf1 = new Surface("titleIncoming", incSurf.pos.x, incSurf.pos.y-80, incSurf.w, 50.0, infoFont, false, "Dein Kommentar ähnelt...");
-  titleSurf2 =  new Surface("titleMatch", matchSurf.pos.x, matchSurf.pos.y-80, matchSurf.w, 50.0, infoFont, false, "...diesem hier");
-  dupSurf1 = new Surface("dup1", titleSurf1.pos.x, titleSurf1.pos.y, incSurf.w, incSurf.h + titleSurf1.h, messageFont, false, "");
-  dupSurf2 = new Surface("dup2", titleSurf2.pos.x, titleSurf2.pos.y, matchSurf.w, matchSurf.h + titleSurf2.h, messageFont, false, "");
+  titleSurf1 = new Surface("titleIncoming", int(incSurf.pos.x), int(incSurf.pos.y-80), int(incSurf.w), 50, infoFont, false, "Dein Kommentar ähnelt...");
+  titleSurf2 =  new Surface("titleMatch", int(matchSurf.pos.x), int(matchSurf.pos.y-80), int(matchSurf.w), 50, infoFont, false, "...diesem hier");
+  dupSurf1 = new Surface("dup1", int(titleSurf1.pos.x), int(titleSurf1.pos.y), int(incSurf.w), int(incSurf.h + titleSurf1.h), messageFont, false, "");
+  dupSurf2 = new Surface("dup2", int(titleSurf2.pos.x), int(titleSurf2.pos.y), matchSurf.w, matchSurf.h + titleSurf2.h, messageFont, false, "");
   infoSurf = new Surface("infoSurf", 0, height-height/15, width, height/15, infoFont, true, incomingText);
   surfs[0] = mainSurf;
   surfs[1] = incSurf;

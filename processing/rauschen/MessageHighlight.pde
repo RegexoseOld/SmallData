@@ -114,7 +114,6 @@ class MessageHighlight {
     this.tSize = 10.0;
     this.tWidth = incSurf.w/6;
     this.tHeight = incSurf.h/6;
-    this.alpha = 255;
     this.stopGrow = false;
     this.velocity = 0;
     this.acceleration = 0;

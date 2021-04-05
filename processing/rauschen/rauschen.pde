@@ -62,7 +62,7 @@ void draw() {
   //  pickIncoming(); //automatische messages werden ausgesucht
   //} 
   if (messageIn) {
-    background(222);
+    surfs[0].clearBackground();
     messageIn = !messageIn;
   }
 
@@ -87,7 +87,7 @@ void draw() {
   }
   if (mFade) {
     // ausblenden der surfaces
-    float gravity = - 3 * mH.mass;
+    float gravity = - 2 * mH.mass;
     mH.applyForce(gravity);
     mH.updateFade();
   }
