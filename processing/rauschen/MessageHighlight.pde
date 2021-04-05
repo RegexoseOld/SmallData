@@ -7,7 +7,7 @@ class MessageHighlight {
   String incoming, related;
   float mass;  
   PFont font;
-  float velocity, acceleration, tSize, tWidth, tHeight, angle; // current Size of message
+  float velocity, lastVelocity, acceleration, tSize, tWidth, tHeight, angle; // current Size of message
   boolean stopGrow;
 
   MessageHighlight(float m, PFont font) {
@@ -67,6 +67,7 @@ class MessageHighlight {
     if (this.tWidth < incSurf.w) {
       this.tWidth +=  velocity;   
       this.tHeight += velocity *2/3;
+      lastVelocity = velocity/9;
       // println("update  tWidth: " + this.tWidth + "  height " + this.tHeight);
     } 
     // We must clear acceleration each frame
@@ -74,9 +75,9 @@ class MessageHighlight {
   }
 
   void updateFade() {
- 
-    if (this.tSize > abs(acceleration)) {
-      this.tSize += acceleration;
+    lastVelocity += acceleration;
+    if (this.tSize > abs(lastVelocity)) {
+      this.tSize += lastVelocity;
       for (int i=1 ; i<=2; i++) {
         Surface s = surfs[i];
         s.tSize = this.tSize;

@@ -126,7 +126,7 @@ void buildSurfaces() {
   titleSurf2 =  new Surface("titleMatch", int(matchSurf.pos.x), int(matchSurf.pos.y-80), int(matchSurf.w), 50, infoFont, false, "...diesem hier");
   dupSurf1 = new Surface("dup1", int(titleSurf1.pos.x), int(titleSurf1.pos.y), int(incSurf.w), int(incSurf.h + titleSurf1.h), messageFont, false, "");
   dupSurf2 = new Surface("dup2", int(titleSurf2.pos.x), int(titleSurf2.pos.y), matchSurf.w, matchSurf.h + titleSurf2.h, messageFont, false, "");
-  infoSurf = new Surface("infoSurf", 0, height-height/15, width, height/15, infoFont, true, incomingText);
+  infoSurf = new Surface("infoSurf", 0, height-height/12, width, height/12, infoFont, true, incomingText);
   surfs[0] = mainSurf;
   surfs[1] = incSurf;
   surfs[2] = matchSurf;
