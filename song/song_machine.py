@@ -51,7 +51,7 @@ class Part:
         """
         for transition in self.transitions:
             if transition.condition(category_counter):
-                return transition.target_name
+                return transition.target_part_name
         return self.name
 
 
