@@ -23,6 +23,10 @@ from sklearn.model_selection import cross_val_score
 
 import warnings
 
+
+REPRESENTATION_TYPE_WORD = 0  # A sentence is represented by a matrix of word-vectors, all words have the same cat
+REPRESENTATION_TYPE_COG = 1  # A sentence is represented by the center of gravity of the word-cloud
+
 warnings.filterwarnings("ignore")
 
 nlp = spacy.load('de')
@@ -64,6 +68,7 @@ def sentence_to_vec_spacy(sentence):
 
 def sentence_to_vec_german_model(sentence):
     """
+    The vectorized sentence is the center of gravity of the vectorized words
     Warning: return nan, if none of the words in the sentence are known to the model!
     :param sentence:
     :return:
@@ -74,15 +79,18 @@ def sentence_to_vec_german_model(sentence):
             data_matrix.append(model.word_vec(word))
         elif word.capitalize() in model.index2word:
             data_matrix.append(model.word_vec(word.capitalize()))
-    return np.mean(np.asarray(data_matrix), axis=0)
+    return data_matrix
 
 
-def vectorize_corpus(texts, vectorizer, categories=None):
+def vectorize_corpus(texts, vectorizer, categories=None, representation=REPRESENTATION_TYPE_WORD):
     """
     :param texts: a list of texts
     :param vectorizer: the vectorizing callable
     :param categories: an optional list of categories. If provided, a new list of categories is returned,
                         with the cats of the texts removed that have not been vectorized
+    :param representation: set how a sentence is vectorized during training. Options:
+            REPRESENTATION_TYPE_WORD
+            REPRESENTATION_TYPE_COG
     :return: an array of vectors. WARNING: if a text cannot be vectorized, it is removed from the corpus!
     """
     print("Vectorizing Corpus ...")
@@ -93,12 +101,17 @@ def vectorize_corpus(texts, vectorizer, categories=None):
     return_cats = []
     return_texts = []
     for idx, text in enumerate(texts):
-        vect = vectorizer(text)
-        if isinstance(vect, np.ndarray):
-            vectors.append(vect)
+        words_matrix = vectorizer(text)
+        if len(words_matrix) > 0:
             return_texts.append(text)
-            if categories is not None:
-                return_cats.append(categories[idx])
+            if representation == REPRESENTATION_TYPE_WORD:  # append every single word of the sentence
+                [vectors.append(word) for word in words_matrix]
+                if categories is not None:
+                    [return_cats.append(cat) for cat in np.ones(len(words_matrix))*categories[idx]]
+            elif representation == REPRESENTATION_TYPE_COG:  # append center of gravity of the sentence
+                vectors.append(np.mean(np.asarray(words_matrix), axis=0))
+                if categories is not None:
+                    return_cats.append(categories[idx])
 
     if categories:
         return np.asarray(return_texts), np.asarray(vectors), np.asarray(return_cats)
@@ -256,11 +269,12 @@ if __name__ == '__main__':
     regs = load_regexes(os.path.join(data_path, 'TrainingData_regex.xlsx'))
 
     pattern = 'TrainingData(Boris|Pelle)[0-9][0-9].tsv'
-    df_ml = load_training_files(data_path, pattern)
+    categories_to_consider = ['praise', 'dissence', 'lecture', 'concession', 'insinuation']
+    df_ml = load_training_files(data_path, pattern, categories_to_consider)
 
     sentences, cats = read_trainingdata_utterances(df_ml)
 
-    vects, cats = vectorize_corpus(sentences, sentence_to_vec_german_model, categories=cats)
+    _, vects, cats = vectorize_corpus(sentences, sentence_to_vec_german_model, categories=cats)
     model = train_clf(vects, cats)
 
     joblib.dump(regs, os.path.join(data_path, 'regex_mapping.pkl'))
