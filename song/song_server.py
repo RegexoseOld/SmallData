@@ -114,7 +114,7 @@ class SongServer:
             if self.song_machine.update_part(cat):  # True if part is changed
                 self.beat_manager.update_next_part(self.song_machine.current_part)
 
-            self._send_utterance_to_audience(osc_map)
+            self._send_utterance(osc_map)
 
     def reset_handler(self, _, content):
         # resets both FX chain and synth controllers
@@ -127,7 +127,7 @@ class SongServer:
         input_dict = {'text': end_message,
                       'cat': str(self.received_utts)}
         if self.received_utts == self.song_machine.parser.max_utterances:
-            self._send_utterance_to_audience(input_dict)
+            self._send_utterance(input_dict)
 
             self.song_machine.set_lock()
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_end, 1.0))
@@ -181,11 +181,12 @@ class SongServer:
         # print('SongerServer. sending: ', message)
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
 
-    def _send_utterance_to_audience(self, input_dict):
+    def _send_utterance(self, input_dict):
         input_dict['category_counter'] = self.song_machine.get_counter_for_visuals()
         input_dict['is_locked'] = self.song_machine.is_locked()
         data = json.dumps(input_dict)
         self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, data)
+        self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)
 
     def _send_partinfo_to_displays(self):
         self.performer_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
