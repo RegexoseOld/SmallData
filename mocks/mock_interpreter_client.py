@@ -38,7 +38,7 @@ def run_mock():
     categories = list(machine.category_counter.keys())
 
     while True:
-        osc_dict = {'text': random.sample(texts, 1)[0],
+        osc_dict = {'text': random.sample(texts, 1)[0].encode('utf-8'),
                     'cat': random.sample(categories, 1)[0],
                     }
         osc_map = pickle.dumps(osc_dict)

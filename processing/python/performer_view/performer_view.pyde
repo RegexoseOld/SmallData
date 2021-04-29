@@ -18,7 +18,7 @@ class Listen(OscEventListener):
             AREAS['part_info'].update_parts(current_part_name, next_part_name, current_beat, change_color)
             
 def setup():
-    size(400, 350)
+    size(800, 350)
     background(200)
     global font, font_bold
 

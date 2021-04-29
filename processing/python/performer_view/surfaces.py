@@ -75,6 +75,11 @@ class Parts:
     def draw(self, surface):
         with surface.beginDraw():
             surface.image(self.surface, 0, 0) 
+
+class SongStatus:
+    counter = OrderedDict()
+    def __init__(self, s_width, s_height, font, col):
+        self.surface = 
     
     
 class PartArea(SurfaceBase):
