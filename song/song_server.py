@@ -98,9 +98,11 @@ class SongServer:
             print("utterances received: ", self.received_utts)
 
             osc_map = pickle.loads(content)
+            osc_map['text'] = osc_map['text'].decode('utf-8')
+
+            speak(osc_map['text'])
+
             cat = osc_map['cat']
-            utt = osc_map['text']
-            speak(utt)
             self.tonality.update_tonality(cat)
             controllers = self.tonality.synth.ctrl_message
             # print("cat {}  controllers  {}".format(cat, controllers))
