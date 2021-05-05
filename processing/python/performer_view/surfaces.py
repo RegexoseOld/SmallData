@@ -1,14 +1,16 @@
 from collections import OrderedDict
 import math
 
-color_scheme = {'dissence': (181, 180, 179),
-                'insinuation': (30, 101, 109),
-                'lecture': (30, 150, 109),
-                'praise': (246, 41, 0),
-                'concession': (241, 243, 150)
+
+color_scheme = {'dissence': color(150, 150, 150),
+                'insinuation': color(30, 101, 109),
+                'lecture': color(30, 150, 109),
+                'praise': color(246, 41, 0),
+                'concession': color(241, 243, 150)
                 }
 
 class SurfaceBase:
+
     def __init__(self, name, pos_x, pos_y, s_width, s_height):
         self.name = name
         self.pos_x = pos_x
@@ -18,13 +20,13 @@ class SurfaceBase:
         self.incoming = False  # utterance coming in
         self.subsurfaces = OrderedDict()
         self.__create_surface(s_width, s_height)
-        
+
     def __create_surface(self, w, h):
         self.surface = createGraphics(w, h)
         self.surface.smooth()
         with self.surface.beginDraw():
             self.surface.background(222)
-    
+
     def draw(self, surface=None):
         if surface:
             print("name if surface: {}".format(self.name))
@@ -34,15 +36,16 @@ class SurfaceBase:
             image(self.surface, self.pos_x, self.pos_y)
         for subsurf in self.subsurfaces.values():
             subsurf.draw(self.surface)
-        
+
     def add_subsurface(self, name, area):
         self.subsurfaces[name] = area
 
 class Beat:
+
     def __init__(self, s_width, s_height, beatnum, col, font):
         self.surface = createGraphics(s_width, s_height)
         self.update_beatnum(beatnum, font, col)
-    
+
     def update_beatnum(self, beatnum, font, col):
         with self.surface.beginDraw():
             self.surface.background(222)
@@ -50,18 +53,20 @@ class Beat:
             self.surface.textSize(50)
             self.surface.fill(col)
             self.surface.textAlign(CENTER)
-            self.surface.text(beatnum, self.surface.width / 2, self.surface.height * 3 / 5)
-        
+            self.surface.text(
+                beatnum, self.surface.width / 2, self.surface.height * 3 / 5)
+
     def draw(self, surface):
         with surface.beginDraw():
             surface.image(self.surface, self.surface.width * 4 / 5, 0)
 
 
 class Parts:
+
     def __init__(self, s_width, s_height, current, next, font, col):
         self.surface = createGraphics(s_width, s_height)
         self.update_parts(current, next, font, col)
-    
+
     def update_parts(self, current, next, font, col):
         with self.surface.beginDraw():
             self.surface.background(222)
@@ -69,30 +74,73 @@ class Parts:
             self.surface.textSize(25)
             self.surface.fill(0)
             self.surface.textAlign(CENTER)
-            self.surface.text("current part:\n" + current, self.surface.width/2, self.surface.height/4)
-            self.surface.text("next part:\n" + next, self.surface.width/2, self.surface.height*3/4)
-    
+            self.surface.text(
+                "current part:\n" + current, self.surface.width / 2, self.surface.height / 4)
+            self.surface.text(
+                "next part:\n" + next, self.surface.width / 2, self.surface.height * 3 / 4)
+
     def draw(self, surface):
         with surface.beginDraw():
-            surface.image(self.surface, 0, 0) 
+            surface.image(self.surface, 0, 0)
 
 class SongStatus:
     counter = OrderedDict()
-    def __init__(self, s_width, s_height, font, col):
-        self.surface = 
-    
-    
+    rect_height = 5
+
+    def __init__(self, pos_x, pos_y, s_width, s_height, font):
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.surface = createGraphics(s_width, s_height)
+        self.font = font
+
+    def draw(self):
+        image(self.surface, self.pos_x, self.pos_y)
+
+    def update_status(self, new_counter):
+        # print(new_counter)
+        self.counter = new_counter
+        with self.surface.beginDraw():
+            self.surface.background(222)
+            i = 0
+            xPosBar = self.surface.width / 6
+            yPosBar = self.surface.height * 4 / 5
+            bar_width = self.surface.width / 20
+            progress = 30
+            spacing = 50
+
+            for cat, v in self.counter.items():
+                col = color_scheme[cat]
+                rect_count = v['count']
+                lim = v['limit']
+                # print("cat {}   count {}   col {} ".format(cat, rect_count, col))
+                self.surface.fill(col)
+                self.surface.noStroke()
+                self.surface.rect(spacing + (xPosBar * i), yPosBar, bar_width, -rect_count * progress)
+                self.surface.stroke(255, 0, 0)
+                self.surface.strokeWeight(3)
+                self.surface.line(spacing + (xPosBar * i), yPosBar - (lim * progress), spacing + (xPosBar * i) + bar_width, yPosBar - (lim * progress))
+                self.surface.fill(0)
+                self.surface.pushMatrix()
+                self.surface.translate(spacing + (xPosBar * i), yPosBar + 20)
+                self.surface.rotate(QUARTER_PI)
+                self.surface.text(cat, 0, 0)
+                self.surface.popMatrix()
+                i += 1
+
 class PartArea(SurfaceBase):
+
     def __init__(self, name, pos_x, pos_y, s_width, s_height, font):
         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
         self.font = font
-    
+
     def update_parts(self, current, next, beatnum, change):
         if change == "True":
             col = color(250, 0, 20)
-        else: 
+        else:
             col = color(10, 250, 0)
-        beat_surf = Beat(self.surface.width/2, self.surface.height, beatnum, col, self.font)
-        current_next_surf = Parts(self.surface.width/2, self.surface.height, current, next, self.font, col)
+        beat_surf = Beat(
+            self.surface.width / 3, self.surface.height, beatnum, col, self.font)
+        current_next_surf = Parts(
+            self.surface.width / 3, self.surface.height, current, next, self.font, col)
         self.add_subsurface("beat", beat_surf)
         self.add_subsurface("parts", current_next_surf)

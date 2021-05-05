@@ -109,13 +109,13 @@ class Surface { //<>//
     this.s.beginDraw();  
     this.s.background(222);
     this.s.textFont(this.font, 10);
-
+    int rectWidth = 2; 
     int yPos = 20;
     for (int i=1; i<category_counter.size()+1; i++) {
       String cat = cats[i-1];
       JSONObject cat_count = category_counter.getJSONObject(cat);
       float limit = cat_count.getInt("limit");
-      float rectWidth = cat_count.getInt("count");
+      float rectCount = cat_count.getInt("count");
       this.s.rectMode(CENTER);
       this.s.textAlign(LEFT, CENTER);
       color fillcol = attributeUtt(cat);
@@ -127,10 +127,10 @@ class Surface { //<>//
       this.s.text(cat, 0, yPos*i);
       this.s.noStroke();
       this.s.rectMode(CORNER);
-      this.s.rect(80, yPos * i, rectWidth, this.h/8);
+      this.s.rect(80, yPos * i, rectCount *rectWidth, this.h/8);
       this.s.noFill();
       this.s.stroke(0);
-      this.s.rect(80, yPos*i, limit*limit, this.h/7);
+      this.s.rect(80, yPos*i, limit*rectWidth, this.h/7);
     }
     this.s.endDraw();
   }
