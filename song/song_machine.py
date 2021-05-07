@@ -4,24 +4,18 @@ import json
 class Transition:
     SIGN = '>'
     source_name = ''
-    target_name = ''
-    category = ''
+    target_part_name = ''
+    target_cat = ''
     limit = 0
 
     def __init__(self, name, part_name, category, limit):
         self.source_name = name
-        self.target_name = part_name
+        self.target_part_name = part_name
         self.target_cat = category
-        self.target_limit = limit
+        self.limit = limit
 
     def condition(self, cat_counter):
-        return cat_counter[self.target_cat] > self.target_limit
-
-    def get_readable(self):
-        """
-        :return: a triple with (category, limit, target_name)
-        """
-        return self.category, self.limit, self.target_name
+        return cat_counter[self.target_cat] > self.limit
 
 
 class Part:
@@ -43,11 +37,10 @@ class Part:
         self.transitions.append(transition)
 
     def get_targets(self):
-        targets = {}
-        for trans in self.transitions:
-            triple = trans.get_readable()
-            targets[triple[0]] = (triple[1], triple[2])
-        return targets
+        """
+        :return: a dictionary with target transitions as keys and the corresponding (limit,part_name) as values
+        """
+        return {trans.target_cat: (trans.limit, trans.target_part_name) for trans in self.transitions}
 
     def test_transitions(self, category_counter):
         """
@@ -58,7 +51,7 @@ class Part:
         """
         for transition in self.transitions:
             if transition.condition(category_counter):
-                return transition.target_name
+                return transition.target_part_name
         return self.name
 
 
@@ -103,6 +96,17 @@ class SongMachine:
             self.current_part = self.parser.song_parts[next_part_name]
             return True
 
+    def get_counter_for_visuals(self):
+        """
+        :return: a dictionary with 'target_cat_names' as keys and {'count':target_cat_count, 'limit': number} as values
+        """
+        targets = self.current_part.get_targets()
+        visual_counter = {}
+        for category, count in self.category_counter.items():
+            limit = targets[category][0] if category in targets else -1
+            visual_counter[category] = {'count': count, 'limit': limit}
+        return visual_counter
+
 
 class SongParser:
     MAX_UTTERANCES = "max_num_utterances"
@@ -121,7 +125,6 @@ class SongParser:
 
     def __init__(self, validated_data):
         self.data = validated_data
-
 
     def parse(self):
         self.categories = self.data[self.NAME_CATEGORIES]
@@ -144,12 +147,10 @@ class SongParser:
                 part_name = part_dict["name"]
                 associated_category = part_dict["category"]
                 limit = part_dict["limit"]
+                print(part_dict)
                 if not part_name == part:
                     transition = Transition(part, part_name, associated_category, limit)
                     self.song_parts[transition.source_name].add_transition(transition)
-
-
-
 
 
 class SongValidator(object):

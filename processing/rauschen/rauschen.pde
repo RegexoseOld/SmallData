@@ -23,7 +23,7 @@ String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
-JSONObject oscTextIn, counter; 
+JSONObject oscTextIn, category_counter; 
 String incomingText, incomingCat; // a mock for incoming OSC text
 color currentCol;
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
@@ -32,6 +32,7 @@ boolean updateUtts = false;
 boolean mFade;
 StringDict shapeMapping = new StringDict(); // mapping to attribute categories to SVG filenames
 int maxUtts = 1;
+int cat_limit, cat_counts;
 float prgIncrement;
 int uttCount = 0; 
 

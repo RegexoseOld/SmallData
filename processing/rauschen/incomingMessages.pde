@@ -6,14 +6,17 @@ void oscEvent(OscMessage m) {
     oscTextIn = parseJSONObject((String) m.arguments()[0]);
     incomingText = oscTextIn.getString("text");
     incomingCat = oscTextIn.getString("cat");
-    counter = oscTextIn.getJSONObject("category_counter");
-    println("counter  " + counter);
+    category_counter = oscTextIn.getJSONObject("category_counter");
+    println("counter  " + category_counter);
+    JSONObject newIncomingCat = category_counter.getJSONObject(incomingCat);
+    cat_limit = newIncomingCat.getInt("limit");
+    cat_counts = newIncomingCat.getInt("count");
     surfs[6].visible = true;
     // boolean is_locked = incomingUtt.getBoolean("is_locked");
     messageIn = true;
     println("new utt: " + incomingText);
     PShape shape = loadShape(shapeMapping.get(incomingCat));
-    float shapeSize = float(counter.getInt(incomingCat)) * 10;
+    float shapeSize = cat_counts * 10;
     int newIndex= 100;
     incomingUtt = new DisplayTD(newIndex, incomingText, incomingCat, shape, shapeSize, true);
     updateUtts = true;
@@ -25,7 +28,6 @@ void oscEvent(OscMessage m) {
         updated.append(utt.utt);
         //println("updated  " + updated.size() + " items");
       }
-      
     }
     mH.newMessage(incomingText);
     uttCount += 1;
