@@ -28,7 +28,9 @@ class DisplayTD {
   void draw() {
     mainSurf.s.beginDraw();
     mainSurf.s.textFont(this.font);
-    mainSurf.s.fill(this.shapeColor, int(random(0, 80)));
+    mainSurf.s.fill(this.shapeColor,150);
+    // mainSurf.s.fill(this.shapeColor);
+
     mainSurf.s.pushMatrix();
     mainSurf.s.translate(this.x, this.y);
     mainSurf.s.rotate(this.angle);
@@ -86,19 +88,20 @@ color attributeUtt(String cat) {
   color col = color(0);
   switch(cat) {
   case "praise" : 
-    col =  color(171, 138, 132, 175);
+    // col =  color(171, 138, 132, 150);
+    col =  color(171, 138, 132);
     break;
   case "dissence" : 
-    col = color(181, 201, 187, 125);
+    col = color(181, 201, 187);
     break;
   case "insinuation" : 
-    col =  color(120, 145, 148, 125);
+    col =  color(120, 145, 148);
     break;
   case "lecture" : 
-    col = color(109, 133, 124, 125);
+    col = color(109, 133, 124);
     break;
   case "concession" : 
-    col = color(198, 199, 177, 180);
+    col = color(198, 199, 177);
   }
   return col;
 }

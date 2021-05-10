@@ -16,12 +16,9 @@ void setup() {
   fontlist =  PFont.list();
   printArray(fontlist);
   font = createFont(fontlist[585], 20, true);
-  article = new StringList();
   table = loadTable("Kommentariat.tsv", "header");
-  for (TableRow row : table.findRows("article", "type")) {
-    String line = row.getString("utterance");
-    article.append(line);
-  }
+  article = makeList("moderation", "intro");
+
   x = 0;
   y = 0;
   i = 0;
@@ -45,4 +42,15 @@ void draw() {
 void keyReleased() {
   i++;
   nextLine = !nextLine;
+}
+
+StringList makeList(String type, String cat) {
+  StringList list = new StringList();
+  for (TableRow row : table.findRows(type, "type")) {
+    if (row.getString("cat").equals(cat)) {
+      String line = row.getString("utterance");
+      list.append(line);
+    }
+  }
+  return list;
 }

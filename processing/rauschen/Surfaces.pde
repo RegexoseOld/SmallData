@@ -11,7 +11,7 @@ class Surface { //<>//
   PFont font;
   String name, message;
   ArrayList<SingleLine> uttLines;
-  int w, h;
+  int w, h, lineIndex;
   float  tSize;
   boolean visible, fade;
   color col;
@@ -29,6 +29,7 @@ class Surface { //<>//
     this.fade = false;
     this.message= _message;
     this.tSize = 1;
+    this.lineIndex = 0;
     initSurf();
   }
 
@@ -54,6 +55,9 @@ class Surface { //<>//
     }
     if (name.startsWith("info")) {
       displayInfo();
+    }
+    if (name.startsWith("article")) {
+      displayMod();
     }
     if (name.startsWith("counter")) {
       displayCounter();
@@ -102,6 +106,18 @@ class Surface { //<>//
     this.s.text(incomingText + "\t     " + incomingCat, 0, this.s.height/4, this.s.width, this.s.height);
     this.s.fill(189, 10, 10, 150);
     this.s.rect(0, 0, uttCount * prgIncrement, this.s.height/4);
+    this.s.endDraw();
+  }
+
+  void displayMod() {
+    this.s.beginDraw();
+    this.s.background (0, 0, 255);
+    StringList moderation = makeList("moderation");
+    String line = moderation.get(lineIndex % moderation.size());
+    this.s.textFont(this.font);
+    this.s.textAlign(CENTER, TOP);
+    this.s.fill(255);
+    this.s.text(line, this.s.width/2, 0);
     this.s.endDraw();
   }
 
@@ -157,9 +173,9 @@ void buildSurfaces() {
   matchSurf = new Surface("matchSurf2", width *5/9, height/2, width *3/7, height/5, messageFont, false, "");
   titleSurf1 = new Surface("titleIncoming", int(incSurf.pos.x), int(incSurf.pos.y-80), int(incSurf.w), 50, infoFont, false, "Dein Kommentar ähnelt...");
   titleSurf2 =  new Surface("titleMatch", int(matchSurf.pos.x), int(matchSurf.pos.y-80), int(matchSurf.w), 50, infoFont, false, "...diesem hier");
-  dupSurf1 = new Surface("dup1", int(titleSurf1.pos.x), int(titleSurf1.pos.y), int(incSurf.w), int(incSurf.h + titleSurf1.h), messageFont, false, "");
   dupSurf2 = new Surface("dup2", int(titleSurf2.pos.x), int(titleSurf2.pos.y), matchSurf.w, matchSurf.h + titleSurf2.h, messageFont, false, "");
   infoSurf = new Surface("infoSurf", 0, height-height/12, width, height/12, infoFont, true, incomingText);
+  articleSurf = new Surface("article", 0, 0, infoSurf.s.width, infoSurf.s.height, infoFont, false, "");
   counterSurf = new Surface("counter", 0, height *3/4, width/8, height/6, infoFont, false, "categories");
   surfs[0] = mainSurf;
   surfs[1] = incSurf;
@@ -168,6 +184,15 @@ void buildSurfaces() {
   surfs[4] = titleSurf2;
   surfs[5] = infoSurf;
   surfs[6] = counterSurf;
-  surfs[7] = dupSurf1;
+  surfs[7] = articleSurf;
   surfs[8] = dupSurf2;
+}
+
+StringList makeList(String type) {
+  StringList list = new StringList();
+  for (TableRow row : article.findRows(type, "type")) {
+    String line = row.getString("utterance");
+    list.append(line);
+  }
+  return list;
 }

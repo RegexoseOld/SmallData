@@ -1,4 +1,4 @@
-import java.util.Timer;   //<>//
+import java.util.Timer;   //<>// //<>//
 import java.util.TimerTask;
 import java.util.Map;
 import java.util.List;
@@ -12,7 +12,7 @@ NetAddress loc;
 
 final Timer t = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
-Surface mainSurf, incSurf, matchSurf, titleSurf1, dupSurf1, dupSurf2, titleSurf2, infoSurf, counterSurf;
+Surface mainSurf, incSurf, matchSurf, titleSurf1, articleSurf, dupSurf2, titleSurf2, infoSurf, counterSurf;
 Surface[] surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
@@ -32,13 +32,15 @@ boolean updateUtts = false;
 boolean mFade;
 StringDict shapeMapping = new StringDict(); // mapping to attribute categories to SVG filenames
 int maxUtts = 1;
-int cat_limit, cat_counts;
+int cat_limit, cat_counts, noiseStart, noiseLimit, noiseInc;
 float prgIncrement;
 int uttCount = 0; 
+Table article;
 
 void setup() {
   size(1000, 700);
   TD = loadJSONObject("TrainingDataPelle01.json");
+  article = loadTable("Moderation.tsv", "header");
   surfs = new Surface[9];
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
@@ -49,12 +51,16 @@ void setup() {
   RG.ignoreStyles(false);
   RG.setPolygonizer(RG.ADAPTATIVE);
   areas = new Areas(cats);
-  buildUtts(50);
+  buildUtts(805);
   mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
   // margin1 = new Margin(incSurf.w, incSurf.h, 0.05);
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
   mFade = false;
+  noiseInc = 20;
+  noiseStart = 0;
+  noiseLimit = noiseInc;
+
   frameRate(20);
 }
 
@@ -67,7 +73,7 @@ void draw() {
     messageIn = !messageIn;
   }
 
-  for (int x=0; x<utts.size(); x++) {
+  for (int x=noiseStart; x<noiseLimit; x++) {
     DisplayTD utt = utts.get(x);
     utt.draw();
     currentCol = utt.shapeColor;
@@ -83,8 +89,7 @@ void draw() {
     float gravity = 3 * mH.mass;
     mH.applyForce(gravity);
     mH.update();
-    mH.checkEdge(); 
-
+    mH.checkEdge();
   }
   if (mFade) {
     // ausblenden der surfaces
@@ -99,36 +104,14 @@ void draw() {
       image(surf.s, surf.pos.x, surf.pos.y);
     }
   }
+  if (noiseLimit <= utts.size() - noiseInc) {
+    noiseStart = noiseLimit;
+    noiseLimit += noiseInc;
+  } else if (noiseLimit > utts.size() - noiseInc ) {
+    noiseStart = 0;
+    noiseLimit = noiseInc;
+  }
 }
-
-//void copyBackground() {
-//  // both areas of mainSurfaces are copied into dupSurf to replace the matching utt areas when mFade is active
-
-//  int startX = int(titleSurf1.pos.x);
-//  int widthX =  dupSurf1.w;
-//  int startY = int(titleSurf1.pos.y);
-//  int heightY = dupSurf1.h;
-//  int areaLength = dupSurf1.w * dupSurf1.h;
-
-//  PImage currentbg1 = mainSurf.s.get(startX, startY, widthX, heightY);
-//  currentbg1.loadPixels();
-//  dupSurf1.s.loadPixels();
-//  println("bg pix  " + currentbg1.pixels.length + "  dup pix   " + dupSurf1.s.pixels.length + "  area length " + areaLength);
-//  println("bg w  " + currentbg1.width + "  bg h  " + currentbg1.height + " dup width  " + dupSurf1.w + "  dup height  " + dupSurf1.h);
-//  arrayCopy(currentbg1.pixels, 0, dupSurf1.s.pixels, 0, areaLength);
-//  dupSurf1.s.updatePixels();
-
-//  int startX2 = int(titleSurf2.pos.x);
-//  int widthX2 = incSurf.w;
-//  int startY2 = int(titleSurf2.pos.y);
-//  int heightY2 =  dupSurf2.h;
-
-//  PImage currentbg2 = mainSurf.s.get(startX2, startY2, widthX2, heightY2);
-//  currentbg2.loadPixels();
-//  dupSurf2.s.loadPixels();
-//  arrayCopy(currentbg2.pixels, 0, dupSurf2.s.pixels, 0, areaLength);
-//  dupSurf2.s.updatePixels();
-//}
 
 void createScheduleTimer(final float ms) {
   messageLock = true;
@@ -154,5 +137,14 @@ void buildUtts(int amount) {
     PShape shape = loadShape(shapeMapping.get(category));
     DisplayTD utt = new DisplayTD(i, utterance, category, shape, 5, false);
     utts.add(utt);
+  }
+}
+
+void keyReleased() {
+  if (key == 'n') {
+    articleSurf.lineIndex ++;
+  }
+  if (key == 'v') {
+    articleSurf.visible = !articleSurf.visible;
   }
 }

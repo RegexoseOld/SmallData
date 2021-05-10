@@ -22,7 +22,7 @@ void oscEvent(OscMessage m) {
     updateUtts = true;
     updateUtts();
     StringList updated = new StringList();
-    for (int x=0; x<utts.size();x++) {
+    for (int x=0; x<utts.size(); x++) {
       DisplayTD utt = utts.get(x);
       if (utt.isShape) {
         updated.append(utt.utt);
@@ -54,6 +54,9 @@ void updateUtts() {
   updateUtts = false;
   // println(" still  updating2?   " + updateUtts + " " + frameCount);
 } 
+
+
+
 
 // mock for incoming String messages. 
 void pickIncoming() {
