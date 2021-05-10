@@ -57,7 +57,7 @@ class Surface { //<>//
       displayInfo();
     }
     if (name.startsWith("article")) {
-      displayMod();
+      displayMod("article");
     }
     if (name.startsWith("counter")) {
       displayCounter();
@@ -109,15 +109,15 @@ class Surface { //<>//
     this.s.endDraw();
   }
 
-  void displayMod() {
+  void displayMod(String type) {
     this.s.beginDraw();
     this.s.background (0, 0, 255);
-    StringList moderation = makeList("moderation");
+    StringList moderation = makeList(type);
     String line = moderation.get(lineIndex % moderation.size());
-    this.s.textFont(this.font);
-    this.s.textAlign(CENTER, TOP);
+    this.s.textFont(this.font, 18);
+    this.s.textAlign(LEFT, TOP);
     this.s.fill(255);
-    this.s.text(line, this.s.width/2, 0);
+    this.s.text(line, 0, 0, this.s.width, this.s.height);
     this.s.endDraw();
   }
 
