@@ -8,6 +8,13 @@ void oscEvent(OscMessage m) {
     incomingCat = oscTextIn.getString("cat");
     category_counter = oscTextIn.getJSONObject("category_counter");
     println("counter  " + category_counter);
+    for (String c : cats) {
+      JSONObject cat = category_counter.getJSONObject(c);
+      int lim = cat.getInt("limit");
+      if (lim == -1) {
+        currentPart = c;
+      }
+    }
     JSONObject newIncomingCat = category_counter.getJSONObject(incomingCat);
     cat_limit = newIncomingCat.getInt("limit");
     cat_counts = newIncomingCat.getInt("count");

@@ -24,7 +24,7 @@ String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
 JSONObject oscTextIn, category_counter; 
-String incomingText, incomingCat; // a mock for incoming OSC text
+String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
 color currentCol;
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
 boolean messageIn = false; // background reset
@@ -38,7 +38,7 @@ int uttCount = 0;
 Table article;
 
 void setup() {
-  size(1000, 700);
+  size(1800, 1200);
   TD = loadJSONObject("TrainingDataPelle01.json");
   article = loadTable("Moderation.tsv", "header");
   surfs = new Surface[9];
@@ -57,10 +57,10 @@ void setup() {
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
   mFade = false;
-  noiseInc = 20;
+  noiseInc = 5;
   noiseStart = 0;
   noiseLimit = noiseInc;
-
+  moderation = "moderation";
   frameRate(20);
 }
 
@@ -146,5 +146,12 @@ void keyReleased() {
   }
   if (key == 'v') {
     articleSurf.visible = !articleSurf.visible;
+  }
+  
+  if (key == 'm') {
+    moderation = "moderation";
+  }
+  if (key == 'a') {
+    moderation = "article";
   }
 }

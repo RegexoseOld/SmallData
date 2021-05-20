@@ -28,7 +28,7 @@ class DisplayTD {
   void draw() {
     mainSurf.s.beginDraw();
     mainSurf.s.textFont(this.font);
-    mainSurf.s.fill(this.shapeColor,150);
+    mainSurf.s.fill(this.shapeColor, 60);
     // mainSurf.s.fill(this.shapeColor);
 
     mainSurf.s.pushMatrix();

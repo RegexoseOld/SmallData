@@ -57,7 +57,7 @@ class Surface { //<>//
       displayInfo();
     }
     if (name.startsWith("article")) {
-      displayMod("article");
+      displayMod(moderation);
     }
     if (name.startsWith("counter")) {
       displayCounter();
@@ -106,6 +106,7 @@ class Surface { //<>//
     this.s.text(incomingText + "\t     " + incomingCat, 0, this.s.height/4, this.s.width, this.s.height);
     this.s.fill(189, 10, 10, 150);
     this.s.rect(0, 0, uttCount * prgIncrement, this.s.height/4);
+    this.s.text("Wir sind im / We are in the \t\t - - " + currentPart + " - - \t \t  Teil / Part", 0, this.s.height *2/3,this.s.width, this.s.height);
     this.s.endDraw();
   }
 
@@ -125,8 +126,8 @@ class Surface { //<>//
     this.s.beginDraw();  
     this.s.background(222);
     this.s.textFont(this.font, 10);
-    int rectWidth = 2; 
-    int yPos = 20;
+    int rectWidth = 8; 
+    int yPos = 30;
     for (int i=1; i<category_counter.size()+1; i++) {
       String cat = cats[i-1];
       JSONObject cat_count = category_counter.getJSONObject(cat);
