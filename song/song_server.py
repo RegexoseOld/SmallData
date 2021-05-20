@@ -113,6 +113,10 @@ class SongServer:
                 if part.category == cat:
                     cat_note = part.fb_note
             self.send_quittung(synth_note, cat_note, cat, controllers)
+
+            if self.song_machine.update_part(cat):
+                self.beat_manager.update_next_part(self.song_machine.current_part)
+
             self.beat_manager.update_next_part(self.song_machine.current_part)
 
             self._send_utterance(osc_map)
