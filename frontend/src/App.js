@@ -25,10 +25,8 @@ class App extends Component {
                     <div>
                         <Utterance/>
                     </div>
-                    <ColoredLine color="blue" />
-                    <div>
-                        <TriggerCategory/>
-                    </div>
+
+
                  </div>
             </main>
         );
@@ -36,3 +34,8 @@ class App extends Component {
 }
 
 export default App;
+ /*  line 28   <ColoredLine color="blue" />
+                    <div>
+                        <TriggerCategory/>
+                    </div>
+                    */
