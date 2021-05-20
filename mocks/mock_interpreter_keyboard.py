@@ -42,7 +42,7 @@ def run_mock():
         if key in ['1', '2', '3', '4', '5', 'r']:
             if not key == 'r':
                 cat = categories[int(key)-1]
-                osc_dict = {'text': random.sample(texts, 1)[0],
+                osc_dict = {'text': random.sample(texts, 1)[0].encode('utf-8'),
                             'cat': cat,
                             }
                 osc_map = pickle.dumps(osc_dict)

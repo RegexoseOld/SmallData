@@ -62,28 +62,10 @@ elif args.app == 'song':
 elif args.app == 'frontend':
     os.chdir('frontend')
     p = subprocess.check_call(["npm", "start"])
-elif args.app == 'display':
-    from song.display.playhead import Playhead
-    from song.display.song_status import SongStatus
-    from song.display.display_server import DisplayServer, BeatAdvanceManager
-    from song.display.surfaces import Beat, Utterances, PartInfo
-    import asyncio
-
-    playhead = Playhead()
-    #  TODO use actula states of song
-    song_surface = SongStatus(settings.song_file, ["intro", "scene02", "scene03"], playhead)
-    beat_manager = BeatAdvanceManager()
-    utterances_surface = Utterances()
-    beat_surface = Beat()
-    partinfo_surface = PartInfo()
-    display_server = DisplayServer(beat_manager, song_surface, utterances_surface, beat_surface, partinfo_surface)
-
-    loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(display_server.init_main())
 elif args.app == 'interpreter':
     # from mocks import mock_interpreter_client
     from mocks import mock_interpreter_keyboard, mock_interpreter_client
-    mock_interpreter_client.run_mock()
+    mock_interpreter_keyboard.run_mock()
 elif args.app == 'osculator':
     from mocks import beat_mock
     beat_mock.run_mock()
