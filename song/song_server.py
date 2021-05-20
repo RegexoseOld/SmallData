@@ -40,15 +40,16 @@ class BeatAdvanceManager:
         else:
             self.__counter = counter
             if counter == settings.note_to_beat['first_count_in_bar']:
+                next_state = self.STATE_NORMAL
                 if self.state == self.STATE_PREPARE:
-                    self.state = self.STATE_WARNING
+                    next_state = self.STATE_WARNING
                 elif self.state == self.STATE_WARNING:
-                    self.state = self.STATE_NORMAL
                     self.current_part = self.next_part
+                self.state = next_state
             return True
 
-    def check_is_one_of_state(self, state):
-        return (self.__counter == '1') and (self.state == state)
+    def is_one_of_normal_state(self):
+        return (self.__counter == '1') and (self.state == self.STATE_NORMAL)
 
     def is_warning(self):
         return self.state == self.STATE_WARNING
@@ -136,11 +137,15 @@ class SongServer:
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
         if self.beat_manager.update_beat_counter(counter):
-            self._send_part(counter)
-            if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_NORMAL) \
-                    and self.song_machine.is_locked():
+
+            # the beat-managers next part is only played next if state is warning
+            next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
+
+            self._send_part_info(counter, next_part)
+
+            if self.beat_manager.is_one_of_normal_state() and self.song_machine.is_locked():
+                self._advance_song(next_part)
                 self.song_machine.release_lock()
-                self._send_partinfo_to_displays()
 
     def fade(self, val, increment):
         if self.rack_fade_val >= 0:
@@ -169,17 +174,16 @@ class SongServer:
         self.osculator_client.send_message('/q_{}'.format(cat), (note, 0.0))
         self.osculator_client.send_message('/mid_{}'.format(cat), controllers)
 
-    def _send_part(self, counter):
-        next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
-        if self.beat_manager.check_is_one_of_state(BeatAdvanceManager.STATE_WARNING):
-            # print("next_part.note", next_part.note)
-            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 1.0))
-            self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 0.0))
-            self.tonality.synth.reset_synth()
-
+    def _send_part_info(self, counter, next_part):
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
         # print('SongerServer. sending: ', message)
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
+
+    def _advance_song(self, next_part):
+        print("next_part.note", next_part.note)
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 1.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 0.0))
+        self.tonality.synth.reset_synth()
 
     def _send_utterance(self, input_dict):
         input_dict['category_counter'] = self.song_machine.get_counter_for_visuals()
@@ -187,14 +191,6 @@ class SongServer:
         data = json.dumps(input_dict)
         self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, data)
         self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)
-
-    def _send_partinfo_to_displays(self):
-        self.performer_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
-                                           pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
-                                           )
-        self.audience_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
-                                          pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
-                                          )
 
     def _send_init_to_display(self):
         category_dict = {idx: i for idx, i in enumerate(self.song_machine.parser.categories)}
