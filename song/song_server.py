@@ -15,6 +15,7 @@ def speak(words):
     engine.say(words)
     engine.startLoop(True)
 
+
 class BeatAdvanceManager:
     """ A simple state machine. Machine starts in 'normal' state. When the next part is changed,
     machine changes to 'prepare'. On the next '1' machine moves to 'warning', then on the next
@@ -81,8 +82,8 @@ class SongServer:
             range(len(self.song_machine.parser.song_parts)
                   ))}
 
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_intro, 1.0))
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_intro, 0.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.song_machine.parser.INTRO_NOTE, 1.0))
+        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.song_machine.parser.INTRO_NOTE, 0.0))
         self.osculator_client.send_message('/mid_{}'.format('praise'), self.tonality.synth.ctrl_message)
         self._send_init_to_display()
 
@@ -109,10 +110,13 @@ class SongServer:
             # print("cat {}  controllers  {}".format(cat, controllers))
             self.send_fx(self.tonality.ctrl_val)
             current_part = self.beat_manager.current_part.name
-            fb_note = self.song_machine.parser.song_parts[current_part].fb_note
-            self.send_quittung(fb_note, cat, controllers)
+            synth_note = self.song_machine.parser.song_parts[current_part].fb_note
+            for name, part in self.song_machine.parser.song_parts.items():
+                if part.category == cat:
+                    cat_note = part.fb_note
+            self.send_quittung(synth_note, cat_note, cat, controllers)
 
-            if self.song_machine.update_part(cat):  # True if part is changed
+            if self.song_machine.update_part(cat):
                 self.beat_manager.update_next_part(self.song_machine.current_part)
 
             self._send_utterance(osc_map)
@@ -167,11 +171,13 @@ class SongServer:
             self.timer.start()
             self.timer_lock = True
 
-    def send_quittung(self, note, cat, controllers):
+    def send_quittung(self, s_note, c_note, cat, controllers):
         self.osculator_client.send_message('/quitt', (60, 1.0))
-        self.osculator_client.send_message('/q_{}'.format(cat), (note, 1.0))
+        self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 1.0))
+        self.osculator_client.send_message('/quittRec', (c_note, 1.0))
         self.osculator_client.send_message('/quitt', (60, 0.0))
-        self.osculator_client.send_message('/q_{}'.format(cat), (note, 0.0))
+        self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 0.0))
+        self.osculator_client.send_message('/quittRec', (c_note, 0.0))
         self.osculator_client.send_message('/mid_{}'.format(cat), controllers)
 
     def _send_part_info(self, counter, next_part):

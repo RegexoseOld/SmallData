@@ -20,12 +20,14 @@ class Transition:
 
 class Part:
     name = ''
+    category = ''
     note = 0
     transitions = []
     fb_note = 0
 
-    def __init__(self, name, note, fb_note):
+    def __init__(self, name, cat, note, fb_note):
         self.name = name
+        self.category = cat
         self.note = note
         self.fb_note = fb_note
         self.transitions = []
@@ -63,7 +65,7 @@ class SongMachine:
 
     def __init__(self, parser):
         self.parser = parser
-        self.current_part = self.parser.song_parts[self.parser.first_part_name]
+        self.current_part = self.parser.song_parts[SongParser.INTRO]
         self._reset_counter(parser.categories)
 
     def _reset_counter(self, categories):
@@ -112,15 +114,17 @@ class SongParser:
     MAX_UTTERANCES = "max_num_utterances"
     NAME_CATEGORIES = "categories"
     PARTS = "parts"
+    INTRO_LIMIT = "intro_limit"
     NAME_FIRST_PART = "first_part"
-    SYNTH_CC =  "synth_fb"
+    SYNTH_CC = "synth_fb"
+    INTRO = 'intro'
+    INTRO_NOTE = 0
 
     data = {}
     song_parts = {}
     categories = []
     synth_fb = {}
 
-    first_part_name = ''
     max_utterances = 0
 
     def __init__(self, validated_data):
@@ -131,14 +135,16 @@ class SongParser:
         self.max_utterances = self.data[self.MAX_UTTERANCES]
         self.synth_fb = self.data[self.SYNTH_CC]
         self._create_parts()
+        self._create_intro_part()
         self._add_transitions()
 
     def _create_parts(self):
         for part_dict in self.data[self.PARTS]:
             part_name = part_dict["name"]
+            cat_name = part_dict["category"]
             note = part_dict["note"]
             fb_note = part_dict["fb_note"]
-            self.song_parts[part_name] = Part(part_name, int(note), fb_note)
+            self.song_parts[part_name] = Part(part_name, cat_name, int(note), fb_note)
         self.first_part_name = self.data[self.NAME_FIRST_PART]
 
     def _add_transitions(self):
@@ -146,11 +152,14 @@ class SongParser:
             for part_dict in self.data[self.PARTS]:
                 part_name = part_dict["name"]
                 associated_category = part_dict["category"]
-                limit = part_dict["limit"]
+                limit = part_dict["limit"] if part != SongParser.INTRO else self.data[self.INTRO_LIMIT]
                 print(part_dict)
                 if not part_name == part:
                     transition = Transition(part, part_name, associated_category, limit)
                     self.song_parts[transition.source_name].add_transition(transition)
+
+    def _create_intro_part(self):
+        self.song_parts[self.INTRO] = Part(self.INTRO, '', self.INTRO_NOTE, 0)
 
 
 class SongValidator(object):
@@ -182,6 +191,7 @@ class SongValidator(object):
 
         __validate_field(SongParser.PARTS)
         __validate_field(SongParser.NAME_CATEGORIES)
+        __validate_field(SongParser.INTRO_LIMIT)
 
     def _validate_consistency(self):
         """

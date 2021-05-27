@@ -42,7 +42,7 @@ class MessageHighlight {
     if (h - spacing >= (textBreak.size() * spacing) ) {
       // make SingleLine Object to store the in singleList
       for (int i=0; i<textBreak.size(); i++) {
-        SingleLine sl = new SingleLine(textBreak.get(i), y);
+        SingleLine sl = new SingleLine(textBreak.get(i), y, this.stopGrow);
         tempsingle.add(sl);
         y += spacing;
       }
@@ -78,7 +78,7 @@ class MessageHighlight {
     lastVelocity += acceleration;
     if (this.tSize > abs(lastVelocity)) {
       this.tSize += lastVelocity;
-      for (int i=1 ; i<=2; i++) {
+      for (int i=1; i<=2; i++) {
         Surface s = surfs[i];
         s.tSize = this.tSize;
       }
@@ -130,18 +130,22 @@ class SingleLine {
   float yPos, r, g, b, a;
   color col;
 
-  SingleLine(String _l, float _y) {
+  SingleLine(String _l, float _y, boolean _grow) {
     line = _l;
     yPos = _y;
-    makeColor();
+    makeColor(_grow);
   }
 
-  void makeColor() {
-    int r = (currentCol >> 16) & 0xFF;
-    int g = (currentCol >> 8) & 0xFF;
-    int b = currentCol & 0xFF;
-    int a = (currentCol >> 24) & 0xFF;
-    col = color(r, g, b, a);
+  void makeColor(boolean grow) {
+    if (!grow) {
+      int r = (currentCol >> 16) & 0xFF;
+      int g = (currentCol >> 8) & 0xFF;
+      int b = currentCol & 0xFF;
+      int a = (currentCol >> 24) & 0xFF;
+      col = color(r, g, b, a);
+    } else {
+      col = color(230);
+    }
   }
 
   void setDark() {

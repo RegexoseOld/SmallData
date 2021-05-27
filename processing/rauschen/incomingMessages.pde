@@ -6,8 +6,16 @@ void oscEvent(OscMessage m) {
     oscTextIn = parseJSONObject((String) m.arguments()[0]);
     incomingText = oscTextIn.getString("text");
     incomingCat = oscTextIn.getString("cat");
+    currentCol = attributeUtt(incomingCat);
     category_counter = oscTextIn.getJSONObject("category_counter");
     println("counter  " + category_counter);
+    for (String c : cats) {
+      JSONObject cat = category_counter.getJSONObject(c);
+      int lim = cat.getInt("limit");
+      if (lim == -1) {
+        currentPart = c;
+      }
+    }
     JSONObject newIncomingCat = category_counter.getJSONObject(incomingCat);
     cat_limit = newIncomingCat.getInt("limit");
     cat_counts = newIncomingCat.getInt("count");
@@ -22,7 +30,7 @@ void oscEvent(OscMessage m) {
     updateUtts = true;
     updateUtts();
     StringList updated = new StringList();
-    for (int x=0; x<utts.size();x++) {
+    for (int x=0; x<utts.size(); x++) {
       DisplayTD utt = utts.get(x);
       if (utt.isShape) {
         updated.append(utt.utt);
@@ -54,6 +62,9 @@ void updateUtts() {
   updateUtts = false;
   // println(" still  updating2?   " + updateUtts + " " + frameCount);
 } 
+
+
+
 
 // mock for incoming String messages. 
 void pickIncoming() {
