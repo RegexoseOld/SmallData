@@ -118,7 +118,7 @@ class Surface { //<>//
     this.s.textFont(this.font, 18);
     this.s.textAlign(LEFT, TOP);
     this.s.fill(255);
-    this.s.text(line, 0, 0, this.s.width, this.s.height);
+    this.s.text(line, 0, 20, this.s.width, this.s.height);
     this.s.endDraw();
   }
 
@@ -126,7 +126,7 @@ class Surface { //<>//
     this.s.beginDraw();  
     this.s.background(222);
     this.s.textFont(this.font, 10);
-    int rectWidth = 8; 
+    int rectWidth = 22; 
     int yPos = 30;
     for (int i=1; i<category_counter.size()+1; i++) {
       String cat = cats[i-1];
@@ -134,20 +134,20 @@ class Surface { //<>//
       float limit = cat_count.getInt("limit");
       float rectCount = cat_count.getInt("count");
       this.s.rectMode(CENTER);
-      this.s.textAlign(LEFT, CENTER);
+      this.s.textAlign(LEFT, TOP);
       color fillcol = attributeUtt(cat);
       int alpha = (fillcol >> 24) & 0xFF;
       alpha = 255;
       fillcol = alpha<<24 | fillcol & 0xFFFFFF ;
       // println("ypos  " + yPos *i);
       this.s.fill(fillcol);
-      this.s.text(cat, 0, yPos*i);
+      this.s.text(cat, 10, (yPos +3) *i);
       this.s.noStroke();
       this.s.rectMode(CORNER);
       this.s.rect(80, yPos * i, rectCount *rectWidth, this.h/8);
       this.s.noFill();
       this.s.stroke(0);
-      this.s.rect(80, yPos*i, limit*rectWidth, this.h/7);
+      this.s.rect(80, yPos *i, limit*rectWidth, this.h/7);
     }
     this.s.endDraw();
   }

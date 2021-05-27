@@ -51,7 +51,7 @@ void setup() {
   RG.ignoreStyles(false);
   RG.setPolygonizer(RG.ADAPTATIVE);
   areas = new Areas(cats);
-  buildUtts(805);
+  buildUtts(480);
   mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
   // margin1 = new Margin(incSurf.w, incSurf.h, 0.05);
   pickIncoming(); // pick first utt
@@ -76,7 +76,6 @@ void draw() {
   for (int x=noiseStart; x<noiseLimit; x++) {
     DisplayTD utt = utts.get(x);
     utt.draw();
-    currentCol = utt.shapeColor;
     utt.matchInput(incomingText);
   }
 

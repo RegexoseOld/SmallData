@@ -15,6 +15,7 @@ def speak(words):
     engine.say(words)
     engine.startLoop(True)
 
+
 class BeatAdvanceManager:
     """ A simple state machine. Machine starts in 'normal' state. When the next part is changed,
     machine changes to 'prepare'. On the next '1' machine moves to 'warning', then on the next
@@ -117,8 +118,6 @@ class SongServer:
 
             if self.song_machine.update_part(cat):
                 self.beat_manager.update_next_part(self.song_machine.current_part)
-
-            self.beat_manager.update_next_part(self.song_machine.current_part)
 
             self._send_utterance(osc_map)
 
