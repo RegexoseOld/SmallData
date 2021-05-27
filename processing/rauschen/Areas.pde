@@ -17,6 +17,11 @@ class Areas {
       this.angle += angIncrement;
     }
   }
+
+  RShape findArea(String cat) {
+    RShape rS = RG.loadShape("data/"+ cat +".svg");
+    return rS;
+  }
 }
 
 class Area {
@@ -55,5 +60,9 @@ class Area {
 
   void draw() {
     this.rS.draw();
+    stroke(0, 255, 0);
+    strokeWeight(10);
+    point(this.rS.getCenter().x, this.rS.getCenter().y);
+    text(this.name,this.rS.getCenter().x, this.rS.getCenter().y); 
   }
 }

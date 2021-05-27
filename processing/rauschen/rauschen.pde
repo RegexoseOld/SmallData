@@ -12,7 +12,7 @@ NetAddress loc;
 
 final Timer t = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
-Surface mainSurf, incSurf, matchSurf, titleSurf1, articleSurf, dupSurf2, titleSurf2, infoSurf, counterSurf;
+Surface mainSurf, incSurf, matchSurf, titleSurf1, articleSurf, sculptureSurf, titleSurf2, infoSurf, counterSurf;
 Surface[] surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
@@ -109,6 +109,9 @@ void draw() {
   } else if (noiseLimit > utts.size() - noiseInc ) {
     noiseStart = 0;
     noiseLimit = noiseInc;
+  }
+  for (Area a : areas.areas){
+    a.draw();
   }
 }
 

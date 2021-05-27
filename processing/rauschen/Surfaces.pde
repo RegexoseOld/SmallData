@@ -23,19 +23,21 @@ class Surface { //<>//
     this.pos = new PVector(_x, _y);
     this.s = createGraphics(_w, _h);
     this.s.smooth();
-    this.uttLines = new ArrayList<SingleLine>();
     this.font = _font;
     this.visible = _visible;
     this.fade = false;
     this.message= _message;
-    this.tSize = 1;
-    this.lineIndex = 0;
     initSurf();
   }
 
   void initSurf() {
     if (this.name.startsWith("title")) {
       makeTitle();
+    }
+    if (this.name.startsWith("match")) {
+      this.uttLines = new ArrayList<SingleLine>();
+      this.tSize = 1;
+      this.lineIndex = 0;
     }
   }
 
@@ -61,6 +63,9 @@ class Surface { //<>//
     }
     if (name.startsWith("counter")) {
       displayCounter();
+    }
+    if (name.equals("sculpture")) {
+      displaySculpture();
     }
 
     if (mFade) {
@@ -106,7 +111,7 @@ class Surface { //<>//
     this.s.text(incomingText + "\t     " + incomingCat, 0, this.s.height/4, this.s.width, this.s.height);
     this.s.fill(189, 10, 10, 150);
     this.s.rect(0, 0, uttCount * prgIncrement, this.s.height/4);
-    this.s.text("Wir sind im / We are in the \t\t - - " + currentPart + " - - \t \t  Teil / Part", 0, this.s.height *2/3,this.s.width, this.s.height);
+    this.s.text("Wir sind im / We are in the \t\t - - " + currentPart + " - - \t \t  Teil / Part", 0, this.s.height *2/3, this.s.width, this.s.height);
     this.s.endDraw();
   }
 
@@ -165,19 +170,30 @@ class Surface { //<>//
     this.s.text(this.message, this.w/2, this.h/2);
     this.s.endDraw();
   }
+
+  void displaySculpture() {
+    RShape area = areas.findArea(incomingCat);
+    PVector pos = new PVector(area.getCenter().x, area.getCenter().y);
+    println("pos  " + pos);
+    this.s.beginDraw();
+    this.s.textFont(this.font);
+    this.s.textAlign(LEFT, CENTER);
+    this.s.fill(20);
+    this.s.text(this.message, pos.x, pos.x);
+    this.s.endDraw();
+  }
 }
 
 void buildSurfaces() {
-  // println("x " + width/30 + " y " + height/2 + " w " +  width *3/7 + " h " + height/5);
   mainSurf = new Surface("main", 0, 0, width, height, messageFont, true, "");
   incSurf = new Surface("matchSurf1", width/30, height/2, width *3/7, height/5, messageFont, false, incomingText);
   matchSurf = new Surface("matchSurf2", width *5/9, height/2, width *3/7, height/5, messageFont, false, "");
   titleSurf1 = new Surface("titleIncoming", int(incSurf.pos.x), int(incSurf.pos.y-80), int(incSurf.w), 50, infoFont, false, "Dein Kommentar ähnelt...");
   titleSurf2 =  new Surface("titleMatch", int(matchSurf.pos.x), int(matchSurf.pos.y-80), int(matchSurf.w), 50, infoFont, false, "...diesem hier");
-  dupSurf2 = new Surface("dup2", int(titleSurf2.pos.x), int(titleSurf2.pos.y), matchSurf.w, matchSurf.h + titleSurf2.h, messageFont, false, "");
   infoSurf = new Surface("infoSurf", 0, height-height/12, width, height/12, infoFont, true, incomingText);
-  articleSurf = new Surface("article", 0, 0, infoSurf.s.width, infoSurf.s.height, infoFont, false, "");
   counterSurf = new Surface("counter", 0, height *3/4, width/8, height/6, infoFont, false, "categories");
+  articleSurf = new Surface("article", 0, 0, infoSurf.s.width, infoSurf.s.height, infoFont, false, "");
+  sculptureSurf = new Surface("sculpture", 0, 0, width, height, infoFont, false, incomingText);
   surfs[0] = mainSurf;
   surfs[1] = incSurf;
   surfs[2] = matchSurf;
@@ -186,7 +202,7 @@ void buildSurfaces() {
   surfs[5] = infoSurf;
   surfs[6] = counterSurf;
   surfs[7] = articleSurf;
-  surfs[8] = dupSurf2;
+  surfs[8] = sculptureSurf;
 }
 
 StringList makeList(String type) {
