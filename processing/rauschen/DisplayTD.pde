@@ -89,19 +89,19 @@ color attributeUtt(String cat) {
   switch(cat) {
   case "praise" : 
     // col =  color(171, 138, 132, 150);
-    col =  color(171, 138, 132);
+    col =  color(196, 128, 79);
     break;
   case "dissence" : 
-    col = color(181, 201, 187);
+    col = color(150, 63, 146);
     break;
   case "insinuation" : 
-    col =  color(120, 145, 148);
+    col =  color(21, 143, 84);
     break;
   case "lecture" : 
-    col = color(109, 133, 124);
+    col = color(23, 139, 189);
     break;
   case "concession" : 
-    col = color(198, 199, 177);
+    col = color(133, 138, 37);
   }
   return col;
 }

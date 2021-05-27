@@ -6,6 +6,7 @@ void oscEvent(OscMessage m) {
     oscTextIn = parseJSONObject((String) m.arguments()[0]);
     incomingText = oscTextIn.getString("text");
     incomingCat = oscTextIn.getString("cat");
+    currentCol = attributeUtt(incomingCat);
     category_counter = oscTextIn.getJSONObject("category_counter");
     println("counter  " + category_counter);
     for (String c : cats) {
