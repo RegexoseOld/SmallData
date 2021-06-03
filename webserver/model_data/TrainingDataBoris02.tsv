@@ -1,4 +1,4 @@
-User	topic	link	utterance	Effekt
+user	topic	link	utterance	category
 Hanno Leichtmann	music		studer kann einpacken	lecture
 Jo Seifried	health		Ich sage nur, ein Machwerk von Total Versager. Und sowas kassiert noch 10000 € Diäten im Monat	dissence
 Susan Roland	health		Kommt etwas spät! Hätte letzten Monat schon angesetzt werden müssen.	lecture
@@ -48,21 +48,21 @@ otterosch	health	https://www.zeit.de/zeit-magazin/leben/2020-11/corona-herbst-ho
 Constructivecriticism	health	https://www.zeit.de/zeit-magazin/leben/2020-11/corona-herbst-home-office-frieren-lockdown-kaelte-winter-zuhause	Ich dusche seit vielen Jahren jeden Morgen die letzten 5-30 Sekunden immer eiskalt (ganzer Körper	lecture
 Constructivecriticism	health	https://www.zeit.de/zeit-magazin/leben/2020-11/corona-herbst-home-office-frieren-lockdown-kaelte-winter-zuhause	Es gibt keine bessere Möglichkeit 5-30 Sekunden sinnvoll zu nutzen !	lecture
 Abondi	health	https://www.zeit.de/zeit-magazin/leben/2020-11/corona-herbst-home-office-frieren-lockdown-kaelte-winter-zuhause	Abnehmen sollte man nicht dadurch, dass man weniger isst als Hunger da ist, sondern in dem man das Makronährstoffverhältnis änder	lecture
-Abondi	health	https://www.zeit.de/zeit-magazin/leben/2020-11/corona-herbst-home-office-frieren-lockdown-kaelte-winter-zuhause	Ansonsten gilt das was hier zur Kälte gesagt wurde auch im Sommer wenn es "zu warm" ist.	lecture
+Abondi	health	https://www.zeit.de/zeit-magazin/leben/2020-11/corona-herbst-home-office-frieren-lockdown-kaelte-winter-zuhause	"Ansonsten gilt das was hier zur Kälte gesagt wurde auch im Sommer wenn es ""zu warm"" ist."	lecture
 Abondi	health	https://www.zeit.de/zeit-magazin/leben/2020-11/corona-herbst-home-office-frieren-lockdown-kaelte-winter-zuhause	Nur die Konfrontation mit Wärme/Kälte steigert die Temperaturtoleranz im Allgemeinen.	lecture
 MrCase	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Bitte nicht einfach so mit irgendwelchen Studien rumwerfen, ohne diese zu lesen und zu hinterfragen und auf die Qualität zu prüfen.	lecture
 MrCase	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	So wie hier. Das ist kein Grund, das ist eine Annahme.	lecture
-MrCase	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Das ist eine Observationsstudie, kann hier bitte der "Beweis" zitiert werden?	lecture
+MrCase	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	"Das ist eine Observationsstudie, kann hier bitte der ""Beweis"" zitiert werden?"	lecture
 meden agan	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Auf den Körper hören. Fertig.	lecture
 meden agan	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Im Kern sind die obigen Analysen richtig.	concession
 meden agan	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Ganz richtig	praise
 s.hendricks	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Gemächlich beginnen, gern auch mit Gehpausen und langsam steigern	lecture
-s.hendricks	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Als Einsteiger nicht auf den km-Schnitt achten; die Geschwindigkeit ist zunächst irrelevant	lecture
+s.hendricks	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	"Als Einsteiger nicht auf den km-Schnitt achten; die Geschwindigkeit ist zunächst irrelevant"	lecture
 s.hendricks	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Ignorieren Sie (vorerst) die technischen Hilfsmittel, die Sie zu irgendwas zwingen	lecture
 s.hendricks	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Auf den eigenen Körper hören: Herausfinden, was einem gut tut - und was nicht!	lecture
 s.hendricks	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Perspektivisch vielleicht einen Volkslauf anvisieren. Das motiviert.	lecture
 s.hendricks	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Fernhalten von jeglicher Militanz in Sachen Sport. Es geht um Lebensfreude, nicht um vermeintliche Leistungsziele	lecture
-s.hendricks	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	Sofern sie regelmäßig laufen; kaufen Sie sich mind. 2 Paar verschiedener Laufschuhe	lecture
+s.hendricks	health	https://www.zeit.de/wissen/gesundheit/2020-04/joggen-gesundheit-laufen-ungesund/seite-3#infobox-laufstil-2-tab	"Sofern sie regelmäßig laufen; kaufen Sie sich mind. 2 Paar verschiedener Laufschuhe"	lecture
 DJ Mischko	music	https://soundcloud.com/bphisto/handschellenremix?in=mahmoud-ashour-203632322/sets/deutsche-lieder	Überragende Arbeit geleistet Jungs ! 	praise
 Evi	music	https://soundcloud.com/the-real-gag/keine-ist-wie-du-remix?in=mahmoud-ashour-203632322/sets/deutsche-lieder	jawoll	praise
 waltlenggenhager	music	https://soundcloud.com/the-real-gag/keine-ist-wie-du-remix?in=mahmoud-ashour-203632322/sets/deutsche-lieder	einfach nur Klasse	praise
@@ -132,9 +132,9 @@ El Franko	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj
 Rio	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	Geiles Set	praise
 Ercan Yurkacul	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	also topmixxx	praise
 Daniel Kohl	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	nice	praise
-schroedizzle	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	need more;)	praise
+schroedizzle	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	"need more;)"	praise
 Ric Da Houseschuh	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	finds nicht gut, wenn schon Oldschool dann bitte Vinyl und nicht Sync	dissence
-Ma Fi	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	weiter sooo ;)	praise
+Ma Fi	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	"weiter sooo ;)"	praise
 StoniHomie MasterP	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	Immer wieder fett anzuhören	praise
 Alex Hitch 26	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	Reise durch die musikalische Liebe meiner Jugend :) pfäd man......	concession
 Klaus Klapperstück	music	https://soundcloud.com/letompe/diamonds-of-oldschool-mixed-by-dj-le-tompe-vol2	einfach grandios!	praise
@@ -170,7 +170,7 @@ Stachel im Fleisch	politics	https://www.zeit.de/politik/ausland/2020-11/joe-bide
 Stachel im Fleisch	politics	https://www.zeit.de/politik/ausland/2020-11/joe-biden-usa-wirtschaft	Allerdings rechne ich schon damit, dass die Republikaner im Senat im Januar die Mehrheit behalten werden.	concession
 DerPöti	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Egal was die Regierung beschließen sollte, bleibt verdammt nochmal Zuhause! 	lecture
 DerPöti	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	EIGENVERANTWORTUNG und VERNUNFT nennt man das!	lecture
-Johann van de Bron	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Was Weihnachten und Silvester für den Januar bedeuten werden, können wir in 14 Tagen in den USA beobachten, wenn wir die Infektionen von Thanksgiving sehen. 	lecture
+Johann van de Bron	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Was Weihnachten und Silvester für den Januar bedeuten werden, können wir in 14 Tagen in den USA beobachten, wenn wir die Infektionen von Thanksgiving sehen.	lecture
 Johann van de Bron	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Dann wäre noch Zeit Vernunft einkehren zu lassen	lecture
 Midgardsnake	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Wenn dieses Jahr uns eins gelehrt hat, dann, dass wir Eigenverantwortung nicht können und Verordnungen brauchen.	lecture
 Midgardsnake	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Und wenn dann Mitte bis Ende Januar die Quittung kommt, dann jammern wieder alle!	insinuation
@@ -191,10 +191,10 @@ W.W.	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src
 Mr. Fettfinger	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Ich hätte mir strengere Maßnahmen gewünscht	concession
 Mr. Fettfinger	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	ich halte die Lockerungen über Weihnachten und Silvester für das Hirnrissigste was es bisher in dieser Pandemie gegeben hat	dissence
 dietantefrieda	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Natürlich ist es doof, dass wir dieses Jahr Weihnachten und Silvester nicht mit allen unseren Freunden und Verwandten feiern dürfen. 	concession
-dietantefrieda	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Aber stellt euch vor: 2021 ist wieder Weihnachten. 	lecture
+dietantefrieda	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Aber stellt euch vor: 2021 ist wieder Weihnachten.	lecture
 dietantefrieda	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Und da wird es schön sein, dass noch alle Freunde und Verwandte zum Feiern da sein können.	lecture
 MyHamster	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Man muss sich das wirklich mal vorstellen, wo wir hingekommen sind...	dissence
-MyHamster	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Was kommt denn als nächstes- vielleicht ein "Appell"- eine Aufforderung zum Suizid???!!!!!	insinuation
+MyHamster	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	"Was kommt denn als nächstes- vielleicht ein ""Appell""- eine Aufforderung zum Suizid???!!!!!"	insinuation
 GGUltras	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Ich verstehe nicht, warum Menschen das feiern von Weihnachten und Silvester wichtiger ist, als dass wir diese Pandemie in den Griff bekommen.	dissence
 Ragnar	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Die Corona Maßnahmen haben jetzt allen gezeigt, dass wir keine freien Menschen in einem freien Land sind, sondern unmündige Untertanen, die nichts zu sagen haben. 	insinuation
 Dominic van Lear	health	https://twitter.com/search?q=%22Weihnachten%20und%20Silvester%22&src=trend_click&vertical=trends	Werte Regierung, ich habe niemanden von euch gewählt. Ihr vertretet weder mich, noch das Volk! 	dissence
@@ -230,7 +230,7 @@ zaralexander	politics	https://www.zeit.de/politik/ausland/2020-11/us-wahl-praesi
 Nikita Hund	politics	https://www.zeit.de/politik/ausland/2020-11/us-wahl-praesident-donald-trump-wahlbetrug-vorwuerfe-praesidentschaftswahl-interview	Leider zeigt unsere Geschichte, dass selbst die armseligsten Typen bei vielen Wählern ankommen und letzten Endes durchaus erfolgreich sein können	lecture
 Agda_Human	politics	https://www.zeit.de/politik/ausland/2020-11/us-wahl-praesident-donald-trump-wahlbetrug-vorwuerfe-praesidentschaftswahl-interview	Das Ausblenden der Wirklichkeit scheint bei ihm pathologisch zu sein.	insinuation
 Agda_Human	politics	https://www.zeit.de/politik/ausland/2020-11/us-wahl-praesident-donald-trump-wahlbetrug-vorwuerfe-praesidentschaftswahl-interview	Nur so ist ja auch erklärbar, dass dieser Typ obgleich in jeder Hinsicht ein Versager, sich derart selbst lieben kann, durch Leugnung der Wirklichkeit	lecture
-Agda_Human	politics	https://www.zeit.de/politik/ausland/2020-11/us-wahl-praesident-donald-trump-wahlbetrug-vorwuerfe-praesidentschaftswahl-interview	Das hat ihn ja schon als "Geschäftsmann" ausgezeichnet, sonst hätte er an sich selbst zerbrechen müssen.	insinuation
+Agda_Human	politics	https://www.zeit.de/politik/ausland/2020-11/us-wahl-praesident-donald-trump-wahlbetrug-vorwuerfe-praesidentschaftswahl-interview	"Das hat ihn ja schon als ""Geschäftsmann"" ausgezeichnet, sonst hätte er an sich selbst zerbrechen müssen."	insinuation
 sqrt	politics	https://www.zeit.de/politik/ausland/2020-11/us-wahl-praesident-donald-trump-wahlbetrug-vorwuerfe-praesidentschaftswahl-interview	sich auch noch von diesen armseligen Fans am Straßenrand feiern lässt	dissence
 sqrt	politics	https://www.zeit.de/politik/ausland/2020-11/us-wahl-praesident-donald-trump-wahlbetrug-vorwuerfe-praesidentschaftswahl-interview	werde ich nie verstehen können. Nie.	dissence
 sqrt	politics	https://www.zeit.de/politik/ausland/2020-11/us-wahl-praesident-donald-trump-wahlbetrug-vorwuerfe-praesidentschaftswahl-interview	Denn das endet per definitionem in seinem Suizid.	lecture
@@ -273,11 +273,11 @@ xxxxxxxx	music	https://soundcloud.com/elianabluub/silbermond-ja-1	Yes Bebe	prais
 Maria Cohn	music	https://soundcloud.com/elbombastiqo/silbermond-das-beste	stotert ganz oft aber sonst ok	concession
 Infinitith:love	music	https://soundcloud.com/elbombastiqo/silbermond-das-beste	wenn ich das nur höre.... Gänsehaut pur...	praise
 Michael Glüsing	music	https://soundcloud.com/elbombastiqo/silbermond-das-beste	echter Klassiker	praise
-user994005502 	music	https://soundcloud.com/elbombastiqo/silbermond-das-beste	schön *-*	praise
+user994005502	music	https://soundcloud.com/elbombastiqo/silbermond-das-beste	schön *-*	praise
 Six Petrified Trees			Knorkator ist sowas von geil	praise
 Nigel Sar	music	https://soundcloud.com/jgm-music/ich-hasse-musik-die-damenkapelle-cover-von-knorkator	Glück in hörbarer form.	praise
 Fieten	music	https://soundcloud.com/jgm-music/ich-hasse-musik-die-damenkapelle-cover-von-knorkator	Fetzt	praise
-MGK	music	https://soundcloud.com/sk3pn4/nur-mal-angenommen-feat-robin	Sehr cool ;)	praise
+MGK	music	https://soundcloud.com/sk3pn4/nur-mal-angenommen-feat-robin	"Sehr cool ;)"	praise
 Mika B.	music	https://soundcloud.com/sk3pn4/nur-mal-angenommen-feat-robin	sehr einfallsreicher Text	praise
 Ninja Tomate	music	https://soundcloud.com/sk3pn4/nur-mal-angenommen-feat-robin	Der text ist einerseits verstörend aber andererseits genial und macht mich nachdenklich	concession
 Kuro	music	https://soundcloud.com/sk3pn4/nur-mal-angenommen-feat-robin	OMFG xD der text ist genial xD	praise
@@ -293,15 +293,15 @@ Northtrue	music	https://soundcloud.com/kai111079/90-minuten-hardcore-echte-gefuh
 Neuro Hunter	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	yeah...	praise
 kleingeld23	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	sehr geil :D	praise
 Dr Wolve	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Richtig so	praise
-User 855750800 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	eine Entscheidung wie sie die Bundesregierung nun getroffen hat hielt ich nicht für möglich	concession
-User 855750800 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Daher kann man sich nur wünschen dass auch andere Satiriker an diesem Thema bleiben und es Ihnen gleich tun.	lecture
-User 855750800 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Ich respektiere Sie für Ihr Engagement, Dank	praise
-User 744979613 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Wie kann eine Regierung so etwas tun? 	dissence
-User 744979613 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Sind wir nun bald die Untertanen der Türken? 	insinuation
-User 744979613 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Geht unsere Presse- und Meinungsfreiheit jetzt auch hier den Bach runter!	insinuation
-User 744979613 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Hängt jetzt bald die türkische Flage auf dem Reichstag? 	insinuation
-User 744979613 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Wundern würde mich das bei der politischen, eigennützigen Regierung nicht wundern!	insinuation
-User 744979613 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	stehe voll hinter Herrn Böhmermann und allen Freihheits liebenden Menschen!	praise
+User 855750800	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	eine Entscheidung wie sie die Bundesregierung nun getroffen hat hielt ich nicht für möglich	concession
+User 855750800	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Daher kann man sich nur wünschen dass auch andere Satiriker an diesem Thema bleiben und es Ihnen gleich tun.	lecture
+User 855750800	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Ich respektiere Sie für Ihr Engagement, Dank	praise
+User 744979613	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Wie kann eine Regierung so etwas tun? 	dissence
+User 744979613	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Sind wir nun bald die Untertanen der Türken? 	insinuation
+User 744979613	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Geht unsere Presse- und Meinungsfreiheit jetzt auch hier den Bach runter!	insinuation
+User 744979613	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Hängt jetzt bald die türkische Flage auf dem Reichstag? 	insinuation
+User 744979613	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Wundern würde mich das bei der politischen, eigennützigen Regierung nicht wundern!	insinuation
+User 744979613	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	stehe voll hinter Herrn Böhmermann und allen Freihheits liebenden Menschen!	praise
 User 789217670	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Sehr gut! Find ich klasse Didi :)	praise
 Züleyha Can	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Ich verneige mich und viele Grüsse aus München	praise
 Sarastro	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Deutschland ist nicht Kurdistan...	lecture
@@ -321,36 +321,36 @@ Ernesto Meng	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Si
 Ernesto Meng	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Bin ein grosser Bewunderer von Ihnen seit 1970	praise
 Ernesto Meng	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Erdogan ist nicht nur Despot er lügt wie gedruckt.	insinuation
 Ernesto Meng	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Er wird sich nie Entschuldigen bei den Armenier.	insinuation
-User 265094294 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	gibs ihnen, oral, anal.	praise
+User 265094294	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	gibs ihnen, oral, anal.	praise
 Caschi Holz	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Volltreffer!	praise
 Schalla der Erste	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	GENIAAAAAAAAAAAL , den Song gibt es doch glatt heute Abend in der Schalla-Show 	praise
 Michael Goerg	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Wieder einmal geht D. Hallervorden voran!	praise
-Matthias Barth	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	scheen ;)	praise
+Matthias Barth	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	"scheen ;)"	praise
 Claudia Spitzer	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Didi Du hast den Finger drauf.	praise
 Benedikt Weinreich	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Großartig!	praise
 AH Musik	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	DAS,,,ist Satire .... und nicht so n schmieriges Beleidigungsgelaber auf unterstem Niveau, wie das des Herren Jan Böhmermann.	lecture
 Benedikt Weinreich	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Ich sehe das genauso. 	concession
-Benedikt Weinreich	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Der Inhalt des "Gedichts" von Herrn Böhmermann ist eine einzige Beleidigung und hat meiner Meinung nach nicht sehr viel mit der künstlerischen Rafinesse von Satire zu tun	dissence
+Benedikt Weinreich	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	"Der Inhalt des ""Gedichts"" von Herrn Böhmermann ist eine einzige Beleidigung und hat meiner Meinung nach nicht sehr viel mit der künstlerischen Rafinesse von Satire zu tun"	dissence
 Benedikt Weinreich	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Als Staatsoberhaupt sollte man da jedoch das Gesicht wahren und einfach darüber stehen.	lecture
 Jan-Nordic the Uproarious	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Nein, hat sie nicht.	dissence
 Jan-Nordic the Uproarious	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Und allein die Tatsache, dass die Debatte durch das Gedicht so massiv befeuert wurde bestätigt nicht nur, dass es Satire ist, sondern auch, dass sie absolut gelungen ist.	lecture
 smkweed420	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Genau, denn wenn man eines weiß, dann dass Satire immer genau dort aufhört wo ich's persönlich nicht mehr lustig finde und bei meinen Fußballverein!	lecture
 smkweed420	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Nur schwer zu verstehen wenn die eigene Toleranz am Gartenzaun endet oder der eigene Job davon abhängt.	lecture
-User 824868627 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Ich möchte noch hinzufügen, dass die meisten Künstler an ihrem Programm ein ganzes Jahr feilen. 	lecture
-User 824868627 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Es ist eine sehr, sehr große Leistung, dass Herr Hallervorden sein Metier so beherrscht, dass er spontan innerhalb kurzer Zeit so etwas auf die Beine stellen kann! 	lecture
-User 824868627 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Davon könnten sich viele Künstler eine Scheibe abschneiden, wenn sie könnten. ;)	lecture
-User 824868627 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	80 Jahre sind kein Grund nicht top-aktuell an wichtigen Themen teilzunehmen.	concession
-User 824868627 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Vielen Dank für Ihr Engagement für diese so wichtige Sache.	praise
-User 824868627 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	ob für sie Ihr Name mit den gleichen oder ähnlichen Empfindungen verknüpft ist, weiß ich nicht. 	concession
-User 824868627 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Auf jeden Fall sind sie wichtig und wertvoll, wie eh und je.	praise
-User 824868627 	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Sie stehen meinem Empfinden nach für einen sehr wichtigen Teil deutscher Kultur.	praise
+User 824868627	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Ich möchte noch hinzufügen, dass die meisten Künstler an ihrem Programm ein ganzes Jahr feilen. 	lecture
+User 824868627	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Es ist eine sehr, sehr große Leistung, dass Herr Hallervorden sein Metier so beherrscht, dass er spontan innerhalb kurzer Zeit so etwas auf die Beine stellen kann! 	lecture
+User 824868627	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	"Davon könnten sich viele Künstler eine Scheibe abschneiden, wenn sie könnten. ;)"	lecture
+User 824868627	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	80 Jahre sind kein Grund nicht top-aktuell an wichtigen Themen teilzunehmen.	concession
+User 824868627	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Vielen Dank für Ihr Engagement für diese so wichtige Sache.	praise
+User 824868627	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	ob für sie Ihr Name mit den gleichen oder ähnlichen Empfindungen verknüpft ist, weiß ich nicht. 	concession
+User 824868627	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Auf jeden Fall sind sie wichtig und wertvoll, wie eh und je.	praise
+User 824868627	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	Sie stehen meinem Empfinden nach für einen sehr wichtigen Teil deutscher Kultur.	praise
 User 715911213	music	https://soundcloud.com/sunrockstudios/erdogan-zeig-mich-an	chapeau!	praise
 unkuschelig xD what uuup	entertainment	https://www.youtube.com/watch?v=U4cCw2eKERU	ich finde cool das ihr das jetzt zeigt	praise
 Privat Eugen	entertainment	https://www.youtube.com/watch?v=U4cCw2eKERU	Hab ich gelacht^^	concession
 Privat Eugen	entertainment	https://www.youtube.com/watch?v=U4cCw2eKERU	Sehr gutes Video Tim	praise
 Ullric Lex	entertainment	https://www.youtube.com/watch?v=U4cCw2eKERU	Dieses Spiel ist so geil.	praise
 Ullric Lex	entertainment	https://www.youtube.com/watch?v=U4cCw2eKERU	Ihr passt alle so gut zusammen und ich hab mich echt kaputt gelacht am Ende.	praise
-Maximilian G.	entertainment	https://www.youtube.com/watch?v=U4cCw2eKERU	Sonst hat mir das Video sehr gut gefallen hoffe es folgen noch viele folgen ;)	concession
+Maximilian G.	entertainment	https://www.youtube.com/watch?v=U4cCw2eKERU	"Sonst hat mir das Video sehr gut gefallen hoffe es folgen noch viele folgen ;)"	concession
 Maximilian G.	entertainment	https://www.youtube.com/watch?v=U4cCw2eKERU	Die tut noch bischen leggen die AA bester Satz :D	praise
 Guts	entertainment	https://www.youtube.com/watch?v=U4cCw2eKERU	Ich will etwas über die ersten Schritte erfahren und ihr redet 34min lang bullshit	dissence
 Guts	entertainment	https://www.youtube.com/watch?v=U4cCw2eKERU	verdammt schlechtes Video	dissence
@@ -361,7 +361,7 @@ Nini	entertainment	https://www.youtube.com/watch?v=5bsyDmEA20k	Wenn ich das so s
 Dayrador	entertainment	https://www.youtube.com/watch?v=5bsyDmEA20k	Ein sehr hüpsches zu Hause, da kann man neidisch werden!	concession
 Markus Rümmler	entertainment	https://www.youtube.com/watch?v=5bsyDmEA20k	Das hat Illiya wirklich sehr schön gebaut	praise
 Markus Rümmler	entertainment	https://www.youtube.com/watch?v=5bsyDmEA20k	Hut ab und weiter so. 	praise
-Markus Rümmler	entertainment	https://www.youtube.com/watch?v=5bsyDmEA20k	in Disney Zeichentrickfilmen sollte man sich immer auskennen. ;-)	lecture
+Markus Rümmler	entertainment	https://www.youtube.com/watch?v=5bsyDmEA20k	"in Disney Zeichentrickfilmen sollte man sich immer auskennen. ;-)"	lecture
 Brax Eisenhand	entertainment	https://www.youtube.com/watch?v=5bsyDmEA20k	Wenn ich sowas sehe, dann kann nur staunen.	concession
 Brax Eisenhand	entertainment	https://www.youtube.com/watch?v=5bsyDmEA20k	Meine Basen sind nicht gerade klein, aber meist nur große Würfel.	concession
 Brax Eisenhand	entertainment	https://www.youtube.com/watch?v=5bsyDmEA20k	Ganz genial gemacht.	praise
@@ -429,7 +429,7 @@ Viola K	entertainment	https://www.youtube.com/watch?v=jOu_0Isklec	Ich will mir g
 Faith-Rachel Schmidt	entertainment	https://www.youtube.com/watch?v=jOu_0Isklec	Wem ist auch der fliegende thorny dragon zu Beginn der Folge aufgefallen	lecture
 A.G. Arts	entertainment	https://www.youtube.com/watch?v=jOu_0Isklec	Diese Kreativität ist einfach der pure Wahnsinn	praise
 fekko	lifestyle	https://www.zeit.de/2020/50/trennung-ehefrau-bruder-liebe-alleinerziehende-schicksalsschlag	Was das aber nun alles mit offener Ehe und freier Liebe zu tun hat, das bleibt wohl ihr Geheimnis.	insinuation
-fekko	lifestyle	https://www.zeit.de/2020/50/trennung-ehefrau-bruder-liebe-alleinerziehende-schicksalsschlag	Aber es ging wohl einfach darum nen Punkt zu machen, was? ;)	insinuation
+fekko	lifestyle	https://www.zeit.de/2020/50/trennung-ehefrau-bruder-liebe-alleinerziehende-schicksalsschlag	"Aber es ging wohl einfach darum nen Punkt zu machen, was? ;)"	insinuation
 Sophie L. Hass	lifestyle	https://www.zeit.de/2020/50/trennung-ehefrau-bruder-liebe-alleinerziehende-schicksalsschlag	Was für ein däm... Kommentar	dissence
 ixüpsilon	lifestyle	https://www.zeit.de/2020/50/trennung-ehefrau-bruder-liebe-alleinerziehende-schicksalsschlag	Eine sehr berührende Geschichte	concession
 fekko	lifestyle	https://www.zeit.de/2020/50/trennung-ehefrau-bruder-liebe-alleinerziehende-schicksalsschlag	Eine bewegende, tragische Geschichte	concession
@@ -491,7 +491,7 @@ Mika	music	https://soundcloud.com/bmg_live/bmg-aka-brachiale-musikgestalter-deic
 BREAKOUR	music	https://soundcloud.com/bmg_live/bmg-aka-brachiale-musikgestalter-deichkind-so-ne-musik-bootleg-2015	so ne musik hat weed geraucht XD nice man !	praise
 Patrick Norberger	music	https://soundcloud.com/bmg_live/bmg-aka-brachiale-musikgestalter-deichkind-so-ne-musik-bootleg-2015	richtig dickes Teil Jungs!!	praise
 Steffen Scharke	music	https://soundcloud.com/bmg_live/bmg-aka-brachiale-musikgestalter-deichkind-so-ne-musik-bootleg-2015	hr habt mich überzeugt :-D Verbeug!	concession
-POKE	music	https://soundcloud.com/bmg_live/bmg-aka-brachiale-musikgestalter-deichkind-so-ne-musik-bootleg-2015	Ihr kranken Irren ;-)	praise
+POKE	music	https://soundcloud.com/bmg_live/bmg-aka-brachiale-musikgestalter-deichkind-so-ne-musik-bootleg-2015	"Ihr kranken Irren ;-)"	praise
 Lieschen	music	https://soundcloud.com/bmg_live/bmg-aka-brachiale-musikgestalter-deichkind-so-ne-musik-bootleg-2015	göttlich!!*-*	praise
 TechnoAnne	music	https://soundcloud.com/bmg_live/bmg-aka-brachiale-musikgestalter-deichkind-so-ne-musik-bootleg-2015	So muss es sein	praise
 HeckmannD	music	https://soundcloud.com/bmg_live/bmg-aka-brachiale-musikgestalter-deichkind-so-ne-musik-bootleg-2015	Giiiib iiiiihM ....	praise
@@ -508,7 +508,7 @@ CrazyChili	food	https://www.kochbar.de/rezept/395333/Mole-Poblano-Schokoladen-Ch
 englischrose	food	https://www.kochbar.de/rezept/395333/Mole-Poblano-Schokoladen-Chili-Huhn.html	Schon gemopst!	concession
 schade5900	food	https://www.kochbar.de/rezept/395333/Mole-Poblano-Schokoladen-Chili-Huhn.html	Das sieht ja wieder sehr lecker aus, eine tolle Rezeptur	praise
 nierslaender	food	https://www.kochbar.de/rezept/70809/Galinhada-Gefluegeltopf.html	mmmhh tolles rezept	praise
-donfrank	food	https://www.kochbar.de/rezept/70809/Galinhada-Gefluegeltopf.html	einfach toll, ich liebe "zweibeiner"	praise
+donfrank	food	https://www.kochbar.de/rezept/70809/Galinhada-Gefluegeltopf.html	"einfach toll, ich liebe ""zweibeiner"""	praise
 barbara62	food	https://www.kochbar.de/rezept/491492/Brasilianische-Fischpfanne-mit-Reis.html	aber geschmeckt hat es trotzdem	concession
 H*****h	food	https://www.kochbar.de/rezept/491492/Brasilianische-Fischpfanne-mit-Reis.html	Deine Fischpfanne gefällt mir sehr gut!	concession
 H*****h	food	https://www.kochbar.de/rezept/491492/Brasilianische-Fischpfanne-mit-Reis.html	Es sieht so köstlich aus - und mit den Zutaten kann es nur schmecken!	concession
@@ -540,11 +540,11 @@ rezeptemaus	food	https://www.kochbar.de/rezept/372603/Fleisch-UEberbackenes-Gyro
 PolkaInge73	food	https://www.kochbar.de/rezept/372603/Fleisch-UEberbackenes-Gyros-mit-Metaxacreme.html	Die Metaxasauce ist total einfach, aber gigantisch lecker	praise
 annaundguenni	food	https://www.kochbar.de/rezept/372603/Fleisch-UEberbackenes-Gyros-mit-Metaxacreme.html	so ähnlich bestellen wir es immer bei unserem Griechen	concession
 annaundguenni	food	https://www.kochbar.de/rezept/372603/Fleisch-UEberbackenes-Gyros-mit-Metaxacreme.html	immer wieder lecker	praise
-goach	food	https://www.kochbar.de/rezept/469252/griechischer-Salat.html	Und zusätzlich gebe ich noch etwas Tsatziki-Gewürz aus der "Lets dip"-Serie von Fuchs dazu	lecture
+goach	food	https://www.kochbar.de/rezept/469252/griechischer-Salat.html	"Und zusätzlich gebe ich noch etwas Tsatziki-Gewürz aus der ""Lets dip""-Serie von Fuchs dazu"	lecture
 Noriana	food	https://www.kochbar.de/rezept/469252/griechischer-Salat.html	Ein köstlicher Salat , ganz fein zubereitet !	praise
 Kluger	food	https://www.kochbar.de/rezept/469252/griechischer-Salat.html	jaaaa den mach ich im Sommer oft aber auch im Winter erinnert er an Urlaub	concession
 OSB Kranz	food	https://www.kochbar.de/rezept/518596/Kotopoulo-kokinisto-ein-Gruss-aus-Griechenland.html	Man kann Dein Gericht kaum aussprechen, aber nach Deiner tollen Beschreibung und den leckeren Photos würde mir das auch seeeeeehr gut schmecken	concession
-Miez	food	https://www.kochbar.de/rezept/518596/Kotopoulo-kokinisto-ein-Gruss-aus-Griechenland.html	griechisches Urlaubsfeeling auf der Gabel; lecker!	praise
+Miez	food	https://www.kochbar.de/rezept/518596/Kotopoulo-kokinisto-ein-Gruss-aus-Griechenland.html	"griechisches Urlaubsfeeling auf der Gabel; lecker!"	praise
 Monja62	food	https://www.kochbar.de/rezept/303674/OSTER-PLAETZCHEN.html	Mir schmecken die auch	concession
 lustigefrau	food	https://www.kochbar.de/rezept/40100/Moussaka-nicht-ganz-original-griechisch-aber-lecker.html	muss ichauch mal probieren	concession
 mimi	food	https://www.kochbar.de/rezept/40100/Moussaka-nicht-ganz-original-griechisch-aber-lecker.html	Ich wollte immer mal eine Moussaka machen, bin aber nie dazu gekommen.	concession
@@ -616,7 +616,7 @@ Revenge	music	https://www.metaltreff.net/topics/view/1740/wen-habt-ihr-zuletzt-l
 strohfischer	music	https://www.metaltreff.net/topics/view/1740/wen-habt-ihr-zuletzt-live-gesehen-thread	Ich könnte mir in den Arsch beissen, dass ich damals nicht mitbekommen hab, wie meine Eltern den Amiga 500 weggeworfen haben	concession
 Calla	music	https://www.metaltreff.net/topics/view/1740/wen-habt-ihr-zuletzt-live-gesehen-thread	aber wer ihn hat muss ihn unbedingt behalten 	lecture
 Calla	music	https://www.metaltreff.net/topics/view/1740/wen-habt-ihr-zuletzt-live-gesehen-thread	ich hab ihn leider nimmer 	concession
-unbekannt	internet	https://www.metaltreff.net/topics/view/1740/wen-habt-ihr-zuletzt-live-gesehen-thread	Typisches Firefox "Kiddy-Gelaber "	insinuation
+unbekannt	internet	https://www.metaltreff.net/topics/view/1740/wen-habt-ihr-zuletzt-live-gesehen-thread	"Typisches Firefox ""Kiddy-Gelaber """	insinuation
 unbekannt	internet	https://www.metaltreff.net/topics/view/1740/wen-habt-ihr-zuletzt-live-gesehen-thread	Anstatt Leuten die sich weniger gut auszukennen, einfach mal einen Tipp zu geben, mit dem sie auch etwas anfangen können, kommt immer dieses Gelaber	insinuation
 unbekannt	internet	https://www.metaltreff.net/topics/view/1740/wen-habt-ihr-zuletzt-live-gesehen-thread	Aber dieses Fan Boy Gerede ist einfach nur nervig. 	dissence
 BulletsBreath	internet	https://www.metaltreff.net/topics/view/1740/wen-habt-ihr-zuletzt-live-gesehen-thread	kuck mal ob du gästebucheinträge schreiben und auf die zweiten seiten von galerien gehen kannst, das ist bei den neuen FF nämlich bei vielen ein problem 	lecture
@@ -639,7 +639,7 @@ Jan Schlömer	internet	https://www.metaltreff.net/topics/view/1740/wen-habt-ihr-
 MrSebo2424	music	https://www.youtube.com/watch?v=cNRetzg_2vk	Sau cooles Video! Weiter so mit der guten arbeit :)	praise
 Leon RushN	music	https://www.youtube.com/watch?v=cNRetzg_2vk	wenn ihr 2 stimmig singt, das haut echt rein	praise
 Inti Ahpuch	music	https://www.youtube.com/watch?v=cNRetzg_2vk	Geniales Video !!!	praise
-lateinpg	music	https://www.youtube.com/watch?v=cNRetzg_2vk	ah gute wahl ;)	praise
+lateinpg	music	https://www.youtube.com/watch?v=cNRetzg_2vk	"ah gute wahl ;)"	praise
 Cypherdrone	music	https://www.youtube.com/watch?v=cNRetzg_2vk	Mega geil jungs!!	praise
 WF6922	music	https://www.youtube.com/watch?v=cNRetzg_2vk	Hey ihr seit cool	praise
 hangman78	music	https://www.youtube.com/watch?v=cNRetzg_2vk	Mucke gut, Gepose shice	concession
@@ -648,12 +648,12 @@ hangman78	music	https://www.youtube.com/watch?v=cNRetzg_2vk	Seid mal n paar Säu
 Neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	Quatsch. Der Mensch BRAUCHT Schubladen	lecture
 neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	Sorry, du machst eigentlich einen recht klaren und anständigen Eindruck, aber zumindest dieser Beitrag (der 1. obere) ist echt schwachfug.	lecture
 Eissturm	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	Scheiß Drauf ich mache meine Eigne Schublade auf mit Blackjack und Nutten 	lecture
-Neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	In absolut JEDEM wissenschaftlichen Bereich wird konsequent kategorisiert und in "schubladen" gesteckt.	lecture
+Neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	"In absolut JEDEM wissenschaftlichen Bereich wird konsequent kategorisiert und in ""schubladen"" gesteckt."	lecture
 Neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	Chaos mag zwar praktisch sein, aber im Endeffekt wirst du kein Buch finden, welches sich mit allen Bereichen der Naturwissenschaft beschäftigt	lecture
 Neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	Jede Schublade für sich lässt sich so verstehen und analysieren. 	lecture
 Neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	Wichtig ist jedoch (und das unterscheidet diese metaphorik von echten Schubladen), dass sich Schubladen überlappen können	lecture
 Neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	So passt auch Metallica in den Thrash Metal, als auch Speed oder Heavy Metal	lecture
-Neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	Kommen wir schließlich zur Definition dieser metaphorischen "Schubladen" wo Menschen so gerne Dinge reinstecken.	lecture
+Neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	"Kommen wir schließlich zur Definition dieser metaphorischen ""Schubladen"" wo Menschen so gerne Dinge reinstecken."	lecture
 Neulaender	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	Es ist eine Ansammlung von Eigenschaften. 	lecture
 Entillsar	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	Was es aber dann genau wird entscheidet deine Emotion	lecture
 Entillsar	music	https://www.metaltreff.net/topics/view/2140/schubladendenken-genres	Da muss ich doch etwas widersprechen	dissence
@@ -689,10 +689,10 @@ Charley Wolf	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-i
 Charley Wolf	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	Alles runterfahren ist keine Lösung.	dissence
 Charley Wolf	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	Warum liest man in dieser Zeitung nur sehr wenige bis gar keine kritischen Stellungnahmen?	dissence
 Charley Wolf	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	Und alle stimmen zu und keiner regt sich auf.	insinuation
-Charley Wolf	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	Es ist schon sehr traurig, dass hier aus "naturwissenschaftlich fundierten Erkenntnissen" scheinbare Lösungen abgeleitet werden, die letztendlich nur Symptome bekämpfen	insinuation
+Charley Wolf	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	"Es ist schon sehr traurig, dass hier aus ""naturwissenschaftlich fundierten Erkenntnissen"" scheinbare Lösungen abgeleitet werden, die letztendlich nur Symptome bekämpfen"	insinuation
 Peter Hinz	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	Eine neue Virensaison begann und es gab keinerlei Vorbereitungen.	insinuation
 Peter Hinz	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	Stattdessen lässt man im ÖPNV die Leute weiterhin mit Behelfsmasken aufeinander los	insinuation
-Peter Hinz	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	Die Politik und die beratenden "Experten" tragen die volle Verantwortung für die Infektionszahlen der letzten Wochen.	lecture
+Peter Hinz	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	"Die Politik und die beratenden ""Experten"" tragen die volle Verantwortung für die Infektionszahlen der letzten Wochen."	lecture
 Thomas Brett	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	Wer sich auch nur halbwegs etwas mit dem Thema beschaeftigt hat, der wusste genau was diesen Winter passieren wird solange kein Impfstoff vorhanden ist	lecture
 Thomas Brett	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	Was soll das Gejammer	lecture
 Susan Braig	politics	https://www.faz.net/aktuell/politik/inland/angela-merkel-in-der-corona-pandemie-sie-hat-recht-behalten-17100401.html?utm_source=pocket-newtab-global-de-DE	Diese Lockdowns sind Ausdruck einer Hilflosigkeit.	insinuation
@@ -708,7 +708,7 @@ mausimHaus	health	https://twitter.com/search?q=%23Nebenwirkungen&src=trend_click
 KarlHeiz Peeks	health	https://twitter.com/search?q=%23Nebenwirkungen&src=trend_click&vertical=trends	ich finde es echt schade, das ich meine Veranstaltungsreihe voraussichtlich erst 2022 fortsetzen kann.	concession
 KarlHeiz Peeks	health	https://twitter.com/search?q=%23Nebenwirkungen&src=trend_click&vertical=trends	Es wäre so wichtig den Menschen in Osterholz zu zeigen das Politiker/innen kommen wenn man sie fragt	lecture
 Neulandrebellen	health	https://twitter.com/search?q=%23Nebenwirkungen&src=trend_click&vertical=trends	Andernfalls müsste Ihr mit den Konsequenzen leben.	lecture
-Neulandrebellen	health	https://twitter.com/search?q=%23Nebenwirkungen&src=trend_click&vertical=trends	Wenn Ihr wissen wollt, wie (und mit wem) Ihr Weihnachten feiern dürft, sind diese 15 Minuten Pflicht. 	lecture
+Neulandrebellen	health	https://twitter.com/search?q=%23Nebenwirkungen&src=trend_click&vertical=trends	Wenn Ihr wissen wollt, wie (und mit wem) Ihr Weihnachten feiern dürft, sind diese 15 Minuten Pflicht.	lecture
 Slavic81	health	https://twitter.com/search?q=%23Nebenwirkungen&src=trend_click&vertical=trends	Erst jammern die #Impfgegner das man Ihnen die Freiheiten nahm.	insinuation
 Slavic81	health	https://twitter.com/search?q=%23Nebenwirkungen&src=trend_click&vertical=trends	Jetzt bekommen Sie die Gelegenheit diese wiederzuerlangen & jammern rum wegen möglicher #Nebenwirkungen! 	insinuation
 Slavic81	health	https://twitter.com/search?q=%23Nebenwirkungen&src=trend_click&vertical=trends	Lieber eine gerötete Einstichstelle & Kopfschmerzen, als ggf. am Beatmungsgerät oder unter der Erde zu landen.	lecture
@@ -824,25 +824,25 @@ Tilitonse	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversor
 Tilitonse	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Fehlende Ersatz- und Verschleißteile wie etwa Batterien (sehr wichtig, denn auch einfache Ersatzteile sind häufig nur in der weit entfernten Stadt verfügbar, wenn überhaupt)	lecture
 Tilitonse	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Fehlende fortgesetzte Betreuung. Hilfsprojekte enden und werden dann nicht mehr betreut.	lecture
 Tilitonse	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Politiker sehen für sich keine Vorteile in dem Projekt oder wurden nicht von Anfang an mit einbezogen	lecture
-Tilitonse	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Fehlende Unterstützung der Regierung (Fokus, Prioritäten, "Policies")	lecture
+Tilitonse	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	"Fehlende Unterstützung der Regierung (Fokus, Prioritäten, ""Policies"")"	lecture
 Tilitonse	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Betrieb der Infrastruktur durch Verwalter, die Profit aus der Infrastruktur schlagen wollen, was zu Querelen mit den Empfängern führt und Vetternwirtschaft fördert	insinuation
 Tilitonse	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Fehleinschätzung der verfügbaren Energie, denn Empfänger kaufen manchmal Mais-/Reismühlen und Wasserpumpen, weil sie sich der begrenzten Kapazität der Anlage nicht bewusst sind	lecture
 Berthu	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Jede Kultur will, muß und kann sich nur von selbst entwickeln, nicht von außen.	lecture
-Berthu	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Das Bedürfnis Handy aufladen, TV ist kein "echtes dortiges Bedürfnis" sondern Werbetraum der Industrieländer.	lecture
+Berthu	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	"Das Bedürfnis Handy aufladen, TV ist kein ""echtes dortiges Bedürfnis"" sondern Werbetraum der Industrieländer."	lecture
 Berthu	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Was die brauchen, ist Ruhe von diesem Irrglauben, keine Waffen, Rohstoffräuber, wirtschaftliche Ausbeutung und industrielebensmittel, die die dortigeen Kreisläufe zerstören.	lecture
-Berthu	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Im Grunde ist der größte Teil der Entwickungshilfe eine "Absatzerschließung" unserer Großunternehmen	lecture
+Berthu	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	"Im Grunde ist der größte Teil der Entwickungshilfe eine ""Absatzerschließung"" unserer Großunternehmen"	lecture
 Hermann Schwaertzler	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Spannende Liste. Was ist die Quelle dafür?	insinuation
 Hermann Schwaertzler	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Anders gefragt: wer hat das so genau erhoben, wann, wo, wie?	lecture
 realHans	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Hier würde ich sogar den gesunden Menschenverstand gelten lassen.	concession
-Emrymer	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Ich stimme im Prinzip zu - wobei ich "gesunden Menschenverstand" erst als zweiten Teil nach "lebenspraktische Erfahrung" setzen würde	concession
+Emrymer	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	"Ich stimme im Prinzip zu - wobei ich ""gesunden Menschenverstand"" erst als zweiten Teil nach ""lebenspraktische Erfahrung"" setzen würde"	concession
 Kalle Bond	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	da ich selbst jahrelang an vielen Projekten in Afrika und Asien mitgearbeitet habe, kann ich ihre Punkte (1-12) nur unterstreichen.	concession
 Kalle Bond	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Einzig wenn es gelingt, lokale Kräfte zu schulen und PV Anlagen anzubieten, die fachgerecht ausgelegt sind, wird sich Vertrauen in diese Technologie aufbauen.	lecture
 Kalle Bond	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Dazu braucht man örtliche Fachhändler, die auch Anlagen aufbauen und einen After Sales Service anbieten	lecture
-HAL-10K	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	damit man im Studenten-Café bis hin zur High-Society-Sektparty auch morgen über die "bösen Kolonialmächte" selbstgefällig meckern kann	insinuation
-HAL-10K	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	wenn sogenannte Soziologen weiter darüber Grübeln, weshalb die Stromversorgung im Kongo, gefälligst mittels EU-Steuergeldern, noch nicht "demokratisiert" wurde	insinuation
+HAL-10K	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	"damit man im Studenten-Café bis hin zur High-Society-Sektparty auch morgen über die ""bösen Kolonialmächte"" selbstgefällig meckern kann"	insinuation
+HAL-10K	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	"wenn sogenannte Soziologen weiter darüber Grübeln, weshalb die Stromversorgung im Kongo, gefälligst mittels EU-Steuergeldern, noch nicht ""demokratisiert"" wurde"	insinuation
 ajf	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Sie wissen nicht das Wohlstand das Bevoelkerungswachstum senkt?	insinuation
 ajf	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	immer wieder erstaunlich was Leute so alles nicht wissen, dachte das waere mittlerweile Allgemeingut.	insinuation
-HAL-10K	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Jo, die Inhalation politisierter "Soziologen"-Propaganda ist "mittlerweile Allgemeingut".	insinuation
+HAL-10K	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	"Jo, die Inhalation politisierter ""Soziologen""-Propaganda ist ""mittlerweile Allgemeingut""."	insinuation
 HAL-10K	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Wie viele Jahre hast du, wie ich, in Afrika gelebt und gearbeitet?	lecture
 ajf	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	Meine Guete, was bei Ihnen im Kopf so los ist...	insinuation
 ajf	society	https://www.heise.de/forum/heise-online/Kommentare/Stromversorgung-in-Afrika-Warum-haben-so-viele-Menschen-keinen-Strom/In-tribalistischen-Gesellschaften-sind-groessere-Projekte-unmoeglich/posting-38061867/show/	In allen Laendern der Welt in denen sich Wohlstand ausgebreitet hat, ist zu erst die Lebenserwartung gestiegen, und dann mit Verzoegerung die Geburtenrate zurueck gegangen.	lecture
@@ -852,7 +852,7 @@ Cygan	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=3398
 Cygan	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Das Funktioniert aber nur teilweise	concession
 Cygan	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Doof dabei ist, dass wir ihm dabei Aufmerksamkeit geben.	concession
 Schurbi	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Das ist doch ganz normal, ein Welpe kann seine Umgebung nur mit der Schnute erkunden, ist doch bei einem Menschenbaby auch nicht anders.	lecture
-Schurbi	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Wieso soll er nicht mal durchdrehen und seine "fünf Minuten" kriegen? 	lecture
+Schurbi	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	"Wieso soll er nicht mal durchdrehen und seine ""fünf Minuten"" kriegen? "	lecture
 Schurbi	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Auch das ist ganz normales Verhalten	lecture
 Schurbi	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Spielt mit ihm und nach ein paar Minuten wird er selber zur Ruhe kommen	lecture
 Schurbi	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Warum sollte er den ganzen Tag schlafen sollen?	dissence
@@ -871,7 +871,7 @@ Frauchen3	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=
 Frauchen3	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Ich gebe zum Kauen nur noch schadstofffreies Spielzeug (Westpaw) und trockene Brotkanten	lecture
 Lighty	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Kaffeebaum Kauwurzel kann ich auch empfehlen	lecture
 Lighty	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	an den Ochsenhäuten kann man sich gerne mal verschlucken	lecture
-Lighty	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Natürlich ist es jetzt wieder müßig, sich mit meinem nur theoretischen "Wissen" zu äußern	concession
+Lighty	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	"Natürlich ist es jetzt wieder müßig, sich mit meinem nur theoretischen ""Wissen"" zu äußern"	concession
 Lighty	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Der Hund hat durch die bisher eher fachungerechte Haltung natürlich wenig Sozialverhalten	concession
 Lighty	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Das muss ihm vermittelt / neu beigebracht werden	lecture
 Lighty	lifestyle	https://www.das-boxerforum.de/thread.php?threadid=21352&sid=33983d095794c554dd1aef140994fa0c	Cesar würde auch von aufgestauter Frustration und Energie reden	lecture
@@ -913,7 +913,7 @@ Spikester	music	https://www.mzee.com/forum/threads/was-macht-eigentlich.334507/	
 Me Aeko	music	https://www.mzee.com/forum/threads/was-macht-eigentlich.334507/	Spielt der nicht in dieser Sat.1 Telenovela mit?	insinuation
 Assazeen	music	https://www.mzee.com/forum/threads/was-macht-eigentlich.334507/	yeah cool, pretty mo is echt gut	praise
 6_4_Impala	music	https://www.mzee.com/forum/threads/was-macht-eigentlich.334507/	Hab gelesen der hoppelt in Hannover rum	insinuation
-3pAtze	music	https://www.mzee.com/forum/threads/was-macht-eigentlich.334507/	Habe "Berliner Bär" eigentlich gefeiert!	concession
+3pAtze	music	https://www.mzee.com/forum/threads/was-macht-eigentlich.334507/	"Habe ""Berliner Bär"" eigentlich gefeiert!"	concession
 Krentzmann	music	https://www.mzee.com/forum/threads/was-macht-eigentlich.334507/	Er meinte, er macht was, was er nich verraten will, in irgendeinem Interview im Netz	insinuation
 3pAtze	music	https://www.mzee.com/forum/threads/was-macht-eigentlich.334507/	meinte nich auch Mach iwie das Isar iwas geheimes startet?	insinuation
 3pAtze	music	https://www.mzee.com/forum/threads/was-macht-eigentlich.334507/	Auf jeden	praise
@@ -946,47 +946,47 @@ Pesci	culture	https://www.mzee.com/forum/threads/graffiti-filme.295248/	Solltest
 RockAngelx3	culture	https://www.mzee.com/forum/threads/graffiti-filme.295248/	Wenn du meinen Beitrag gelesen hast und mein Kommentar auch wüsstest du das ich Spray Paint Art machen möchte, auf Karton.	lecture
 RockAngelx3	culture	https://www.mzee.com/forum/threads/graffiti-filme.295248/	Es muss trotzdem nicht sein das eine 85 Jährige sowas einatmen muss oder?	lecture
 RockAngelx3	culture	https://www.mzee.com/forum/threads/graffiti-filme.295248/	Da ich recht klein und dünn bin fällt es mir schwer mehrere Dosen mehrere Minuten zu schütteln.	concession
-Monkeyvs Robot	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010	Danke für den Mix gerne gehört	praise
-soulstar	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010	der mix ist schon ein paar tage älter aber er passte umso aktueller weil einige tunes recht früh nach der produktion verarbeitet wurden	concession
-soulstar	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010	aber es ergab sich dann aber anders	concession
-soulstar	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010	ein mix immer wieder unverkennbar durchsetzt von mario'schem propellernden treiben	praise
-soulstar	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010	die bekannten Mar io- und Cie-produktionen ragen in diesem umfeld weiterhin heraus	praise
-Cie	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010	Sehr cooler Mix, flowed sehr gut	praise
-Stylomat	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010	Tolles Set. Höre ich sehr gerne und das immer wieder mal	praise
-Monkeyvs Robot	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	Die Foren Software hier ist etwas antiquiert Aber dafür lieben wir sie auch.	concession
-chris	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	"suche track" oder "oldschool perlen" sagt wenig bis gar nichts aus, was du suchst	lecture
-chris	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	klassifiziere also etwa den stil 	lecture
-chris	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	und im beitrag erwähne bitte, von wann der track sein könnte	lecture
-chris	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	und abschließend: bitte hier nicht gleich eine gigantische liste posten	lecture
-chris	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	denn letzten endes möchten andere dir helfen und nehmen sich zeit für dich, d.h. ein forum ist immer ein geben und nehmen, entsprechend also bitte nicht gleich zuviel fordern.	lecture
-Steffen Landauer	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	Bei No7 dachte ich zuerst an TONY SCOTT, konnte aber, wie bei zwei anderen Tracks, noch nicht ganz in die Tiefen ;-) meines Hirns vordringen.	concession
-Steffen Landauer	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	Rest noch nie gehört.	concession
-chris	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	5a und 9 meine ich, damals durchaus auf der ein oder anderen Party gehört zu haben, aber kann hier auch leider keine Hilfe anbieten.	concession
-chris	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	Abgesehen davon aber gestatte mir den Hinweis, dass selbst für Tapes die Qualität echt unterirdisch ist	lecture
-wizard of wor	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	Die Aufnahmen sind tatsächlich kaum verwertbar.	lecture
-wizard of wor	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	aber ich glaube auch nicht, dass hier großartig viele Leute vertreten sind, die in dieser Zeit schon so richtig "gefeiert" haben..?	insinuation
-OIdSchoolLover	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	An der Quali muss ich noch arbeiten, habt ihr recht	concession
-Steffen Landauer	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	Sollten Dir die Tracks wichtig sein, leg`doch das Tape ein, versuche einen guten Klang/Lautstärke einzustellen 	lecture
-Steffen Landauer	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	Allerdings Einer wüsste es bestimmt wieder, er war der Hammer was das angeht!	concession
-Steffen Landauer	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015	kann ich verstehen, mir ging es mal vor fast 15Jahren so, als ich zur Hochzeit unbedingt EINE Scheibe wollte und ich ein Jahr gesucht habe	concession
-dauerwellen	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	oh Facebook, die scheinen echt verzweifelt oder geltungsbedürftig zu sein.	insinuation
-dauerwellen	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	Die Helena wirkt wirklich einsam, Rauchen und Saufen für sich.	insinuation
-dauerwellen	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	Krach in meinen Ohren. 	dissence
-dauerwellen	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	Musik kann ich mir nicht antun.	dissence
-wizard of wor	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	omg... was soll denn das jetzt..?	dissence
-wizard of wor	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	Natürlich wollen sie alle irgendwie präsent bleiben, so wie alle anderen Pop- und Rockstars auch.	insinuation
-wizard of wor	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	meine Güte, wie spießig bist du denn drauf.	dissence
-wizard of wor	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	Ich glaub du hast echt das Forum und das Thema verfehlt, vor allem wenn du flotten Elektro als unerträglich empfindest.	dissence
-wizard of wor	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	sorry aber deine kleine Meinung ist woanders glaub ich besser aufgehoben.	lecture
-quinto	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	Würde bei mir nicht anders aussehen	concession
-quinto	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	Die Helenna finde ich da recht authentisch, ungekünstelt einfach mixen und machen wie es gefällt	concession
-quinto	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	klar ganz andere Ecke, aber auch er authentisch aus der eigenen Wohnung.	concession
-dauerwellen	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	schon besser, aber bedroom geht noch entspannter.	lecture
-Hyp Nom	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	und sowieso fehlt die synergie mit der crowd bei der entstehung der sets.	lecture
-Der D	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	Modeselektor in einem netten Ambiente und mit einem Hammerset	praise
-chris	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	denn wir sehen ja, dass es unzählig vielen Menschen nach wie vor genauso geht	insinuation
-chris	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	Und, ähm, das war auch ohne Isolation schon in anderen Wohnzimmern vor über 20 Jahren (!) genauso	lecture
-chris	culture	https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019	Davon abgesehen mag' ich diesen alten Elektro, den die Frau Hauff da mitunter auflegt, sehr gern. 	concession
+Monkeyvs Robot	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010"	Danke für den Mix gerne gehört	praise
+soulstar	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010"	der mix ist schon ein paar tage älter aber er passte umso aktueller weil einige tunes recht früh nach der produktion verarbeitet wurden	concession
+soulstar	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010"	aber es ergab sich dann aber anders	concession
+soulstar	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010"	ein mix immer wieder unverkennbar durchsetzt von mario'schem propellernden treiben	praise
+soulstar	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010"	die bekannten Mar io- und Cie-produktionen ragen in diesem umfeld weiterhin heraus	praise
+Cie	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010"	Sehr cooler Mix, flowed sehr gut	praise
+Stylomat	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005722;p=1#000010"	Tolles Set. Höre ich sehr gerne und das immer wieder mal	praise
+Monkeyvs Robot	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	Die Foren Software hier ist etwas antiquiert Aber dafür lieben wir sie auch.	concession
+chris	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	"suche track oder ""oldschool perlen"" sagt wenig bis gar nichts aus, was du suchst"	lecture
+chris	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	klassifiziere also etwa den stil 	lecture
+chris	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	und im beitrag erwähne bitte, von wann der track sein könnte	lecture
+chris	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	und abschließend: bitte hier nicht gleich eine gigantische liste posten	lecture
+chris	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	denn letzten endes möchten andere dir helfen und nehmen sich zeit für dich, d.h. ein forum ist immer ein geben und nehmen, entsprechend also bitte nicht gleich zuviel fordern.	lecture
+Steffen Landauer	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	"Bei No7 dachte ich zuerst an TONY SCOTT, konnte aber, wie bei zwei anderen Tracks, noch nicht ganz in die Tiefen ;-) meines Hirns vordringen."	concession
+Steffen Landauer	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	Rest noch nie gehört.	concession
+chris	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	5a und 9 meine ich, damals durchaus auf der ein oder anderen Party gehört zu haben, aber kann hier auch leider keine Hilfe anbieten.	concession
+chris	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	Abgesehen davon aber gestatte mir den Hinweis, dass selbst für Tapes die Qualität echt unterirdisch ist	lecture
+wizard of wor	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	Die Aufnahmen sind tatsächlich kaum verwertbar.	lecture
+wizard of wor	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	"aber ich glaube auch nicht, dass hier großartig viele Leute vertreten sind, die in dieser Zeit schon so richtig ""gefeiert"" haben..?"	insinuation
+OIdSchoolLover	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	An der Quali muss ich noch arbeiten, habt ihr recht	concession
+Steffen Landauer	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	Sollten Dir die Tracks wichtig sein, leg`doch das Tape ein, versuche einen guten Klang/Lautstärke einzustellen 	lecture
+Steffen Landauer	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	Allerdings Einer wüsste es bestimmt wieder, er war der Hammer was das angeht!	concession
+Steffen Landauer	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=3;t=019901;p=1#000015"	kann ich verstehen, mir ging es mal vor fast 15Jahren so, als ich zur Hochzeit unbedingt EINE Scheibe wollte und ich ein Jahr gesucht habe	concession
+dauerwellen	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	oh Facebook, die scheinen echt verzweifelt oder geltungsbedürftig zu sein.	insinuation
+dauerwellen	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	Die Helena wirkt wirklich einsam, Rauchen und Saufen für sich.	insinuation
+dauerwellen	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	Krach in meinen Ohren. 	dissence
+dauerwellen	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	Musik kann ich mir nicht antun.	dissence
+wizard of wor	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	omg... was soll denn das jetzt..?	dissence
+wizard of wor	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	Natürlich wollen sie alle irgendwie präsent bleiben, so wie alle anderen Pop- und Rockstars auch.	insinuation
+wizard of wor	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	meine Güte, wie spießig bist du denn drauf.	dissence
+wizard of wor	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	Ich glaub du hast echt das Forum und das Thema verfehlt, vor allem wenn du flotten Elektro als unerträglich empfindest.	dissence
+wizard of wor	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	sorry aber deine kleine Meinung ist woanders glaub ich besser aufgehoben.	lecture
+quinto	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	Würde bei mir nicht anders aussehen	concession
+quinto	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	Die Helenna finde ich da recht authentisch, ungekünstelt einfach mixen und machen wie es gefällt	concession
+quinto	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	klar ganz andere Ecke, aber auch er authentisch aus der eigenen Wohnung.	concession
+dauerwellen	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	schon besser, aber bedroom geht noch entspannter.	lecture
+Hyp Nom	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	und sowieso fehlt die synergie mit der crowd bei der entstehung der sets.	lecture
+Der D	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	Modeselektor in einem netten Ambiente und mit einem Hammerset	praise
+chris	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	denn wir sehen ja, dass es unzählig vielen Menschen nach wie vor genauso geht	insinuation
+chris	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	Und, ähm, das war auch ohne Isolation schon in anderen Wohnzimmern vor über 20 Jahren (!) genauso	lecture
+chris	culture	"https://forum.technoforum.de/cgi-bin/ultimatebb.cgi?ubb=get_topic;f=28;t=005697;p=1#000019"	Davon abgesehen mag' ich diesen alten Elektro, den die Frau Hauff da mitunter auflegt, sehr gern. 	concession
 vincentvision	entertainment	https://www.zeit.de/kultur/film/2021-01/tatort-stuttgart-das-ist-unser-haus-obduktionsbericht	Ich sehe sie schon vor mir - die verbohrten Rechtsausleger, die sich angesichts des Tatortes endlich mal über die linken Öko-Bewohner und ihre Marotten auslassen können.	insinuation
 vincentvision	entertainment	https://www.zeit.de/kultur/film/2021-01/tatort-stuttgart-das-ist-unser-haus-obduktionsbericht	 die verbohrten Rechtsausleger, die sich angesichts des Tatortes endlich mal über die linken Öko-Bewohner und ihre Marotten auslassen können.	insinuation
 vincentvision	entertainment	https://www.zeit.de/kultur/film/2021-01/tatort-stuttgart-das-ist-unser-haus-obduktionsbericht	Immer verdächtig zu schnell, immer zu bösartig, immer zu missgünstig treten sie nach	insinuation

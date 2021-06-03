@@ -107,7 +107,7 @@ def vectorize_corpus(texts, vectorizer, categories=None, representation=REPRESEN
             if representation == REPRESENTATION_TYPE_WORD:  # append every single word of the sentence
                 [vectors.append(word) for word in words_matrix]
                 if categories is not None:
-                    [return_cats.append(cat) for cat in np.ones(len(words_matrix))*categories[idx]]
+                    return_cats.extend([categories[idx] for k in range(len(words_matrix))])
             elif representation == REPRESENTATION_TYPE_COG:  # append center of gravity of the sentence
                 vectors.append(np.mean(np.asarray(words_matrix), axis=0))
                 if categories is not None:
@@ -228,7 +228,7 @@ def validate_df_header(frame):
     frame_header = frame.columns.to_list()
     frame_header.sort()
     if header != frame_header:
-        raise Exception('Frame has wrong header: {}'.format(frame_header))
+        raise Exception('Frame has wrong header: {} needs to be {}'.format(frame_header, header))
 
 
 def clean_category_string(cat):
