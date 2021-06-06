@@ -19,7 +19,7 @@ DisplayTD currentUtt;
 Areas areas;
 Area area;
 MessageHighlight mH; // Environment for growing Text display
-String[] fontlist;
+String[] fontlist, uttList;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
@@ -109,7 +109,7 @@ void draw() {
     noiseStart = 0;
     noiseLimit = noiseInc;
   }
-  
+
   for (Area a : areas.areas) {
     a.draw();
   }
@@ -131,13 +131,16 @@ void buildUtts(int amount) {
   shapeMapping.set("insinuation", "knacks03.svg");
   shapeMapping.set("concession", "knacks04.svg");
   shapeMapping.set("lecture", "knacks05.svg");
+  uttList = new String[amount];
   for (int i=0; i<amount; i++) {
     int index = int(random(TD.size()));
     JSONObject row = TD.getJSONObject(str(index));
     String utterance = row.getString("utterance");
     String category = row.getString("category").toLowerCase();
+    String user = row.getString("user");
     PShape shape = loadShape(shapeMapping.get(category));
-    DisplayTD utt = new DisplayTD(i, utterance, category, shape, 5, false);
+    DisplayTD utt = new DisplayTD(i, utterance, category, user, shape, 5, false);
+    uttList[i]= utterance;
     utts.add(utt);
   }
 }

@@ -22,15 +22,13 @@ void oscEvent(OscMessage m) {
     counterSurf.visible = true;
     sculptureSurf.visible = true;
     sculptureSurf.message = incomingText;
-    // boolean is_locked = incomingUtt.getBoolean("is_locked");
     messageIn = true;
     println("new utt: " + incomingText);
     PShape shape = loadShape(shapeMapping.get(incomingCat));
     float shapeSize = cat_counts * 10;
     // add new utterance to utts
     int newIndex = utts.size();
-    incomingUtt = new DisplayTD(newIndex, incomingText, incomingCat, shape, shapeSize, true);
-    //updateUtts = true;
+    incomingUtt = new DisplayTD(newIndex, incomingText, incomingCat, "kommentariat", shape, shapeSize, true);
     updateUtts();
     StringList updated = new StringList();
     for (int x=0;  x<utts.size(); x++) {
@@ -62,7 +60,6 @@ void updateUtts() {
     break; // just remove one utt
   }
   utts.add(incomingUtt);
-  // updateUtts = false;
   // println(" still  updating2?   " + updateUtts + " " + frameCount);
 } 
 

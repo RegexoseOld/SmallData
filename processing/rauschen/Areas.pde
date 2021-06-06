@@ -15,7 +15,7 @@ class Areas {
       area.svgShape = loadRShape("knacks0" + (i+1));
       area.points = area.svgShape.getPoints();
       this.areas.add(area);
-      println("area name  " + area.name + "  area width  " + area.rS.getWidth() + "  area X  " + area.rS.getX());
+      // println("area name  " + area.name + "  area width  " + area.rS.getWidth() + "  area X  " + area.rS.getX());
       angle += angIncrement;
     }
   }
@@ -84,7 +84,6 @@ class Area {
   //}
 
   void draw() {
-    // translate(this.transX, 0);
     // println(" draw name:   " + this.name + "   rS origwidth:  " + this.rS.getOrigWidth() + "   rS newwidth:  " + this.rS.getWidth());
     this.rS.draw();
     stroke(0, 255, 0);

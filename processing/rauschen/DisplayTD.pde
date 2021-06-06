@@ -3,7 +3,7 @@ class DisplayTD {
   int font_size, index;
   float x, y, sX, sY, angle;
   PVector pos;
-  String utt, cat, fontName;
+  String utt, cat, user, fontName;
   PShape shape;
   RShape rS;
   Area area;
@@ -11,10 +11,11 @@ class DisplayTD {
   boolean isShape, matched;
   float shapeSize;
 
-  DisplayTD(int index, String utterance, String category, PShape shape, float sSize, boolean isShape) {
+  DisplayTD(int index, String utterance, String category, String _user, PShape shape, float sSize, boolean isShape) {
     this.index = index;
     this.utt = utterance;
     this.cat = category.toLowerCase();
+    this.user = _user;
     this.isShape = isShape;
     this.matched = false; // should be checked only once between to incoming messages: line 70
     this.shape = shape;
@@ -63,10 +64,10 @@ class DisplayTD {
     if (this.utt.equals(incoming) && !messageLock && !this.matched && !mFade) {
       messageLock = true;
       mH.related = this.utt;
+      println("matched!  " + incoming + "    with index  " + this.index);
       this.matched = true;
       titleSurf1.col = shapeColor;
       titleSurf2.col = attributeUtt(cat);
-      // println("matched!  " + incoming + "    with   " + this.utt);
     }
   }
 }
