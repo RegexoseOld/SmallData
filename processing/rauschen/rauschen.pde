@@ -1,4 +1,4 @@
-import java.util.Timer;   //<>// //<>//
+import java.util.Timer; 
 import java.util.TimerTask;
 import java.util.Map;
 import java.util.List;
@@ -17,7 +17,7 @@ Surface[] surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
 Areas areas;
-RShape area, newarea;
+Area area;
 MessageHighlight mH; // Environment for growing Text display
 String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
@@ -49,11 +49,9 @@ void setup() {
   loc = new NetAddress("127.0.0.1", 5040); // send to self
   RG.init(this);
   RG.ignoreStyles(false);
-  RG.setPolygonizer(RG.ADAPTATIVE);
   areas = new Areas(cats);
   buildUtts(480);
   mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
-  // margin1 = new Margin(incSurf.w, incSurf.h, 0.05);
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
   mFade = false;
@@ -61,7 +59,7 @@ void setup() {
   noiseStart = 0;
   noiseLimit = noiseInc;
   moderation = "moderation";
-  frameRate(20);
+  // frameRate(20);
 }
 
 void draw() {
@@ -69,7 +67,7 @@ void draw() {
   //  pickIncoming(); //automatische messages werden ausgesucht
   //} 
   if (messageIn) {
-    surfs[0].clearBackground();
+    mainSurf.clearBackground();
     messageIn = !messageIn;
   }
 
@@ -110,7 +108,8 @@ void draw() {
     noiseStart = 0;
     noiseLimit = noiseInc;
   }
-  for (Area a : areas.areas){
+  
+  for (Area a : areas.areas) {
     a.draw();
   }
 }
@@ -142,6 +141,12 @@ void buildUtts(int amount) {
   }
 }
 
+RShape loadRShape(String name) {
+  String shapeName = name +".svg";
+  RShape s = RG.loadShape(shapeName);
+  return s;
+}
+
 void keyReleased() {
   if (key == 'n') {
     articleSurf.lineIndex ++;
@@ -149,7 +154,7 @@ void keyReleased() {
   if (key == 'v') {
     articleSurf.visible = !articleSurf.visible;
   }
-  
+
   if (key == 'm') {
     moderation = "moderation";
   }

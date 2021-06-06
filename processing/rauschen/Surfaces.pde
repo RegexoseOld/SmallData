@@ -172,8 +172,8 @@ class Surface { //<>//
   }
 
   void displaySculpture() {
-    RShape area = areas.findArea(incomingCat);
-    PVector pos = new PVector(area.getCenter().x, area.getCenter().y);
+    Area a = areas.findArea(incomingCat);
+    PVector pos = new PVector(a.rS.getCenter().x, a.rS.getCenter().y);
     println("pos  " + pos);
     this.s.beginDraw();
     this.s.textFont(this.font);

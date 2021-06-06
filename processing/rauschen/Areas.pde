@@ -1,26 +1,32 @@
 class Areas {
   ArrayList<Area> areas;
-  float angle;
 
   Areas(String[] cats) {
     this.areas = new ArrayList<Area>();
-    this.angle = 0;
     makeAreaShape(cats);
   }
-  
+
   void makeAreaShape(String[] cats) {
     float angIncrement = TWO_PI/ cats.length;
+    float angle = 0;
     for (int i=0; i<5; i++) {
       String cat = cats[i];
-      Area area = new Area(cat);
+      Area area = new Area();
+      area.constructWithName(cat, angle);
       this.areas.add(area);
-      this.angle += angIncrement;
+      // println("area name  " + area.name + "  area width  " + area.rS.getWidth());
+      angle += angIncrement;
     }
   }
 
-  RShape findArea(String cat) {
-    RShape rS = RG.loadShape("data/"+ cat +".svg");
-    return rS;
+  Area findArea(String cat) {
+    Area newArea = new Area();
+    for (Area a : this.areas) {
+      if (a.name.equals(cat)) {
+        newArea = a;
+      }
+    }
+    return newArea;
   }
 }
 
@@ -31,18 +37,25 @@ class Area {
   String name; 
   color col; 
   float angle, angIncrement, radius, posX, posY;
-  int num;
+  int num, transX;
 
-  Area(String name) {
-    this.name = name; 
-    this.col = attributeUtt(this.name); 
-    this.rS = RG.loadShape("data/"+ name +".svg"); //<>//
-    this.points = rS.getPoints();
-    // println("loaded .... " + name);
+  Area() {
+    this.transX = 200;
   }
 
-  PShape makeShape() {
-    println("making   " + this.name);
+  void constructWithName(String name, float angle) {
+    this.name = name;
+    this.angle = angle;
+    this.col = attributeUtt(name); 
+    this.rS = loadRShape(name);    
+    // this.rS.print();
+    // println("name:   " + this.name + "   rS width:  " + this.rS.getWidth());
+    this.rS.scale(50);
+    this.points = rS.getPoints();
+  }
+
+  PShape makeShape(String name) {
+    println("making   " + name);
     PShape s = createShape();
     s.beginShape();
     s.vertex(width/2, height/2);
@@ -59,10 +72,13 @@ class Area {
   }
 
   void draw() {
+  
+    // println(" draw name:   " + this.name + "   rS origwidth:  " + this.rS.getOrigWidth() + "   rS newwidth:  " + this.rS.getWidth());
+   
     this.rS.draw();
     stroke(0, 255, 0);
     strokeWeight(10);
-    point(this.rS.getCenter().x, this.rS.getCenter().y);
-    text(this.name,this.rS.getCenter().x, this.rS.getCenter().y); 
+    point(this.rS.getCenter().x + transX, this.rS.getCenter().y);
+    text(this.name, this.rS.getCenter().x + transX, this.rS.getCenter().y); 
   }
 }

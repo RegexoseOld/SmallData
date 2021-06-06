@@ -5,7 +5,8 @@ class DisplayTD {
   PVector pos;
   String utt, cat, fontName;
   PShape shape;
-  RShape area;
+  RShape rS;
+  Area area;
   color shapeColor; 
   boolean isShape, matched;
   float shapeSize;
@@ -20,7 +21,9 @@ class DisplayTD {
     this.shapeSize = sSize;
     shapeColor = attributeUtt(this.cat);
     this.area = areas.findArea(this.cat);
-    this.pos = new PVector(area.getCenter().x, area.getCenter().y);
+    this.rS = this.area.rS;
+    this.rS.scale(0.9);
+    this.pos = new PVector(this.rS.getCenter().x, this.rS.getCenter().y);
     this.font_size = 25;
     this.angle = int(random(TWO_PI));
     this.fontName = fontlist[int(random(fontlist.length))];
@@ -44,11 +47,11 @@ class DisplayTD {
   }
 
   void moveText() {
-    RPoint center = area.getCenter();
-    float aW = area.getWidth();
-    float aH = area.getHeight();
-    this.x = random(center.x - aW/3, center.x + aW/3);
-    this.y = random(center.y - aH/3, center.y + aH/3);
+    RPoint center = this.rS.getCenter() ;
+    float aW = this.rS.getWidth() ;
+    float aH = this.rS.getHeight();
+    this.x = random(center.x - aW/15, center.x + aW/15) + this.area.transX;
+    this.y = random(center.y - aH/15, center.y + aH/15);
     if (this.x < width && this.y < height) {
       this.x += random(-10, 10);
       ;
