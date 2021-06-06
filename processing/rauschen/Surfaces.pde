@@ -173,13 +173,13 @@ class Surface { //<>//
 
   void displaySculpture() {
     Area a = areas.findArea(incomingCat);
-    PVector pos = new PVector(a.rS.getCenter().x, a.rS.getCenter().y);
-    println("pos  " + pos);
+    PVector pos = new PVector(a.center.x, a.center.y);
+    println("area name  " + a.name + "   pos  " + pos);
     this.s.beginDraw();
     this.s.textFont(this.font);
-    this.s.textAlign(LEFT, CENTER);
+    this.s.textAlign(CENTER, CENTER);
     this.s.fill(20);
-    this.s.text(this.message, pos.x, pos.x);
+    this.s.text(this.message, pos.x, pos.y);
     this.s.endDraw();
   }
 }
