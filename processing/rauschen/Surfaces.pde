@@ -173,13 +173,19 @@ class Surface { //<>//
 
   void displaySculpture() {
     Area a = areas.findArea(incomingCat);
+    RShape svg = a.svgShape;
     PVector pos = new PVector(a.center.x, a.center.y);
-    println("area name  " + a.name + "   pos  " + pos);
+    // println("area name  " + a.name + "   pos  " + pos);
     this.s.beginDraw();
     this.s.textFont(this.font);
     this.s.textAlign(CENTER, CENTER);
     this.s.fill(20);
     this.s.text(this.message, pos.x, pos.y);
+    this.s.translate(a.center.x, a.center.y);
+    for (RPoint p : a.points) {
+      this.s.circle(p.x, p.y, 2);
+    }
+    // svg.draw(this.s);
     this.s.endDraw();
   }
 }

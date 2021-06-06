@@ -12,6 +12,8 @@ class Areas {
     for (int i=0; i<5; i++) {
       String cat = cats[i];
       Area area = new Area(cat, angle);
+      area.svgShape = loadRShape("knacks0" + (i+1));
+      area.points = area.svgShape.getPoints();
       this.areas.add(area);
       println("area name  " + area.name + "  area width  " + area.rS.getWidth() + "  area X  " + area.rS.getX());
       angle += angIncrement;
@@ -32,7 +34,7 @@ class Areas {
 class Area {
   PShape aShape; 
   PVector center;
-  RShape rS;
+  RShape rS, svgShape;
   RPoint[] points;
   String name; 
   color col; 
@@ -64,22 +66,22 @@ class Area {
     this.center = new PVector(c.x, c.y + this.transY);
   }
 
-  PShape makeShape(String name) {
-    println("making   " + name);
-    PShape s = createShape();
-    s.beginShape();
-    s.vertex(width/2, height/2);
-    this.posX = width/2 + cos(this.angle) * this.radius;
-    this.posY = height/2 + sin(this.angle) * this.radius;
-    s.vertex(this.posX, this.posY);
-    this.angle += this.angIncrement;
-    this.posX = width/2 + cos(this.angle)* this.radius;
-    this.posY = height/2 + sin(this.angle)* this.radius;
-    s.vertex(this.posX, this.posY);
-    s.endShape(CLOSE);
-    s.setFill(this.col);
-    return s;
-  }
+  //PShape makeShape(String name) {
+  //  println("making   " + name);
+  //  PShape s = createShape();
+  //  s.beginShape();
+  //  s.vertex(width/2, height/2);
+  //  this.posX = width/2 + cos(this.angle) * this.radius;
+  //  this.posY = height/2 + sin(this.angle) * this.radius;
+  //  s.vertex(this.posX, this.posY);
+  //  this.angle += this.angIncrement;
+  //  this.posX = width/2 + cos(this.angle)* this.radius;
+  //  this.posY = height/2 + sin(this.angle)* this.radius;
+  //  s.vertex(this.posX, this.posY);
+  //  s.endShape(CLOSE);
+  //  s.setFill(this.col);
+  //  return s;
+  //}
 
   void draw() {
     // translate(this.transX, 0);
