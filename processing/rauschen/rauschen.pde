@@ -49,6 +49,7 @@ void setup() {
   loc = new NetAddress("127.0.0.1", 5040); // send to self
   RG.init(this);
   RG.ignoreStyles(false);
+  RG.setPolygonizer(RG.ADAPTATIVE);
   areas = new Areas(cats);
   buildUtts(480);
   mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html

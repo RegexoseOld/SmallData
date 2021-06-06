@@ -22,7 +22,6 @@ class DisplayTD {
     shapeColor = attributeUtt(this.cat);
     this.area = areas.findArea(this.cat);
     this.rS = this.area.rS;
-    this.rS.scale(0.9);
     this.pos = new PVector(this.rS.getCenter().x, this.rS.getCenter().y);
     this.font_size = 25;
     this.angle = int(random(TWO_PI));
@@ -47,11 +46,11 @@ class DisplayTD {
   }
 
   void moveText() {
-    RPoint center = this.rS.getCenter() ;
+    // RPoint center = this.rS.getCenter() ;
     float aW = this.rS.getWidth() ;
     float aH = this.rS.getHeight();
-    this.x = random(center.x - aW/15, center.x + aW/15) + this.area.transX;
-    this.y = random(center.y - aH/15, center.y + aH/15);
+    this.x = random(this.area.center.x - aW/15, this.area.center.x + aW/15);
+    this.y = random(this.area.center.y - aH/15, this.area.center.y + aH/15);
     if (this.x < width && this.y < height) {
       this.x += random(-10, 10);
       ;
