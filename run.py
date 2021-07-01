@@ -65,7 +65,8 @@ elif args.app == 'frontend':
 elif args.app == 'interpreter':
     # from mocks import mock_interpreter_client
     from mocks import mock_interpreter_keyboard, mock_interpreter_client
-    mock_interpreter_keyboard.run_mock()
+    # mock_interpreter_keyboard.run_mock()
+    mock_interpreter_client.run_mock()
 elif args.app == 'osculator':
     from mocks import beat_mock
     beat_mock.run_mock()

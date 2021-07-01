@@ -11,7 +11,7 @@ from config import settings
 def speak(words):
     engine = pyttsx3.init()
     volume = engine.getProperty('volume')
-    engine.setProperty('volume', volume / 5)
+    engine.setProperty('volume', volume / 10)
     engine.say(words)
     engine.startLoop(True)
 
