@@ -110,9 +110,9 @@ void draw() {
     noiseLimit = noiseInc;
   }
 
-  for (Area a : areas.areas) {
-    a.draw();
-  }
+  //for (Area a : areas.areas) {
+  //  a.draw();
+  //}
 }
 
 void createScheduleTimer(final float ms) {
@@ -133,8 +133,8 @@ void buildUtts(int amount) {
   shapeMapping.set("lecture", "knacks05.svg");
   uttList = new String[amount];
   for (int i=0; i<amount; i++) {
-    int index = int(random(TD.size()));
-    JSONObject row = TD.getJSONObject(str(index));
+    // int index = int(random(TD.size()));
+    JSONObject row = TD.getJSONObject(str(i));
     String utterance = row.getString("utterance");
     String category = row.getString("category").toLowerCase();
     String user = row.getString("user");

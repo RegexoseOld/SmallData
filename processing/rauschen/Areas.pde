@@ -66,23 +66,6 @@ class Area {
     this.center = new PVector(c.x, c.y + this.transY);
   }
 
-  //PShape makeShape(String name) {
-  //  println("making   " + name);
-  //  PShape s = createShape();
-  //  s.beginShape();
-  //  s.vertex(width/2, height/2);
-  //  this.posX = width/2 + cos(this.angle) * this.radius;
-  //  this.posY = height/2 + sin(this.angle) * this.radius;
-  //  s.vertex(this.posX, this.posY);
-  //  this.angle += this.angIncrement;
-  //  this.posX = width/2 + cos(this.angle)* this.radius;
-  //  this.posY = height/2 + sin(this.angle)* this.radius;
-  //  s.vertex(this.posX, this.posY);
-  //  s.endShape(CLOSE);
-  //  s.setFill(this.col);
-  //  return s;
-  //}
-
   void draw() {
     // println(" draw name:   " + this.name + "   rS origwidth:  " + this.rS.getOrigWidth() + "   rS newwidth:  " + this.rS.getWidth());
     this.rS.draw();

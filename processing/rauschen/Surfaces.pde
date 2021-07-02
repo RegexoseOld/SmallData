@@ -67,14 +67,13 @@ class Surface { //<>//
     if (name.equals("sculpture")) {
       displaySculpture();
     }
-
-    if (mFade) {
-      fadeGraphics(this.s, this.name, 2);
-    }
+     if (mFade && this.name.startsWith("match")) {
+        fadeGraphics(this.s, this.name, 2);
+      }
   }
 
   void fadeGraphics(PGraphics c, String name, int fadeAmount) {
-    // println("fading   " + name);
+    println("fading   " + name);
     c.beginDraw();
     c.loadPixels();
     // iterate over pixels

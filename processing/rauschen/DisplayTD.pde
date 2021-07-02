@@ -50,8 +50,8 @@ class DisplayTD {
     // RPoint center = this.rS.getCenter() ;
     float aW = this.rS.getWidth() ;
     float aH = this.rS.getHeight();
-    this.x = random(this.area.center.x - aW/15, this.area.center.x + aW/15);
-    this.y = random(this.area.center.y - aH/15, this.area.center.y + aH/15);
+    this.x = random(this.area.center.x - aW/10, this.area.center.x + aW/10);
+    this.y = random(this.area.center.y - aH/10, this.area.center.y + aH/10);
     if (this.x < width && this.y < height) {
       this.x += random(-10, 10);
       ;
