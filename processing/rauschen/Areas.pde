@@ -33,23 +33,25 @@ class Areas {
 
 class Area {
   PShape aShape; 
-  PVector center;
+  PVector center, fromCenter;
   RShape rS, svgShape;
+  RPoint nextPoint;
   RPoint[] points;
   String name; 
   color col; 
-  float angle, angIncrement, radius, posX, posY;
-  int num, transX, transY;
+  float angle, angIncrement, radius, progressAngle, textAngle;
+  int transX, transY, pointIndex;
 
   Area(String name, float angle) {
     this.name = name;
     this.angle = angle;
     this.col = attributeUtt(name); 
     this.rS = loadRShape(name);  
-    this.rS.scale(0.9);
-    // this.rS.print();
+    this.rS.scale(2.6);
+    progressAngle = 0;
+    pointIndex = 0;
     // println("name:   " + this.name + "   rS width:  " + this.rS.getWidth());
-    this.points = rS.getPoints();
+    // this.points = rS.getPoints();
     this.transX = 100;
     makeCenter(this.name);
   }
@@ -66,12 +68,23 @@ class Area {
     this.center = new PVector(c.x, c.y + this.transY);
   }
 
+  void sculptureText() {
+    nextPoint = this.points[(pointIndex % this.points.length)];
+    PVector nP = new PVector(nextPoint.x, nextPoint.y);
+    fromCenter = PVector.sub(screenCenter, nP);
+    this.textAngle = PVector.angleBetween(new PVector(1,0), fromCenter) - HALF_PI;
+    pointIndex +=1;
+    println("pointindex  " + pointIndex);
+    // progressAngle += 0.01;
+    
+  }
   void draw() {
     // println(" draw name:   " + this.name + "   rS origwidth:  " + this.rS.getOrigWidth() + "   rS newwidth:  " + this.rS.getWidth());
     this.rS.draw();
     stroke(0, 255, 0);
     strokeWeight(10);
     point(this.center.x, this.center.y);
+    textSize(12);
     text(this.name, this.center.x + this.transX, this.center.y);
   }
 }

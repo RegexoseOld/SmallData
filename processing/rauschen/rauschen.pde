@@ -36,6 +36,7 @@ int cat_limit, cat_counts, noiseStart, noiseLimit, noiseInc;
 float prgIncrement;
 int uttCount = 0; 
 Table article;
+PVector screenCenter;
 
 void setup() {
   size(1800, 1200);
@@ -60,6 +61,7 @@ void setup() {
   noiseStart = 0;
   noiseLimit = noiseInc;
   moderation = "moderation";
+  screenCenter = new PVector(width/2, height/2);
   // frameRate(20);
 }
 
@@ -70,6 +72,7 @@ void draw() {
   if (messageIn) {
     mainSurf.clearBackground();
     messageIn = !messageIn;
+    sculptureSurf.sculpt = true;
   }
 
   for (int x=noiseStart; x<noiseLimit; x++) {
@@ -110,9 +113,9 @@ void draw() {
     noiseLimit = noiseInc;
   }
 
-  //for (Area a : areas.areas) {
-  //  a.draw();
-  //}
+  for (Area a : areas.areas) {
+    a.draw();
+  }
 }
 
 void createScheduleTimer(final float ms) {

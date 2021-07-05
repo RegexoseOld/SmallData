@@ -13,7 +13,7 @@ class Surface { //<>//
   ArrayList<SingleLine> uttLines;
   int w, h, lineIndex;
   float  tSize;
-  boolean visible, fade;
+  boolean visible, fade, sculpt;
   color col;
 
   Surface(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible, String _message) {
@@ -26,6 +26,7 @@ class Surface { //<>//
     this.font = _font;
     this.visible = _visible;
     this.fade = false;
+    this.sculpt = true;
     this.message= _message;
     initSurf();
   }
@@ -64,8 +65,9 @@ class Surface { //<>//
     if (name.startsWith("counter")) {
       displayCounter();
     }
-    if (name.equals("sculpture")) {
+    if (name.equals("sculpture") && this.sculpt) {
       displaySculpture();
+      this.sculpt = false;
     }
      if (mFade && this.name.startsWith("match")) {
         fadeGraphics(this.s, this.name, 2);
@@ -73,7 +75,7 @@ class Surface { //<>//
   }
 
   void fadeGraphics(PGraphics c, String name, int fadeAmount) {
-    println("fading   " + name);
+    // println("fading   " + name);
     c.beginDraw();
     c.loadPixels();
     // iterate over pixels
@@ -173,17 +175,20 @@ class Surface { //<>//
   void displaySculpture() {
     Area a = areas.findArea(incomingCat);
     // RShape svg = a.svgShape;
-    PVector pos = new PVector(a.center.x, a.center.y);
+    a.sculptureText();
     // println("area name  " + a.name + "   pos  " + pos);
     this.s.beginDraw();
     this.s.textFont(this.font);
     this.s.textAlign(CENTER, CENTER);
     this.s.fill(20);
-    this.s.text(this.message, pos.x, pos.y);
-    this.s.translate(pos.x, pos.y);
-    for (RPoint p : a.points) {
-      this.s.circle(p.x, p.y, 2);
-    }
+    this.s.pushMatrix();
+    this.s.stroke(a.col);
+    this.s.strokeWeight(5);
+    this.s.point(a.nextPoint.x, a.nextPoint.y);
+    this.s.translate(a.fromCenter.x, a.fromCenter.y);
+    this.s.rotate(a.textAngle);
+    this.s.text(this.message, 0, 0);
+    this.s.popMatrix();
     this.s.endDraw();
   }
 }

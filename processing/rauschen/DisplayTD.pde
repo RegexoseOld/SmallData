@@ -4,11 +4,12 @@ class DisplayTD {
   float x, y, sX, sY, angle;
   PVector pos;
   String utt, cat, user, fontName;
+  StringList matched;
   PShape shape;
   RShape rS;
   Area area;
   color shapeColor; 
-  boolean isShape, matched;
+  boolean isShape;
   float shapeSize;
 
   DisplayTD(int index, String utterance, String category, String _user, PShape shape, float sSize, boolean isShape) {
@@ -17,7 +18,6 @@ class DisplayTD {
     this.cat = category.toLowerCase();
     this.user = _user;
     this.isShape = isShape;
-    this.matched = false; // should be checked only once between to incoming messages: line 70
     this.shape = shape;
     this.shapeSize = sSize;
     shapeColor = attributeUtt(this.cat);
@@ -28,6 +28,7 @@ class DisplayTD {
     this.angle = int(random(TWO_PI));
     this.fontName = fontlist[int(random(fontlist.length))];
     this.font = createFont(this.fontName, font_size, true);
+    this.matched = new StringList();
   }
 
   void draw() {
@@ -47,25 +48,24 @@ class DisplayTD {
   }
 
   void moveText() {
-    // RPoint center = this.rS.getCenter() ;
+    int d = 4;
     float aW = this.rS.getWidth() ;
     float aH = this.rS.getHeight();
-    this.x = random(this.area.center.x - aW/10, this.area.center.x + aW/10);
-    this.y = random(this.area.center.y - aH/10, this.area.center.y + aH/10);
+    this.x = random(this.area.center.x - aW/d, this.area.center.x + aW/d);
+    this.y = random(this.area.center.y - aH/d, this.area.center.y + aH/d);
     if (this.x < width && this.y < height) {
       this.x += random(-10, 10);
-      ;
       this.y += random(-8, 8);
     } 
     this.angle += random(-0.05, 0.05);
   }
 
   void matchInput(String incoming) {
-    if (this.utt.equals(incoming) && !messageLock && !this.matched && !mFade) {
+    if (this.utt.equals(incoming) && !messageLock && !matched.hasValue(incoming) && !mFade) {
       messageLock = true;
       mH.related = this.utt;
-      println("matched!  " + incoming + "    with index  " + this.index);
-      this.matched = true;
+      // println("matched!  " + incoming + "    with index  " + this.index);
+      this.matched.append(incoming);
       titleSurf1.col = shapeColor;
       titleSurf2.col = attributeUtt(cat);
     }
