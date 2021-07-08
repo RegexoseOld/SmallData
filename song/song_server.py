@@ -144,7 +144,7 @@ class SongServer:
 
             # the beat-managers next part is only played next if state is warning
             next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
-
+            print('BeatManager.current_part', self.beat_manager.current_part.name)
             self._send_part_info(counter, next_part)
 
             if self.beat_manager.is_one_of_normal_state() and self.song_machine.is_locked():
