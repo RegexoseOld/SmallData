@@ -4,7 +4,6 @@ class DisplayTD {
   float x, y, sX, sY, angle;
   PVector pos;
   String utt, cat, user, fontName;
-  StringList matched;
   PShape shape;
   RShape rS;
   Area area;
@@ -28,7 +27,6 @@ class DisplayTD {
     this.angle = int(random(TWO_PI));
     this.fontName = fontlist[int(random(fontlist.length))];
     this.font = createFont(this.fontName, font_size, true);
-    this.matched = new StringList();
   }
 
   void draw() {
@@ -61,11 +59,11 @@ class DisplayTD {
   }
 
   void matchInput(String incoming) {
-    if (this.utt.equals(incoming) && !messageLock && !matched.hasValue(incoming) && !mFade) {
+    if (this.utt.equals(incoming) && !messageLock && !matchedUtts.hasValue(incoming) && !mFade) {
       messageLock = true;
       mH.related = this.utt;
       // println("matched!  " + incoming + "    with index  " + this.index);
-      this.matched.append(incoming);
+      matchedUtts.append(incoming);
       titleSurf1.col = shapeColor;
       titleSurf2.col = attributeUtt(cat);
     }

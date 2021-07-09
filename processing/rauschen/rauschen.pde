@@ -17,10 +17,10 @@ Surface[] surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
 Areas areas;
-Area area;
 MessageHighlight mH; // Environment for growing Text display
 String[] fontlist, uttList;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
+StringList matchedUtts;
 PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
 JSONObject oscTextIn, category_counter; 
@@ -62,6 +62,7 @@ void setup() {
   noiseLimit = noiseInc;
   moderation = "moderation";
   screenCenter = new PVector(width/2, height/2);
+  matchedUtts = new StringList();
   // frameRate(20);
 }
 
@@ -113,9 +114,14 @@ void draw() {
     noiseLimit = noiseInc;
   }
 
+  //  for (Area a : areas.areas) {
+  //    a.draw();
+  //  }
+  areas.shapeGrp.draw();
   for (Area a : areas.areas) {
-    a.draw();
+     a.drawOutlines();
   }
+ 
 }
 
 void createScheduleTimer(final float ms) {
@@ -165,6 +171,10 @@ void keyReleased() {
   if (key == 'm') {
     moderation = "moderation";
   }
+  if (key == 'a') {
+    moderation = "article";
+  }
+
   if (key == 'a') {
     moderation = "article";
   }
