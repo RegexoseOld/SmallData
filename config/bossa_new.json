@@ -1,11 +1,11 @@
 {
   "max_num_utterances": 500,
-  "first_part" : "sei auf der Hut",
+  "first_part" : "dissence",
   "categories": ["praise", "insinuation", "dissence",  "lecture", "concession"],
   "intro_limit": 2,
   "parts": [
     {
-      "name": "dissemnce",
+      "name": "dissence",
       "category": "dissence",
       "note": 2,
       "fb_note": 29,

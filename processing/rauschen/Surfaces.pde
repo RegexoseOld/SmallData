@@ -65,13 +65,9 @@ class Surface { //<>//
     if (name.startsWith("counter")) {
       displayCounter();
     }
-    if (name.equals("sculpture") && this.sculpt) {
-      displaySculpture();
-      this.sculpt = false;
+    if (mFade && this.name.startsWith("match")) {
+      fadeGraphics(this.s, this.name, 2);
     }
-     if (mFade && this.name.startsWith("match")) {
-        fadeGraphics(this.s, this.name, 2);
-      }
   }
 
   void fadeGraphics(PGraphics c, String name, int fadeAmount) {
@@ -172,22 +168,18 @@ class Surface { //<>//
     this.s.endDraw();
   }
 
-  void displaySculpture() {
+  void displaySculpture(String msg) {
     Area a = areas.findArea(incomingCat);
-    // RShape svg = a.svgShape;
     a.sculptureText();
     // println("area name  " + a.name + "   pos  " + pos);
     this.s.beginDraw();
     this.s.textFont(this.font);
-    this.s.textAlign(CENTER, CENTER);
-    this.s.fill(20);
+    this.s.textAlign(LEFT, TOP);
+    this.s.fill(a.col);
     this.s.pushMatrix();
-    this.s.stroke(a.col);
-    this.s.strokeWeight(5);
-    this.s.point(a.nextPoint.x, a.nextPoint.y);
-    this.s.translate(a.fromCenter.x, a.fromCenter.y);
+    this.s.translate(a.handles[0].x, a.handles[0].y);
     this.s.rotate(a.textAngle);
-    this.s.text(this.message, 0, 0);
+    this.s.text(msg, 0, 0);
     this.s.popMatrix();
     this.s.endDraw();
   }

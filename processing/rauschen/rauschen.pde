@@ -29,7 +29,7 @@ color currentCol;
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
 boolean messageIn = false; // background reset
 boolean updateUtts = false;
-boolean mFade;
+boolean mFade, vector;
 StringDict shapeMapping = new StringDict(); // mapping to attribute categories to SVG filenames
 int maxUtts = 1;
 int cat_limit, cat_counts, noiseStart, noiseLimit, noiseInc;
@@ -51,6 +51,7 @@ void setup() {
   RG.init(this);
   RG.ignoreStyles(false);
   RG.setPolygonizer(RG.ADAPTATIVE);
+  vector = true;
   areas = new Areas(cats);
   buildUtts(480);
   mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
@@ -62,6 +63,7 @@ void setup() {
   noiseLimit = noiseInc;
   moderation = "moderation";
   screenCenter = new PVector(width/2, height/2);
+
   matchedUtts = new StringList();
   // frameRate(20);
 }
@@ -79,7 +81,7 @@ void draw() {
   for (int x=noiseStart; x<noiseLimit; x++) {
     DisplayTD utt = utts.get(x);
     utt.draw();
-    utt.matchInput(incomingText);
+    // utt.matchInput(incomingText);
   }
 
   if (messageLock && !mFade) {
@@ -114,14 +116,10 @@ void draw() {
     noiseLimit = noiseInc;
   }
 
-  //  for (Area a : areas.areas) {
-  //    a.draw();
-  //  }
-  areas.shapeGrp.draw();
+
   for (Area a : areas.areas) {
-     a.drawOutlines();
+    a.drawOutlines();
   }
- 
 }
 
 void createScheduleTimer(final float ms) {
@@ -157,6 +155,7 @@ void buildUtts(int amount) {
 RShape loadRShape(String name) {
   String shapeName = name +".svg";
   RShape s = RG.loadShape(shapeName);
+  RG.ignoreStyles();
   return s;
 }
 
@@ -175,7 +174,10 @@ void keyReleased() {
     moderation = "article";
   }
 
-  if (key == 'a') {
-    moderation = "article";
+  if (key == 'q') {
+    vector = !vector;
+    mainSurf.s.beginDraw();
+    mainSurf.s.background(222 );
+    mainSurf.s.endDraw();
   }
-}
+    }

@@ -49,8 +49,8 @@ class DisplayTD {
     int d = 4;
     float aW = this.rS.getWidth() ;
     float aH = this.rS.getHeight();
-    this.x = random(this.area.center.x - aW/d, this.area.center.x + aW/d);
-    this.y = random(this.area.center.y - aH/d, this.area.center.y + aH/d);
+    this.x = random(this.area.centerOfArea.x - aW/d, this.area.centerOfArea.x + aW/d);
+    this.y = random(this.area.centerOfArea.y - aH/d, this.area.centerOfArea.y + aH/d);
     if (this.x < width && this.y < height) {
       this.x += random(-10, 10);
       this.y += random(-8, 8);

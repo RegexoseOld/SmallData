@@ -21,7 +21,7 @@ void oscEvent(OscMessage m) {
     cat_counts = newIncomingCat.getInt("count");
     counterSurf.visible = true;
     sculptureSurf.visible = true;
-    sculptureSurf.message = incomingText;
+    sculptureSurf.displaySculpture(incomingText);
     messageIn = true;
     println("new utt: " + incomingText);
     PShape shape = loadShape(shapeMapping.get(incomingCat));
