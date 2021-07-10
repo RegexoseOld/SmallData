@@ -5,13 +5,13 @@ class Areas {
   Areas(String[] cats) {
     this.areas = new ArrayList<Area>();
     shapeGrp = new RGroup();
-    makeAreaShape(cats);
+    makeAreas(cats);
     shapeGrp.translate(500, 400);
-    shapeGrp.scale(0.4);
+    shapeGrp.scale(0.7);
     //println("group width  " + shapeGrp.getWidth() + "   height   " + shapeGrp.getHeight());
   }
-  // eigentlich überflüssig ... 
-  void makeAreaShape(String[] cats) {
+
+  void makeAreas(String[] cats) {
     for (int i=0; i<5; i++) {
       String cat = cats[i];
       Area area = new Area(cat);
@@ -77,26 +77,35 @@ class Area {
     PVector firstPoint = new PVector(frst.x, frst.y);
     PVector secondPoint = new PVector(scnd.x, scnd.y);
     PVector firstLine = new PVector();
+    PVector secondLine = new PVector();
     //println("txt.x  " + txt.x + " txt y " + txt.y + "  textStart  " + this.textStart);
     // println("frst.x  " + frst.x + " frst y " + frst.y + "  first  " + firstPoint);
     //println("p.x  " + p.x + " p y " + p.y +  " prv.x  " + prv.x + " prv y " + prv.y);
+
+    //angles depends on direction of Shape
     if (firstPoint.y < 0) {
       firstLine = PVector.sub( this.textStart, firstPoint);
+      secondLine= PVector.sub(this.textStart, secondPoint);
       this.firstAngle = PVector.angleBetween(firstLine, horizontal) - PI;
     } else {
       firstLine = PVector.sub(firstPoint, this.textStart );
+      secondLine= PVector.sub(secondPoint, this.textStart );
       this.firstAngle = PVector.angleBetween(horizontal, firstLine);
     }
-    PVector secondLine= PVector.sub(secondPoint, this.textStart );
+
     println(horizontal + " firstLine  " + firstLine);
     println("name  " + name + "  textAngle  " + this.textAngle + "  maxAngle  " + this.maxAngle);
-    // this.maxAngle = PVector.angleBetween(secondLine, horizontal);
+    this.maxAngle = TWO_PI / 5;
     this.textAngle = this.firstAngle;
-    println("name  " + name + "  initAngle  " + this.textAngle);
   }
 
   void sculptureText() {
-    this.textAngle += this.progressAngle;
+    println("name  " + name + "  textAngle  " + this.textAngle);
+    if (this.textAngle > this.firstAngle + this.maxAngle) {
+      this.textAngle = this.firstAngle;
+    } else {
+      this.textAngle += this.progressAngle;
+    }
   }
 
   void drawOutlines() {

@@ -116,10 +116,6 @@ void draw() {
     noiseLimit = noiseInc;
   }
 
-
-  for (Area a : areas.areas) {
-    a.drawOutlines();
-  }
 }
 
 void createScheduleTimer(final float ms) {
