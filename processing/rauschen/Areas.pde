@@ -112,26 +112,26 @@ class Area {
     RPoint p = this.handles[0];
     RPoint prv = this.handles[1];
     PVector firstPoint = new PVector(frst.x, frst.y);
-    mainSurf.s.beginDraw();
+    rauschSurf.s.beginDraw();
 
-    mainSurf.s.stroke(col);
-    mainSurf.s.strokeWeight(10);
+    rauschSurf.s.stroke(col);
+    rauschSurf.s.strokeWeight(10);
     if (vector) {
-      mainSurf.s.point(p.x, p.y);
-      mainSurf.s.point(prv.x, prv.y);
-      mainSurf.s.text("start", p.x, p.y);
-      mainSurf.s.text("first", prv.x, prv.y);
-      mainSurf.s.strokeWeight(3);
-      mainSurf.s.line(p.x, p.y, prv.x, prv.y);
+      rauschSurf.s.point(p.x, p.y);
+      rauschSurf.s.point(prv.x, prv.y);
+      rauschSurf.s.text("start", p.x, p.y);
+      rauschSurf.s.text("first", prv.x, prv.y);
+      rauschSurf.s.strokeWeight(3);
+      rauschSurf.s.line(p.x, p.y, prv.x, prv.y);
     } else {
-      mainSurf.s.point(this.textStart.x, this.textStart.y);
-      mainSurf.s.point(firstPoint.x, firstPoint.y);
-      mainSurf.s.text("start", this.textStart.x, this.textStart.y);
-      mainSurf.s.text("first", firstPoint.x, firstPoint.y);
-      mainSurf.s.strokeWeight(3);
-      mainSurf.s.line(this.textStart.x, this.textStart.y, firstPoint.x, firstPoint.y);
+      rauschSurf.s.point(this.textStart.x, this.textStart.y);
+      rauschSurf.s.point(firstPoint.x, firstPoint.y);
+      rauschSurf.s.text("start", this.textStart.x, this.textStart.y);
+      rauschSurf.s.text("first", firstPoint.x, firstPoint.y);
+      rauschSurf.s.strokeWeight(3);
+      rauschSurf.s.line(this.textStart.x, this.textStart.y, firstPoint.x, firstPoint.y);
     }
-    mainSurf.s.endDraw();
+    rauschSurf.s.endDraw();
   }
 
   void draw() {

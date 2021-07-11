@@ -186,7 +186,7 @@ class Surface { //<>//
 }
 
 void buildSurfaces() {
-  mainSurf = new Surface("main", 0, 0, width, height, messageFont, true, "");
+  rauschSurf = new Surface("main", 0, 0, width, height, messageFont, true, "");
   incSurf = new Surface("matchSurf1", width/30, height/2, width *3/7, height/5, messageFont, false, incomingText);
   matchSurf = new Surface("matchSurf2", width *5/9, height/2, width *3/7, height/5, messageFont, false, "");
   titleSurf1 = new Surface("titleIncoming", int(incSurf.pos.x), int(incSurf.pos.y-80), int(incSurf.w), 50, infoFont, false, "Dein Kommentar ähnelt...");
@@ -195,7 +195,7 @@ void buildSurfaces() {
   counterSurf = new Surface("counter", 0, height *3/4, width/8, height/6, infoFont, false, "categories");
   articleSurf = new Surface("article", 0, 0, infoSurf.s.width, infoSurf.s.height, infoFont, false, "");
   sculptureSurf = new Surface("sculpture", 0, 0, width, height, infoFont, false, incomingText);
-  surfs[0] = mainSurf;
+  surfs[0] = rauschSurf;
   surfs[1] = incSurf;
   surfs[2] = matchSurf;
   surfs[3] = titleSurf1;

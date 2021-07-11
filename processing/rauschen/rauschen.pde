@@ -12,7 +12,7 @@ NetAddress loc;
 
 final Timer t = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
-Surface mainSurf, incSurf, matchSurf, titleSurf1, articleSurf, sculptureSurf, titleSurf2, infoSurf, counterSurf;
+Surface rauschSurf, incSurf, matchSurf, titleSurf1, articleSurf, sculptureSurf, titleSurf2, infoSurf, counterSurf;
 Surface[] surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
@@ -73,7 +73,7 @@ void draw() {
   //  pickIncoming(); //automatische messages werden ausgesucht
   //} 
   if (messageIn) {
-    mainSurf.clearBackground();
+    rauschSurf.clearBackground();
     messageIn = !messageIn;
     sculptureSurf.sculpt = true;
   }
@@ -81,14 +81,14 @@ void draw() {
   for (int x=noiseStart; x<noiseLimit; x++) {
     DisplayTD utt = utts.get(x);
     utt.draw();
-    // utt.matchInput(incomingText);
+    utt.matchInput(incomingText);
   }
 
   if (messageLock && !mFade) {
     // einblenden der Surfaces
     for (int i=1; i<5; i++) {
       Surface s = surfs[i];
-      s.visible = true;
+      //s.visible = true;
     }
     float gravity = 3 * mH.mass;
     mH.applyForce(gravity);
@@ -115,7 +115,6 @@ void draw() {
     noiseStart = 0;
     noiseLimit = noiseInc;
   }
-
 }
 
 void createScheduleTimer(final float ms) {
@@ -155,25 +154,51 @@ RShape loadRShape(String name) {
   return s;
 }
 
+
+void visibility(char k) {
+
+  switch(k) {
+
+  case '1':
+    rauschSurf.visible = !rauschSurf.visible;
+    break;
+  case '2':
+    incSurf.visible = !incSurf.visible;
+    matchSurf.visible = !matchSurf.visible;
+    titleSurf1.visible = !titleSurf1.visible;
+    titleSurf2.visible = !titleSurf2.visible;
+    break;
+  case '3':
+    infoSurf.visible = !infoSurf.visible;
+    break;
+  case '4':
+    counterSurf.visible = !counterSurf.visible;
+    break;
+  case '5':
+    articleSurf.visible = !articleSurf.visible;
+    break;
+  case '6':
+    sculptureSurf.visible = !sculptureSurf.visible;
+    break;
+  case 'm':
+    moderation = "moderation";
+    break;
+  case 'a':
+    moderation = "article";
+    break;
+
+  case 'q':
+    vector = !vector;
+    rauschSurf.s.beginDraw();
+    rauschSurf.s.background(222 );
+    rauschSurf.s.endDraw();
+    break;
+  }
+}
+
 void keyReleased() {
   if (key == 'n') {
     articleSurf.lineIndex ++;
   }
-  if (key == 'v') {
-    articleSurf.visible = !articleSurf.visible;
-  }
-
-  if (key == 'm') {
-    moderation = "moderation";
-  }
-  if (key == 'a') {
-    moderation = "article";
-  }
-
-  if (key == 'q') {
-    vector = !vector;
-    mainSurf.s.beginDraw();
-    mainSurf.s.background(222 );
-    mainSurf.s.endDraw();
-  }
-    }
+  visibility(key);
+}

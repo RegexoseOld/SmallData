@@ -19,8 +19,11 @@ void oscEvent(OscMessage m) {
     JSONObject newIncomingCat = category_counter.getJSONObject(incomingCat);
     cat_limit = newIncomingCat.getInt("limit");
     cat_counts = newIncomingCat.getInt("count");
-    counterSurf.visible = true;
-    sculptureSurf.visible = true;
+    //counterSurf.visible = true;
+    //sculptureSurf.visible = true;
+    for (Surface s : surfs) {
+      println("name  " + s.name + "  is visible? " + s.visible);
+    }
     sculptureSurf.displaySculpture(incomingText);
     messageIn = true;
     println("new utt: " + incomingText);

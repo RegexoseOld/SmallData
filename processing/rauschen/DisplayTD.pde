@@ -30,19 +30,19 @@ class DisplayTD {
   }
 
   void draw() {
-    mainSurf.s.beginDraw();
-    mainSurf.s.textFont(this.font);
-    mainSurf.s.fill(this.shapeColor, 60);
+    rauschSurf.s.beginDraw();
+    rauschSurf.s.textFont(this.font);
+    rauschSurf.s.fill(this.shapeColor, 60);
     // mainSurf.s.fill(this.shapeColor);
-    mainSurf.s.pushMatrix();
-    mainSurf.s.translate(this.x, this.y);
-    mainSurf.s.rotate(this.angle);
+    rauschSurf.s.pushMatrix();
+    rauschSurf.s.translate(this.x, this.y);
+    rauschSurf.s.rotate(this.angle);
     this.shape.disableStyle();
-    mainSurf.s.fill(shapeColor);
-    mainSurf.s.shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
+    rauschSurf.s.fill(shapeColor);
+    rauschSurf.s.shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
     moveText();
-    mainSurf.s.popMatrix();
-    mainSurf.s.endDraw();
+    rauschSurf.s.popMatrix();
+    rauschSurf.s.endDraw();
   }
 
   void moveText() {
