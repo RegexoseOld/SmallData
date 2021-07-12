@@ -49,10 +49,12 @@ void setup() {
   oscP5 = new OscP5(this, 5040); //Audience Port
   loc = new NetAddress("127.0.0.1", 5040); // send to self
   RG.init(this);
-  RG.ignoreStyles(false);
+  RG.ignoreStyles(true);
   RG.setPolygonizer(RG.ADAPTATIVE);
   vector = true;
+  screenCenter = new PVector(width/2, height/2);
   areas = new Areas(cats);
+
   buildUtts(480);
   mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
   pickIncoming(); // pick first utt
@@ -62,7 +64,7 @@ void setup() {
   noiseStart = 0;
   noiseLimit = noiseInc;
   moderation = "moderation";
-  screenCenter = new PVector(width/2, height/2);
+
 
   matchedUtts = new StringList();
   // frameRate(20);
@@ -115,6 +117,10 @@ void draw() {
     noiseStart = 0;
     noiseLimit = noiseInc;
   }
+  for (Area a : areas.areas) {
+    // a.draw();
+    a.drawOutlines();
+  }
 }
 
 void createScheduleTimer(final float ms) {
@@ -146,14 +152,6 @@ void buildUtts(int amount) {
     utts.add(utt);
   }
 }
-
-RShape loadRShape(String name) {
-  String shapeName = name +".svg";
-  RShape s = RG.loadShape(shapeName);
-  RG.ignoreStyles();
-  return s;
-}
-
 
 void visibility(char k) {
 

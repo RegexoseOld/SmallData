@@ -1,22 +1,32 @@
 class Areas {
   ArrayList<Area> areas;
   RGroup shapeGrp;
+  float areaAngle;
 
   Areas(String[] cats) {
     this.areas = new ArrayList<Area>();
+    areaAngle = 0.0;
     shapeGrp = new RGroup();
     makeAreas(cats);
-    shapeGrp.translate(500, 400);
-    shapeGrp.scale(0.7);
+    //shapeGrp.translate(500, 400);
+    //shapeGrp.scale(0.7);
     //println("group width  " + shapeGrp.getWidth() + "   height   " + shapeGrp.getHeight());
   }
 
   void makeAreas(String[] cats) {
+    RShape screenShape = new RShape();
+    screenShape.addLineTo(width, 0);
+    screenShape.addLineTo(width, height);
+    screenShape.addLineTo(0, height);
+    screenShape.addLineTo(0, 0);
+    
+
     for (int i=0; i<5; i++) {
       String cat = cats[i];
-      Area area = new Area(cat);
+      Area area = new Area(cat, areaAngle, screenShape);
       this.areas.add(area);
       shapeGrp.addElement(area.rS);
+      areaAngle += TWO_PI/5;
       // println("area name  " + area.name + "  area width  " + area.rS.getWidth() + "  area X  " + area.rS.getX());
     }
   }
@@ -33,29 +43,48 @@ class Areas {
 }
 
 class Area {
-  PVector horizontal, centerOfArea, textStart, fromCenter;
-  RShape rS, svgShape;
-  RPoint txt, frst, scnd;
+  PVector horizontal, textStart, fromCenter;
+  RShape rS, screen;
+  RPoint centerOfArea, txt, frst, scnd;
   RPoint[] points, handles;
   String name; 
   color col; 
-  float firstAngle, maxAngle, radius, progressAngle, textAngle;
+  float areaAngle, firstAngle, maxAngle, radius, progressAngle, textAngle;
   int transX, transY;
 
-  Area(String name) {
+  Area(String name, float angle, RShape screen) {
     this.name = name;
+    this.areaAngle = angle;
+    this.screen = screen;
     this.col = attributeUtt(name); 
-    this.rS = loadRShape(name);
+    this.rS = createRShape();
     horizontal = new PVector(1, 0);
     this.handles = this.rS.getHandles();
     this.firstAngle = 0;
     this.progressAngle = 0.1;
-    // println("name:   " + this.name + "   textStart:  " + this.textStart + "  handles0 x " + this.handles[0].x + "  y  " + this.handles[0].y);
     this.points = rS.getPoints();
     this.transX = 100;
-    makeCenter(this.name);
-    createHandles();
+    this.centerOfArea = this.rS.getCentroid();
+    // createHandles();
   }
+
+  RShape createRShape() {
+    //Create triangle from screenCenter with a side length of radius r and an angle of TWO_PI/5
+    // r is PVector(Width/2, height/2).mag
+    rS = new RShape();
+    //https://github.com/runemadsen/printing-code/blob/master/geomerative/beginshape/beginshape.pde
+    radius = 2 * screenCenter.mag();
+    rS.addMoveTo(screenCenter.x, screenCenter.y);
+    float x1 = screenCenter.x + cos(this.areaAngle) * radius;
+    float y1 = screenCenter.y + sin(this.areaAngle) * radius;
+    rS.addLineTo(x1, y1);
+    float x2 = screenCenter.x + cos(this.areaAngle + TWO_PI/5) * radius;
+    float y2 = screenCenter.y + sin(this.areaAngle  + TWO_PI/5) * radius;
+    rS.addLineTo(x2, y2);
+    RShape diff = rS.intersection(this.screen);
+    return diff;
+  }
+
 
   void makeCenter(String cat) {
     RPoint c = this.rS.getCenter();
@@ -66,7 +95,7 @@ class Area {
       this.transX = 0;
       this.transY = 150;
     }
-    this.centerOfArea = new PVector(c.x, c.y + this.transY);
+    // this.centerOfArea = new PVector(c.x, c.y + this.transY);
   }
 
   void createHandles() {
@@ -77,7 +106,7 @@ class Area {
     PVector firstPoint = new PVector(frst.x, frst.y);
     PVector secondPoint = new PVector(scnd.x, scnd.y);
     PVector firstLine = new PVector();
-    PVector secondLine = new PVector();
+
     //println("txt.x  " + txt.x + " txt y " + txt.y + "  textStart  " + this.textStart);
     // println("frst.x  " + frst.x + " frst y " + frst.y + "  first  " + firstPoint);
     //println("p.x  " + p.x + " p y " + p.y +  " prv.x  " + prv.x + " prv y " + prv.y);
@@ -85,11 +114,9 @@ class Area {
     //angles depends on direction of Shape
     if (firstPoint.y < 0) {
       firstLine = PVector.sub( this.textStart, firstPoint);
-      secondLine= PVector.sub(this.textStart, secondPoint);
       this.firstAngle = PVector.angleBetween(firstLine, horizontal) - PI;
     } else {
       firstLine = PVector.sub(firstPoint, this.textStart );
-      secondLine= PVector.sub(secondPoint, this.textStart );
       this.firstAngle = PVector.angleBetween(horizontal, firstLine);
     }
 
@@ -109,27 +136,25 @@ class Area {
   }
 
   void drawOutlines() {
-    RPoint p = this.handles[0];
-    RPoint prv = this.handles[1];
-    PVector firstPoint = new PVector(frst.x, frst.y);
+    RPoint p = new RPoint();
+    RPoint prv = new RPoint();
+    // PVector firstPoint = new PVector(frst.x, frst.y);
     rauschSurf.s.beginDraw();
-
-    rauschSurf.s.stroke(col);
-    rauschSurf.s.strokeWeight(10);
-    if (vector) {
-      rauschSurf.s.point(p.x, p.y);
-      rauschSurf.s.point(prv.x, prv.y);
-      rauschSurf.s.text("start", p.x, p.y);
-      rauschSurf.s.text("first", prv.x, prv.y);
-      rauschSurf.s.strokeWeight(3);
+    for (int i=0; i<this.handles.length; i++) {
+      p = this.handles[i];
+      if (i <=0) {
+        prv = this.handles[this.handles.length -1];
+      } else {
+        prv = this.handles[i-1];
+      }
+      // println("point x  " + p.x + "  y    " + p.y);
+      rauschSurf.s.stroke(this.col);
+      rauschSurf.s.strokeWeight(5);
       rauschSurf.s.line(p.x, p.y, prv.x, prv.y);
-    } else {
-      rauschSurf.s.point(this.textStart.x, this.textStart.y);
-      rauschSurf.s.point(firstPoint.x, firstPoint.y);
-      rauschSurf.s.text("start", this.textStart.x, this.textStart.y);
-      rauschSurf.s.text("first", firstPoint.x, firstPoint.y);
-      rauschSurf.s.strokeWeight(3);
-      rauschSurf.s.line(this.textStart.x, this.textStart.y, firstPoint.x, firstPoint.y);
+      rauschSurf.s.strokeWeight(15);
+      rauschSurf.s.point(p.x, p.y);
+      rauschSurf.s.strokeWeight(25);
+      //rauschSurf.s.point(width/2, height/2);
     }
     rauschSurf.s.endDraw();
   }
@@ -139,7 +164,7 @@ class Area {
     this.rS.draw();
     stroke(0, 255, 0);
     strokeWeight(10);
-    point(this.centerOfArea.x, this.centerOfArea.y);
+    point(this.rS.getCentroid().x, this.rS.getCentroid().y);
     textSize(12);
     text(this.name, this.centerOfArea.x + this.transX, this.centerOfArea.y);
   }
