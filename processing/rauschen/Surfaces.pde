@@ -182,6 +182,7 @@ class Surface { //<>//
     this.s.text(msg, 0, 0);
     this.s.popMatrix();
     this.s.endDraw();
+    a.textAngle += a.progressAngle;
   }
 }
 

@@ -5,7 +5,7 @@ class Areas {
 
   Areas(String[] cats) {
     this.areas = new ArrayList<Area>();
-    areaAngle = 0;
+    areaAngle = 0.1;
     shapeGrp = new RGroup();
     makeAreas(cats);
     //shapeGrp.translate(500, 400);
@@ -101,14 +101,19 @@ class Area {
     RPoint scndCopy = new RPoint(this.scnd);
     RPoint sCCopy2 = new RPoint(this.sC);
     sCCopy2.sub(scndCopy);
-    if (frstCopy.y < height/2) {
+    println("name  " + this.name + "  frst y  " + this.frst.y);
+    if (this.frst.y <= height/2) {
       this.firstAngle = sCCopy.angle(this.horizontal) - PI;
     } else {
-      this.firstAngle = sCCopy.angle(this.horizontal);
+      this.firstAngle = - sCCopy.angle(this.horizontal) + PI;
     }
-    println("name  " + this.name + "  1. angle  " + this.firstAngle);
+    if (this.scnd.y <= height/2) {
+      this.secondAngle = sCCopy2.angle(this.horizontal) - PI;
+    } else {
+      this.secondAngle = - sCCopy2.angle(this.horizontal) + PI;
+    }
+        println("name  " + this.name + "  1. angle  " + degrees(this.firstAngle) + "  2. angle  " + degrees(this.secondAngle));
 
-    this.secondAngle = sCCopy2.angle(this.horizontal);
     // println("2. angle  " + this.secondAngle);
     this.textAngle = this.firstAngle;
   }
@@ -160,8 +165,6 @@ class Area {
     println("name  " + name + "  textAngle  " + this.textAngle);
     if (this.textAngle > this.firstAngle + this.secondAngle) {
       this.textAngle = this.firstAngle;
-    } else {
-      this.textAngle += this.progressAngle;
     }
   }
 
@@ -185,7 +188,7 @@ class Area {
       rauschSurf.s.point(p.x, p.y);
       rauschSurf.s.strokeWeight(25);
       rauschSurf.s.fill(this.col);
-      rauschSurf.s.textSize(30);
+      rauschSurf.s.textFont(messageFont, 30);
       rauschSurf.s.text(this.name, this.centerOfArea.x + this.transX, this.centerOfArea.y);
       //rauschSurf.s.point(width/2, height/2);
     }
