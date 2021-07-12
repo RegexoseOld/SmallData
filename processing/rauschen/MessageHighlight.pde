@@ -14,7 +14,6 @@ class MessageHighlight {
     mass = m;
     velocity = 0;
     acceleration = 0;
-    buildSurfaces();
     angle = 0;
     this.font = font;
     this.tSize = 10.0;

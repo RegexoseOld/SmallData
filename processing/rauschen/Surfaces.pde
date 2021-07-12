@@ -177,7 +177,7 @@ class Surface { //<>//
     this.s.textAlign(LEFT, TOP);
     this.s.fill(a.col);
     this.s.pushMatrix();
-    this.s.translate(a.handles[0].x, a.handles[0].y);
+    this.s.translate(a.sC.x, a.sC.y);
     this.s.rotate(a.textAngle);
     this.s.text(msg, 0, 0);
     this.s.popMatrix();

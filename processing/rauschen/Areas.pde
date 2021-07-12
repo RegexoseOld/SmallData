@@ -5,7 +5,7 @@ class Areas {
 
   Areas(String[] cats) {
     this.areas = new ArrayList<Area>();
-    areaAngle = 0.0;
+    areaAngle = 0;
     shapeGrp = new RGroup();
     makeAreas(cats);
     //shapeGrp.translate(500, 400);
@@ -19,7 +19,7 @@ class Areas {
     screenShape.addLineTo(width, height);
     screenShape.addLineTo(0, height);
     screenShape.addLineTo(0, 0);
-    
+
 
     for (int i=0; i<5; i++) {
       String cat = cats[i];
@@ -43,28 +43,30 @@ class Areas {
 }
 
 class Area {
-  PVector horizontal, textStart, fromCenter;
-  RShape rS, screen;
-  RPoint centerOfArea, txt, frst, scnd;
+  PVector textStart, fromCenter;
+  RShape rS, screen, firstLine, secondLine;
+  RPoint sC, centerOfArea, horizontal, txt, frst, scnd;
   RPoint[] points, handles;
   String name; 
   color col; 
-  float areaAngle, firstAngle, maxAngle, radius, progressAngle, textAngle;
+  float areaAngle, firstAngle, secondAngle, radius, progressAngle, textAngle;
   int transX, transY;
 
   Area(String name, float angle, RShape screen) {
     this.name = name;
     this.areaAngle = angle;
     this.screen = screen;
+    this.sC = new RPoint(width/2, height/2);
     this.col = attributeUtt(name); 
     this.rS = createRShape();
-    horizontal = new PVector(1, 0);
     this.handles = this.rS.getHandles();
     this.firstAngle = 0;
     this.progressAngle = 0.1;
     this.points = rS.getPoints();
     this.transX = 100;
     this.centerOfArea = this.rS.getCentroid();
+    makeAngles();
+    drawOutlines();
     // createHandles();
   }
 
@@ -72,63 +74,91 @@ class Area {
     //Create triangle from screenCenter with a side length of radius r and an angle of TWO_PI/5
     // r is PVector(Width/2, height/2).mag
     rS = new RShape();
+    this.horizontal = new RPoint(10, 0);
     //https://github.com/runemadsen/printing-code/blob/master/geomerative/beginshape/beginshape.pde
-    radius = 2 * screenCenter.mag();
-    rS.addMoveTo(screenCenter.x, screenCenter.y);
-    float x1 = screenCenter.x + cos(this.areaAngle) * radius;
-    float y1 = screenCenter.y + sin(this.areaAngle) * radius;
+    radius = width;
+    rS.addMoveTo(sC.x, sC.y);
+    float x1 = sC.x + cos(this.areaAngle) * radius;
+    float y1 = sC.y + sin(this.areaAngle) * radius;
+    this.frst = new RPoint(x1, y1);
+    this.firstLine = RShape.createLine(sC.x, sC.y, this.frst.x, this.frst.y);
+    // copying to obtain angle
     rS.addLineTo(x1, y1);
-    float x2 = screenCenter.x + cos(this.areaAngle + TWO_PI/5) * radius;
-    float y2 = screenCenter.y + sin(this.areaAngle  + TWO_PI/5) * radius;
+    float x2 = sC.x + cos(this.areaAngle + TWO_PI/5) * radius;
+    float y2 = sC.y + sin(this.areaAngle  + TWO_PI/5) * radius;
+    this.scnd = new RPoint(x2, y2);
+    this.secondLine = RShape.createLine(sC.x, sC.y, this.scnd.x, this.scnd.y);
     rS.addLineTo(x2, y2);
     RShape diff = rS.intersection(this.screen);
+    // println("diff shape  " + this.name + "  has  " + diff.paths[0].getPoints().length + "  points");
     return diff;
   }
 
-
-  void makeCenter(String cat) {
-    RPoint c = this.rS.getCenter();
-    if (cat.equals("praise") || cat.equals("insinuation")) {
-      this.transX = 0;
-      this.transY = - 150;
-    } else if (cat.equals("concession") || cat.equals("lecture")) {
-      this.transX = 0;
-      this.transY = 150;
-    }
-    // this.centerOfArea = new PVector(c.x, c.y + this.transY);
-  }
-
-  void createHandles() {
-    txt = this.handles[0];
-    frst = this.handles[1];
-    scnd = this.handles[2];
-    this.textStart = new PVector(txt.x, txt.y);
-    PVector firstPoint = new PVector(frst.x, frst.y);
-    PVector secondPoint = new PVector(scnd.x, scnd.y);
-    PVector firstLine = new PVector();
-
-    //println("txt.x  " + txt.x + " txt y " + txt.y + "  textStart  " + this.textStart);
-    // println("frst.x  " + frst.x + " frst y " + frst.y + "  first  " + firstPoint);
-    //println("p.x  " + p.x + " p y " + p.y +  " prv.x  " + prv.x + " prv y " + prv.y);
-
-    //angles depends on direction of Shape
-    if (firstPoint.y < 0) {
-      firstLine = PVector.sub( this.textStart, firstPoint);
-      this.firstAngle = PVector.angleBetween(firstLine, horizontal) - PI;
+  void makeAngles() {
+    RPoint frstCopy = new RPoint(this.frst);
+    RPoint sCCopy = new RPoint(this.sC);
+    sCCopy.sub(frstCopy);
+    RPoint scndCopy = new RPoint(this.scnd);
+    RPoint sCCopy2 = new RPoint(this.sC);
+    sCCopy2.sub(scndCopy);
+    if (frstCopy.y < height/2) {
+      this.firstAngle = sCCopy.angle(this.horizontal) - PI;
     } else {
-      firstLine = PVector.sub(firstPoint, this.textStart );
-      this.firstAngle = PVector.angleBetween(horizontal, firstLine);
+      this.firstAngle = sCCopy.angle(this.horizontal);
     }
+    println("name  " + this.name + "  1. angle  " + this.firstAngle);
 
-    println(horizontal + " firstLine  " + firstLine);
-    println("name  " + name + "  textAngle  " + this.textAngle + "  maxAngle  " + this.maxAngle);
-    this.maxAngle = TWO_PI / 5;
+    this.secondAngle = sCCopy2.angle(this.horizontal);
+    // println("2. angle  " + this.secondAngle);
     this.textAngle = this.firstAngle;
   }
 
+  //void makeCenter(String cat) {
+  //  RPoint c = this.rS.getCenter();
+  //  if (cat.equals("praise") || cat.equals("insinuation")) {
+  //    this.transX = 0;
+  //    this.transY = - 150;
+  //  } else if (cat.equals("concession") || cat.equals("lecture")) {
+  //    this.transX = 0;
+  //    this.transY = 150;
+  //  }
+  //  // this.centerOfArea = new PVector(c.x, c.y + this.transY);
+  //}
+
+  //void createHandles() {
+
+  //  txt = this.handles[0];
+  //  this.frst = this.handles[1];
+  //  this.scnd = this.handles[this.handles.length-1];
+  //  this.textStart = new PVector(txt.x, txt.y);
+  //  PVector firstPoint = new PVector(frst.x, frst.y);
+  //  PVector secondPoint = new PVector(scnd.x, scnd.y);
+
+
+  //  //println("txt.x  " + txt.x + " txt y " + txt.y + "  textStart  " + this.textStart);
+  //  // println("frst.x  " + frst.x + " frst y " + frst.y + "  first  " + firstPoint);
+  //  //println("p.x  " + p.x + " p y " + p.y +  " prv.x  " + prv.x + " prv y " + prv.y);
+
+  //  //angles depends on direction of Shape
+  //  if (firstPoint.y < 0) {
+  //    firstLine = PVector.sub(this.textStart, firstPoint);
+  //    secondLine = PVector.sub(this.textStart, secondPoint);
+  //    this.firstAngle = PVector.angleBetween(firstLine, horizontal) - PI;
+  //  } else {
+  //    firstLine = PVector.sub(firstPoint, this.textStart );
+  //    secondLine = PVector.sub(secondPoint, this.textStart);
+  //    this.firstAngle = PVector.angleBetween(horizontal, firstLine);
+  //  }
+
+  //  println(horizontal + " firstLine  " + firstLine);
+  //  println("name  " + name + "  textAngle  " + this.textAngle + "  maxAngle  " + this.maxAngle);
+  //  this.maxAngle = TWO_PI / 5;
+  //  this.textAngle = this.firstAngle;
+  //}
+
   void sculptureText() {
     println("name  " + name + "  textAngle  " + this.textAngle);
-    if (this.textAngle > this.firstAngle + this.maxAngle) {
+    if (this.textAngle > this.firstAngle + this.secondAngle) {
       this.textAngle = this.firstAngle;
     } else {
       this.textAngle += this.progressAngle;
@@ -154,18 +184,24 @@ class Area {
       rauschSurf.s.strokeWeight(15);
       rauschSurf.s.point(p.x, p.y);
       rauschSurf.s.strokeWeight(25);
+      rauschSurf.s.fill(this.col);
+      rauschSurf.s.textSize(30);
+      rauschSurf.s.text(this.name, this.centerOfArea.x + this.transX, this.centerOfArea.y);
       //rauschSurf.s.point(width/2, height/2);
     }
     rauschSurf.s.endDraw();
   }
 
-  void draw() {
+  void draw(PGraphics surf) {
     // println(" draw name:   " + this.name + "   rS origwidth:  " + this.rS.getOrigWidth() + "   rS newwidth:  " + this.rS.getWidth());
-    this.rS.draw();
-    stroke(0, 255, 0);
-    strokeWeight(10);
-    point(this.rS.getCentroid().x, this.rS.getCentroid().y);
-    textSize(12);
-    text(this.name, this.centerOfArea.x + this.transX, this.centerOfArea.y);
+    surf.beginDraw();
+    // this.rS.draw();
+    surf.stroke(0, 255, 0);
+    surf.strokeWeight(10);
+    surf.point(this.rS.getCentroid().x, this.rS.getCentroid().y);
+    surf.textSize(30);
+    surf.fill(this.col);
+    surf.text(this.name, this.centerOfArea.x + this.transX, this.centerOfArea.y);
+    surf.endDraw();
   }
 }

@@ -36,25 +36,24 @@ int cat_limit, cat_counts, noiseStart, noiseLimit, noiseInc;
 float prgIncrement;
 int uttCount = 0; 
 Table article;
-PVector screenCenter;
 
 void setup() {
   size(1800, 1200);
   TD = loadJSONObject("TrainingDataPelle01.json");
   article = loadTable("Moderation.tsv", "header");
   surfs = new Surface[9];
+  
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[25], 20, true);
+  buildSurfaces();
   oscP5 = new OscP5(this, 5040); //Audience Port
   loc = new NetAddress("127.0.0.1", 5040); // send to self
   RG.init(this);
   RG.ignoreStyles(true);
   RG.setPolygonizer(RG.ADAPTATIVE);
   vector = true;
-  screenCenter = new PVector(width/2, height/2);
   areas = new Areas(cats);
-
   buildUtts(480);
   mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
   pickIncoming(); // pick first utt
@@ -118,7 +117,7 @@ void draw() {
     noiseLimit = noiseInc;
   }
   for (Area a : areas.areas) {
-    // a.draw();
+    //a.draw(rauschSurf.s);
     a.drawOutlines();
   }
 }
