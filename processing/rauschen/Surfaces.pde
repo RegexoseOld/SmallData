@@ -11,9 +11,9 @@ class Surface { //<>//
   PFont font;
   String name, message;
   ArrayList<SingleLine> uttLines;
-  int w, h, lineIndex;
+  int w, h, lineIndex, alpha;
   float  tSize;
-  boolean visible, fade, sculpt;
+  boolean visible, fade, active, reset;
   color col;
 
   Surface(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible, String _message) {
@@ -26,7 +26,8 @@ class Surface { //<>//
     this.font = _font;
     this.visible = _visible;
     this.fade = false;
-    this.sculpt = true;
+    this.active = true;
+    this.reset = false;
     this.message= _message;
     initSurf();
   }
@@ -137,7 +138,7 @@ class Surface { //<>//
       float rectCount = cat_count.getInt("count");
       this.s.rectMode(CENTER);
       this.s.textAlign(LEFT, TOP);
-      color fillcol = attributeUtt(cat);
+      color fillcol = findColor(cat);
       int alpha = (fillcol >> 24) & 0xFF;
       alpha = 255;
       fillcol = alpha<<24 | fillcol & 0xFFFFFF ;
@@ -174,20 +175,25 @@ class Surface { //<>//
     // println("area name  " + a.name + "   pos  " + pos);
     this.s.beginDraw();
     this.s.textFont(this.font);
-    this.s.textAlign(LEFT, TOP);
-    this.s.fill(a.col);
+    this.s.textAlign(TOP, TOP);
     this.s.pushMatrix();
     this.s.translate(a.sC.x, a.sC.y);
     this.s.rotate(a.textAngle);
+    this.s.fill(255);
+    this.s.noStroke();
+    this.s.rect(0, 0, textWidth(msg), textAscent());
+    this.s.fill(a.col);
     this.s.text(msg, 0, 0);
     this.s.popMatrix();
+
+
     this.s.endDraw();
     a.textAngle += a.progressAngle;
   }
 }
 
 void buildSurfaces() {
-  rauschSurf = new Surface("main", 0, 0, width, height, messageFont, true, "");
+  rauschSurf = new Surface("rausch", 0, 0, width, height, messageFont, true, "");
   incSurf = new Surface("matchSurf1", width/30, height/2, width *3/7, height/5, messageFont, false, incomingText);
   matchSurf = new Surface("matchSurf2", width *5/9, height/2, width *3/7, height/5, messageFont, false, "");
   titleSurf1 = new Surface("titleIncoming", int(incSurf.pos.x), int(incSurf.pos.y-80), int(incSurf.w), 50, infoFont, false, "Dein Kommentar ähnelt...");
@@ -195,7 +201,7 @@ void buildSurfaces() {
   infoSurf = new Surface("infoSurf", 0, height-height/12, width, height/12, infoFont, true, incomingText);
   counterSurf = new Surface("counter", 0, height *3/4, width/8, height/6, infoFont, false, "categories");
   articleSurf = new Surface("article", 0, 0, infoSurf.s.width, infoSurf.s.height, infoFont, false, "");
-  sculptureSurf = new Surface("sculpture", 0, 0, width, height, infoFont, false, incomingText);
+  sculptureSurf = new Surface("sculpture", 0, 0, width, height, infoFont, true, incomingText);
   surfs[0] = rauschSurf;
   surfs[1] = incSurf;
   surfs[2] = matchSurf;

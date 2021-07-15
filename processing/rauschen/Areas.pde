@@ -44,29 +44,32 @@ class Areas {
 
 class Area {
   PVector textStart, fromCenter;
+  PShape reset;
   RShape rS, screen, firstLine, secondLine;
   RPoint sC, centerOfArea, horizontal, txt, frst, scnd;
   RPoint[] points, handles;
   String name; 
   color col; 
   float areaAngle, firstAngle, secondAngle, radius, progressAngle, textAngle;
-  int transX, transY;
+  int transX, transY, resetCol;
 
   Area(String name, float angle, RShape screen) {
     this.name = name;
     this.areaAngle = angle;
     this.screen = screen;
     this.sC = new RPoint(width/2, height/2);
-    this.col = attributeUtt(name); 
+    this.col = findColor(name); 
     this.rS = createRShape();
     this.handles = this.rS.getHandles();
+    this.reset = createShape();
     this.firstAngle = 0;
-    this.progressAngle = 0.1;
+    this.progressAngle = 0.2;
     this.points = rS.getPoints();
     this.transX = 100;
     this.centerOfArea = this.rS.getCentroid();
     makeAngles();
     drawOutlines();
+    resetShape();
     // createHandles();
   }
 
@@ -101,7 +104,7 @@ class Area {
     RPoint scndCopy = new RPoint(this.scnd);
     RPoint sCCopy2 = new RPoint(this.sC);
     sCCopy2.sub(scndCopy);
-    println("name  " + this.name + "  frst y  " + this.frst.y);
+    // println("name  " + this.name + "  frst y  " + this.frst.y);
     if (this.frst.y <= height/2) {
       this.firstAngle = sCCopy.angle(this.horizontal) - PI;
     } else {
@@ -112,58 +115,32 @@ class Area {
     } else {
       this.secondAngle = - sCCopy2.angle(this.horizontal) + PI;
     }
-        println("name  " + this.name + "  1. angle  " + degrees(this.firstAngle) + "  2. angle  " + degrees(this.secondAngle));
+    println("name  " + this.name + "  1. angle  " + degrees(this.firstAngle) + "  2. angle  " + degrees(this.secondAngle));
 
     // println("2. angle  " + this.secondAngle);
     this.textAngle = this.firstAngle;
   }
 
-  //void makeCenter(String cat) {
-  //  RPoint c = this.rS.getCenter();
-  //  if (cat.equals("praise") || cat.equals("insinuation")) {
-  //    this.transX = 0;
-  //    this.transY = - 150;
-  //  } else if (cat.equals("concession") || cat.equals("lecture")) {
-  //    this.transX = 0;
-  //    this.transY = 150;
-  //  }
-  //  // this.centerOfArea = new PVector(c.x, c.y + this.transY);
-  //}
-
-  //void createHandles() {
-
-  //  txt = this.handles[0];
-  //  this.frst = this.handles[1];
-  //  this.scnd = this.handles[this.handles.length-1];
-  //  this.textStart = new PVector(txt.x, txt.y);
-  //  PVector firstPoint = new PVector(frst.x, frst.y);
-  //  PVector secondPoint = new PVector(scnd.x, scnd.y);
-
-
-  //  //println("txt.x  " + txt.x + " txt y " + txt.y + "  textStart  " + this.textStart);
-  //  // println("frst.x  " + frst.x + " frst y " + frst.y + "  first  " + firstPoint);
-  //  //println("p.x  " + p.x + " p y " + p.y +  " prv.x  " + prv.x + " prv y " + prv.y);
-
-  //  //angles depends on direction of Shape
-  //  if (firstPoint.y < 0) {
-  //    firstLine = PVector.sub(this.textStart, firstPoint);
-  //    secondLine = PVector.sub(this.textStart, secondPoint);
-  //    this.firstAngle = PVector.angleBetween(firstLine, horizontal) - PI;
-  //  } else {
-  //    firstLine = PVector.sub(firstPoint, this.textStart );
-  //    secondLine = PVector.sub(secondPoint, this.textStart);
-  //    this.firstAngle = PVector.angleBetween(horizontal, firstLine);
-  //  }
-
-  //  println(horizontal + " firstLine  " + firstLine);
-  //  println("name  " + name + "  textAngle  " + this.textAngle + "  maxAngle  " + this.maxAngle);
-  //  this.maxAngle = TWO_PI / 5;
-  //  this.textAngle = this.firstAngle;
-  //}
+  void resetShape() {
+    int a = 255;
+    int r = 204;
+    int g = 204;
+    int b = 51;
+    a = a << 24;
+    r = r << 16;
+    g = g << 8; 
+    this.resetCol = (a | r | g | b);
+    this.reset.beginShape();
+    for (RPoint p : this.handles) {
+      this.reset.vertex(p.x, p.y);
+    }
+    this.reset.endShape(CLOSE);
+    this.reset.setFill(this.resetCol);
+  }
 
   void sculptureText() {
-    println("name  " + name + "  textAngle  " + this.textAngle);
-    if (this.textAngle > this.firstAngle + this.secondAngle) {
+    //println("name  " + name + "  textAngle  " + this.textAngle);
+    if (this.textAngle > this.firstAngle + (TWO_PI/5)) {
       this.textAngle = this.firstAngle;
     }
   }

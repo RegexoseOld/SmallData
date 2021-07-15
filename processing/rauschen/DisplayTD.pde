@@ -18,8 +18,12 @@ class DisplayTD {
     this.user = _user;
     this.isShape = isShape;
     this.shape = shape;
+    this.shape.disableStyle();
     this.shapeSize = sSize;
-    shapeColor = attributeUtt(this.cat);
+    this.shapeColor = findColor(this.cat);
+    this.shape.setFill(this.shapeColor);
+    //this.shape.setFill(color(255, 0, 0));
+    // println("shape color of" + this.cat + "  is "  + this.shapeColor);
     this.area = areas.findArea(this.cat);
     this.rS = this.area.rS;
     this.pos = new PVector(this.rS.getCenter().x, this.rS.getCenter().y);
@@ -31,14 +35,10 @@ class DisplayTD {
 
   void draw() {
     rauschSurf.s.beginDraw();
-    rauschSurf.s.textFont(this.font);
-    rauschSurf.s.fill(this.shapeColor, 60);
-    // mainSurf.s.fill(this.shapeColor);
+    // rauschSurf.s.textFont(this.font);
     rauschSurf.s.pushMatrix();
     rauschSurf.s.translate(this.x, this.y);
     rauschSurf.s.rotate(this.angle);
-    this.shape.disableStyle();
-    rauschSurf.s.fill(shapeColor);
     rauschSurf.s.shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
     moveText();
     rauschSurf.s.popMatrix();
@@ -51,10 +51,6 @@ class DisplayTD {
     float aH = this.rS.getHeight();
     this.x = random(this.area.centerOfArea.x - aW/d, this.area.centerOfArea.x + aW/d);
     this.y = random(this.area.centerOfArea.y - aH/d, this.area.centerOfArea.y + aH/d);
-    if (this.x < width && this.y < height) {
-      this.x += random(-10, 10);
-      this.y += random(-8, 8);
-    } 
     this.angle += random(-0.05, 0.05);
   }
 
@@ -65,13 +61,13 @@ class DisplayTD {
       // println("matched!  " + incoming + "    with index  " + this.index);
       matchedUtts.append(incoming);
       titleSurf1.col = shapeColor;
-      titleSurf2.col = attributeUtt(cat);
+      titleSurf2.col = findColor(cat);
     }
   }
 }
 
 
-color attributeUtt(String cat) {
+color findColor(String cat) {
   color col = color(0);
   switch(cat) {
   case "praise" : 

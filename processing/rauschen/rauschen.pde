@@ -38,7 +38,7 @@ int uttCount = 0;
 Table article;
 
 void setup() {
-  size(1800, 1200);
+  size(1000, 700);
   TD = loadJSONObject("TrainingDataPelle01.json");
   article = loadTable("Moderation.tsv", "header");
   surfs = new Surface[9];
@@ -76,7 +76,7 @@ void draw() {
   if (messageIn) {
     rauschSurf.clearBackground();
     messageIn = !messageIn;
-    sculptureSurf.sculpt = true;
+    sculptureSurf.visible = true;
   }
 
   for (int x=noiseStart; x<noiseLimit; x++) {
@@ -146,6 +146,7 @@ void buildUtts(int amount) {
     String category = row.getString("category").toLowerCase();
     String user = row.getString("user");
     PShape shape = loadShape(shapeMapping.get(category));
+    shape.setFill(findColor(category));
     DisplayTD utt = new DisplayTD(i, utterance, category, user, shape, 5, false);
     uttList[i]= utterance;
     utts.add(utt);
