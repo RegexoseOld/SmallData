@@ -21,12 +21,12 @@ class DisplayTD {
     this.shape.disableStyle();
     this.shapeSize = sSize;
     this.shapeColor = findColor(this.cat);
-    this.shape.setFill(this.shapeColor);
+    //this.shape.setFill(this.shapeColor);
     //this.shape.setFill(color(255, 0, 0));
     // println("shape color of" + this.cat + "  is "  + this.shapeColor);
     this.area = areas.findArea(this.cat);
     this.rS = this.area.rS;
-    this.pos = new PVector(this.rS.getCenter().x, this.rS.getCenter().y);
+    this.pos = this.area.areaPos.get(3);
     this.font_size = 25;
     this.angle = int(random(TWO_PI));
     this.fontName = fontlist[int(random(fontlist.length))];
@@ -37,8 +37,9 @@ class DisplayTD {
     rauschSurf.s.beginDraw();
     // rauschSurf.s.textFont(this.font);
     rauschSurf.s.pushMatrix();
-    rauschSurf.s.translate(this.x, this.y);
+    rauschSurf.s.translate(this.pos.x, this.pos.y);
     rauschSurf.s.rotate(this.angle);
+    rauschSurf.s.fill(this.shapeColor);
     rauschSurf.s.shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
     moveText();
     rauschSurf.s.popMatrix();
@@ -49,8 +50,10 @@ class DisplayTD {
     int d = 4;
     float aW = this.rS.getWidth() ;
     float aH = this.rS.getHeight();
-    this.x = random(this.area.centerOfArea.x - aW/d, this.area.centerOfArea.x + aW/d);
-    this.y = random(this.area.centerOfArea.y - aH/d, this.area.centerOfArea.y + aH/d);
+    int rIndex = int(random(this.area.areaPos.size()));
+    this.pos = this.area.areaPos.get(rIndex);
+    //this.x = random(this.area.centerOfArea.x - aW/d, this.area.centerOfArea.x + aW/d);
+    //this.y = random(this.area.centerOfArea.y - aH/d, this.area.centerOfArea.y + aH/d);
     this.angle += random(-0.05, 0.05);
   }
 

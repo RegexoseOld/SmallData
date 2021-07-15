@@ -76,7 +76,7 @@ void draw() {
   if (messageIn) {
     rauschSurf.clearBackground();
     messageIn = !messageIn;
-    sculptureSurf.visible = true;
+    //sculptureSurf.visible = true;
   }
 
   for (int x=noiseStart; x<noiseLimit; x++) {
@@ -116,9 +116,10 @@ void draw() {
     noiseStart = 0;
     noiseLimit = noiseInc;
   }
+  
   for (Area a : areas.areas) {
     //a.draw(rauschSurf.s);
-    a.drawOutlines();
+    //a.drawOutlines();
   }
 }
 

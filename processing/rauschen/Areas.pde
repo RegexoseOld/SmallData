@@ -44,6 +44,7 @@ class Areas {
 
 class Area {
   PVector textStart, fromCenter;
+  ArrayList<PVector> areaPos;
   PShape reset;
   RShape rS, screen, firstLine, secondLine;
   RPoint sC, centerOfArea, horizontal, txt, frst, scnd;
@@ -61,6 +62,7 @@ class Area {
     this.col = findColor(name); 
     this.rS = createRShape();
     this.handles = this.rS.getHandles();
+    this.areaPos = new ArrayList<PVector>();
     this.reset = createShape();
     this.firstAngle = 0;
     this.progressAngle = 0.2;
@@ -68,9 +70,8 @@ class Area {
     this.transX = 100;
     this.centerOfArea = this.rS.getCentroid();
     makeAngles();
-    drawOutlines();
     resetShape();
-    // createHandles();
+    createAreaPositions();
   }
 
   RShape createRShape() {
@@ -119,6 +120,20 @@ class Area {
 
     // println("2. angle  " + this.secondAngle);
     this.textAngle = this.firstAngle;
+  }
+
+  void createAreaPositions() {
+    loadPixels();
+    for (int x=0; x<width; x++) {
+      for (int y=0; y<height; y++) {
+        RPoint test = new RPoint(x, y);
+        if (this.rS.contains(test)) {
+          PVector pos = new PVector(x,y);
+          this.areaPos.add(pos);
+        }
+      }
+    }
+    println("size areaPos  " + this.areaPos.size());
   }
 
   void resetShape() {
