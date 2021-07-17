@@ -21,9 +21,6 @@ class DisplayTD {
     this.shape.disableStyle();
     this.shapeSize = sSize;
     this.shapeColor = findColor(this.cat);
-    //this.shape.setFill(this.shapeColor);
-    //this.shape.setFill(color(255, 0, 0));
-    // println("shape color of" + this.cat + "  is "  + this.shapeColor);
     this.area = areas.findArea(this.cat);
     this.rS = this.area.rS;
     this.pos = this.area.areaPos.get(3);
@@ -47,13 +44,8 @@ class DisplayTD {
   }
 
   void moveText() {
-    int d = 4;
-    float aW = this.rS.getWidth() ;
-    float aH = this.rS.getHeight();
     int rIndex = int(random(this.area.areaPos.size()));
     this.pos = this.area.areaPos.get(rIndex);
-    //this.x = random(this.area.centerOfArea.x - aW/d, this.area.centerOfArea.x + aW/d);
-    //this.y = random(this.area.centerOfArea.y - aH/d, this.area.centerOfArea.y + aH/d);
     this.angle += random(-0.05, 0.05);
   }
 

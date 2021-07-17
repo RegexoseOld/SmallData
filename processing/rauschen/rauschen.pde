@@ -18,7 +18,7 @@ DisplayTD incomingUtt;
 DisplayTD currentUtt;
 Areas areas;
 MessageHighlight mH; // Environment for growing Text display
-String[] fontlist, uttList;
+String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
 PFont messageFont, infoFont;
@@ -42,7 +42,6 @@ void setup() {
   TD = loadJSONObject("TrainingDataPelle01.json");
   article = loadTable("Moderation.tsv", "header");
   surfs = new Surface[9];
-  
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[25], 20, true);
@@ -103,7 +102,8 @@ void draw() {
     mH.updateFade();
   }
 
-  for (Surface surf : surfs) {
+  for (int i=0; i<surfs.length; i++) {
+    Surface surf = surfs[i];
     if (surf.visible) {
       surf.display(surf.name);
       image(surf.s, surf.pos.x, surf.pos.y);
@@ -116,7 +116,7 @@ void draw() {
     noiseStart = 0;
     noiseLimit = noiseInc;
   }
-  
+
   for (Area a : areas.areas) {
     //a.draw(rauschSurf.s);
     //a.drawOutlines();
@@ -139,7 +139,6 @@ void buildUtts(int amount) {
   shapeMapping.set("insinuation", "knacks03.svg");
   shapeMapping.set("concession", "knacks04.svg");
   shapeMapping.set("lecture", "knacks05.svg");
-  uttList = new String[amount];
   for (int i=0; i<amount; i++) {
     // int index = int(random(TD.size()));
     JSONObject row = TD.getJSONObject(str(i));
@@ -149,7 +148,6 @@ void buildUtts(int amount) {
     PShape shape = loadShape(shapeMapping.get(category));
     shape.setFill(findColor(category));
     DisplayTD utt = new DisplayTD(i, utterance, category, user, shape, 5, false);
-    uttList[i]= utterance;
     utts.add(utt);
   }
 }
@@ -192,6 +190,13 @@ void visibility(char k) {
     rauschSurf.s.background(222 );
     rauschSurf.s.endDraw();
     break;
+    
+  case 'r' :
+    for (Surface s : surfs) {
+      s.s.beginDraw();
+      s.s.background(222);
+      s.s.endDraw();
+    }
   }
 }
 

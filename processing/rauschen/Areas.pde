@@ -94,7 +94,6 @@ class Area {
     this.secondLine = RShape.createLine(sC.x, sC.y, this.scnd.x, this.scnd.y);
     rS.addLineTo(x2, y2);
     RShape diff = rS.intersection(this.screen);
-    // println("diff shape  " + this.name + "  has  " + diff.paths[0].getPoints().length + "  points");
     return diff;
   }
 
@@ -105,7 +104,6 @@ class Area {
     RPoint scndCopy = new RPoint(this.scnd);
     RPoint sCCopy2 = new RPoint(this.sC);
     sCCopy2.sub(scndCopy);
-    // println("name  " + this.name + "  frst y  " + this.frst.y);
     if (this.frst.y <= height/2) {
       this.firstAngle = sCCopy.angle(this.horizontal) - PI;
     } else {
@@ -116,9 +114,6 @@ class Area {
     } else {
       this.secondAngle = - sCCopy2.angle(this.horizontal) + PI;
     }
-    println("name  " + this.name + "  1. angle  " + degrees(this.firstAngle) + "  2. angle  " + degrees(this.secondAngle));
-
-    // println("2. angle  " + this.secondAngle);
     this.textAngle = this.firstAngle;
   }
 
@@ -133,7 +128,6 @@ class Area {
         }
       }
     }
-    println("size areaPos  " + this.areaPos.size());
   }
 
   void resetShape() {
@@ -172,7 +166,6 @@ class Area {
       } else {
         prv = this.handles[i-1];
       }
-      // println("point x  " + p.x + "  y    " + p.y);
       rauschSurf.s.stroke(this.col);
       rauschSurf.s.strokeWeight(5);
       rauschSurf.s.line(p.x, p.y, prv.x, prv.y);
@@ -182,7 +175,6 @@ class Area {
       rauschSurf.s.fill(this.col);
       rauschSurf.s.textFont(messageFont, 30);
       rauschSurf.s.text(this.name, this.centerOfArea.x + this.transX, this.centerOfArea.y);
-      //rauschSurf.s.point(width/2, height/2);
     }
     rauschSurf.s.endDraw();
   }

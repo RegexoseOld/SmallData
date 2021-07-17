@@ -44,17 +44,20 @@ class Surface { //<>//
   }
 
   void clearBackground() {
+    println("clearing  " + this.name);
     this.s.beginDraw();
+    // this.s.clear();
     this.s.background(222); 
     this.s.endDraw();
+    println("visible? " + this.visible);
   }
 
 
   void display(String name) {
-    if (name.startsWith("match")) {
-      displayUtt();
+    if (name.startsWith("match") && !this.reset) {
+      displayMatch();
     }
-    if (name.startsWith("title")) {
+    if (name.startsWith("title") && !this.reset) {
       makeTitle();
     }
     if (name.startsWith("info")) {
@@ -67,18 +70,17 @@ class Surface { //<>//
       displayCounter();
     }
     if (mFade && this.name.startsWith("match")) {
-      fadeGraphics(this.s, this.name, 2);
+      fadeGraphics(this.s, this.name, 5);
     }
   }
 
   void fadeGraphics(PGraphics c, String name, int fadeAmount) {
-    // println("fading   " + name);
     c.beginDraw();
     c.loadPixels();
     // iterate over pixels
     for (int i =0; i<c.pixels.length; i++) {
       // get alpha value
-      int alpha = (c.pixels[i] >> 24) & 0xFF ;
+      alpha = (c.pixels[i] >> 24) & 0xFF ;
       // reduce alpha value
       alpha = max(0, alpha-fadeAmount);
       // assign color with new alpha-value
@@ -86,11 +88,13 @@ class Surface { //<>//
     }
     c.updatePixels();
     c.endDraw();
+    // println("fading   " + name );
   }
 
-  void displayUtt() {
+  void displayMatch() {
     this.s.beginDraw();
-    this.s.clear();
+    // this.s.clear();
+    this.s.background(222);
     for (SingleLine sl : uttLines) {
       this.s.textFont(this.font, this.tSize);
       this.s.fill(sl.col);
