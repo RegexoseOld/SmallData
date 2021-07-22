@@ -96,36 +96,42 @@ class SongStatus:
     def draw(self):
         image(self.surface, self.pos_x, self.pos_y)
 
-    def update_status(self, new_counter):
+    def update_status(self, new_counter, machine_is_locked):
         # print(new_counter)
         self.counter = new_counter
         with self.surface.beginDraw():
-            self.surface.background(222)
-            i = 0
-            xPosBar = self.surface.width / 6
-            yPosBar = self.surface.height * 4 / 5
-            bar_width = self.surface.width / 20
-            progress = 30
-            spacing = 50
-
-            for cat, v in self.counter.items():
-                col = color_scheme[cat]
-                rect_count = v['count']
-                lim = v['limit']
-                # print("cat {}   count {}   col {} ".format(cat, rect_count, col))
-                self.surface.fill(col)
-                self.surface.noStroke()
-                self.surface.rect(spacing + (xPosBar * i), yPosBar, bar_width, -rect_count * progress)
-                self.surface.stroke(255, 0, 0)
-                self.surface.strokeWeight(3)
-                self.surface.line(spacing + (xPosBar * i), yPosBar - (lim * progress), spacing + (xPosBar * i) + bar_width, yPosBar - (lim * progress))
-                self.surface.fill(0)
-                self.surface.pushMatrix()
-                self.surface.translate(spacing + (xPosBar * i), yPosBar + 20)
-                self.surface.rotate(QUARTER_PI)
-                self.surface.text(cat, 0, 0)
-                self.surface.popMatrix()
-                i += 1
+            
+            
+            if machine_is_locked:
+                self.surface.background(123)
+                self.surface.text("LOCKED", self.surface.width/2, self.surface.height/2)
+            else:
+                self.surface.background(222)
+                xPosBar = self.surface.width / 6
+                yPosBar = self.surface.height * 4 / 5
+                bar_width = self.surface.width / 20
+                progress = 30
+                spacing = 50
+    
+                i = 0
+                for cat, v in self.counter.items():
+                    col = color_scheme[cat]
+                    rect_count = v['count']
+                    lim = v['limit']
+                    # print("cat {}   count {}   col {} ".format(cat, rect_count, col))
+                    self.surface.fill(col)
+                    self.surface.noStroke()
+                    self.surface.rect(spacing + (xPosBar * i), yPosBar, bar_width, -rect_count * progress)
+                    self.surface.stroke(255, 0, 0)
+                    self.surface.strokeWeight(3)
+                    self.surface.line(spacing + (xPosBar * i), yPosBar - (lim * progress), spacing + (xPosBar * i) + bar_width, yPosBar - (lim * progress))
+                    self.surface.fill(0)
+                    self.surface.pushMatrix()
+                    self.surface.translate(spacing + (xPosBar * i), yPosBar + 20)
+                    self.surface.rotate(QUARTER_PI)
+                    self.surface.text(cat, 0, 0)
+                    self.surface.popMatrix()
+                    i += 1
 
 class PartArea(SurfaceBase):
 

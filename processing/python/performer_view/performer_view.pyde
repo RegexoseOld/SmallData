@@ -21,7 +21,8 @@ class Listen(OscEventListener):
                 current_part_name, next_part_name, current_beat, change_color)
         if m.checkAddrPattern("/counter"):
             new_counter = json.loads(m.arguments()[0])["category_counter"]
-            AREAS['status'].update_status(new_counter)
+            machine_is_locked = json.loads(m.arguments()[0])["is_locked"]
+            AREAS['status'].update_status(new_counter, machine_is_locked)
             
 
 def setup():
