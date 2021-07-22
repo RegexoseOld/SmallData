@@ -144,13 +144,11 @@ class SongServer:
         counter = settings.note_to_beat[note]
         if self.beat_manager.update_beat_counter(counter):
 
-            # the beat-managers next part is only played next if state is warning
-            next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else \
-                self.beat_manager.current_part
-            self._send_part_info(counter, next_part)
+            # update performer view (show counter and next part)
+            self._send_part_info(counter, self.beat_manager.next_part)
 
             if self.beat_manager.is_one_of_normal_state() and self.song_machine.is_locked():
-                self._advance_song(next_part)
+                self._advance_song(self.beat_manager.next_part)
                 self.song_machine.release_lock()
 
     def fade(self, val, increment):
@@ -207,6 +205,4 @@ class SongServer:
         data_init = json.dumps(data)
         self.audience_client.send_message(settings.DISPLAY_INIT_ADDRESS, data_init)
         # self.audience_client.send_message(settings.DISPLAY_PARTINFO_ADDRESS,
-                                          # pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2)
-                                          # )
-
+        # pickle.dumps(self.song_machine.current_part.get_targets(), protocol=2))
