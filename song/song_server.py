@@ -150,6 +150,7 @@ class SongServer:
             if self.beat_manager.is_one_of_normal_state() and self.song_machine.is_locked():
                 self._advance_song(self.beat_manager.next_part)
                 self.song_machine.release_lock()
+                self._send_utterance({}, send_to_audience=False)  # resets the counter visuals
 
     def fade(self, val, increment):
         if self.rack_fade_val >= 0:
@@ -191,12 +192,15 @@ class SongServer:
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 0.0))
         self.tonality.synth.reset_synth()
 
-    def _send_utterance(self, input_dict):
+    def _send_utterance(self, input_dict, send_to_audience=True):
         input_dict['category_counter'] = self.song_machine.get_counter_for_visuals()
         input_dict['is_locked'] = self.song_machine.is_locked()
+
         data = json.dumps(input_dict)
-        self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, data)
         self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)
+        if send_to_audience:
+            self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, data)
+
 
     def _send_init_to_display(self):
         category_dict = {idx: i for idx, i in enumerate(self.song_machine.parser.categories)}
