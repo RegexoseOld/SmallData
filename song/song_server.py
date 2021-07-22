@@ -91,7 +91,6 @@ class SongServer:
         self.received_utts += 1
         if self.song_machine.is_locked():
             print("machine locked")
-            return
         elif self.received_utts >= self.song_machine.parser.max_utterances:
             end_message = "Von  {} moeglichen Meinungen sind {} abgegeben worden" \
                 .format(self.song_machine.parser.max_utterances, self.received_utts)
@@ -101,14 +100,16 @@ class SongServer:
 
             osc_map = pickle.loads(content)
             osc_map['text'] = osc_map['text'].decode('utf-8')
+            cat = osc_map['cat']
 
             speak(osc_map['text'])
 
-            cat = osc_map['cat']
+            # Update tonality
             self.tonality.update_tonality(cat)
-            controllers = self.tonality.synth.ctrl_message
-            # print("cat {}  controllers  {}".format(cat, controllers))
             self.send_fx(self.tonality.ctrl_val)
+
+            # Send Quittung
+            controllers = self.tonality.synth.ctrl_message
             current_part = self.beat_manager.current_part.name
             synth_note = self.song_machine.parser.song_parts[current_part].fb_note
             for name, part in self.song_machine.parser.song_parts.items():
@@ -116,6 +117,7 @@ class SongServer:
                     cat_note = part.fb_note
             self.send_quittung(synth_note, cat_note, cat, controllers)
 
+            # Update part
             if self.song_machine.update_part(cat):
                 self.beat_manager.update_next_part(self.song_machine.current_part)
 
@@ -143,8 +145,8 @@ class SongServer:
         if self.beat_manager.update_beat_counter(counter):
 
             # the beat-managers next part is only played next if state is warning
-            next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else self.beat_manager.current_part
-            print('BeatManager.current_part', self.beat_manager.current_part.name)
+            next_part = self.beat_manager.next_part if self.beat_manager.is_warning() else \
+                self.beat_manager.current_part
             self._send_part_info(counter, next_part)
 
             if self.beat_manager.is_one_of_normal_state() and self.song_machine.is_locked():
