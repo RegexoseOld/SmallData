@@ -7,7 +7,6 @@ from song.timer import RepeatTimer
 import threading
 from config import settings
 
-
 def speak(words):
     engine = pyttsx3.init()
     volume = engine.getProperty('volume')
@@ -185,6 +184,9 @@ class SongServer:
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
         # print('SongerServer. sending: ', message)
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
+        if next_part.name != self.beat_manager.current_part.name:
+            with open('../Experiments/frontend_tests/assets/parts.json', 'w', encoding='utf-8') as f:
+                json.dump([self.beat_manager.current_part.name, next_part.name], f, ensure_ascii=False)
 
     def _advance_song(self, next_part):
         print("next_part.note", next_part.note)
@@ -197,6 +199,10 @@ class SongServer:
         input_dict['is_locked'] = self.song_machine.is_locked()
 
         data = json.dumps(input_dict)
+
+        with open('../Experiments/frontend_tests/assets/data.json', 'w', encoding='utf-8') as f:
+            json.dump(input_dict, f, ensure_ascii=False)
+
         self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)
         if send_to_audience:
             self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, data)

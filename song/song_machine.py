@@ -153,7 +153,7 @@ class SongParser:
                 part_name = part_dict["name"]
                 associated_category = part_dict["category"]
                 limit = part_dict["limit"] if part != SongParser.INTRO else self.data[self.INTRO_LIMIT]
-                print(part_dict)
+                # print(part_dict)
                 if not part_name == part:
                     transition = Transition(part, part_name, associated_category, limit)
                     self.song_parts[transition.source_name].add_transition(transition)

@@ -1,6 +1,9 @@
 import subprocess
 import os
 import json
+# from flask import Flask
+from http.server import BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer
 import argparse
 from config import settings
 import joblib
@@ -31,6 +34,8 @@ parser.add_argument('app')
 parser.add_argument('--skip-checks', help='skip consistency checks', action="store_true")
 args = parser.parse_args()
 
+
+
 if not args.skip_checks:
     check_model_song_cats()
 
@@ -45,6 +50,12 @@ elif args.app == 'song':
     oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
     audience_client = udp_client.SimpleUDPClient(settings.ip, settings.AUDIENCE_PORT)
     performer_client = udp_client.SimpleUDPClient(settings.ip, settings.PERFORMER_PORT)
+    # http_server = ThreadingHTTPServer(('settings.ip', 5500), BaseHTTPRequestHandler)
+    # http_server.serve_forever()
+    # app = Flask(__name__)
+    # @app.route("/output")
+    # def output():
+    #     return "hello world"
 
     machine_instance = song_machine.create_instance(settings.song_path)
     synth_fb = machine_instance.parser.data[machine_instance.parser.SYNTH_CC]
@@ -72,3 +83,4 @@ elif args.app == 'osculator':
 
 else:
     raise Exception('Unknown command: {}. Please see run.py for options'.format(args.app))
+
