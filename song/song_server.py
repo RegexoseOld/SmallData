@@ -185,7 +185,7 @@ class SongServer:
         # print('SongerServer. sending: ', message)
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
         if next_part.name != self.beat_manager.current_part.name:
-            with open('../Experiments/frontend_tests/assets/parts.json', 'w', encoding='utf-8') as f:
+            with open('frontend/public/assets/parts.json', 'w', encoding='utf-8') as f:
                 json.dump([self.beat_manager.current_part.name, next_part.name], f, ensure_ascii=False)
 
     def _advance_song(self, next_part):
@@ -200,7 +200,7 @@ class SongServer:
 
         data = json.dumps(input_dict)
 
-        with open('../Experiments/frontend_tests/assets/data.json', 'w', encoding='utf-8') as f:
+        with open('frontend/public/assets/data.json', 'w', encoding='utf-8') as f:
             json.dump(input_dict, f, ensure_ascii=False)
 
         self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)
