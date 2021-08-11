@@ -1,8 +1,11 @@
 // frontend/src/App.js
 
+import React, { Component } from "react";
+import P5Wrapper from 'react-p5-wrapper';
+import sketch from './sketch_test';
 import Utterance from './components/Utterance';
 import TriggerCategory from './components/TriggerCategory';
-import React, { Component } from "react";
+
 
 
 const ColoredLine = ({ color }) => (
@@ -25,8 +28,7 @@ class App extends Component {
                     <div>
                         <Utterance/>
                     </div>
-
-
+                    <P5Wrapper sketch={sketch}></P5Wrapper>
                  </div>
             </main>
         );
