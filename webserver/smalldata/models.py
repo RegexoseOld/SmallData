@@ -12,6 +12,7 @@ class Category(models.Model):
 class Utterance(models.Model):
     category = models.ForeignKey('Category', on_delete=models.CASCADE, null=True)
     text = models.CharField(max_length=500)
+    created = models.DateTimeField(auto_now_add=True)
 
     def _str_(self):
         return self.text
@@ -20,6 +21,7 @@ class Utterance(models.Model):
 class TrainingUtterance(models.Model):
     category = models.CharField(max_length=500)
     text = models.CharField(max_length=500)
+    created = models.DateTimeField(auto_now_add=True)
 
     def _str_(self):
         return self.text

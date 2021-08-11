@@ -7,6 +7,12 @@ from rest_framework import viewsets
 from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
 from .models import Utterance, Category, TrainingUtterance
 
+from os import path
+import sys
+
+sys.path.append(path.abspath(path.dirname(__file__) + '/../..'))  # hack top make sure webserver can be imported
+sys.path.reverse()  # hack to make sure the project's config is used instead of a config from the package 'odf'
+
 from webserver.classification.Classifier_max import Classifier
 from webserver.sound.UDPClient import MusicClient
 from config import settings
