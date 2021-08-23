@@ -50,7 +50,7 @@ class Beat:
         with self.surface.beginDraw():
             self.surface.background(222)
             self.surface.textFont(font)
-            self.surface.textSize(50)
+            self.surface.textSize(150)
             self.surface.fill(col)
             self.surface.textAlign(CENTER)
             self.surface.text(
@@ -71,7 +71,7 @@ class Parts:
         with self.surface.beginDraw():
             self.surface.background(222)
             self.surface.textFont(font)
-            self.surface.textSize(25)
+            # self.surface.textSize(25)
             self.surface.fill(0)
             self.surface.textAlign(CENTER)
             self.surface.text(

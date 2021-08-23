@@ -1,24 +1,31 @@
 export default function sketch(p){
-  let tSize = 10;
-  //let p, inP;
+  let canvas;
   var font;
   let currentPart, nextPart;
-  let barWidth, barHeight, yPos
+  let barWidth, barHeight, yPos, tSize;
   var counterData = {};
   var parts = {};
-  let categories = ["praise", "dissence", "insinuation", "concession", "lecture"]
-  let canvas;
-
-
-  let counter = counterData['category_counter'];
+  let categories = ["praise", "dissence", "insinuation", "concession", "lecture"];
   let locked = counterData['is_locked'];
-  barHeight = 30;
-  let yOff = p.height / 2;
-  let xOff = 50;
-  let barOff = 120;
-  yPos = 40;
+  let yOff, xOff, barOff;
+  let counter;
 
-  function findColor(cat) {
+  p.preload = () => {
+    font = p.loadFont('../../assets/BebasNeue.otf');
+    p.loadJSON('../../assets/parts.json', gotParts);
+    p.loadJSON('../../assets/data.json', gotCounter);
+  }
+
+  function gotCounter(data) {
+    counterData = data;
+    counter = counterData['category_counter'];
+  }
+
+  function gotParts(data) {
+    parts = data;
+  }
+
+ function findColor(cat) {
     let col = p.color(0);
     if (cat == "praise") {
       col = p.color(196, 128, 79);
@@ -32,84 +39,77 @@ export default function sketch(p){
       col = p.color(133, 138, 37);
     }
     return col;
+ }
+
+  p.setup = () => {
+    canvas = p.createCanvas(500, 600);
+    tSize= 25;
+    yOff = p.height/2;
+    xOff = 50;
+    barOff = 120;
+    barWidth = 60;
+    barHeight = 30;
+    yPos = 40;
+    p.textFont(font, tSize);
+    p.textAlign(p.LEFT, p.TOP);
+    p.rectMode(p.CENTER);
+    p.noStroke();
   }
 
-  function gotCounter(data) {
-    counterData = data;
-  }
+  p.draw = () => {
 
-  function gotParts(data) {
-    parts = data;
+    p.background(222);
+    if (counterData) {
+       displayCounter();
+    }
   }
 
   function displayCounter() {
 
-      for (let i = 0; i < categories.length; i++) {
+    for (let i = 0; i < categories.length; i++) {
         let cat = categories[i];
         var limit = p.int(counter[cat].limit);
         var barCount = p.int(counter[cat].count);
         // console.log("cat " + cat + " barcount " + barCount);
-
-
         let col = findColor(cat);
         p.fill(col);
+        p.textSize(tSize);
         p.noStroke();
-        if (limit < 0) {
+      if (limit < 0) {
           barWidth = 0;
-          p.text("currently playing", 200, yOff + (yPos) * i);
-        } else if (limit < 0 && locked) {
+          p.text("läuft gerade " + cat + " hat keinen effekt", barOff, yOff + (yPos) * i);
+      } else if (limit < 0 && locked) {
           barWidth = 0;
           p.textSize(15);
           p.text('neuer Songpart wird geladen. Eingabe hat gerade keinen Effekt', 200, yOff + (yPos * i), p.width / 3, 200);
       } else {
         barWidth = 60
-      }
-      p.text(cat, xOff, yOff + (yPos) * i);
+   }
+      p.text(cat, xOff, yOff + (yPos * i));
       p.rectMode(p.CORNER);
       p.rect(xOff + barOff, yOff + (yPos * i), barCount * barWidth, barHeight);
+      // p.rect(xOff + barOff, yOff + (yPos * i), 200, barHeight);
       p.noFill();
-      p.stroke(0);
       p.rect(xOff + barOff, yOff + (yPos * i), limit * barWidth, barHeight + 5);
-      p.fill(0);
+      p.fill(2);
       if (barCount >= limit - 2 && limit > 0) {
-        p.textSize(20);
-        p.text("nur noch " + (limit + 1 - barCount) + " x " + cat + " bis zum " + cat + "-part", 120 + limit * barWidth + 20, yOff + (yPos * i));
+        p.textSize(18);
+        p.text("noch " + (limit + 1 - barCount) + " x " + cat + " bis zum " + cat + "-part", 200 , yOff + (yPos * i));
       }
     }
   }
-
-
-  p.preload = () => {
-    font = p.loadFont('../../assets/BebasNeue.otf');
-    p.loadJSON('../../assets/parts.json', gotParts);
-    p.loadJSON('../../assets/data.json', gotCounter);
-  }
-
-  p.updateParts = () => {
+   function updateParts(){
     p.loadJSON('../../assets/parts.json', gotParts);
     console.log('updating parts');
   }
 
-  p.setup = () => {
-    canvas = p.createCanvas(800, 600);
-    //print('lemon boob');
-    //setInterval(updateParts, 4000);
-    //p.setInterval(p.updateCounter, 2000);
-    p.textFont(font, 20);
-    p.textAlign(p.LEFT, p.TOP);
-    p.rectMode(p.CENTER);
-  }
-
-  p.updateCounter = () => {
+   function updateCounter() {
     console.log('updating counter');
     p.loadJSON('../..//data.json', gotCounter);
   }
 
-  p.draw = () => {
-    p.background(220);
-    if (counterData) {
-       displayCounter();
+  p.myCustomRedrawAccordingToNewPropsHandler = (newProps) => {
+      if(canvas) { //Make sure the canvas has been created
     }
-  }
 }
-
+}

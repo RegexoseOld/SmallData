@@ -42,7 +42,7 @@ export default function sketch(p){
  }
 
   p.setup = () => {
-    canvas = p.createCanvas(800, 600);
+    canvas = p.createCanvas(500, 600);
     tSize= 30;
     yOff = p.height/2;
     xOff = 50;
@@ -57,12 +57,8 @@ export default function sketch(p){
   }
 
   p.draw = () => {
-//  if (p.frameCount%240 == 0){
-//    updateCounter();
-//    updateParts();
-//    // console.log("reload data");
-//  }
-    p.background('lightblue');
+
+    p.background(222);
     if (counterData) {
        displayCounter();
     }
@@ -80,7 +76,7 @@ export default function sketch(p){
         p.noStroke();
       if (limit < 0) {
           barWidth = 0;
-          p.text("currently playing", 200, yOff + (yPos) * i);
+          p.text("läuft gerade/currently playing", 200, yOff + (yPos) * i);
       } else if (limit < 0 && locked) {
           barWidth = 0;
           p.textSize(15);
@@ -93,12 +89,11 @@ export default function sketch(p){
       p.rect(xOff + barOff, yOff + (yPos * i), barCount * barWidth, barHeight);
       // p.rect(xOff + barOff, yOff + (yPos * i), 200, barHeight);
       p.noFill();
-      p.stroke(0);
       p.rect(xOff + barOff, yOff + (yPos * i), limit * barWidth, barHeight + 5);
-      p.fill(222);
+      p.fill(2);
       if (barCount >= limit - 2 && limit > 0) {
-        p.textSize(20);
-        p.text("nur noch " + (limit + 1 - barCount) + " x " + cat + " bis zum " + cat + "-part", 200 + limit * barWidth + 20, yOff + (yPos * i));
+        p.textSize(18);
+        p.text("noch " + (limit + 1 - barCount) + " x " + cat + " bis zum " + cat + "-part", 200 , yOff + (yPos * i));
       }
     }
   }

@@ -49,7 +49,7 @@ elif args.app == 'song':
 
     oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
     audience_client = udp_client.SimpleUDPClient(settings.ip, settings.AUDIENCE_PORT)
-    performer_client = udp_client.SimpleUDPClient(settings.ip, settings.PERFORMER_PORT)
+    performer_client = udp_client.SimpleUDPClient(settings.performer_ip, settings.PERFORMER_PORT)
     # http_server = ThreadingHTTPServer(('settings.ip', 5500), BaseHTTPRequestHandler)
     # http_server.serve_forever()
     # app = Flask(__name__)
@@ -76,7 +76,7 @@ elif args.app == 'frontend':
 elif args.app == 'interpreter':
     # from mocks import mock_interpreter_client
     from mocks import mock_interpreter_keyboard, mock_interpreter_client
-    mock_interpreter_keyboard.run_mock()
+    mock_interpreter_client.run_mock()
 elif args.app == 'osculator':
     from mocks import beat_mock
     beat_mock.run_mock()
