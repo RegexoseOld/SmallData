@@ -44,18 +44,21 @@ export default class Utterance extends Component {
             <div>
                 <div className="row ">
                     <label>
-                        Please enter your utterance:
+                        Schreibe hier Deinen Beitrag zur Musik
                     </label>
                 </div>
 
                 <div className="row ">
                     <form onSubmit={this.handleSubmit}>
-                <textarea type="text" style={{width: 350}}
+                <textarea type="text" style={{width: 600}}
                           onChange={this.handleChange}
                           value={this.state.text}
                 />
+
                         <div>
-                            <input type="submit" value="Submit" />
+                            <input type="submit" value="kommentieren" />
+                            <p>  </p>
+
                         </div>
                     </form>
                 </div>

@@ -21,7 +21,8 @@ class Listen(OscEventListener):
                 current_part_name, next_part_name, current_beat, change_color)
         if m.checkAddrPattern("/counter"):
             new_counter = json.loads(m.arguments()[0])["category_counter"]
-            AREAS['status'].update_status(new_counter)
+            machine_is_locked = json.loads(m.arguments()[0])["is_locked"]
+            AREAS['status'].update_status(new_counter, machine_is_locked)
             
 
 def setup():
@@ -29,6 +30,7 @@ def setup():
     background(200)
     global font, font_bold
     font_size = width/20
+
     font = createFont("Helvetica", font_size, True)
     font_bold = createFont("Helvetica-Bold", font_size, True)
     global osc, loc
