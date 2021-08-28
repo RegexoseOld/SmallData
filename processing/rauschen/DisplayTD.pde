@@ -2,23 +2,28 @@ class DisplayTD {
   PFont font;
   int font_size, index;
   float x, y, sX, sY, angle;
-  String utt, cat, fontName;
+  PVector pos;
+  String utt, cat, user, fontName;
   PShape shape;
-  RShape area;
+  RShape rS;
+  Area area;
   color shapeColor; 
-  boolean isShape, matched;
+  boolean isShape;
   float shapeSize;
 
-  DisplayTD(int index, String utterance, String category, PShape shape, float sSize, boolean isShape) {
+  DisplayTD(int index, String utterance, String category, String _user, PShape shape, float sSize, boolean isShape) {
     this.index = index;
     this.utt = utterance;
     this.cat = category.toLowerCase();
+    this.user = _user;
     this.isShape = isShape;
-    this.matched = false; // should be checked only once between to incoming messages: line 70
     this.shape = shape;
+    this.shape.disableStyle();
     this.shapeSize = sSize;
-    shapeColor = attributeUtt(this.cat);
-    findArea();
+    this.shapeColor = findColor(this.cat);
+    this.area = areas.findArea(this.cat);
+    this.rS = this.area.rS;
+    this.pos = this.area.areaPos.get(3);
     this.font_size = 25;
     this.angle = int(random(TWO_PI));
     this.fontName = fontlist[int(random(fontlist.length))];
@@ -26,65 +31,38 @@ class DisplayTD {
   }
 
   void draw() {
-    mainSurf.s.beginDraw();
-    mainSurf.s.textFont(this.font);
-    mainSurf.s.fill(this.shapeColor, 60);
-    // mainSurf.s.fill(this.shapeColor);
-
-    mainSurf.s.pushMatrix();
-    mainSurf.s.translate(this.x, this.y);
-    mainSurf.s.rotate(this.angle);
-    if (this.isShape) {
-      this.shape.disableStyle();
-      mainSurf.s.fill(shapeColor);
-      mainSurf.s.shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
-    } else if (!this.isShape) {
-      mainSurf.s.textAlign(CENTER, CENTER);
-      mainSurf.s.textSize(random(40));
-      mainSurf.s.text(this.utt, 0, 0);
-    }
+    rauschSurf.s.beginDraw();
+    // rauschSurf.s.textFont(this.font);
+    rauschSurf.s.pushMatrix();
+    rauschSurf.s.translate(this.pos.x, this.pos.y);
+    rauschSurf.s.rotate(this.angle);
+    rauschSurf.s.fill(this.shapeColor);
+    rauschSurf.s.shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
     moveText();
-    mainSurf.s.popMatrix();
-    mainSurf.s.endDraw();
-  }
-
-  void findArea() {
-    for (Area a : areas.areas) {
-      if (a.name.equals(this.cat)) {
-        this.area = a.rS;
-        RPoint center = area.getCenter();
-        float aW = area.getWidth();
-        float aH = area.getHeight();
-        this.x = random(center.x - aW/3, center.x + aW/3);
-        this.y = random(center.y - aH/3, center.y + aH/3);
-        // println("   cat   " + this.cat + " x  " + this.x + "   y  " + this.y);
-      }
-    }
+    rauschSurf.s.popMatrix();
+    rauschSurf.s.endDraw();
   }
 
   void moveText() {
-    if (this.x < width && this.y < height) {
-      this.x += random(-10, 10);
-      ;
-      this.y += random(-8, 8);
-    } 
+    int rIndex = int(random(this.area.areaPos.size()));
+    this.pos = this.area.areaPos.get(rIndex);
     this.angle += random(-0.05, 0.05);
   }
 
   void matchInput(String incoming) {
-    if (this.utt.equals(incoming) && !messageLock && !this.matched && !mFade) {
+    if (this.utt.equals(incoming) && !messageLock && !matchedUtts.hasValue(incoming) && !mFade) {
       messageLock = true;
       mH.related = this.utt;
-      this.matched = true;
+      // println("matched!  " + incoming + "    with index  " + this.index);
+      matchedUtts.append(incoming);
       titleSurf1.col = shapeColor;
-      titleSurf2.col = attributeUtt(cat);
-      // println("matched!  " + incoming + "    with   " + this.utt);
+      titleSurf2.col = findColor(cat);
     }
   }
 }
 
 
-color attributeUtt(String cat) {
+color findColor(String cat) {
   color col = color(0);
   switch(cat) {
   case "praise" : 

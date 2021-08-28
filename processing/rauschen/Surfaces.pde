@@ -11,9 +11,9 @@ class Surface { //<>//
   PFont font;
   String name, message;
   ArrayList<SingleLine> uttLines;
-  int w, h, lineIndex;
+  int w, h, lineIndex, alpha;
   float  tSize;
-  boolean visible, fade;
+  boolean visible, fade, active, reset;
   color col;
 
   Surface(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible, String _message) {
@@ -23,13 +23,12 @@ class Surface { //<>//
     this.pos = new PVector(_x, _y);
     this.s = createGraphics(_w, _h);
     this.s.smooth();
-    this.uttLines = new ArrayList<SingleLine>();
     this.font = _font;
     this.visible = _visible;
     this.fade = false;
+    this.active = true;
+    this.reset = false;
     this.message= _message;
-    this.tSize = 1;
-    this.lineIndex = 0;
     initSurf();
   }
 
@@ -37,20 +36,28 @@ class Surface { //<>//
     if (this.name.startsWith("title")) {
       makeTitle();
     }
+    if (this.name.startsWith("match")) {
+      this.uttLines = new ArrayList<SingleLine>();
+      this.tSize = 1;
+      this.lineIndex = 0;
+    }
   }
 
   void clearBackground() {
+    println("clearing  " + this.name);
     this.s.beginDraw();
+    // this.s.clear();
     this.s.background(222); 
     this.s.endDraw();
+    println("visible? " + this.visible);
   }
 
 
   void display(String name) {
-    if (name.startsWith("match")) {
-      displayUtt();
+    if (name.startsWith("match") && !this.reset) {
+      displayMatch();
     }
-    if (name.startsWith("title")) {
+    if (name.startsWith("title") && !this.reset) {
       makeTitle();
     }
     if (name.startsWith("info")) {
@@ -62,20 +69,18 @@ class Surface { //<>//
     if (name.startsWith("counter")) {
       displayCounter();
     }
-
-    if (mFade) {
-      fadeGraphics(this.s, this.name, 2);
+    if (mFade && this.name.startsWith("match")) {
+      fadeGraphics(this.s, this.name, 5);
     }
   }
 
   void fadeGraphics(PGraphics c, String name, int fadeAmount) {
-    // println("fading   " + name);
     c.beginDraw();
     c.loadPixels();
     // iterate over pixels
     for (int i =0; i<c.pixels.length; i++) {
       // get alpha value
-      int alpha = (c.pixels[i] >> 24) & 0xFF ;
+      alpha = (c.pixels[i] >> 24) & 0xFF ;
       // reduce alpha value
       alpha = max(0, alpha-fadeAmount);
       // assign color with new alpha-value
@@ -83,11 +88,13 @@ class Surface { //<>//
     }
     c.updatePixels();
     c.endDraw();
+    // println("fading   " + name );
   }
 
-  void displayUtt() {
+  void displayMatch() {
     this.s.beginDraw();
-    this.s.clear();
+    // this.s.clear();
+    this.s.background(222);
     for (SingleLine sl : uttLines) {
       this.s.textFont(this.font, this.tSize);
       this.s.fill(sl.col);
@@ -106,7 +113,7 @@ class Surface { //<>//
     this.s.text(incomingText + "\t     " + incomingCat, 0, this.s.height/4, this.s.width, this.s.height);
     this.s.fill(189, 10, 10, 150);
     this.s.rect(0, 0, uttCount * prgIncrement, this.s.height/4);
-    this.s.text("Wir sind im / We are in the \t\t - - " + currentPart + " - - \t \t  Teil / Part", 0, this.s.height *2/3,this.s.width, this.s.height);
+    this.s.text("Wir sind im / We are in the \t\t - - " + currentPart + " - - \t \t  Teil / Part", 0, this.s.height *2/3, this.s.width, this.s.height);
     this.s.endDraw();
   }
 
@@ -135,7 +142,7 @@ class Surface { //<>//
       float rectCount = cat_count.getInt("count");
       this.s.rectMode(CENTER);
       this.s.textAlign(LEFT, TOP);
-      color fillcol = attributeUtt(cat);
+      color fillcol = findColor(cat);
       int alpha = (fillcol >> 24) & 0xFF;
       alpha = 255;
       fillcol = alpha<<24 | fillcol & 0xFFFFFF ;
@@ -165,20 +172,41 @@ class Surface { //<>//
     this.s.text(this.message, this.w/2, this.h/2);
     this.s.endDraw();
   }
+
+  void displaySculpture(String msg) {
+    Area a = areas.findArea(incomingCat);
+    a.sculptureText();
+    // println("area name  " + a.name + "   pos  " + pos);
+    this.s.beginDraw();
+    this.s.textFont(this.font);
+    this.s.textAlign(TOP, TOP);
+    this.s.pushMatrix();
+    this.s.translate(a.sC.x, a.sC.y);
+    this.s.rotate(a.textAngle);
+    this.s.fill(255);
+    this.s.noStroke();
+    this.s.rect(0, 0, textWidth(msg), textAscent());
+    this.s.fill(a.col);
+    this.s.text(msg, 0, 0);
+    this.s.popMatrix();
+
+
+    this.s.endDraw();
+    a.textAngle += a.progressAngle;
+  }
 }
 
 void buildSurfaces() {
-  // println("x " + width/30 + " y " + height/2 + " w " +  width *3/7 + " h " + height/5);
-  mainSurf = new Surface("main", 0, 0, width, height, messageFont, true, "");
+  rauschSurf = new Surface("rausch", 0, 0, width, height, messageFont, true, "");
   incSurf = new Surface("matchSurf1", width/30, height/2, width *3/7, height/5, messageFont, false, incomingText);
   matchSurf = new Surface("matchSurf2", width *5/9, height/2, width *3/7, height/5, messageFont, false, "");
   titleSurf1 = new Surface("titleIncoming", int(incSurf.pos.x), int(incSurf.pos.y-80), int(incSurf.w), 50, infoFont, false, "Dein Kommentar ähnelt...");
   titleSurf2 =  new Surface("titleMatch", int(matchSurf.pos.x), int(matchSurf.pos.y-80), int(matchSurf.w), 50, infoFont, false, "...diesem hier");
-  dupSurf2 = new Surface("dup2", int(titleSurf2.pos.x), int(titleSurf2.pos.y), matchSurf.w, matchSurf.h + titleSurf2.h, messageFont, false, "");
   infoSurf = new Surface("infoSurf", 0, height-height/12, width, height/12, infoFont, true, incomingText);
-  articleSurf = new Surface("article", 0, 0, infoSurf.s.width, infoSurf.s.height, infoFont, false, "");
   counterSurf = new Surface("counter", 0, height *3/4, width/8, height/6, infoFont, false, "categories");
-  surfs[0] = mainSurf;
+  articleSurf = new Surface("article", 0, 0, infoSurf.s.width, infoSurf.s.height, infoFont, false, "");
+  sculptureSurf = new Surface("sculpture", 0, 0, width, height, infoFont, true, incomingText);
+  surfs[0] = rauschSurf;
   surfs[1] = incSurf;
   surfs[2] = matchSurf;
   surfs[3] = titleSurf1;
@@ -186,7 +214,7 @@ void buildSurfaces() {
   surfs[5] = infoSurf;
   surfs[6] = counterSurf;
   surfs[7] = articleSurf;
-  surfs[8] = dupSurf2;
+  surfs[8] = sculptureSurf;
 }
 
 StringList makeList(String type) {

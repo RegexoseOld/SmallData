@@ -6,9 +6,9 @@ void oscEvent(OscMessage m) {
     oscTextIn = parseJSONObject((String) m.arguments()[0]);
     incomingText = oscTextIn.getString("text");
     incomingCat = oscTextIn.getString("cat");
-    currentCol = attributeUtt(incomingCat);
+    currentCol = findColor(incomingCat);
     category_counter = oscTextIn.getJSONObject("category_counter");
-    println("counter  " + category_counter);
+    // println("counter  " + category_counter);
     for (String c : cats) {
       JSONObject cat = category_counter.getJSONObject(c);
       int lim = cat.getInt("limit");
@@ -19,18 +19,17 @@ void oscEvent(OscMessage m) {
     JSONObject newIncomingCat = category_counter.getJSONObject(incomingCat);
     cat_limit = newIncomingCat.getInt("limit");
     cat_counts = newIncomingCat.getInt("count");
-    surfs[6].visible = true;
-    // boolean is_locked = incomingUtt.getBoolean("is_locked");
+    sculptureSurf.displaySculpture(incomingText);
     messageIn = true;
     println("new utt: " + incomingText);
     PShape shape = loadShape(shapeMapping.get(incomingCat));
     float shapeSize = cat_counts * 10;
-    int newIndex= 100;
-    incomingUtt = new DisplayTD(newIndex, incomingText, incomingCat, shape, shapeSize, true);
-    updateUtts = true;
+    // add new utterance to utts
+    int newIndex = utts.size();
+    incomingUtt = new DisplayTD(newIndex, incomingText, incomingCat, "kommentariat", shape, shapeSize, true);
     updateUtts();
     StringList updated = new StringList();
-    for (int x=0; x<utts.size(); x++) {
+    for (int x=0;  x<utts.size(); x++) {
       DisplayTD utt = utts.get(x);
       if (utt.isShape) {
         updated.append(utt.utt);
@@ -59,7 +58,6 @@ void updateUtts() {
     break; // just remove one utt
   }
   utts.add(incomingUtt);
-  updateUtts = false;
   // println(" still  updating2?   " + updateUtts + " " + frameCount);
 } 
 

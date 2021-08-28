@@ -50,6 +50,7 @@ class Beat:
         with self.surface.beginDraw():
             self.surface.background(222)
             self.surface.textFont(font)
+
             self.surface.textSize(150)
             self.surface.fill(col)
             self.surface.textAlign(CENTER)

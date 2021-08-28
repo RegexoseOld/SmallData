@@ -1,4 +1,4 @@
-import java.util.Timer;   //<>// //<>//
+import java.util.Timer;  //<>//
 import java.util.TimerTask;
 import java.util.Map;
 import java.util.List;
@@ -12,15 +12,15 @@ NetAddress loc;
 
 final Timer t = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
-Surface mainSurf, incSurf, matchSurf, titleSurf1, articleSurf, dupSurf2, titleSurf2, infoSurf, counterSurf;
+Surface rauschSurf, incSurf, matchSurf, titleSurf1, articleSurf, sculptureSurf, titleSurf2, infoSurf, counterSurf;
 Surface[] surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
 Areas areas;
-RShape area, newarea;
 MessageHighlight mH; // Environment for growing Text display
 String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
+StringList matchedUtts;
 PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
 JSONObject oscTextIn, category_counter; 
@@ -29,7 +29,7 @@ color currentCol;
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
 boolean messageIn = false; // background reset
 boolean updateUtts = false;
-boolean mFade;
+boolean mFade, vector;
 StringDict shapeMapping = new StringDict(); // mapping to attribute categories to SVG filenames
 int maxUtts = 1;
 int cat_limit, cat_counts, noiseStart, noiseLimit, noiseInc;
@@ -38,22 +38,23 @@ int uttCount = 0;
 Table article;
 
 void setup() {
-  size(1800, 1200);
+  fullScreen();  // size(1000, 700);
   TD = loadJSONObject("TrainingDataPelle01.json");
   article = loadTable("Moderation.tsv", "header");
   surfs = new Surface[9];
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[25], 20, true);
+  buildSurfaces();
   oscP5 = new OscP5(this, 5040); //Audience Port
-  loc = new NetAddress("127.0.0.1", 5040); // send to self
+  loc = new NetAddress("192.168.1.16", 5040); // send to self
   RG.init(this);
-  RG.ignoreStyles(false);
+  RG.ignoreStyles(true);
   RG.setPolygonizer(RG.ADAPTATIVE);
+  vector = true;
   areas = new Areas(cats);
   buildUtts(480);
   mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
-  // margin1 = new Margin(incSurf.w, incSurf.h, 0.05);
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
   mFade = false;
@@ -61,7 +62,10 @@ void setup() {
   noiseStart = 0;
   noiseLimit = noiseInc;
   moderation = "moderation";
-  frameRate(20);
+
+
+  matchedUtts = new StringList();
+  // frameRate(20);
 }
 
 void draw() {
@@ -69,8 +73,9 @@ void draw() {
   //  pickIncoming(); //automatische messages werden ausgesucht
   //} 
   if (messageIn) {
-    surfs[0].clearBackground();
+    rauschSurf.clearBackground();
     messageIn = !messageIn;
+    //sculptureSurf.visible = true;
   }
 
   for (int x=noiseStart; x<noiseLimit; x++) {
@@ -83,7 +88,7 @@ void draw() {
     // einblenden der Surfaces
     for (int i=1; i<5; i++) {
       Surface s = surfs[i];
-      s.visible = true;
+      //s.visible = true;
     }
     float gravity = 3 * mH.mass;
     mH.applyForce(gravity);
@@ -97,7 +102,8 @@ void draw() {
     mH.updateFade();
   }
 
-  for (Surface surf : surfs) {
+  for (int i=0; i<surfs.length; i++) {
+    Surface surf = surfs[i];
     if (surf.visible) {
       surf.display(surf.name);
       image(surf.s, surf.pos.x, surf.pos.y);
@@ -109,6 +115,11 @@ void draw() {
   } else if (noiseLimit > utts.size() - noiseInc ) {
     noiseStart = 0;
     noiseLimit = noiseInc;
+  }
+
+  for (Area a : areas.areas) {
+    //a.draw(rauschSurf.s);
+    //a.drawOutlines();
   }
 }
 
@@ -129,13 +140,63 @@ void buildUtts(int amount) {
   shapeMapping.set("concession", "knacks04.svg");
   shapeMapping.set("lecture", "knacks05.svg");
   for (int i=0; i<amount; i++) {
-    int index = int(random(TD.size()));
-    JSONObject row = TD.getJSONObject(str(index));
+    // int index = int(random(TD.size()));
+    JSONObject row = TD.getJSONObject(str(i));
     String utterance = row.getString("utterance");
     String category = row.getString("category").toLowerCase();
+    String user = row.getString("user");
     PShape shape = loadShape(shapeMapping.get(category));
-    DisplayTD utt = new DisplayTD(i, utterance, category, shape, 5, false);
+    shape.setFill(findColor(category));
+    DisplayTD utt = new DisplayTD(i, utterance, category, user, shape, 5, false);
     utts.add(utt);
+  }
+}
+
+void visibility(char k) {
+
+  switch(k) {
+
+  case '1':
+    rauschSurf.visible = !rauschSurf.visible;
+    break;
+  case '2':
+    incSurf.visible = !incSurf.visible;
+    matchSurf.visible = !matchSurf.visible;
+    titleSurf1.visible = !titleSurf1.visible;
+    titleSurf2.visible = !titleSurf2.visible;
+    break;
+  case '3':
+    infoSurf.visible = !infoSurf.visible;
+    break;
+  case '4':
+    counterSurf.visible = !counterSurf.visible;
+    break;
+  case '5':
+    articleSurf.visible = !articleSurf.visible;
+    break;
+  case '6':
+    sculptureSurf.visible = !sculptureSurf.visible;
+    break;
+  case 'm':
+    moderation = "moderation";
+    break;
+  case 'a':
+    moderation = "article";
+    break;
+
+  case 'q':
+    vector = !vector;
+    rauschSurf.s.beginDraw();
+    rauschSurf.s.background(222 );
+    rauschSurf.s.endDraw();
+    break;
+    
+  case 'r' :
+    for (Surface s : surfs) {
+      s.s.beginDraw();
+      s.s.background(222);
+      s.s.endDraw();
+    }
   }
 }
 
@@ -143,14 +204,5 @@ void keyReleased() {
   if (key == 'n') {
     articleSurf.lineIndex ++;
   }
-  if (key == 'v') {
-    articleSurf.visible = !articleSurf.visible;
-  }
-  
-  if (key == 'm') {
-    moderation = "moderation";
-  }
-  if (key == 'a') {
-    moderation = "article";
-  }
+  visibility(key);
 }

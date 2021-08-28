@@ -26,10 +26,11 @@ class Listen(OscEventListener):
             
 
 def setup():
-    size(1800, 1000)
+    size (1800, 1200)
     background(200)
     global font, font_bold
-    font_size = 75
+    font_size = width/20
+
     font = createFont("Helvetica", font_size, True)
     font_bold = createFont("Helvetica-Bold", font_size, True)
     global osc, loc

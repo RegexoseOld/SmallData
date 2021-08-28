@@ -14,7 +14,6 @@ class MessageHighlight {
     mass = m;
     velocity = 0;
     acceleration = 0;
-    buildSurfaces();
     angle = 0;
     this.font = font;
     this.tSize = 10.0;
@@ -50,13 +49,18 @@ class MessageHighlight {
     }
     if (messType.equals("incomingSurf")) {
       Surface s = surfs[1];
+      s.reset = false;
       s.uttLines = tempsingle;
       s.tSize = this.tSize;
     } else if (messType.equals("matchSurf")) {
       Surface s = surfs[2];
+      s.reset = false;
       s.uttLines = tempsingle;
       s.tSize = this.tSize;
     }
+    // reactivate titleSurfs
+    surfs[3].reset = false;
+    surfs[4].reset = false;
   }
 
   void update() {
@@ -88,6 +92,7 @@ class MessageHighlight {
       reset();
     }
     acceleration = 0;
+    
   }
 
   void applyForce(float force) {
@@ -112,7 +117,7 @@ class MessageHighlight {
   }
 
   void reset() {
-    this.tSize = 10.0;
+    this.tSize = 1.0;
     this.tWidth = incSurf.w/6;
     this.tHeight = incSurf.h/6;
     this.stopGrow = false;
@@ -120,7 +125,10 @@ class MessageHighlight {
     this.acceleration = 0;
     for (int i=1; i<5; i++) {
       Surface s = surfs[i];
-      s.visible = false;
+      s.clearBackground();
+      // reset is more visible disappearance of the Surface
+      s.reset = true;
+      //s.visible = false;
     }
   }
 }
