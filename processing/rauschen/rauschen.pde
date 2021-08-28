@@ -47,7 +47,7 @@ void setup() {
   infoFont = createFont(fontlist[25], 20, true);
   buildSurfaces();
   oscP5 = new OscP5(this, 5040); //Audience Port
-  loc = new NetAddress("127.0.0.1", 5040); // send to self
+  loc = new NetAddress("192.168.1.16", 5040); // send to self
   RG.init(this);
   RG.ignoreStyles(true);
   RG.setPolygonizer(RG.ADAPTATIVE);

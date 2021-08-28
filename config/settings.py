@@ -14,6 +14,7 @@ note_end = 12
 # OSC-Settings
 ip = "127.0.0.1"
 performer_ip = "192.168.1.164"
+audience_ip = "192.168.1.16"
 PERFORMER_COUNTER_ADDRESS = "/counter"
 SONG_ADVANCE_ADDRESS = '/advance'
 SONG_RACK_ADDRESS = '/rack'

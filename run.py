@@ -48,7 +48,7 @@ elif args.app == 'song':
     from song.user_feedback import Tonality, SynthFeedback
 
     oscul_client = udp_client.SimpleUDPClient(settings.ip, settings.OSCULATOR_PORT)
-    audience_client = udp_client.SimpleUDPClient(settings.ip, settings.AUDIENCE_PORT)
+    audience_client = udp_client.SimpleUDPClient(settings.audience_ip, settings.AUDIENCE_PORT)
     performer_client = udp_client.SimpleUDPClient(settings.performer_ip, settings.PERFORMER_PORT)
     # http_server = ThreadingHTTPServer(('settings.ip', 5500), BaseHTTPRequestHandler)
     # http_server.serve_forever()
