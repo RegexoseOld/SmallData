@@ -1,4 +1,4 @@
-import java.util.Timer; 
+import java.util.Timer;  //<>//
 import java.util.TimerTask;
 import java.util.Map;
 import java.util.List;
@@ -38,7 +38,7 @@ int uttCount = 0;
 Table article;
 
 void setup() {
-  size(1000, 700);
+  fullScreen();  // size(1000, 700);
   TD = loadJSONObject("TrainingDataPelle01.json");
   article = loadTable("Moderation.tsv", "header");
   surfs = new Surface[9];
