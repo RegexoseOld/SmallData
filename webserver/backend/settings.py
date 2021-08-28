@@ -25,7 +25,7 @@ SECRET_KEY = 'k-#j-gde%se!%j76d39ommy=d0-v&_2jcb%17y0p%m-@4slnl*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.1.164"]
 
 
 # Application definition
@@ -127,5 +127,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # we whitelist localhost:3000 because that's where frontend will be served
 CORS_ORIGIN_WHITELIST = [
-         'http://localhost:3000'
+         'http://localhost:3000',
+        'http://192.168.1.164:3000'
      ]

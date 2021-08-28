@@ -40,7 +40,7 @@ if not args.skip_checks:
     check_model_song_cats()
 
 if args.app == 'backend':
-    p = subprocess.check_call(["python", "webserver/manage.py", "runserver"])
+    p = subprocess.check_call(["python", "webserver/manage.py", "runserver", "0.0.0.0:8000"])
 elif args.app == 'song':
     from pythonosc import udp_client
     from song import song_machine
