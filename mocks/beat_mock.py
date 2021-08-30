@@ -4,7 +4,7 @@ from config import settings
 
 
 notes = list(settings.note_to_beat.keys())
-song_client = SimpleUDPClient(settings.ip, settings.SONG_SERVER_PORT)
+song_client = SimpleUDPClient(settings.ips["song_server"], settings.SONG_SERVER_PORT)
 
 
 def run_mock():

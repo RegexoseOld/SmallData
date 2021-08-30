@@ -5,8 +5,8 @@ import pickle
 from config import settings
 from song import song_machine
 
-song_client = SimpleUDPClient(settings.ip, settings.SONG_SERVER_PORT)
-processing_client = SimpleUDPClient(settings.ip, settings.AUDIENCE_PORT)
+song_client = SimpleUDPClient(settings.ips["song_server"], settings.SONG_SERVER_PORT)
+processing_client = SimpleUDPClient(settings.ips["audience"], settings.AUDIENCE_PORT)
 texts = ['Dies ist der nullte Kommentar von Mock_Interpreter_Client',
          'Dies ist der erste Kommentar',
          'der zweite Kommentar',

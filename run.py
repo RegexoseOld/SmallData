@@ -50,12 +50,6 @@ elif args.app == 'song':
     oscul_client = udp_client.SimpleUDPClient(settings.ips['song_server'], settings.OSCULATOR_PORT)
     audience_client = udp_client.SimpleUDPClient(settings.ips['audience'], settings.AUDIENCE_PORT)
     performer_client = udp_client.SimpleUDPClient(settings.ips['performer'], settings.PERFORMER_PORT)
-    # http_server = ThreadingHTTPServer(('settings.ip', 5500), BaseHTTPRequestHandler)
-    # http_server.serve_forever()
-    # app = Flask(__name__)
-    # @app.route("/output")
-    # def output():
-    #     return "hello world"
 
     machine_instance = song_machine.create_instance(settings.song_path)
     synth_fb = machine_instance.parser.data[machine_instance.parser.SYNTH_CC]
