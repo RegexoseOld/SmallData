@@ -17,7 +17,10 @@ export default class Utterance extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        fetch("http://192.168.1.164:8000/api/utterances/", {
+
+        const url = "http://127.0.0.1:8000";
+
+        fetch(url + "/api/utterances/", {
             method: "POST",
             body: JSON.stringify(this.state),
             headers: {

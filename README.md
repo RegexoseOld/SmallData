@@ -48,3 +48,4 @@ The entire application consists of several apps that communicate via OSC. The in
  - django-rest-framework
  - sklearn
  - npm
+ - pyttsx3

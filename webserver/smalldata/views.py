@@ -17,10 +17,12 @@ from webserver.classification.Classifier_max import Classifier
 from webserver.sound.UDPClient import MusicClient
 from config import settings
 
+
+
 clf = Classifier(settings.DATA_DIR)
 #   Client for a simple Feedback from Ableton Live
-song_client = MusicClient(settings.ip, settings.SONG_SERVER_PORT)
-display_client = MusicClient(settings.ip, settings.AUDIENCE_PORT)
+song_client = MusicClient(settings.ips['song_server'], settings.SONG_SERVER_PORT)
+display_client = MusicClient(settings.ips['audience'], settings.AUDIENCE_PORT)
 
 
 def send_to_music_server(utterance, category):

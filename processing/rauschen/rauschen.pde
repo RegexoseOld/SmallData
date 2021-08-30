@@ -23,7 +23,7 @@ String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
 PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
-JSONObject oscTextIn, category_counter; 
+JSONObject oscTextIn, category_counter, ip_config; 
 String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
 color currentCol;
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
@@ -40,6 +40,8 @@ Table article;
 void setup() {
   fullScreen();  // size(1000, 700);
   TD = loadJSONObject("TrainingDataPelle01.json");
+  ip_config = loadJSONObject("../../config/ip_config.json");
+  String ip = ip_config.getString("audience");
   article = loadTable("Moderation.tsv", "header");
   surfs = new Surface[9];
   fontlist = PFont.list();
@@ -47,7 +49,7 @@ void setup() {
   infoFont = createFont(fontlist[25], 20, true);
   buildSurfaces();
   oscP5 = new OscP5(this, 5040); //Audience Port
-  loc = new NetAddress("192.168.1.16", 5040); // send to self
+  loc = new NetAddress(ip, 5040); // send to self
   RG.init(this);
   RG.ignoreStyles(true);
   RG.setPolygonizer(RG.ADAPTATIVE);

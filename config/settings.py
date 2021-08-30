@@ -1,5 +1,5 @@
 from os import path
-
+import json
 
 #  Directories
 BASE_DIR = path.dirname(path.dirname(path.abspath(__file__)))
@@ -8,13 +8,12 @@ DATA_DIR = path.join(BASE_DIR, 'webserver/model_data')
 # Song settings
 song_file = "bossa_new.json"
 song_path = path.join(BASE_DIR, 'config', song_file)
+ips = json.load(open('config/ip_config.json'))
+
 note_intro = 0
 note_end = 12
 
 # OSC-Settings
-ip = "127.0.0.1"
-performer_ip = "192.168.1.164"
-audience_ip = "192.168.1.16"
 PERFORMER_COUNTER_ADDRESS = "/counter"
 SONG_ADVANCE_ADDRESS = '/advance'
 SONG_RACK_ADDRESS = '/rack'
@@ -32,6 +31,7 @@ DISPLAY_INIT_ADDRESS = "/display_init"
 DISPLAY_PORT = 5030
 AUDIENCE_PORT = 5040
 PERFORMER_PORT = 5050
+FRONTEND_PORT = 3000
 
 
 # MIDI-note-to-beat-counter-conversion (for Ableton)

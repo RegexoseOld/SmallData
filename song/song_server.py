@@ -62,7 +62,7 @@ class SongServer:
     rack_fade_val = 0
 
     def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager,
-                 tonality):
+                 tonality, server_ip):
         self.osculator_client = osculator_client
         self.audience_client = audience_client
         self.performer_client = performer_client
@@ -74,7 +74,7 @@ class SongServer:
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
         dispatcher.map(settings.SONG_BEAT_ADDRESS, self.beat_handler)
         dispatcher.map(settings.SONG_SYNTH_RESET_ADDRESS, self.reset_handler)
-        self.server = ThreadingOSCUDPServer((settings.ip, settings.SONG_SERVER_PORT), dispatcher)
+        self.server = ThreadingOSCUDPServer((server_ip, settings.SONG_SERVER_PORT), dispatcher)
 
         self.song_scenes = {k: v for k, v in zip(
             self.song_machine.parser.song_parts,
