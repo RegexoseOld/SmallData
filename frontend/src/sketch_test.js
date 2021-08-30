@@ -27,15 +27,15 @@ export default function sketch(p){
 
  function findColor(cat) {
     let col = p.color(0);
-    if (cat == "praise") {
+    if (cat === "praise") {
       col = p.color(196, 128, 79);
-    } else if (cat == "dissence") {
+    } else if (cat === "dissence") {
       col = p.color(150, 63, 146);
-    } else if (cat == "insinuation") {
+    } else if (cat === "insinuation") {
       col = p.color(21, 143, 84);
-    } else if (cat == "lecture") {
+    } else if (cat === "lecture") {
       col = p.color(23, 139, 189);
-    } else if (cat == "concession") {
+    } else if (cat === "concession") {
       col = p.color(133, 138, 37);
     }
     return col;
