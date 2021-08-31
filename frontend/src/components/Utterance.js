@@ -2,11 +2,13 @@
 
 import React, { Component } from "react";
 import fetch from "node-fetch";
+import { Button} from 'react-bootstrap';
 
 
 export default class Utterance extends Component {
     constructor(props) {
         super(props);
+        this.utteranceRef = React.createRef();
         this.state = {
             text: ''
         };
@@ -42,30 +44,34 @@ export default class Utterance extends Component {
         this.setState({text: ''});
     }
 
+    // this focusses on the textarea after the alert-window is closed
+    componentDidUpdate () {
+      this.utteranceRef.current.focus();
+    }
+
+    // this focusses on the textarea after the page is reloaded
+    componentDidMount () {
+      this.utteranceRef.current.focus();
+    }
+
     render() {
         return (
-            <div>
-                <div className="row ">
+            <div className="row ">
+                <form>
                     <label>
                         Schreibe hier Deinen Beitrag zur Musik
                     </label>
-                </div>
 
-                <div className="row ">
-                    <form onSubmit={this.handleSubmit}>
-                <textarea type="text" style={{width: 600}}
+                    <textarea type="text" style={{width: 600}}
+                          ref={this.utteranceRef}
                           onChange={this.handleChange}
                           value={this.state.text}
-                />
-
-                        <div>
-                            <input type="submit" value="kommentieren" />
-                            <p>  </p>
-
-                        </div>
-                    </form>
-                </div>
+                    />
+                    <Button onClick={this.handleSubmit}>kommentieren</Button>
+                </form>
+                <p> </p>
             </div>
         );
     }
 }
+ //  onSubmit=
