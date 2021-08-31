@@ -78,7 +78,7 @@ export default class Utterance extends Component {
                           onKeyPress={this.handleKeypress.bind(this)}
                     />
                     <Button variant="outline-secondary"
-                        onClick={this.handleSubmit}
+                        onClick={this.handleSubmit}>
                         kommentieren</Button>
                 </form>
                 <p> </p>
