@@ -19,21 +19,23 @@ export default class Utterance extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-
-        const url = "http://127.0.0.1:8000";
-
-        fetch(url + "/api/utterances/", {
-            method: "POST",
-            body: JSON.stringify(this.state),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(response => {
-            (response.json().then(data => {alert('You said: ' + data['text'] +
-                '\n Machine thinks: ' + data['category']['name'])
-            }).then(val => this.resetForm()))
-        });
+        if (this.state.text === "") {
+            alert('Bitte einen Kommentar eingeben')
+        } else {
+            const url = "http://127.0.0.1:8000";
+            fetch(url + "/api/utterances/", {
+                method: "POST",
+                body: JSON.stringify(this.state),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            }).then(response => {
+                (response.json().then(data => {alert('You said: ' + data['text'] +
+                    '\n Machine thinks: ' + data['category']['name'])
+                }).then(val => this.resetForm()))
+            });
+        }
     }
 
     handleChange(event) {
@@ -54,6 +56,13 @@ export default class Utterance extends Component {
       this.utteranceRef.current.focus();
     }
 
+    handleKeypress(e) {
+      //it triggers by pressing the enter key
+        if (e.key === "Enter") {
+          this.handleSubmit(e);
+        }
+    };
+
     render() {
         return (
             <div className="row ">
@@ -66,8 +75,11 @@ export default class Utterance extends Component {
                           ref={this.utteranceRef}
                           onChange={this.handleChange}
                           value={this.state.text}
+                          onKeyPress={this.handleKeypress.bind(this)}
                     />
-                    <Button onClick={this.handleSubmit}>kommentieren</Button>
+                    <Button variant="outline-secondary"
+                        onClick={this.handleSubmit}
+                        kommentieren</Button>
                 </form>
                 <p> </p>
             </div>
