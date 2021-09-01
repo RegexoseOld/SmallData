@@ -3,6 +3,9 @@
 import React, { Component } from "react";
 import fetch from "node-fetch";
 import { Button} from 'react-bootstrap';
+import { ToastContainer, toast, Slide } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default class Utterance extends Component {
@@ -20,7 +23,7 @@ export default class Utterance extends Component {
     handleSubmit(e) {
         e.preventDefault();
         if (this.state.text === "") {
-            alert('Bitte einen Kommentar eingeben')
+            toast.error('Bitte einen Kommentar eingeben')
         } else {
             const url = "http://127.0.0.1:8000";
             fetch(url + "/api/utterances/", {
@@ -31,11 +34,15 @@ export default class Utterance extends Component {
                     'Content-Type': 'application/json'
                 },
             }).then(response => {
-                (response.json().then(data => {alert('You said: ' + data['text'] +
-                    '\n Machine thinks: ' + data['category']['name'])
-                }).then(val => this.resetForm()))
+                (response.json().then(data => {this.notify(data)
+            }).then(val => this.resetForm()))
             });
         }
+    }
+
+    notify(data) {
+        toast.info(<div>You said: {data['text']}
+                    <br /> Machine thinks: {data['category']['name']} </div>);
     }
 
     handleChange(event) {
@@ -65,7 +72,22 @@ export default class Utterance extends Component {
 
     render() {
         return (
+
             <div className="row ">
+                        <div>
+                <ToastContainer
+                    position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    transition={Slide}
+                    />
+            </div>
                 <form>
                     <label>
                         Schreibe hier Deinen Beitrag zur Musik
