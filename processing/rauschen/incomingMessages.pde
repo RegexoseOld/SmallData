@@ -6,9 +6,10 @@ void oscEvent(OscMessage m) {
     oscTextIn = parseJSONObject((String) m.arguments()[0]);
     incomingText = oscTextIn.getString("text");
     incomingCat = oscTextIn.getString("cat");
+    //vcprintln("incoming CAt  " + incomingCat);
     currentCol = findColor(incomingCat);
     category_counter = oscTextIn.getJSONObject("category_counter");
-    // println("counter  " + category_counter);
+    
     for (String c : cats) {
       JSONObject cat = category_counter.getJSONObject(c);
       int lim = cat.getInt("limit");
@@ -70,7 +71,9 @@ void pickIncoming() {
     int index = int(random(TD.size()));
     JSONObject row = TD.getJSONObject(str(index));
     String utterance = row.getString("utterance");
+    String category = row.getString("category");
     incomingText = utterance;
+    incomingCat = category;
     mH.incoming = incomingText;
     // println("new incoming: " + incomingText);
     background(222);

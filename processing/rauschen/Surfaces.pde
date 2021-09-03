@@ -1,4 +1,4 @@
-class Surface { //<>//
+class Surface {  //<>//
   /*
   Surfaces haben verschiedene Funktionen
    permanent = main und infosurf, sind immer visible
@@ -44,12 +44,12 @@ class Surface { //<>//
   }
 
   void clearBackground() {
-    println("clearing  " + this.name);
+    // println("clearing  " + this.name);
     this.s.beginDraw();
     // this.s.clear();
     this.s.background(222); 
     this.s.endDraw();
-    println("visible? " + this.visible);
+    // println("visible? " + this.visible);
   }
 
 
@@ -104,13 +104,14 @@ class Surface { //<>//
   }
 
   void displayInfo() {
+    String cat = translatedCats.getString(incomingCat);
     this.s.beginDraw();
     this.s.background(222);
     this.s.textFont(this.font, 15);
     this.s.fill(20, 200);
     this.s.rectMode(CORNER);
     // progress bar for remaining Timer
-    this.s.text(incomingText + "\t     " + incomingCat, 0, this.s.height/4, this.s.width, this.s.height);
+    this.s.text(incomingText + "\t     " + cat, 0, this.s.height/4, this.s.width, this.s.height);
     this.s.fill(189, 10, 10, 150);
     this.s.rect(0, 0, uttCount * prgIncrement, this.s.height/4);
     this.s.text("Wir sind im / We are in the \t\t - - " + currentPart + " - - \t \t  Teil / Part", 0, this.s.height *2/3, this.s.width, this.s.height);
@@ -136,17 +137,18 @@ class Surface { //<>//
     int rectWidth = 22; 
     int yPos = 30;
     for (int i=1; i<category_counter.size()+1; i++) {
-      String cat = cats[i-1];
-      JSONObject cat_count = category_counter.getJSONObject(cat);
+      String category = cats[i-1];
+      JSONObject cat_count = category_counter.getJSONObject(category);
       float limit = cat_count.getInt("limit");
       float rectCount = cat_count.getInt("count");
       this.s.rectMode(CENTER);
       this.s.textAlign(LEFT, TOP);
-      color fillcol = findColor(cat);
+      color fillcol = findColor(category);
       int alpha = (fillcol >> 24) & 0xFF;
       alpha = 255;
       fillcol = alpha<<24 | fillcol & 0xFFFFFF ;
       // println("ypos  " + yPos *i);
+      String cat = translatedCats.getString(category);
       this.s.fill(fillcol);
       this.s.text(cat, 10, (yPos +3) *i);
       this.s.noStroke();
@@ -179,13 +181,15 @@ class Surface { //<>//
     // println("area name  " + a.name + "   pos  " + pos);
     this.s.beginDraw();
     this.s.textFont(this.font);
+    this.s.textSize(20);
     this.s.textAlign(TOP, TOP);
     this.s.pushMatrix();
     this.s.translate(a.sC.x, a.sC.y);
     this.s.rotate(a.textAngle);
     this.s.fill(255);
     this.s.noStroke();
-    this.s.rect(0, 0, textWidth(msg), textAscent());
+    println("text Ascent " + textAscent() + "text Width:  " + textWidth(msg) );
+    this.s.rect(0, 0, textWidth(msg), textAscent() * 0.7);
     this.s.fill(a.col);
     this.s.text(msg, 0, 0);
     this.s.popMatrix();
