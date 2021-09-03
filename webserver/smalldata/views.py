@@ -51,10 +51,13 @@ class UtteranceView(viewsets.ModelViewSet):
         # lookup found category in database
         #  TODO: build a test during startup to make sure the db and the model reproduce the same categories!
         categories = Category.objects.all().filter(name=str(cat))
-        if not categories:  # if db is inconsistent with model, just use any cat
+        if categories:
+            category = categories[0]
+        else:  # if db is inconsistent with model, use a random cat
             categories = Category.objects.all()
+            category = categories[random.randint(0, len(categories)-1)]
             print('WARNING: no matching category in db! Using random assignment')
-        category = categories[0]
+
         serializer.validated_data["category"] = category
 
         #  save result in db
