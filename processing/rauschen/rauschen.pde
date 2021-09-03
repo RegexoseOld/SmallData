@@ -1,4 +1,4 @@
-import java.util.Timer;  //<>//
+import java.util.Timer;  //<>// //<>//
 import java.util.TimerTask;
 import java.util.Map;
 import java.util.List;
@@ -23,7 +23,7 @@ String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
 PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
-JSONObject oscTextIn, category_counter, ip_config; 
+JSONObject oscTextIn, category_counter, ip_config, translatedCats; 
 String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
 color currentCol;
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
@@ -41,6 +41,7 @@ void setup() {
   fullScreen();  // size(1000, 700);
   TD = loadJSONObject("TrainingDataPelle01.json");
   ip_config = loadJSONObject("../../config/ip_config.json");
+  translatedCats = loadJSONObject("../../config/category_translator.json");
   String ip = ip_config.getString("audience");
   article = loadTable("Moderation.tsv", "header");
   surfs = new Surface[9];
@@ -117,11 +118,6 @@ void draw() {
   } else if (noiseLimit > utts.size() - noiseInc ) {
     noiseStart = 0;
     noiseLimit = noiseInc;
-  }
-
-  for (Area a : areas.areas) {
-    //a.draw(rauschSurf.s);
-    //a.drawOutlines();
   }
 }
 
