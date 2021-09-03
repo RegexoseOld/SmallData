@@ -25,7 +25,7 @@ export default class Utterance extends Component {
         if (this.state.text === "") {
             toast.error('Bitte einen Kommentar eingeben')
         } else {
-            const url = "http://127.0.0.1:8000";
+            const url = "http://192.168.1.164:8000";
             fetch(url + "/api/utterances/", {
                 method: "POST",
                 body: JSON.stringify(this.state),
