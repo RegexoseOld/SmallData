@@ -57,7 +57,6 @@ export default function sketch(p){
   }
 
   p.draw = () => {
-
     p.background(222);
     if (counterData) {
        displayCounter();
@@ -65,7 +64,6 @@ export default function sketch(p){
   }
 
   function displayCounter() {
-
     for (let i = 0; i < categories.length; i++) {
         let cat = categories[i];
         var limit = p.int(counter[cat].limit);
@@ -98,12 +96,13 @@ export default function sketch(p){
       }
     }
   }
-   function updateParts(){
+
+  function updateParts(){
     p.loadJSON('../../assets/parts.json', gotParts);
     console.log('updating parts');
   }
 
-   function updateCounter() {
+  function updateCounter() {
     console.log('updating counter');
     p.loadJSON('../..//data.json', gotCounter);
   }
@@ -111,5 +110,5 @@ export default function sketch(p){
   p.myCustomRedrawAccordingToNewPropsHandler = (newProps) => {
       if(canvas) { //Make sure the canvas has been created
     }
-}
+  }
 }

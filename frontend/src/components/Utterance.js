@@ -2,11 +2,16 @@
 
 import React, { Component } from "react";
 import fetch from "node-fetch";
+import { Button} from 'react-bootstrap';
+import { ToastContainer, toast, Slide } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default class Utterance extends Component {
     constructor(props) {
         super(props);
+        this.utteranceRef = React.createRef();
         this.state = {
             text: ''
         };
@@ -17,21 +22,32 @@ export default class Utterance extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-
-        const url = "http://127.0.0.1:8000";
-
-        fetch(url + "/api/utterances/", {
-            method: "POST",
-            body: JSON.stringify(this.state),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(response => {
-            (response.json().then(data => {alert('You said: ' + data['text'] +
-                '\n Machine thinks: ' + data['category']['name'])
+        if (this.state.text === "") {
+            toast.error('Bitte einen Kommentar eingeben')
+        } else {
+            const url = "http://127.0.0.1:8000";
+            fetch(url + "/api/utterances/", {
+                method: "POST",
+                body: JSON.stringify(this.state),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            }).then(response => {
+                (response.json().then(data => {this.notify(data)
             }).then(val => this.resetForm()))
-        });
+            });
+        }
+    }
+
+    notify(data) {
+        if (data['category'].name === 'unknown') {
+            toast.info(<div>Die Meinungsorgel funktioniert nur mit richtigen Sätzen. <br />
+                        Bitte versuche es noch einmal!</div>);
+        } else {
+            toast.success(<div>You said: {data['text']}
+                    <br /> Machine thinks: {data['category']['name']} </div>);
+        }
     }
 
     handleChange(event) {
@@ -42,30 +58,59 @@ export default class Utterance extends Component {
         this.setState({text: ''});
     }
 
+    // this focusses on the textarea after the alert-window is closed
+    componentDidUpdate () {
+      this.utteranceRef.current.focus();
+    }
+
+    // this focusses on the textarea after the page is reloaded
+    componentDidMount () {
+      this.utteranceRef.current.focus();
+    }
+
+    handleKeypress(e) {
+      //it triggers by pressing the enter key
+        if (e.key === "Enter") {
+          this.handleSubmit(e);
+        }
+    };
+
     render() {
         return (
-            <div>
-                <div className="row ">
+
+            <div className="row ">
+                        <div>
+                <ToastContainer
+                    position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    transition={Slide}
+                    />
+            </div>
+                <form>
                     <label>
                         Schreibe hier Deinen Beitrag zur Musik
                     </label>
-                </div>
 
-                <div className="row ">
-                    <form onSubmit={this.handleSubmit}>
-                <textarea type="text" style={{width: 600}}
+                    <textarea type="text" style={{width: 600}}
+                          ref={this.utteranceRef}
                           onChange={this.handleChange}
                           value={this.state.text}
-                />
-
-                        <div>
-                            <input type="submit" value="kommentieren" />
-                            <p>  </p>
-
-                        </div>
-                    </form>
-                </div>
+                          onKeyPress={this.handleKeypress.bind(this)}
+                    />
+                    <Button variant="outline-secondary"
+                        onClick={this.handleSubmit}>
+                        kommentieren</Button>
+                </form>
+                <p> </p>
             </div>
         );
     }
 }
+ //  onSubmit=

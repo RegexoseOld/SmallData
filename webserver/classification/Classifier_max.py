@@ -9,17 +9,18 @@ from . import trainer
 
 
 class Classifier:
-    '''
+    """
     A Word2Vec based Text classifier. It classifies sentences into one of several sentiment categories.
     It uses a mix of regular expression and wordvector based SVM classification.
-    '''
+    """
+    UNCLASSIFIABLE = 'unknown'
 
     def __init__(self, data_dir):
-        '''
+        """
         Initializes a trained classifier. the specified data data directory needs to contain on gensim model
         called "german.model", one trained sklearn SGD Classifier called "sgd_clf.pkl" and one
         dictionary mapping regular expressions to sentiment categories calles "regex_mapping.pkl"
-        '''
+        """
         self.model = gensim.models.KeyedVectors.load_word2vec_format(os.path.join(data_dir, 'german.model'),
                                                                      binary=True)
         self.clf = joblib.load(os.path.join(data_dir, 'sgd_clf.pkl'))
@@ -103,4 +104,4 @@ class Classifier:
             sorted_preds = self.aggregate_vector_preds(clf_preds)
             return sorted_preds[0]
         else:
-            return ('Gaga', 1.0)
+            return self.UNCLASSIFIABLE, 1.0

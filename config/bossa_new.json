@@ -1,5 +1,5 @@
 {
-  "max_num_utterances": 500,
+  "max_num_utterances": 50,
   "first_part" : "dissence",
   "categories": ["praise", "insinuation", "dissence",  "lecture", "concession"],
   "intro_limit": 2,

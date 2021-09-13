@@ -18,7 +18,6 @@ from webserver.sound.UDPClient import MusicClient
 from config import settings
 
 
-
 clf = Classifier(settings.DATA_DIR)
 #   Client for a simple Feedback from Ableton Live
 song_client = MusicClient(settings.ips['song_server'], settings.SONG_SERVER_PORT)
@@ -51,17 +50,18 @@ class UtteranceView(viewsets.ModelViewSet):
         # lookup found category in database
         #  TODO: build a test during startup to make sure the db and the model reproduce the same categories!
         categories = Category.objects.all().filter(name=str(cat))
-        if not categories:  # if db is inconsistent with model, just use any cat
-            categories = Category.objects.all()
-            print('WARNING: no matching category in db! Using random assignment')
+        if not categories:
+            print('WARNING: category {} not in db! Fix your db setup!'.format(cat))
+
         category = categories[0]
-        serializer.validated_data["category"] = category
 
         #  save result in db
+        serializer.validated_data["category"] = category
         super(UtteranceView, self).perform_create(serializer)
         print('cat: {}\ntext {}'.format(category.name, text))
 
-        send_to_music_server(text.encode("utf-8"), category.name)
+        if cat[0] != clf.UNCLASSIFIABLE:
+            send_to_music_server(text.encode("utf-8"), category.name)
 
 
 class CategoryView(viewsets.ModelViewSet):
