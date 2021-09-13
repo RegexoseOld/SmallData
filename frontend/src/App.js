@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import P5Wrapper from 'react-p5-wrapper';
-import sketch from './sketch_test';
+import sketch from './sketch';
 import Utterance from './components/Utterance';
 import TriggerCategory from './components/TriggerCategory';
 
