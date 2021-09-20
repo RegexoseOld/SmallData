@@ -1,19 +1,33 @@
 export default function sketch(p){
   let canvas;
   var font;
+  let fr = 10;  // Frames per second,
   let currentPart, nextPart;
   let barWidth, barHeight, yPos, tSize;
   var counterData = {};
+  var counter;
   var parts = {};
   let categories = ["praise", "dissence", "insinuation", "concession", "lecture"];
   let locked = counterData['is_locked'];
   let yOff, xOff, barOff;
-  let counter;
 
   p.preload = () => {
     font = p.loadFont('../../assets/BebasNeue.otf');
     p.loadJSON('../../assets/parts.json', gotParts);
-    p.loadJSON('../../assets/data.json', gotCounter);
+    fetchData();
+    // p.loadJSON('../../assets/data.json', gotCounter);
+  }
+
+  function fetchData() {
+    let url = "http://127.0.0.1:8000";
+    p.httpGet(url + "/api/category_counter", "json", false,
+      function (response) {
+        counterData = response;
+        counter = counterData['category_counter'];
+      },
+      function (response) { // Handle unsuccessful loading of data.json
+        console.log('Fetching data.json unsuccessfull!')
+      });
   }
 
   function gotCounter(data) {
@@ -42,6 +56,7 @@ export default function sketch(p){
  }
 
   p.setup = () => {
+    p.frameRate(fr);
     canvas = p.createCanvas(500, 600);
     tSize= 25;
     yOff = p.height/2;
@@ -57,10 +72,13 @@ export default function sketch(p){
   }
 
   p.draw = () => {
-    p.background(222);
-    if (counterData) {
-       displayCounter();
+    fetchData()
+    if (!counter) {
+      // Wait until the counter-data has loaded before drawing.
+      return;
     }
+    p.background(222);
+    displayCounter();
   }
 
   function displayCounter() {
