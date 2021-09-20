@@ -55,6 +55,8 @@ def build_areas():
     AREAS["part_info"] = PartArea(
         "part_info", x_spacing, y_spacing, width - 2 * x_spacing, height - 2 * y_spacing, font)
     AREAS["status"] = SongStatus(width/2, 0, width/2, height, font)
+    AREAS["article"] = ArticleArea(
+        "Moderation.tsv", x_spacing, y_spacing, width - 2 * x_spacing, height - 2 * y_spacing, font)
 
     return AREAS
 

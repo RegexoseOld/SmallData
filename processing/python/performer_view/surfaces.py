@@ -151,3 +151,11 @@ class PartArea(SurfaceBase):
             self.surface.width / 3, self.surface.height, current, next, self.font, col)
         self.add_subsurface("beat", beat_surf)
         self.add_subsurface("parts", current_next_surf)
+
+class ArticleArea(SurfaceBase):
+    
+    def __init__(self, name, pos_x, pos_y, s_width, s_height, font):
+        SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
+        self.font = font
+        self.article = loadTable(self.name, "header")
+        
