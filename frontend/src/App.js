@@ -28,8 +28,8 @@ class App extends Component {
                     <div>
                         <Utterance/>
                     </div>
-                    <P5Wrapper sketch={sketch}></P5Wrapper>
                  </div>
+                 /* <P5Wrapper sketch={sketch}></P5Wrapper> */
             </main>
         );
     }

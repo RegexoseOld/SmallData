@@ -15,10 +15,9 @@ export default function sketch(p){
     font = p.loadFont('../../assets/BebasNeue.otf');
     p.loadJSON('../../assets/parts.json', gotParts);
     fetchData();
-    // p.loadJSON('../../assets/data.json', gotCounter);
   }
 
-  function fetchData() {
+  function fetchData() {  //TODO: use websockets for data transfer
     let url = "http://127.0.0.1:8000";
     p.httpGet(url + "/api/category_counter", "json", false,
       function (response) {
@@ -28,11 +27,6 @@ export default function sketch(p){
       function (response) { // Handle unsuccessful loading of data.json
         console.log('Fetching data.json unsuccessfull!')
       });
-  }
-
-  function gotCounter(data) {
-    counterData = data;
-    counter = counterData['category_counter'];
   }
 
   function gotParts(data) {
@@ -113,16 +107,6 @@ export default function sketch(p){
         p.text("noch " + (limit + 1 - barCount) + " x " + cat + " bis zum " + cat + "-part", 200 , yOff + (yPos * i));
       }
     }
-  }
-
-  function updateParts(){
-    p.loadJSON('../../assets/parts.json', gotParts);
-    console.log('updating parts');
-  }
-
-  function updateCounter() {
-    console.log('updating counter');
-    p.loadJSON('../..//data.json', gotCounter);
   }
 
   p.myCustomRedrawAccordingToNewPropsHandler = (newProps) => {
