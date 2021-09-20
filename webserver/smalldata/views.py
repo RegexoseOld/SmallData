@@ -3,12 +3,13 @@ import random
 
 from django.http import JsonResponse
 
-from rest_framework import viewsets
+from rest_framework import viewsets, views, response
 from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
 from .models import Utterance, Category, TrainingUtterance
 
 from os import path
 import sys
+import json
 
 sys.path.append(path.abspath(path.dirname(__file__) + '/../..'))  # hack top make sure webserver can be imported
 sys.path.reverse()  # hack to make sure the project's config is used instead of a config from the package 'odf'
@@ -62,6 +63,15 @@ class UtteranceView(viewsets.ModelViewSet):
 
         if cat[0] != clf.UNCLASSIFIABLE:
             send_to_music_server(text.encode("utf-8"), category.name)
+
+
+class JSONFileView(views.APIView):
+    file_path = path.join(settings.BASE_DIR, "song/data", "data.json")
+
+    def get(self, request):
+        with open(self.file_path, 'r') as jsonfile:
+            json_data = json.load(jsonfile)
+        return response.Response(json_data)
 
 
 class CategoryView(viewsets.ModelViewSet):

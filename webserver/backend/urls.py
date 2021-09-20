@@ -13,5 +13,6 @@ router.register(r'training_utterances', views.TrainingUtteranceView, 'training_u
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/categories/<int:pk>/trigger', csrf_exempt(views.trigger_category))
+    path('api/categories/<int:pk>/trigger', csrf_exempt(views.trigger_category)),
+    path('api/category_counter', views.JSONFileView.as_view()),
 ]
