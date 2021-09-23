@@ -66,7 +66,7 @@ export default function sketch(p){
   }
 
   p.draw = () => {
-    fetchData()
+    // fetchData()
     if (!counter) {
       // Wait until the counter-data has loaded before drawing.
       return;
