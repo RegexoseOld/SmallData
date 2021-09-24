@@ -1,11 +1,12 @@
 from surfaces import *
 import pickle
 import json
+from collections import OrderedDict
 
 add_library('oscP5')
 addr = "?"
 
-AREAS = {}
+AREAS = OrderedDict()
 
 class Listen(OscEventListener):
 
@@ -51,14 +52,20 @@ def build_areas():
     global font
     y_spacing = height / 100
     x_spacing = width / 50
-
+   
     AREAS["part_info"] = PartArea(
-        "part_info", x_spacing, y_spacing, width - 2 * x_spacing, height - 2 * y_spacing, font)
+        "part_info", x_spacing, y_spacing, width/2, height - 2 * y_spacing, font)
     AREAS["status"] = SongStatus(width/2, 0, width/2, height, font)
     AREAS["article"] = ArticleArea(
-        "Moderation.tsv", x_spacing, y_spacing, width - 2 * x_spacing, height - 2 * y_spacing, font)
+        "Moderation.tsv", width/16, 0, width *7/8, height/8, font)
 
     return AREAS
+
+def keyReleased():
+    if key == 'n':
+        AREAS["article"].art_index += 1
+        AREAS["article"].update_line()
+        
 
 def stop():
     global osc

@@ -16,6 +16,7 @@ class SurfaceBase:
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.s_width = s_width
+        self.s_height = s_height
 
         self.incoming = False  # utterance coming in
         self.subsurfaces = OrderedDict()
@@ -41,7 +42,6 @@ class SurfaceBase:
         self.subsurfaces[name] = area
 
 class Beat:
-
     def __init__(self, s_width, s_height, beatnum, col, font):
         self.surface = createGraphics(s_width, s_height)
         self.update_beatnum(beatnum, font, col)
@@ -63,7 +63,6 @@ class Beat:
 
 
 class Parts:
-
     def __init__(self, s_width, s_height, current, next, font, col):
         self.surface = createGraphics(s_width, s_height)
         self.update_parts(current, next, font, col)
@@ -153,9 +152,30 @@ class PartArea(SurfaceBase):
         self.add_subsurface("parts", current_next_surf)
 
 class ArticleArea(SurfaceBase):
+    ARTICLE_LINES = []
     
     def __init__(self, name, pos_x, pos_y, s_width, s_height, font):
         SurfaceBase.__init__(self, name, pos_x, pos_y, s_width, s_height)
         self.font = font
         self.article = loadTable(self.name, "header")
+        self.make_lines("article")
+        self.art_index = 0
+        self.update_line()
+        # self.add_subsurface("article",  self)
+    
+    def make_lines(self, type):
+        for row in self.article.findRows(type, "type"):
+            art_line = row.getString("utterance")
+            self.ARTICLE_LINES.append(art_line)
+    
+    def update_line(self):
+        with self.surface.beginDraw():
+            self.surface.background(180)
+            self.surface.textFont(self.font, 12)
+            self.surface.textAlign(LEFT,TOP)
+            self.surface.fill(0)
+            art_line = self.ARTICLE_LINES[self.art_index % len(self.ARTICLE_LINES)]
+            print("art_line, " , art_line)
+            self.surface.text(art_line, 0, 0)
+
         
