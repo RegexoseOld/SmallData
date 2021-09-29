@@ -160,6 +160,7 @@ class ArticleArea(SurfaceBase):
         self.article = loadTable(self.name, "header")
         self.make_lines("article")
         self.art_index = 0
+        self.article_line = ''
         self.update_line()
         # self.add_subsurface("article",  self)
     
@@ -174,8 +175,9 @@ class ArticleArea(SurfaceBase):
             self.surface.textFont(self.font, 12)
             self.surface.textAlign(LEFT,TOP)
             self.surface.fill(0)
-            art_line = self.ARTICLE_LINES[self.art_index % len(self.ARTICLE_LINES)]
-            print("art_line, " , art_line)
-            self.surface.text(art_line, 0, 0)
+            self.article_line = self.ARTICLE_LINES[self.art_index % len(self.ARTICLE_LINES)]
+            print("art_line, " , self.article_line)
+            self.surface.text(self.article_line, 0, 0)
+            
 
         
