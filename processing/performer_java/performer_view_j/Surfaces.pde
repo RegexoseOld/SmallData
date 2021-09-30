@@ -131,3 +131,43 @@ class SongStatus extends AreaBase {
     }
   }
 }
+
+class Article extends AreaBase {
+  PFont font;
+  color col;
+  StringList articleLines;
+  Table artic;
+  int indx;
+  String currentLine;
+
+  Article (String name, int pos_x, int pos_y, int s_width, int s_height, PFont font) {
+    super(name, pos_x, pos_y, s_width, s_height);
+    this.surf = createGraphics(s_width, s_height);
+    this.surf.smooth();
+    this.col = color(0);
+    this.font = font;
+    this.artic = loadTable("data/" + this.name, "header");
+    this.articleLines = new StringList();
+    makeLines("article");
+    this.indx = 0;
+  }
+
+  void makeLines(String type) {
+    for (TableRow row : artic.findRows(type, "type")) {
+      String art_line = row.getString("utterance");
+      this.articleLines.append(art_line);
+    }
+  }
+
+  void updateLine(){
+    this.surf.beginDraw();
+    this.surf.background(180);
+    this.surf.textFont(this.font, 12);
+    this.surf.textAlign(LEFT, TOP);
+    this.surf.fill(0);
+    this.currentLine = this.articleLines.get(this.indx % this.articleLines.size());
+    println("current line " + this.currentLine);
+    this.surf.text(this.currentLine, 0, 0);
+    this.surf.endDraw();
+  }
+}

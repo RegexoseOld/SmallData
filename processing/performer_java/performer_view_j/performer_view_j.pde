@@ -5,9 +5,9 @@ OscP5 oscP5;
 NetAddress loc;
 JSONObject ip_config, color_scheme;
 PFont font, font_bold;
-AreaBase article;
 Beat beat;
 Parts parts;
+Article article;
 SongStatus songstatus;
 ArrayList<AreaBase> areas;
 int bt;
@@ -40,16 +40,18 @@ void makeAreas() {
   parts= new Parts("parts", x_spacing, y_spacing, width/6, height - 2 * y_spacing, font);
   beat = new Beat("beat", width/5, y_spacing, width / 6, height - 2 * y_spacing, font);
   songstatus = new SongStatus("status", width/2, 0, width/2, height, font);
+  article = new Article("Moderation.tsv", width/16, 0, width *7/8, height/8, font);
   areas.add(beat);
   areas.add(parts);
   areas.add(songstatus);
+  areas.add(article);
 }
 
 
 
-void keyPressed() {
+void keyReleased() {
   if (key == 'n') {
-    beat.beatnum +=1;
-    beat.updateBeatnum(str(beat.beatnum), "False");
+    article.indx += 1;
+    article.updateLine();
   }
 }
