@@ -98,7 +98,7 @@ export default class Utterance extends Component {
                         Schreibe hier Deinen Beitrag zur Musik
                     </label>
 
-                    <textarea type="text" style={{width: 600}}
+                    <textarea type="text" style={{width: 500}}
                           ref={this.utteranceRef}
                           onChange={this.handleChange}
                           value={this.state.text}

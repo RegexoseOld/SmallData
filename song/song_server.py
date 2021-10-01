@@ -1,5 +1,6 @@
 import pickle
 import json
+import os
 import pyttsx3
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
@@ -207,7 +208,7 @@ class SongServer:
 
         data = json.dumps(input_dict)
 
-        with open('frontend/public/assets/data.json', 'w', encoding='utf-8') as f:
+        with open(os.path.join(settings.BASE_DIR, 'song/data/','data.json'), 'w', encoding='utf-8') as f:
             json.dump(input_dict, f, ensure_ascii=False)
 
         self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)

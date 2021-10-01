@@ -24,3 +24,16 @@ body {
   background-color: #282c34;
   color: #ffffff;
 }
+
+.wrapper > div {
+  margin:0;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    padding: 0 10px;
+  }
+
+  textarea {
+  width: 95vw!important;}
+}

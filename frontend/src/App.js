@@ -25,11 +25,12 @@ class App extends Component {
             <main className="content">
                 <h1 className="text-black text-uppercase text-center my-4">Small Data</h1>
                 <div className="col-md-6 col-sm-10 mx-auto p-0">
-                    <div>
+                    <div className="wrapper">
                         <Utterance/>
                     </div>
                     <P5Wrapper sketch={sketch}></P5Wrapper>
                  </div>
+
             </main>
         );
     }
