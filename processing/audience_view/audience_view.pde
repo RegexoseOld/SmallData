@@ -12,8 +12,12 @@ NetAddress loc;
 
 final Timer t = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
-Surface rauschSurf, incSurf, matchSurf, titleSurf1, articleSurf, sculptureSurf, titleSurf2, infoSurf, counterSurf;
-Surface[] surfs;
+Article articleSurf;
+Rauschen rauschSurf;
+Kinship incSurf, matchSurf;
+Info infoSurf;
+Sculpture sculptureSurf;
+ArrayList<SurfaceBase> surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
 Areas areas;
@@ -23,8 +27,8 @@ String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
 PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
-JSONObject oscTextIn, category_counter, ip_config, translatedCats; 
-String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
+JSONObject oscTextIn, category_counter, ip_config, translatedCats, newArticleLine; 
+String incomingText, incomingCat, moderation, currentPart, currentArticleLine; // a mock for incoming OSC text
 color currentCol;
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
 boolean messageIn = false; // background reset
@@ -38,13 +42,12 @@ int uttCount = 0;
 Table article;
 
 void setup() {
-  fullScreen();  // size(1000, 700);
+  size(1000, 700);
   TD = loadJSONObject("TrainingDataPelle01.json");
   ip_config = loadJSONObject("../../config/ip_config.json");
   translatedCats = loadJSONObject("../../config/category_translator.json");
   String ip = ip_config.getString("audience");
   article = loadTable("Moderation.tsv", "header");
-  surfs = new Surface[9];
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[25], 20, true);
@@ -83,16 +86,11 @@ void draw() {
 
   for (int x=noiseStart; x<noiseLimit; x++) {
     DisplayTD utt = utts.get(x);
-    utt.draw();
+    utt.update();
     utt.matchInput(incomingText);
   }
 
   if (messageLock && !mFade) {
-    // einblenden der Surfaces
-    for (int i=1; i<5; i++) {
-      Surface s = surfs[i];
-      //s.visible = true;
-    }
     float gravity = 3 * mH.mass;
     mH.applyForce(gravity);
     mH.update();
@@ -105,11 +103,10 @@ void draw() {
     mH.updateFade();
   }
 
-  for (int i=0; i<surfs.length; i++) {
-    Surface surf = surfs[i];
+  for (int i=0; i<surfs.size(); i++) {
+    SurfaceBase surf = surfs.get(i);
     if (surf.visible) {
-      surf.display(surf.name);
-      image(surf.s, surf.pos.x, surf.pos.y);
+      surf.display();
     }
   }
   if (noiseLimit <= utts.size() - noiseInc) {
@@ -160,19 +157,14 @@ void visibility(char k) {
   case '2':
     incSurf.visible = !incSurf.visible;
     matchSurf.visible = !matchSurf.visible;
-    titleSurf1.visible = !titleSurf1.visible;
-    titleSurf2.visible = !titleSurf2.visible;
     break;
   case '3':
     infoSurf.visible = !infoSurf.visible;
     break;
   case '4':
-    counterSurf.visible = !counterSurf.visible;
-    break;
-  case '5':
     articleSurf.visible = !articleSurf.visible;
     break;
-  case '6':
+  case '5':
     sculptureSurf.visible = !sculptureSurf.visible;
     break;
   case 'm':
@@ -184,23 +176,18 @@ void visibility(char k) {
 
   case 'q':
     vector = !vector;
-    rauschSurf.s.beginDraw();
-    rauschSurf.s.background(222 );
-    rauschSurf.s.endDraw();
+    rauschSurf.surf.beginDraw();
+    rauschSurf.surf.background(222 );
+    rauschSurf.surf.endDraw();
     break;
-    
+
   case 'r' :
-    for (Surface s : surfs) {
-      s.s.beginDraw();
-      s.s.background(222);
-      s.s.endDraw();
+    for (SurfaceBase s : surfs) {
+      s.clearBackground();
     }
   }
 }
 
 void keyReleased() {
-  if (key == 'n') {
-    articleSurf.lineIndex ++;
-  }
   visibility(key);
 }

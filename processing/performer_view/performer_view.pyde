@@ -1,11 +1,12 @@
 from surfaces import *
 import pickle
 import json
+from collections import OrderedDict
 
 add_library('oscP5')
 addr = "?"
 
-AREAS = {}
+AREAS = OrderedDict()
 
 class Listen(OscEventListener):
 
@@ -23,12 +24,11 @@ class Listen(OscEventListener):
             new_counter = json.loads(m.arguments()[0])["category_counter"]
             machine_is_locked = json.loads(m.arguments()[0])["is_locked"]
             AREAS['status'].update_status(new_counter, machine_is_locked)
-            
-
+    
 def setup():
     size (1000, 500)
     background(200)
-    global font, font_bold
+    global font, font_bold, loc
     font_size = width/20
 
     font = createFont("Helvetica", font_size, True)
@@ -45,18 +45,33 @@ def draw():
     for area in AREAS.values():
         area.draw()
 
-        
-
 def build_areas():
     global font
     y_spacing = height / 100
     x_spacing = width / 50
-
+   
     AREAS["part_info"] = PartArea(
-        "part_info", x_spacing, y_spacing, width - 2 * x_spacing, height - 2 * y_spacing, font)
+        "part_info", x_spacing, y_spacing, width/2, height - 2 * y_spacing, font)
     AREAS["status"] = SongStatus(width/2, 0, width/2, height, font)
-
+    AREAS["article"] = ArticleArea(
+        "Moderation.tsv", width/16, 0, width *7/8, height/8, font)
     return AREAS
+
+def sendOsc(message):
+    global loc
+    myMessage = OscMessage("/article") 
+    serialized = json.dumps(message)
+    myMessage.add(serialized)
+    print("serialized: ", serialized)
+    osc.send(myMessage, loc)
+
+def keyReleased():
+    article = AREAS["article"]
+    if key == 'n':
+        article.art_index += 1
+        article.update_line()
+        sendOsc(article.article_line)
+        
 
 def stop():
     global osc

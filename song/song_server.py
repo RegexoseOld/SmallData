@@ -75,6 +75,7 @@ class SongServer:
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
         dispatcher.map(settings.SONG_BEAT_ADDRESS, self.beat_handler)
         dispatcher.map(settings.SONG_SYNTH_RESET_ADDRESS, self.reset_handler)
+        dispatcher.map(settings.DISPLAY_ARTICLE_ADDRESS, self.article_handler)
         self.server = ThreadingOSCUDPServer((server_ip, settings.SONG_SERVER_PORT), dispatcher)
 
         self.song_scenes = {k: v for k, v in zip(
@@ -130,6 +131,12 @@ class SongServer:
         self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.ccnr),
                                            self.tonality.synth.reset_values[str(self.tonality.ccnr)])
 
+    def article_handler(self, _, content):
+        print('article? ', content)
+        data = json.dumps({'newLine' : content})
+        self.audience_client.send_message(settings.DISPLAY_ARTICLE_ADDRESS, data)
+
+
     def end_of_song(self, end_message):
         input_dict = {'text': end_message,
                       'cat': str(self.received_utts)}
@@ -159,7 +166,7 @@ class SongServer:
         else:
             self.timer.cancel()
             self.timer_lock = False
-            print("closing fader Thread", threading.enumerate())
+            # print("closing fader Thread", threading.enumerate())
 
     def send_fx(self, val):
         # print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], val))
@@ -183,7 +190,7 @@ class SongServer:
 
     def _send_part_info(self, counter, next_part):
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
-        # print('SongerServer. sending: ', message)
+        print('SongerServer. sending: ', message)
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
         if next_part.name != self.beat_manager.current_part.name:
             with open('frontend/public/assets/parts.json', 'w', encoding='utf-8') as f:

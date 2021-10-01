@@ -1,4 +1,4 @@
-class DisplayTD {
+class DisplayTD{
   PFont font;
   int font_size, index;
   float x, y, sX, sY, angle;
@@ -30,20 +30,12 @@ class DisplayTD {
     this.font = createFont(this.fontName, font_size, true);
   }
 
-  void draw() {
-    rauschSurf.s.beginDraw();
-    // rauschSurf.s.textFont(this.font);
-    rauschSurf.s.pushMatrix();
-    rauschSurf.s.translate(this.pos.x, this.pos.y);
-    rauschSurf.s.rotate(this.angle);
-    rauschSurf.s.fill(this.shapeColor);
-    rauschSurf.s.shape(this.shape, 0, 0, this.shapeSize, this.shapeSize);
-    moveText();
-    rauschSurf.s.popMatrix();
-    rauschSurf.s.endDraw();
+  void update() {
+    rauschSurf.updateDisplay(this.shape, this.pos, this.shapeSize, this.angle, this.shapeColor);
+    move();
   }
 
-  void moveText() {
+  void move() {
     int rIndex = int(random(this.area.areaPos.size()));
     this.pos = this.area.areaPos.get(rIndex);
     this.angle += random(-0.05, 0.05);
@@ -55,8 +47,8 @@ class DisplayTD {
       mH.related = this.utt;
       // println("matched!  " + incoming + "    with index  " + this.index);
       matchedUtts.append(incoming);
-      titleSurf1.col = shapeColor;
-      titleSurf2.col = findColor(cat);
+      incSurf.col = shapeColor;
+      matchSurf.col = findColor(cat);
     }
   }
 }
