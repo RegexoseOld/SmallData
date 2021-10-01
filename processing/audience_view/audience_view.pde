@@ -161,10 +161,10 @@ void visibility(char k) {
   case '3':
     infoSurf.visible = !infoSurf.visible;
     break;
-  case '5':
+  case '4':
     articleSurf.visible = !articleSurf.visible;
     break;
-  case '6':
+  case '5':
     sculptureSurf.visible = !sculptureSurf.visible;
     break;
   case 'm':
@@ -180,10 +180,14 @@ void visibility(char k) {
     rauschSurf.surf.background(222 );
     rauschSurf.surf.endDraw();
     break;
-    
+
   case 'r' :
     for (SurfaceBase s : surfs) {
       s.clearBackground();
     }
   }
+}
+
+void keyReleased() {
+  visibility(key);
 }
