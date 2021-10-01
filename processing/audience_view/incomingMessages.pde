@@ -50,6 +50,7 @@ void oscEvent(OscMessage m) {
   } else if (m.checkAddrPattern("/article")) {
     newArticleLine = parseJSONObject((String) m.arguments()[0]);
     currentArticleLine = newArticleLine.getString("newLine");
+    articleSurf.updateLine(currentArticleLine);
   }
 }
 

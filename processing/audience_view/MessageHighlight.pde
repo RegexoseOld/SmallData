@@ -48,19 +48,17 @@ class MessageHighlight {
       this.tSize += 1;
     }
     if (messType.equals("incomingSurf")) {
-      Surface s = surfs[1];
-      s.reset = false;
-      s.uttLines = tempsingle;
-      s.tSize = this.tSize;
+      incSurf.reset = false;
+      incSurf.uttLines = tempsingle;
+      incSurf.tSize = int(this.tSize);
     } else if (messType.equals("matchSurf")) {
-      Surface s = surfs[2];
-      s.reset = false;
-      s.uttLines = tempsingle;
-      s.tSize = this.tSize;
+      matchSurf.reset = false;
+      matchSurf.uttLines = tempsingle;
+      matchSurf.tSize = int(this.tSize);
     }
     // reactivate titleSurfs
-    surfs[3].reset = false;
-    surfs[4].reset = false;
+    //surfs[3].reset = false;
+    //surfs[4].reset = false;
   }
 
   void update() {
@@ -82,10 +80,9 @@ class MessageHighlight {
     lastVelocity += acceleration;
     if (this.tSize > abs(lastVelocity)) {
       this.tSize += lastVelocity;
-      for (int i=1; i<=2; i++) {
-        Surface s = surfs[i];
-        s.tSize = this.tSize;
-      }
+   
+      incSurf.tSize = int(this.tSize);
+      matchSurf.tSize = int(this.tSize);
     } else {
       mFade = false;
       messageLock = false;
@@ -106,12 +103,8 @@ class MessageHighlight {
     } else if (!stopGrow) {
       // println("checkEdge:  " + this.tWidth);
       this.stopGrow = true;
-      for (int i = 1; i<=2; i++) {
-        Surface s = surfs[i];
-        for (SingleLine l : s.uttLines) {
-          l.setDark();
-        }
-      }
+      incSurf.setDark();
+      matchSurf.setDark();
       createScheduleTimer(3000.0); // stops growing but displays for 3 more seconds
     }
   }
@@ -124,10 +117,10 @@ class MessageHighlight {
     this.velocity = 0;
     this.acceleration = 0;
     for (int i=1; i<5; i++) {
-      Surface s = surfs[i];
+      SurfaceBase s = surfs.get(i);
       s.clearBackground();
       // reset is more visible disappearance of the Surface
-      s.reset = true;
+      // s.reset = true;
       //s.visible = false;
     }
   }
