@@ -41,12 +41,15 @@ void oscEvent(OscMessage m) {
     uttCount += 1;
     // println("increment:  " + prgIncrement + "   uttcount:   " + uttCount);
   } else if (m.checkAddrPattern("/display_init") == true) {
-    println("\tINCOMING :" + m.arguments()[0]);
+    // println("\tINCOMING :" + m.arguments()[0]);
     JSONObject data = parseJSONObject((String) m.arguments()[0]);
     int max_utt = data.getInt("max_utts");
     // JSONObject cats = data.getJSONObject("categories");
     maxUtts = max_utt;
     prgIncrement = width/maxUtts;
+  } else if (m.checkAddrPattern("/article")) {
+    newArticleLine = parseJSONObject((String) m.arguments()[0]);
+    currentArticleLine = newArticleLine.getString("newLine");
   }
 }
 

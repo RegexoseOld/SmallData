@@ -77,7 +77,6 @@ class SongStatus extends AreaBase {
   float rectHeight;
   JSONObject counter;
 
-
   SongStatus(String _name, int pos_x, int pos_y, int s_width, int s_height, PFont font) {
     super(_name, pos_x, pos_y, s_width, s_height);
     this.font = font;
@@ -87,24 +86,28 @@ class SongStatus extends AreaBase {
     println("is locked  " + isLocked);
 
     this.counter = newCounter;
-    printArray(" Counter  " + this.counter);
+    // printArray(" Counter  " + this.counter);
 
     if (isLocked) {
       this.surf.beginDraw();
       this.surf.background(123);
-      this.surf.textSize(100);
+      this.surf.textFont(this.font, 100);
+      println("textfont 100");
       this.surf.textAlign(CENTER);
       this.surf.text("LOCKED", this.surf.width/2, this.surf.height/2);
       this.surf.endDraw();
     } else {
-      this.surf.beginDraw();
-      this.surf.background(222);
+
       float xPosBar = this.surf.width/6;
       float yPosBar = this.surf.height *4/5;
       float barWidth = this.surf.width/20;
       int increment = 30;
       int spacing = 50;
       String[] cats = (String[]) this.counter.keys().toArray(new String[this.counter.size()]);
+      this.surf.beginDraw();
+      this.surf.background(222);
+      this.surf.textFont(this.font, width/60);
+      println("textfont width/20  " + width/60);
       for (int i=0; i<cats.length; i++) {
         String cat = cats[i];
         println("current cat  " + cat);
@@ -118,11 +121,10 @@ class SongStatus extends AreaBase {
         this.surf.stroke(255, 0, 0);
         this.surf.strokeWeight(3);
         this.surf.line(spacing + (xPosBar * i), yPosBar - (limit * increment), spacing + (xPosBar * i) + barWidth, yPosBar - (limit * increment));
-        this.surf.fill(0);
         this.surf.pushMatrix();
         this.surf.translate(spacing + (xPosBar * i), yPosBar + 20);
         this.surf.rotate(QUARTER_PI);
-        this.surf.textSize(width/20);
+        this.surf.fill(0);
         this.surf.textAlign(LEFT);
         this.surf.text(cat, 0, 0);
         this.surf.popMatrix();
@@ -159,15 +161,22 @@ class Article extends AreaBase {
     }
   }
 
-  void updateLine(){
+  void updateLine() {
     this.surf.beginDraw();
     this.surf.background(180);
     this.surf.textFont(this.font, 12);
     this.surf.textAlign(LEFT, TOP);
     this.surf.fill(0);
     this.currentLine = this.articleLines.get(this.indx % this.articleLines.size());
-    println("current line " + this.currentLine);
+    // println("performer current line " + this.currentLine);
     this.surf.text(this.currentLine, 0, 0);
     this.surf.endDraw();
+    sendLine(); 
+  }
+
+  void sendLine() {
+    OscMessage message = new OscMessage("/article");
+    message.add(this.currentLine);
+    oscP5.send(message, loc_send);
   }
 }

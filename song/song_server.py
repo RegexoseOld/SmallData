@@ -131,9 +131,10 @@ class SongServer:
                                            self.tonality.synth.reset_values[str(self.tonality.ccnr)])
 
     def article_handler(self, _, content):
-        print("article handle")
-        art_line = json.loads(content)
-        print('article? ', art_line)
+        print('article? ', content)
+        data = json.dumps({'newLine' : content})
+        self.audience_client.send_message(settings.DISPLAY_ARTICLE_ADDRESS, data)
+
 
     def end_of_song(self, end_message):
         input_dict = {'text': end_message,
@@ -164,7 +165,7 @@ class SongServer:
         else:
             self.timer.cancel()
             self.timer_lock = False
-            print("closing fader Thread", threading.enumerate())
+            # print("closing fader Thread", threading.enumerate())
 
     def send_fx(self, val):
         # print('fx sent: cc {}  value: {}'.format(self.tonality.chain[1], val))
