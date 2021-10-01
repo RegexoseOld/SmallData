@@ -1,4 +1,4 @@
-class SurfaceBase { //<>//
+class SurfaceBase { //<>// //<>//
   String name;
   int w, h;
   PVector pos;
@@ -175,34 +175,56 @@ class Info extends SurfaceBase {
 }
 
 class Sculpture extends SurfaceBase {
+  ArrayList<SculptElement> elements, elements2;
+  boolean canUpdate;
 
   Sculpture(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
     super(name, _x, _y, _w, _h, _font, _visible);
+    this.elements = new ArrayList<SculptElement>();
+    this.elements2 = new ArrayList<SculptElement>();
+    this.canUpdate = true;
   }
 
-  void displaySculpture(String msg) {
+  void updateElements(String msg, String incomingCat) {
     Area a = areas.findArea(incomingCat);
-    a.sculptureText();
-    // println("area name  " + a.name + "   pos  " + pos);
-    this.surf.beginDraw();
-    this.surf.textFont(this.font);
-    this.surf.textSize(20);
-    this.surf.textAlign(TOP, TOP);
-    this.surf.pushMatrix();
-    this.surf.translate(a.sC.x, a.sC.y);
-    this.surf.rotate(a.textAngle);
-    this.surf.fill(255);
-    this.surf.noStroke();
-    println("text Ascent " + textAscent() + "text Width:  " + textWidth(msg) );
-    this.surf.rect(0, 0, textWidth(msg), textAscent() * 0.7);
-    this.surf.fill(a.col);
-    this.surf.text(msg, 0, 0);
-    this.surf.popMatrix();
-
-
-    this.surf.endDraw();
-    a.textAngle += a.progressAngle;
+    a.changeAngle(); // textAngle ändert sich, abhängig von der Area
+    PVector angles = new PVector(a.firstAngle, a.secondAngle, a.textAngle); // für jedes neue Element werden die Angles festgeschrieben
+    SculptElement sE = new SculptElement(msg, this.font, a.col, this.surf.width, this.surf.height, angles);
+    if (canUpdate) {
+      elements.add(sE);
+    } else {
+      elements2.add(sE);
+    }
   }
+
+  void updateSculpture() {
+    Iterator itr = this.elements.iterator();
+    while (itr.hasNext()) {
+      SculptElement e =  (SculptElement)itr.next();
+      if (e.alpha <= 50) itr.remove();
+      println("removing  " + e.t);
+      break;
+    }
+    // if (this.elements.size() > 0) {
+    this.canUpdate = false;
+    this.surf.beginDraw();
+    this.surf.background(222);
+    for (SculptElement e : this.elements) {
+      // println("area name  " + a.name + "   pos  " + pos);
+      this.surf.pushMatrix(); 
+      this.surf.translate(width/2, height/2);
+      this.surf.rotate(e.current);
+      println("alpha of " + e.t + "  is    " + e.alpha);
+      this.surf.tint(255, e.alpha);
+      this.surf.image(e.element, 0, 0);
+      this.surf.popMatrix();
+    }
+    this.surf.endDraw();
+    this.canUpdate = true;
+    this.elements.addAll(this.elements2);
+  }
+  //} else {
+  //  println("elements is empty  " + this.elements.size());
 }
 
 

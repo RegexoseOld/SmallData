@@ -1,4 +1,4 @@
-import java.util.Timer;  //<>// //<>//
+import java.util.Timer;  //<>//
 import java.util.TimerTask;
 import java.util.Map;
 import java.util.List;
@@ -75,9 +75,12 @@ void setup() {
 }
 
 void draw() {
-  //if (frameCount%80 == 0) {
-  //  pickIncoming(); //automatische messages werden ausgesucht
-  //} 
+  if (frameCount%20 == 0) {
+    //  pickIncoming(); //automatische messages werden ausgesucht
+    for (SculptElement e : sculptureSurf.elements) {
+      e.changeAlpha();
+    }
+  } 
   if (messageIn) {
     rauschSurf.clearBackground();
     messageIn = !messageIn;
@@ -102,7 +105,7 @@ void draw() {
     mH.applyForce(gravity);
     mH.updateFade();
   }
-
+  sculptureSurf.updateSculpture();
   for (int i=0; i<surfs.size(); i++) {
     SurfaceBase surf = surfs.get(i);
     if (surf.visible) {

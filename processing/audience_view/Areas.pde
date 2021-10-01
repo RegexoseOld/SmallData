@@ -20,7 +20,6 @@ class Areas {
     screenShape.addLineTo(0, height);
     screenShape.addLineTo(0, 0);
 
-
     for (int i=0; i<5; i++) {
       String cat = cats[i];
       Area area = new Area(cat, areaAngle, screenShape);
@@ -42,7 +41,6 @@ class Areas {
 }
 
 class Area {
-  PVector textStart, fromCenter;
   ArrayList<PVector> areaPos;
   PShape reset;
   RShape rS, screen, firstLine, secondLine;
@@ -97,6 +95,8 @@ class Area {
   }
 
   void makeAngles() {
+    // hier wird für die Fläche der Area der erste und der letzte Winkel definiert
+    // dient der Kalkulation der Textwinkel, die bei this.firstAngle beginnen und maximal bis this.secondAngle gehen
     RPoint frstCopy = new RPoint(this.frst);
     RPoint sCCopy = new RPoint(this.sC);
     sCCopy.sub(frstCopy);
@@ -146,10 +146,12 @@ class Area {
     this.reset.setFill(this.resetCol);
   }
 
-  void sculptureText() {
+  void changeAngle() {
     //println("name  " + name + "  textAngle  " + this.textAngle);
     if (this.textAngle > this.firstAngle + (TWO_PI/5)) {
       this.textAngle = this.firstAngle;
+    } else {
+      this.textAngle += this.progressAngle;
     }
   }
 
@@ -180,5 +182,51 @@ class Area {
     surf.fill(this.col);
     surf.text(this.name, this.centerOfArea.x + this.transX, this.centerOfArea.y);
     surf.endDraw();
+  }
+}
+
+class SculptElement {
+  PImage element;
+  PGraphics surf;
+  int alpha, w, h;
+  PFont font;
+  color col;
+  String t, cat;
+  float current, first, last;
+  PVector pos;
+
+  SculptElement(String _t, PFont _font, color _col, int _w, int _h, PVector _angles) {
+    this.t = _t;
+    this.w = _w;
+    this.h = _h;
+    this.font = _font;
+    this.col = _col;
+    this.surf = createGraphics(this.w, this.h); 
+    this.surf.smooth();
+    this.alpha = 255;
+    this.first = _angles.x;
+    this.last = _angles.y;
+    this.current =_angles.z;
+    this.pos = new PVector();
+    makePImage();
+  }
+
+  void makePImage() {
+    this.surf.beginDraw();
+    this.surf.textFont(this.font, 20);
+    this.surf.textAlign(TOP, TOP);
+    this.surf.fill(255);
+    this.surf.noStroke();
+    this.surf.rect(0, 0, textWidth(this.t), textAscent() * 0.7);
+    this.surf.fill(this.col);
+    this.surf.text(this.t, 0, 0);
+    this.surf.endDraw();
+    element = this.surf.get();
+  }
+
+  void changeAlpha() {
+    if (this.alpha >= 1) { 
+      this.alpha -= 5;
+    }
   }
 }
