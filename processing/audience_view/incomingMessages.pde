@@ -20,7 +20,7 @@ void oscEvent(OscMessage m) {
     JSONObject newIncomingCat = category_counter.getJSONObject(incomingCat);
     cat_limit = newIncomingCat.getInt("limit");
     cat_counts = newIncomingCat.getInt("count");
-    sculptureSurf.updateElements(incomingText, incomingCat);
+    sculptureSurf.addElements(incomingText, incomingCat);
     messageIn = true;
     println("new utt: " + incomingText);
     PShape shape = loadShape(shapeMapping.get(incomingCat));

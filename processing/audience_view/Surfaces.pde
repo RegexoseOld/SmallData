@@ -185,7 +185,7 @@ class Sculpture extends SurfaceBase {
     this.canUpdate = true;
   }
 
-  void updateElements(String msg, String incomingCat) {
+  void addElements(String msg, String incomingCat) {
     Area a = areas.findArea(incomingCat);
     a.changeAngle(); // textAngle ändert sich, abhängig von der Area
     PVector angles = new PVector(a.firstAngle, a.secondAngle, a.textAngle); // für jedes neue Element werden die Angles festgeschrieben
@@ -194,18 +194,26 @@ class Sculpture extends SurfaceBase {
       elements.add(sE);
     } else {
       elements2.add(sE);
+      println("after adding to elemente  " + this.elements2.size());
+    }
+  }
+
+  void checkElements() {
+
+    Iterator itr = this.elements.iterator();
+    while (itr.hasNext()) {
+      SculptElement e =  (SculptElement)itr.next();
+      if (e.alpha <= 50) {
+        println("before elements size  " + this.elements.size());
+        itr.remove();
+        println("after removing  " + this.elements.size());
+        break;
+      }
     }
   }
 
   void updateSculpture() {
-    Iterator itr = this.elements.iterator();
-    while (itr.hasNext()) {
-      SculptElement e =  (SculptElement)itr.next();
-      if (e.alpha <= 50) itr.remove();
-      println("removing  " + e.t);
-      break;
-    }
-    // if (this.elements.size() > 0) {
+    checkElements();
     this.canUpdate = false;
     this.surf.beginDraw();
     this.surf.background(222);
@@ -214,17 +222,17 @@ class Sculpture extends SurfaceBase {
       this.surf.pushMatrix(); 
       this.surf.translate(width/2, height/2);
       this.surf.rotate(e.current);
-      println("alpha of " + e.t + "  is    " + e.alpha);
       this.surf.tint(255, e.alpha);
       this.surf.image(e.element, 0, 0);
       this.surf.popMatrix();
     }
     this.surf.endDraw();
     this.canUpdate = true;
-    this.elements.addAll(this.elements2);
+    if (this.elements2.size() <0){ 
+      this.elements.addAll(this.elements2);
+      println("after adding element  " + this.elements.size());
+    }
   }
-  //} else {
-  //  println("elements is empty  " + this.elements.size());
 }
 
 

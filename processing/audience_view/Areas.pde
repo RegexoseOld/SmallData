@@ -227,6 +227,7 @@ class SculptElement {
   void changeAlpha() {
     if (this.alpha >= 1) { 
       this.alpha -= 5;
+      // println("alpha of " + this.t + "  is    " + this.alpha);
     }
   }
 }
