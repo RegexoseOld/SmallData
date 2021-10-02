@@ -187,37 +187,41 @@ class Area {
 
 class SculptElement {
   PImage element;
+  Area area;
   PGraphics surf;
-  int alpha, w, h;
+  int alpha, w, h, textsize;
   PFont font;
   color col;
   String t, cat;
   float current, first, last;
   PVector pos;
 
-  SculptElement(String _t, PFont _font, color _col, int _w, int _h, PVector _angles) {
+  SculptElement(String _t, PFont _font, Area _a, int _w, int _h) {
     this.t = _t;
     this.w = _w;
     this.h = _h;
     this.font = _font;
-    this.col = _col;
+    this.area = _a;
+    this.col = this.area.col;
     this.surf = createGraphics(this.w, this.h); 
     this.surf.smooth();
     this.alpha = 255;
-    this.first = _angles.x;
-    this.last = _angles.y;
-    this.current =_angles.z;
+    this.first = this.area.firstAngle;
+    this.last = this.area.secondAngle;
+    this.current = this.area.textAngle;
     this.pos = new PVector();
+    this.textsize = 15;
     makePImage();
   }
 
   void makePImage() {
     this.surf.beginDraw();
-    this.surf.textFont(this.font, 20);
+    this.surf.textFont(this.font);
+    this.surf.textSize(this.textsize);
     this.surf.textAlign(TOP, TOP);
     this.surf.fill(255);
     this.surf.noStroke();
-    this.surf.rect(0, 0, textWidth(this.t), textAscent() * 0.7);
+    this.surf.rect(0, 0, textWidth(this.t), this.textsize);
     this.surf.fill(this.col);
     this.surf.text(this.t, 0, 0);
     this.surf.endDraw();

@@ -75,7 +75,7 @@ void setup() {
 }
 
 void draw() {
-  if (frameCount%20 == 0) {
+  if (frameCount%30 == 0) {
     //  pickIncoming(); //automatische messages werden ausgesucht
     for (SculptElement e : sculptureSurf.elements) {
       e.changeAlpha();

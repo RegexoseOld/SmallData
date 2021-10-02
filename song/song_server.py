@@ -132,7 +132,6 @@ class SongServer:
                                            self.tonality.synth.reset_values[str(self.tonality.ccnr)])
 
     def article_handler(self, _, content):
-        print('article? ', content)
         data = json.dumps({'newLine' : content})
         self.audience_client.send_message(settings.DISPLAY_ARTICLE_ADDRESS, data)
 
@@ -190,7 +189,7 @@ class SongServer:
 
     def _send_part_info(self, counter, next_part):
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
-        print('SongerServer. sending: ', message)
+        # print('SongerServer. sending: ', message)
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
         if next_part.name != self.beat_manager.current_part.name:
             with open('frontend/public/assets/parts.json', 'w', encoding='utf-8') as f:

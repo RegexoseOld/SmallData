@@ -98,6 +98,7 @@ class Rauschen extends SurfaceBase {
 }
 
 class Kinship extends SurfaceBase {
+  //class to show messages that are related to each other
   ArrayList<SingleLine> uttLines;
   int tSize;
   boolean reset;
@@ -189,34 +190,40 @@ class Sculpture extends SurfaceBase {
     Area a = areas.findArea(incomingCat);
     a.changeAngle(); // textAngle ändert sich, abhängig von der Area
     PVector angles = new PVector(a.firstAngle, a.secondAngle, a.textAngle); // für jedes neue Element werden die Angles festgeschrieben
-    SculptElement sE = new SculptElement(msg, this.font, a.col, this.surf.width, this.surf.height, angles);
-    if (canUpdate) {
+    // todo einfach area übergeben und daraus die Angles und die color ableiten
+    SculptElement sE = new SculptElement(msg, this.font, a, this.surf.width, this.surf.height);
+    if (this.canUpdate) {
       elements.add(sE);
-    } else {
+    } else if (!this.canUpdate) {
+      // use elements2 when loop in updateSculpture is busy to avoid concurrency
       elements2.add(sE);
-      println("after adding to elemente  " + this.elements2.size());
     }
   }
 
   void checkElements() {
-
     Iterator itr = this.elements.iterator();
     while (itr.hasNext()) {
       SculptElement e =  (SculptElement)itr.next();
-      if (e.alpha <= 50) {
-        println("before elements size  " + this.elements.size());
+      if (e.alpha <= 10) {
         itr.remove();
-        println("after removing  " + this.elements.size());
         break;
       }
     }
+    // add elements of elements2 to elements and clear Array
+    if (this.elements2.size() > 0) { 
+      println("before adding elements2" + this.elements2.size() + "  to elements  " + this.elements.size());
+      this.elements.addAll(this.elements2);
+      println("after addingAll to elements  " + this.elements.size());
+      this.elements2.clear();
+    }
   }
+
 
   void updateSculpture() {
     checkElements();
     this.canUpdate = false;
     this.surf.beginDraw();
-    this.surf.background(222);
+    this.surf.clear();
     for (SculptElement e : this.elements) {
       // println("area name  " + a.name + "   pos  " + pos);
       this.surf.pushMatrix(); 
@@ -228,36 +235,31 @@ class Sculpture extends SurfaceBase {
     }
     this.surf.endDraw();
     this.canUpdate = true;
-    if (this.elements2.size() <0){ 
-      this.elements.addAll(this.elements2);
-      println("after adding element  " + this.elements.size());
+  }
+}
+
+  void buildSurfaces() {
+    PFont articleFont = createFont("Courier", 30, true);
+    surfs = new ArrayList<SurfaceBase>();
+    rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true);
+    incSurf = new Kinship("incoming", width/30, height/2, width *3/7, height/5, messageFont, true);
+    matchSurf = new Kinship("matching", width *5/9, height/2, width *3/7, height/5, messageFont, true);
+    infoSurf = new Info("infoSurf", 0, height-height/12, width, height/12, infoFont, true);
+    articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30);
+    sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true);
+    surfs.add(rauschSurf);
+    surfs.add(incSurf);
+    surfs.add(matchSurf);
+    surfs.add(infoSurf);
+    surfs.add(articleSurf);
+    surfs.add(sculptureSurf);
+  }
+
+  StringList makeList(String type) {
+    StringList list = new StringList();
+    for (TableRow row : article.findRows(type, "type")) {
+      String line = row.getString("utterance");
+      list.append(line);
     }
+    return list;
   }
-}
-
-
-void buildSurfaces() {
-  PFont articleFont = createFont("Courier", 30, true);
-  surfs = new ArrayList<SurfaceBase>();
-  rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true);
-  incSurf = new Kinship("incoming", width/30, height/2, width *3/7, height/5, messageFont, true);
-  matchSurf = new Kinship("matching", width *5/9, height/2, width *3/7, height/5, messageFont, true);
-  infoSurf = new Info("infoSurf", 0, height-height/12, width, height/12, infoFont, true);
-  articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30);
-  sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true);
-  surfs.add(rauschSurf);
-  surfs.add(incSurf);
-  surfs.add(matchSurf);
-  surfs.add(infoSurf);
-  surfs.add(articleSurf);
-  surfs.add(sculptureSurf);
-}
-
-StringList makeList(String type) {
-  StringList list = new StringList();
-  for (TableRow row : article.findRows(type, "type")) {
-    String line = row.getString("utterance");
-    list.append(line);
-  }
-  return list;
-}
