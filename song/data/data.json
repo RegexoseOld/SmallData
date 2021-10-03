@@ -1,1 +1,1 @@
-{"text": "Wie naiv gehts noch?", "cat": "insinuation", "category_counter": {"praise": {"count": 1, "limit": 2}, "insinuation": {"count": 1, "limit": 2}, "dissence": {"count": 0, "limit": 2}, "lecture": {"count": 1, "limit": 2}, "concession": {"count": 1, "limit": 2}}, "is_locked": false}
+{"text": "Wie naiv gehts noch?", "cat": "lecture", "category_counter": {"praise": {"count": 1, "limit": 2}, "insinuation": {"count": 0, "limit": 2}, "dissence": {"count": 0, "limit": 2}, "lecture": {"count": 2, "limit": 2}, "concession": {"count": 0, "limit": 2}}, "is_locked": false}
