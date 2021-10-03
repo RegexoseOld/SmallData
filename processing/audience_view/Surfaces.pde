@@ -27,32 +27,111 @@ class SurfaceBase { //<>// //<>//
     this.surf.endDraw();
   }
 
-  void fadeGraphics(PGraphics c, String name, int fadeAmount) {
-    c.beginDraw();
-    c.loadPixels();
-    // iterate over pixels
-    for (int i =0; i<c.pixels.length; i++) {
-      // get alpha value
-      int alpha = (c.pixels[i] >> 24) & 0xFF ;
-      // reduce alpha value
-      alpha = max(0, alpha-fadeAmount);
-      // assign color with new alpha-value
-      c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
+  //void fadeGraphics(PGraphics c, String name, int fadeAmount) {
+  //  c.beginDraw();
+  //  c.loadPixels();
+  //  // iterate over pixels
+  //  for (int i =0; i<c.pixels.length; i++) {
+  //    // get alpha value
+  //    int alpha = (c.pixels[i] >> 24) & 0xFF ;
+  //    // reduce alpha value
+  //    alpha = max(0, alpha-fadeAmount);
+  //    // assign color with new alpha-value
+  //    c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
+  //  }
+  //  c.updatePixels();
+  //  c.endDraw();
+  //  // println("fading   " + name );
+  //}
+}
+
+class Kinship extends SurfaceBase {
+  //class to show messages that are related to each other
+  ArrayList<SingleLine> uttLines;
+  float tSize;
+  PGraphics titleSurf;
+  color col;
+  String title, currentMessage;
+  boolean fade;
+
+  Kinship(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
+    super(name, _x, _y, _w, _h, _font, _visible);
+    this.uttLines = new ArrayList<SingleLine>();
+    this.titleSurf = createGraphics(_w, _h/10);
+    this.tSize = 10.0;
+    this.fade = false;
+  }
+
+  void matchUpdate() {
+    if (this.fade) {
+      println("fade");
+      // ausblenden der surfaces
+      float gravity = - 2 * tc.mass;
+      tc.applyForce(gravity);
+      tc.updateFade(this);
+    } else {
+      float gravity = 3 * tc.mass;
+      tc.applyForce(gravity);
+      tc.update(this.w);
+      tc.checkEdge(this.w, this.font, this.tSize, this.currentMessage, this);
     }
-    c.updatePixels();
-    c.endDraw();
-    // println("fading   " + name );
+    this.visible = true;
+  }
+
+  void update() {
+    println("k tSize   " + this.tSize);
+    this.surf.beginDraw();
+    // this.surf.clear();
+    this.surf.background(222);
+    for (SingleLine sl : this.uttLines) {
+      this.surf.textFont(this.font, this.tSize);
+      this.surf.fill(sl.col);
+      this.surf.text(sl.line, 10, sl.yPos + 30);
+    }
+    this.surf.endDraw();
+    makeTitle();
+  }
+
+  void makeTitle() {
+    if (this.name.equals("incoming")) {
+      this.title = "Dein Kommentar ähnelt ...";
+    } else { 
+      this.title= " ... diesem hier";
+    }
+    this.titleSurf.beginDraw();
+    // remove alpha color
+    int alpha = (this.col >> 24) & 0xFF;
+    alpha = 255;
+    this.col = alpha<<24 | this.col & 0xFFFFFF ;
+    this.titleSurf.background(this.col);
+    this.titleSurf.textFont(this.font);
+    this.titleSurf.textAlign(CENTER, CENTER);
+    this.titleSurf.fill(20);
+    this.titleSurf.text(this.title, this.w/2, this.h/2);
+    this.titleSurf.endDraw();
+    this.surf.beginDraw();
+    this.surf.image(this.titleSurf, this.pos.x, this.pos.y);
+  }
+
+  void setDark() {
+    this.surf.beginDraw();
+    for (SingleLine l : this.uttLines) {
+      l.setDark();
+    }
+    this.surf.endDraw();
   }
 }
 
-class Article extends SurfaceBase {
+class Article extends Kinship {
   String currentLine;
   int tSize;
+  ArrayList<SingleLine> articleLines;
 
   Article(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible, int _tSize) {
     super(name, _x, _y, _w, _h, _font, _visible);
     this.currentLine = "";
     this.tSize = _tSize;
+    this.articleLines = new ArrayList<SingleLine>();
   }
 
   void updateLine(String l) {
@@ -93,62 +172,6 @@ class Rauschen extends SurfaceBase {
     this.surf.fill(col);
     this.surf.textFont(this.font, 30);
     this.surf.text(this.name, c.x + offset, c.y);
-    this.surf.endDraw();
-  }
-}
-
-class Kinship extends SurfaceBase {
-  //class to show messages that are related to each other
-  ArrayList<SingleLine> uttLines;
-  int tSize;
-  boolean reset;
-  PGraphics titleSurf;
-  color col;
-  String title;
-
-  Kinship(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
-    super(name, _x, _y, _w, _h, _font, _visible);
-    this.uttLines = new ArrayList<SingleLine>();
-    this.titleSurf = createGraphics(_w, _h/10);
-    this.reset = false;
-  }
-  void updateMatch() {
-    makeTitle();
-    this.surf.beginDraw();
-    // this.s.clear();
-    this.surf.background(222);
-    for (SingleLine sl : this.uttLines) {
-      this.surf.textFont(this.font, this.tSize);
-      this.surf.fill(sl.col);
-      this.surf.text(sl.line, 10, sl.yPos);
-    }
-    this.surf.endDraw();
-  }
-
-  void makeTitle() {
-    if (this.name.equals("incoming")) {
-      this.title = "Dein Kommentar ähnelt ...";
-    } else { 
-      this.title= " ... diesem hier";
-    }
-    this.titleSurf.beginDraw();
-    // remove alpha color
-    int alpha = (this.col >> 24) & 0xFF;
-    alpha = 255;
-    this.col = alpha<<24 | this.col & 0xFFFFFF ;
-    this.titleSurf.background(this.col);
-    this.titleSurf.textFont(this.font);
-    this.titleSurf.textAlign(CENTER, CENTER);
-    this.titleSurf.fill(20);
-    this.titleSurf.text(this.title, this.w/2, this.h/2);
-    this.titleSurf.endDraw();
-  }
-
-  void setDark() {
-    this.surf.beginDraw();
-    for (SingleLine l : this.uttLines) {
-      l.setDark();
-    }
     this.surf.endDraw();
   }
 }
@@ -238,28 +261,28 @@ class Sculpture extends SurfaceBase {
   }
 }
 
-  void buildSurfaces() {
-    PFont articleFont = createFont("Courier", 30, true);
-    surfs = new ArrayList<SurfaceBase>();
-    rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true);
-    incSurf = new Kinship("incoming", width/30, height/2, width *3/7, height/5, messageFont, true);
-    matchSurf = new Kinship("matching", width *5/9, height/2, width *3/7, height/5, messageFont, true);
-    infoSurf = new Info("infoSurf", 0, height-height/12, width, height/12, infoFont, true);
-    articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30);
-    sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true);
-    surfs.add(rauschSurf);
-    surfs.add(incSurf);
-    surfs.add(matchSurf);
-    surfs.add(infoSurf);
-    surfs.add(articleSurf);
-    surfs.add(sculptureSurf);
-  }
+void buildSurfaces() {
+  PFont articleFont = createFont("Courier", 30, true);
+  surfs = new ArrayList<SurfaceBase>();
+  rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true);
+  incSurf = new Kinship("incoming", width/30, height/2, width *3/7, height/3, messageFont, false);
+  matchSurf = new Kinship("matching", width *5/9, height/2, width *3/7, height/3, messageFont, false);
+  infoSurf = new Info("infoSurf", 0, height-height/12, width, height/12, infoFont, true);
+  articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30);
+  sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true);
+  surfs.add(rauschSurf);
+  surfs.add(incSurf);
+  surfs.add(matchSurf);
+  surfs.add(infoSurf);
+  surfs.add(articleSurf);
+  surfs.add(sculptureSurf);
+}
 
-  StringList makeList(String type) {
-    StringList list = new StringList();
-    for (TableRow row : article.findRows(type, "type")) {
-      String line = row.getString("utterance");
-      list.append(line);
-    }
-    return list;
+StringList makeList(String type) {
+  StringList list = new StringList();
+  for (TableRow row : article.findRows(type, "type")) {
+    String line = row.getString("utterance");
+    list.append(line);
   }
+  return list;
+}

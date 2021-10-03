@@ -42,13 +42,14 @@ class DisplayTD{
   }
 
   void matchInput(String incoming) {
-    if (this.utt.equals(incoming) && !messageLock && !matchedUtts.hasValue(incoming) && !mFade) {
-      messageLock = true;
-      mH.related = this.utt;
+    if (this.utt.equals(incoming) && !matchLock && !matchedUtts.hasValue(incoming) && !mFade) {
+      matchLock = true;
+      incSurf.currentMessage = this.utt;
+      matchSurf.currentMessage = this.utt;
       // println("matched!  " + incoming + "    with index  " + this.index);
       matchedUtts.append(incoming);
       incSurf.col = shapeColor;
-      matchSurf.col = findColor(cat);
+      matchSurf.col = findColor(this.cat);
     }
   }
 }

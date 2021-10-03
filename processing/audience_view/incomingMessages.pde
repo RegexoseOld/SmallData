@@ -37,7 +37,6 @@ void oscEvent(OscMessage m) {
         //println("updated  " + updated.size() + " items");
       }
     }
-    mH.newMessage(incomingText);
     uttCount += 1;
     // println("increment:  " + prgIncrement + "   uttcount:   " + uttCount);
   } else if (m.checkAddrPattern("/display_init") == true) {
@@ -71,14 +70,13 @@ void updateUtts() {
 
 // mock for incoming String messages. 
 void pickIncoming() {
-  if (!messageLock) {
+  if (!matchLock) {
     int index = int(random(TD.size()));
     JSONObject row = TD.getJSONObject(str(index));
     String utterance = row.getString("utterance");
     String category = row.getString("category");
     incomingText = utterance;
     incomingCat = category;
-    mH.incoming = incomingText;
     // println("new incoming: " + incomingText);
     background(222);
   }

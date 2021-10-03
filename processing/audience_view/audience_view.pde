@@ -21,7 +21,8 @@ ArrayList<SurfaceBase> surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
 Areas areas;
-MessageHighlight mH; // Environment for growing Text display
+// MessageHighlight mH; // Environment for growing Text display
+TextCalculations tc;
 String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
@@ -30,7 +31,7 @@ JSONObject TD; // TrainingData is stored here
 JSONObject oscTextIn, category_counter, ip_config, translatedCats, newArticleLine; 
 String incomingText, incomingCat, moderation, currentPart, currentArticleLine; // a mock for incoming OSC text
 color currentCol;
-boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
+boolean matchLock = false; //turns true if incomingText matches an utt in DisplayTD.matchInput
 boolean messageIn = false; // background reset
 boolean updateUtts = false;
 boolean mFade, vector;
@@ -60,16 +61,15 @@ void setup() {
   vector = true;
   areas = new Areas(cats);
   buildUtts(480);
-  mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
+  // mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
+  tc = new TextCalculations(20, incSurf.surf);
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
   mFade = false;
-  noiseInc = 5;
-  noiseStart = 0;
-  noiseLimit = noiseInc;
+  noiseInc = 5; // put in DisplayTD
+  noiseStart = 0;// put in DisplayTD
+  noiseLimit = noiseInc;// put in DisplayTD
   moderation = "moderation";
-
-
   matchedUtts = new StringList();
   // frameRate(20);
 }
@@ -93,18 +93,11 @@ void draw() {
     utt.matchInput(incomingText);
   }
 
-  if (messageLock && !mFade) {
-    float gravity = 3 * mH.mass;
-    mH.applyForce(gravity);
-    mH.update();
-    mH.checkEdge();
+  if (matchLock && !mFade) {
+    incSurf.matchUpdate();
+    matchSurf.matchUpdate();
   }
-  if (mFade) {
-    // ausblenden der surfaces
-    float gravity = - 2 * mH.mass;
-    mH.applyForce(gravity);
-    mH.updateFade();
-  }
+
   sculptureSurf.updateSculpture();
   for (int i=0; i<surfs.size(); i++) {
     SurfaceBase surf = surfs.get(i);
@@ -121,11 +114,11 @@ void draw() {
   }
 }
 
-void createScheduleTimer(final float ms) {
-  messageLock = true;
+void createScheduleTimer(final float ms, final Kinship k) {
+  matchLock = true;
   t.schedule(new TimerTask() {
     public void run() {
-      mFade = true;
+      k.visible = false;
     }
   }
   , (long) (ms));
