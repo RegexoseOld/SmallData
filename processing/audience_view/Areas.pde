@@ -27,7 +27,6 @@ class Areas {
       this.areas.add(area);
       shapeGrp.addElement(area.rS);
       areaAngle += TWO_PI/5;
-      // println("area name  " + area.name + "  area width  " + area.rS.getWidth() + "  area X  " + area.rS.getX());
     }
   }
 
@@ -123,7 +122,7 @@ class Area {
       for (int y=0; y<height; y++) {
         RPoint test = new RPoint(x, y);
         if (this.rS.contains(test)) {
-          PVector pos = new PVector(x,y);
+          PVector pos = new PVector(x, y);
           this.areaPos.add(pos);
         }
       }
@@ -158,7 +157,7 @@ class Area {
     RPoint p = new RPoint();
     RPoint prv = new RPoint();
     // PVector firstPoint = new PVector(frst.x, frst.y);
-    rauschSurf.s.beginDraw();
+
     for (int i=0; i<this.handles.length; i++) {
       p = this.handles[i];
       if (i <=0) {
@@ -166,17 +165,8 @@ class Area {
       } else {
         prv = this.handles[i-1];
       }
-      rauschSurf.s.stroke(this.col);
-      rauschSurf.s.strokeWeight(5);
-      rauschSurf.s.line(p.x, p.y, prv.x, prv.y);
-      rauschSurf.s.strokeWeight(15);
-      rauschSurf.s.point(p.x, p.y);
-      rauschSurf.s.strokeWeight(25);
-      rauschSurf.s.fill(this.col);
-      rauschSurf.s.textFont(messageFont, 30);
-      rauschSurf.s.text(this.name, this.centerOfArea.x + this.transX, this.centerOfArea.y);
+      rauschSurf.areaOutlines(p, prv, this.centerOfArea, this.transX, this.col);
     }
-    rauschSurf.s.endDraw();
   }
 
   void draw(PGraphics surf) {
