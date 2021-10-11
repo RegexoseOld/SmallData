@@ -34,7 +34,7 @@ color currentCol;
 boolean matchLock = false; //turns true if incomingText matches an utt in DisplayTD.matchInput
 boolean messageIn = false; // background reset
 boolean updateUtts = false;
-boolean mFade, vector;
+boolean activeTimer, vector;
 StringDict shapeMapping = new StringDict(); // mapping to attribute categories to SVG filenames
 int maxUtts = 1;
 int cat_limit, cat_counts, noiseStart, noiseLimit, noiseInc;
@@ -65,7 +65,6 @@ void setup() {
   tc = new TextCalculations(20, incSurf.surf);
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
-  mFade = false;
   noiseInc = 5; // put in DisplayTD
   noiseStart = 0;// put in DisplayTD
   noiseLimit = noiseInc;// put in DisplayTD
@@ -93,9 +92,9 @@ void draw() {
     utt.matchInput(incomingText);
   }
 
-  if (matchLock && !mFade) {
-    incSurf.matchUpdate();
-    matchSurf.matchUpdate();
+  if (matchLock) {
+    incSurf.update();
+    matchSurf.update();
   }
 
   sculptureSurf.updateSculpture();
@@ -114,11 +113,11 @@ void draw() {
   }
 }
 
-void createScheduleTimer(final float ms, final Kinship k) {
-  matchLock = true;
+void createScheduleTimer(final float ms) {
+  activeTimer = true;
   t.schedule(new TimerTask() {
     public void run() {
-      k.visible = false;
+      activeTimer = false;
     }
   }
   , (long) (ms));

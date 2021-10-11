@@ -26,23 +26,6 @@ class SurfaceBase { //<>// //<>//
     this.surf.background(222);
     this.surf.endDraw();
   }
-
-  //void fadeGraphics(PGraphics c, String name, int fadeAmount) {
-  //  c.beginDraw();
-  //  c.loadPixels();
-  //  // iterate over pixels
-  //  for (int i =0; i<c.pixels.length; i++) {
-  //    // get alpha value
-  //    int alpha = (c.pixels[i] >> 24) & 0xFF ;
-  //    // reduce alpha value
-  //    alpha = max(0, alpha-fadeAmount);
-  //    // assign color with new alpha-value
-  //    c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
-  //  }
-  //  c.updatePixels();
-  //  c.endDraw();
-  //  // println("fading   " + name );
-  //}
 }
 
 class Kinship extends SurfaceBase {
@@ -52,44 +35,57 @@ class Kinship extends SurfaceBase {
   PGraphics titleSurf;
   color col;
   String title, currentMessage;
-  boolean fade;
+  boolean stopGrow, matched;
 
   Kinship(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
     super(name, _x, _y, _w, _h, _font, _visible);
     this.uttLines = new ArrayList<SingleLine>();
     this.titleSurf = createGraphics(_w, _h/10);
     this.tSize = 10.0;
-    this.fade = false;
+    this.stopGrow = false;
   }
 
-  void matchUpdate() {
-    if (this.fade) {
-      println("fade");
-      // ausblenden der surfaces
-      float gravity = - 2 * tc.mass;
-      tc.applyForce(gravity);
-      tc.updateFade(this);
-    } else {
-      float gravity = 3 * tc.mass;
-      tc.applyForce(gravity);
-      tc.update(this.w);
-      tc.checkEdge(this.w, this.font, this.tSize, this.currentMessage, this);
-    }
+  void grow() {
+    float gravity = 3 * tc.mass;
+    tc.applyForce(gravity);
+    tc.update(this.w);
+    tc.checkEdge(this.w, this.font, this.tSize, this.currentMessage, this);
     this.visible = true;
   }
 
+  void shrink() {
+    float gravity = - 2 * tc.mass;
+    tc.applyForce(gravity);
+    tc.updateFade(this);
+  }
+
+  void matched(String msg, color c) {
+    this.currentMessage = msg;
+    this.col = c;
+    this.matched = true;
+  }
+
   void update() {
-    println("k tSize   " + this.tSize);
-    this.surf.beginDraw();
-    // this.surf.clear();
-    this.surf.background(222);
-    for (SingleLine sl : this.uttLines) {
-      this.surf.textFont(this.font, this.tSize);
-      this.surf.fill(sl.col);
-      this.surf.text(sl.line, 10, sl.yPos + 30);
+    if (this.matched) {
+      if (!this.stopGrow) {
+        grow();
+      } else if (this.stopGrow && !activeTimer) {
+        shrink();
+      }
+      this.surf.beginDraw();
+      this.surf.background(222);
+      for (SingleLine sl : this.uttLines) {
+        this.surf.textFont(this.font, this.tSize);
+        this.surf.fill(sl.col);
+        this.surf.text(sl.line, 10, sl.yPos + 30);
+      }
+      makeTitle();
+      this.surf.image(this.titleSurf, this.pos.x, this.pos.y);
+      this.surf.endDraw();
+    } else {
+      clearSurf();
+      //Todo  wo muss matchLock ausgeschaltet werden?
     }
-    this.surf.endDraw();
-    makeTitle();
   }
 
   void makeTitle() {
@@ -109,8 +105,13 @@ class Kinship extends SurfaceBase {
     this.titleSurf.fill(20);
     this.titleSurf.text(this.title, this.w/2, this.h/2);
     this.titleSurf.endDraw();
+  }
+
+  void clearSurf() {
+    // println("clearSurf   " + this.name);
     this.surf.beginDraw();
-    this.surf.image(this.titleSurf, this.pos.x, this.pos.y);
+    this.surf.background(222);
+    this.surf.endDraw();
   }
 
   void setDark() {

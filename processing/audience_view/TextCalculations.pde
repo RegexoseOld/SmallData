@@ -44,10 +44,9 @@ class TextCalculations {
       calculateTSize(this.tWidth, this.tHeight, tSize, t, this.stopGrow, font, k);
     } else {
       println("checkEdge:  " + this.tWidth);
-      this.stopGrow = true;
-      k.fade = true;
+      k.stopGrow = true;
       k.setDark();
-      createScheduleTimer(3000.0, k); // stops growing but displays for 3 more seconds
+      createScheduleTimer(3000.0); // stops growing but displays for 3 more seconds
     }
   }
 
@@ -74,7 +73,6 @@ class TextCalculations {
     }
     k.uttLines = tempsingle;
     k.tSize = int(floor(fontSize));
-    k.update();
   }
 
   void updateFade(Kinship k) {
@@ -83,11 +81,10 @@ class TextCalculations {
       this.tSize += lastVelocity;
       println("update fade" + this.tSize);
       k.tSize = int(this.tSize);
-      k.update();
     } else {
-      k.fade = false;
-      matchLock = false;
-      reset();
+      println("time to disappear");
+      // k.visible = false;
+      k.matched = false;
     }
     acceleration = 0;
   }
@@ -96,7 +93,6 @@ class TextCalculations {
     this.tSize = 1.0;
     this.tWidth = incSurf.w/6;
     this.tHeight = incSurf.h/6;
-    this.stopGrow = false;
     this.velocity = 0;
     this.acceleration = 0;
   }
