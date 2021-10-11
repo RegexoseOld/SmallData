@@ -16,10 +16,11 @@ int bt;
 void setup() {
   size(1000, 500);
   ip_config = loadJSONObject("../../../config/ip_config.json");
-  String ip = ip_config.getString("audience");
+  String ip = ip_config.getString("performer");
+  String audience_ip = ip_config.getString("audience");
   oscP5 = new OscP5(this, 5050); //Audience Port
   loc = new NetAddress(ip, 5050); // send to self
-  loc_send = new NetAddress(ip, 5020);
+  loc_send = new NetAddress(audience_ip, 5040);
   int font_size = width/20;
   font = createFont("Helvetica", font_size, true);
   font_bold = createFont("Helvetica-Bold", font_size, true);

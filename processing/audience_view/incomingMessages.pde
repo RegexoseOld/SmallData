@@ -48,9 +48,7 @@ void oscEvent(OscMessage m) {
     maxUtts = max_utt;
     prgIncrement = width/maxUtts;
   } else if (m.checkAddrPattern("/article")) {
-    newArticleLine = parseJSONObject((String) m.arguments()[0]);
-    currentArticleLine = newArticleLine.getString("newLine");
-    articleSurf.updateLine(currentArticleLine);
+    articleSurf.updateLine((String) m.arguments()[0]);
   }
 }
 

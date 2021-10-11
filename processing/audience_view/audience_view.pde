@@ -27,8 +27,8 @@ String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
 PFont messageFont, infoFont;
 JSONObject TD; // TrainingData is stored here
-JSONObject oscTextIn, category_counter, ip_config, translatedCats, newArticleLine; 
-String incomingText, incomingCat, moderation, currentPart, currentArticleLine; // a mock for incoming OSC text
+JSONObject oscTextIn, category_counter, ip_config, translatedCats; 
+String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
 color currentCol;
 boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
 boolean messageIn = false; // background reset

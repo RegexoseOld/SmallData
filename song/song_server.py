@@ -75,7 +75,6 @@ class SongServer:
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
         dispatcher.map(settings.SONG_BEAT_ADDRESS, self.beat_handler)
         dispatcher.map(settings.SONG_SYNTH_RESET_ADDRESS, self.reset_handler)
-        dispatcher.map(settings.DISPLAY_ARTICLE_ADDRESS, self.article_handler)
         self.server = ThreadingOSCUDPServer((server_ip, settings.SONG_SERVER_PORT), dispatcher)
 
         self.song_scenes = {k: v for k, v in zip(
@@ -130,12 +129,6 @@ class SongServer:
         self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain_value)
         self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.ccnr),
                                            self.tonality.synth.reset_values[str(self.tonality.ccnr)])
-
-    def article_handler(self, _, content):
-        print('article? ', content)
-        data = json.dumps({'newLine' : content})
-        self.audience_client.send_message(settings.DISPLAY_ARTICLE_ADDRESS, data)
-
 
     def end_of_song(self, end_message):
         input_dict = {'text': end_message,
