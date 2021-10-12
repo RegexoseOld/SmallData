@@ -31,7 +31,7 @@ JSONObject TD; // TrainingData is stored here
 JSONObject oscTextIn, category_counter, ip_config, translatedCats; 
 String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
 color currentCol;
-boolean matchLock = false; //turns true if incomingText matches an utt in DisplayTD.matchInput
+boolean matchLock = false; //eine neue Klasse, die true oder false wird, wenn es öfter aktiviert wird (siehe incSurf und matchSurf)
 boolean messageIn = false; // background reset
 boolean updateUtts = false;
 boolean activeTimer, vector;

@@ -287,3 +287,25 @@ StringList makeList(String type) {
   }
   return list;
 }
+
+class Lock {
+  boolean theLock;
+  String name;
+  int needed, counter;
+
+
+  Lock(String name, int n) {
+    this.name = name;
+    this.needed = n;
+    this.theLock = false;
+    this.counter = 0;
+  }
+
+  void update() {
+    this.counter +=1;
+    if (this.counter == this.needed) {
+      this.theLock = !this.theLock;
+      this.counter = 0;
+    }
+  }
+}
