@@ -82,9 +82,8 @@ class TextCalculations {
       println("update fade" + this.tSize);
       k.tSize = int(this.tSize);
     } else {
-      println("time to disappear");
-      // k.visible = false;
-      k.matched = false;
+      println("time to disappear" + k.name);
+      mL.update();
     }
     acceleration = 0;
   }

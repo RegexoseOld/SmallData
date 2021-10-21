@@ -42,8 +42,7 @@ class DisplayTD{
   }
 
   void matchInput(String incoming) {
-    if (this.utt.equals(incoming) && !matchLock && !matchedUtts.hasValue(incoming)) {
-      matchLock = true;
+    if (this.utt.equals(incoming) && !mL.theLock && !matchedUtts.hasValue(incoming)) {
       incSurf.matched(this.utt, shapeColor);
       matchSurf.matched(this.utt, findColor(this.cat));
       // println("matched!  " + incoming + "    with index  " + this.index);

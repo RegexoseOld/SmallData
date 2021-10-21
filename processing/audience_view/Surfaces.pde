@@ -63,6 +63,7 @@ class Kinship extends SurfaceBase {
     this.currentMessage = msg;
     this.col = c;
     this.matched = true;
+    mL.update();
   }
 
   void update() {
@@ -304,8 +305,12 @@ class Lock {
   void update() {
     this.counter +=1;
     if (this.counter == this.needed) {
-      this.theLock = !this.theLock;
+      println("lock is  " + this.theLock);
+      this.theLock = true;
+    } else if (this.counter == this.needed * 2) {
       this.counter = 0;
+      this.theLock = false;
+      println("Lock is  " + this.theLock);
     }
   }
 }

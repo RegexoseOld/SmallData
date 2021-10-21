@@ -17,6 +17,7 @@ Rauschen rauschSurf;
 Kinship incSurf, matchSurf;
 Info infoSurf;
 Sculpture sculptureSurf;
+Lock mL;
 ArrayList<SurfaceBase> surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
@@ -31,7 +32,6 @@ JSONObject TD; // TrainingData is stored here
 JSONObject oscTextIn, category_counter, ip_config, translatedCats; 
 String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
 color currentCol;
-boolean matchLock = false; //eine neue Klasse, die true oder false wird, wenn es öfter aktiviert wird (siehe incSurf und matchSurf)
 boolean messageIn = false; // background reset
 boolean updateUtts = false;
 boolean activeTimer, vector;
@@ -61,8 +61,8 @@ void setup() {
   vector = true;
   areas = new Areas(cats);
   buildUtts(480);
-  // mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
   tc = new TextCalculations(20, incSurf.surf);
+  mL = new Lock("matchlock", 2);
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
   noiseInc = 5; // put in DisplayTD
@@ -92,7 +92,7 @@ void draw() {
     utt.matchInput(incomingText);
   }
 
-  if (matchLock) {
+  if (mL.theLock) {
     incSurf.update();
     matchSurf.update();
   }

@@ -68,7 +68,7 @@ void updateUtts() {
 
 // mock for incoming String messages. 
 void pickIncoming() {
-  if (!matchLock) {
+  if (!mL.theLock) {
     int index = int(random(TD.size()));
     JSONObject row = TD.getJSONObject(str(index));
     String utterance = row.getString("utterance");
