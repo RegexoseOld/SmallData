@@ -1,5 +1,6 @@
 export default function sketch(p){
   let canvas;
+  let socket;
   var font;
   let fr = 10;  // Frames per second,
   let currentPart, nextPart;
@@ -63,6 +64,18 @@ export default function sketch(p){
     p.textAlign(p.LEFT, p.TOP);
     p.rectMode(p.CENTER);
     p.noStroke();
+
+     var socketPath = 'ws://'
+            + window.location.host
+            + '/ws/utterance';
+
+    socket = new WebSocket(socketPath);
+    console.log("building websocket")
+
+    socket.onmessage = function(e) {
+      console.log(e);
+      fetchData();
+    };
   }
 
   p.draw = () => {

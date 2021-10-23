@@ -8,7 +8,7 @@ DATA_DIR = path.join(BASE_DIR, 'webserver/model_data')
 # Song settings
 song_file = "bossa_new.json"
 song_path = path.join(BASE_DIR, 'config', song_file)
-ips = json.load(open('config/ip_config.json'))
+ips = json.load(open(path.join(BASE_DIR, 'config', 'ip_config.json')))
 
 note_intro = 0
 note_end = 12

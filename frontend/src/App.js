@@ -20,6 +20,20 @@ const ColoredLine = ({ color }) => (
 
 
 class App extends Component {
+
+    componentDidMount() {
+      var socketPath = 'ws://'
+            + window.location.host
+            + '/ws/utterance';
+
+      const socket = new WebSocket(socketPath);
+            console.log("building websocket")
+
+      socket.onmessage = function(e) {
+                console.log(e)
+            };
+    }
+
     render() {
         return (
             <main className="content">
@@ -35,6 +49,8 @@ class App extends Component {
         );
     }
 }
+
+
 
 export default App;
  /*  line 28   <ColoredLine color="blue" />

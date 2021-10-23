@@ -2,14 +2,19 @@ import pickle
 import random
 
 from django.http import JsonResponse
+from django.shortcuts import render
 
 from rest_framework import viewsets, views, response
 from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
 from .models import Utterance, Category, TrainingUtterance
+from .consumers import UtteranceConsumer
+
+from channels.layers import get_channel_layer
 
 from os import path
 import sys
 import json
+from asgiref.sync import async_to_sync
 
 sys.path.append(path.abspath(path.dirname(__file__) + '/../..'))  # hack top make sure webserver can be imported
 sys.path.reverse()  # hack to make sure the project's config is used instead of a config from the package 'odf'
@@ -34,6 +39,19 @@ def send_to_music_server(utterance, category):
     osc_map = pickle.dumps(osc_dict)
     song_client.send_message(settings.INTERPRETER_TARGET_ADDRESS, osc_map)
     # display_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, [utterance, category])
+
+
+def home(request):
+    return render(request, 'app/index.html', {})
+
+
+def inform_connected_websockets():
+    """
+    Inform all connected websockets about new utterance
+    :return:
+    """
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send(UtteranceConsumer.group_name, {"type": "New Utterance"}))
 
 
 class UtteranceView(viewsets.ModelViewSet):
@@ -61,8 +79,11 @@ class UtteranceView(viewsets.ModelViewSet):
         super(UtteranceView, self).perform_create(serializer)
         print('cat: {}\ntext {}'.format(category.name, text))
 
+        #  send to relevant other services
         if cat[0] != clf.UNCLASSIFIABLE:
             send_to_music_server(text.encode("utf-8"), category.name)
+
+        #  inform_connected_websockets()
 
 
 class JSONFileView(views.APIView):
