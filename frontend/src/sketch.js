@@ -50,6 +50,11 @@ export default function sketch(p){
     return col;
  }
 
+ function handle_incoming(e) {
+    console.log(e["data"]);
+    fetchData();
+ }
+
   p.setup = () => {
     p.frameRate(fr);
     canvas = p.createCanvas(500, 600);
@@ -65,17 +70,15 @@ export default function sketch(p){
     p.rectMode(p.CENTER);
     p.noStroke();
 
-     var socketPath = 'ws://'
-            + window.location.host
+    // TODO fix proper url (window.location.host is localhost:3000, so the API-port needs to be loaded!
+    var socketPath = 'ws://'
+            + 'localhost:8000'
             + '/ws/utterance';
 
     socket = new WebSocket(socketPath);
     console.log("building websocket")
 
-    socket.onmessage = function(e) {
-      console.log(e);
-      fetchData();
-    };
+    socket.onmessage = handle_incoming;
   }
 
   p.draw = () => {

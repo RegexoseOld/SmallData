@@ -51,7 +51,12 @@ def inform_connected_websockets():
     :return:
     """
     channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send(UtteranceConsumer.group_name, {"type": "New Utterance"}))
+    async_to_sync(channel_layer.group_send)(
+        UtteranceConsumer.group_name, {
+            "type": "confirmation",
+            "text": "es aendert sich was!!!"
+        }
+    )
 
 
 class UtteranceView(viewsets.ModelViewSet):
@@ -83,7 +88,7 @@ class UtteranceView(viewsets.ModelViewSet):
         if cat[0] != clf.UNCLASSIFIABLE:
             send_to_music_server(text.encode("utf-8"), category.name)
 
-        #  inform_connected_websockets()
+        inform_connected_websockets()
 
 
 class JSONFileView(views.APIView):

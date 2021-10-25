@@ -21,17 +21,11 @@ const ColoredLine = ({ color }) => (
 
 class App extends Component {
 
-    componentDidMount() {
-      var socketPath = 'ws://'
-            + window.location.host
-            + '/ws/utterance';
-
-      const socket = new WebSocket(socketPath);
-            console.log("building websocket")
-
-      socket.onmessage = function(e) {
-                console.log(e)
-            };
+    constructor(props) {
+        super(props);
+        this.state = {
+            messages: [],
+        };
     }
 
     render() {
