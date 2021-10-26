@@ -1,11 +1,12 @@
 import pickle
 import json
 import os
+import requests
 import pyttsx3
 from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from song.timer import RepeatTimer
-import threading
+
 from config import settings
 
 def speak(words):
@@ -199,15 +200,21 @@ class SongServer:
         input_dict['category_counter'] = self.song_machine.get_counter_for_visuals()
         input_dict['is_locked'] = self.song_machine.is_locked()
 
+        #  Inform django-backend about changes
+        requests.post('http://localhost:8000/api/category_counter',
+                                 data={},
+                                 json=json.dumps(input_dict["category_counter"])
+                                 )
+
         data = json.dumps(input_dict)
 
-        with open(os.path.join(settings.BASE_DIR, 'song/data/','data.json'), 'w', encoding='utf-8') as f:
+        #  store changes so that new clients start with proper cat_counter
+        with open(os.path.join(settings.BASE_DIR, 'song/data/', 'data.json'), 'w', encoding='utf-8') as f:
             json.dump(input_dict, f, ensure_ascii=False)
 
         self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)
         if send_to_audience:
             self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, data)
-
 
     def _send_init_to_display(self):
         category_dict = {idx: i for idx, i in enumerate(self.song_machine.parser.categories)}

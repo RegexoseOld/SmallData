@@ -45,20 +45,6 @@ def home(request):
     return render(request, 'app/index.html', {})
 
 
-def inform_connected_websockets():
-    """
-    Inform all connected websockets about new utterance
-    :return:
-    """
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        UtteranceConsumer.group_name, {
-            "type": "confirmation",
-            "text": "es aendert sich was!!!"
-        }
-    )
-
-
 class UtteranceView(viewsets.ModelViewSet):
     serializer_class = UtteranceSerializer
     queryset = Utterance.objects.all()
@@ -88,16 +74,26 @@ class UtteranceView(viewsets.ModelViewSet):
         if cat[0] != clf.UNCLASSIFIABLE:
             send_to_music_server(text.encode("utf-8"), category.name)
 
-        inform_connected_websockets()
 
-
-class JSONFileView(views.APIView):
+class CategoryCounterView(views.APIView):
     file_path = path.join(settings.BASE_DIR, "song/data", "data.json")
 
     def get(self, request):
         with open(self.file_path, 'r') as jsonfile:
             json_data = json.load(jsonfile)
         return response.Response(json_data)
+
+    def post(self, request):
+        #  inform connected channels
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            UtteranceConsumer.group_name, {
+                "type": "confirmation",
+                "text": "es aendert sich was!!!"
+            }
+        )
+
+        return response.Response("Ok")
 
 
 class CategoryView(viewsets.ModelViewSet):
