@@ -88,8 +88,8 @@ class CategoryCounterView(views.APIView):
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             UtteranceConsumer.group_name, {
-                "type": "confirmation",
-                "text": "es aendert sich was!!!"
+                "type": "category_counter",
+                "text": request.data
             }
         )
 

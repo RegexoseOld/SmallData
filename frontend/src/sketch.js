@@ -50,9 +50,15 @@ export default function sketch(p){
     return col;
  }
 
- function handle_incoming(e) {
-    console.log(e["data"]);
-    fetchData();
+ function onmessage_handler(e) {
+   let content = JSON.parse(e["data"]);
+   if (content.type === 'confirmation') {
+     console.log(content.body);
+   } else if (content.type === 'category_counter') {
+     counter = JSON.parse(content.body);
+   } else {
+     console.log('Unknown message type ' + content.type)
+   }
  }
 
   p.setup = () => {
@@ -78,7 +84,7 @@ export default function sketch(p){
     socket = new WebSocket(socketPath);
     console.log("building websocket")
 
-    socket.onmessage = handle_incoming;
+    socket.onmessage = onmessage_handler;
   }
 
   p.draw = () => {
@@ -94,6 +100,9 @@ export default function sketch(p){
   function displayCounter() {
     for (let i = 0; i < categories.length; i++) {
         let cat = categories[i];
+        if (!counter[cat]) {
+        console.log('jetzt')
+        }
         var limit = p.int(counter[cat].limit);
         var barCount = p.int(counter[cat].count);
         // console.log("cat " + cat + " barcount " + barCount);

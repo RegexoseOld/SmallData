@@ -1,4 +1,5 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
+import json
 
 
 class UtteranceConsumer(AsyncWebsocketConsumer):
@@ -15,12 +16,23 @@ class UtteranceConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.group_name, {
                 "type": "confirmation",
-                "text": "connected voll geil"
+                "text": "Websocket connection successfull"
             })
 
     async def disconnect(self, close_code):
         print("disconect")
 
-    async def confirmation(self, event):
-        await self.send(text_data=event["text"])
+    async def confirmation(self, event):  # TODO: give better name
+        await self.send(
+            text_data=json.dumps({
+                "type": "confirmation",
+                "body": event["text"]
+            }))
         print('In confirmation callback:', event["text"])
+
+    async def category_counter(self, event):
+        await self.send(
+            text_data=json.dumps({
+                "type": "category_counter",
+                "body": event["text"]
+            }))
