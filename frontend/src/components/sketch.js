@@ -3,23 +3,20 @@ export default function sketch(p){
   let socket;
   var font;
   let fr = 10;  // Frames per second,
-  let currentPart, nextPart;
   let barWidth, barHeight, yPos, tSize;
   var counterData = {};
   var counter;
-  var parts = {};
   let categories = ["praise", "dissence", "insinuation", "concession", "lecture"];
   let locked = counterData['is_locked'];
   let yOff, xOff, barOff;
 
   p.preload = () => {
     font = p.loadFont('../../assets/BebasNeue.otf');
-    p.loadJSON('../../assets/parts.json', gotParts);
     fetchData();
   }
 
-  function fetchData() {  //TODO: use websockets for data transfer
-    let url = "http://127.0.0.1:8000";
+  function fetchData() {
+    let url = "http://127.0.0.1:8000";  // TODO remove hardcoded url
     p.httpGet(url + "/api/category_counter", "json", false,
       function (response) {
         counterData = response;
@@ -30,21 +27,17 @@ export default function sketch(p){
       });
   }
 
-  function gotParts(data) {
-    parts = data;
-  }
-
  function findColor(cat) {
     let col = p.color(0);
-    if (cat == "praise") {
+    if (cat === "praise") {
       col = p.color(196, 128, 79);
-    } else if (cat == "dissence") {
+    } else if (cat === "dissence") {
       col = p.color(150, 63, 146);
-    } else if (cat == "insinuation") {
+    } else if (cat === "insinuation") {
       col = p.color(21, 143, 84);
-    } else if (cat == "lecture") {
+    } else if (cat === "lecture") {
       col = p.color(23, 139, 189);
-    } else if (cat == "concession") {
+    } else if (cat === "concession") {
       col = p.color(133, 138, 37);
     }
     return col;
@@ -88,7 +81,6 @@ export default function sketch(p){
   }
 
   p.draw = () => {
-    // fetchData()
     if (!counter) {
       // Wait until the counter-data has loaded before drawing.
       return;
@@ -100,9 +92,6 @@ export default function sketch(p){
   function displayCounter() {
     for (let i = 0; i < categories.length; i++) {
         let cat = categories[i];
-        if (!counter[cat]) {
-        console.log('jetzt')
-        }
         var limit = p.int(counter[cat].limit);
         var barCount = p.int(counter[cat].count);
         // console.log("cat " + cat + " barcount " + barCount);
