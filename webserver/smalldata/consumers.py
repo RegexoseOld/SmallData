@@ -22,7 +22,12 @@ class UtteranceConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         print("disconect")
 
-    async def confirmation(self, event):  # TODO: give better name
+    async def confirmation(self, event):
+        """
+        message handler for confirmation messages (called in self.connect)
+        :param event:
+        :return:
+        """
         await self.send(
             text_data=json.dumps({
                 "type": "confirmation",
@@ -31,6 +36,11 @@ class UtteranceConsumer(AsyncWebsocketConsumer):
         print('In confirmation callback:', event["text"])
 
     async def category_counter(self, event):
+        """
+        message handler for messages transmitting cat_counter (called from CategoryCounterView.post)
+        :param event:
+        :return:
+        """
         await self.send(
             text_data=json.dumps({
                 "type": "category_counter",

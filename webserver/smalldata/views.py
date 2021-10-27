@@ -40,10 +40,6 @@ def send_to_music_server(utterance, category):
     # display_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, [utterance, category])
 
 
-def home(request):
-    return render(request, 'app/index.html', {})
-
-
 class UtteranceView(viewsets.ModelViewSet):
     serializer_class = UtteranceSerializer
     queryset = Utterance.objects.all()
