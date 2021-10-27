@@ -202,15 +202,11 @@ class SongServer:
 
         #  Inform django-backend about changes
         requests.post('http://localhost:8000/api/category_counter',
-                                 data={},
-                                 json=json.dumps(input_dict["category_counter"])
-                                 )
+                      data={},
+                      json=json.dumps(input_dict["category_counter"])
+                      )
 
         data = json.dumps(input_dict)
-
-        #  store changes so that new clients start with proper cat_counter
-        with open(os.path.join(settings.BASE_DIR, 'song/data/', 'data.json'), 'w', encoding='utf-8') as f:
-            json.dump(input_dict, f, ensure_ascii=False)
 
         self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)
         if send_to_audience:

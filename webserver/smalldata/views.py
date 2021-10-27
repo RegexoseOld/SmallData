@@ -13,7 +13,6 @@ from channels.layers import get_channel_layer
 
 from os import path
 import sys
-import json
 from asgiref.sync import async_to_sync
 
 sys.path.append(path.abspath(path.dirname(__file__) + '/../..'))  # hack top make sure webserver can be imported
@@ -50,9 +49,7 @@ class UtteranceView(viewsets.ModelViewSet):
     queryset = Utterance.objects.all()
 
     def perform_create(self, serializer):
-        #  First detect the correct category,
-        # Fetch sent data:
-
+        # Fetch sent data
         text = serializer.validated_data["text"]
         # send text to clf to return a category
         cat, prob = clf.predict_proba(text, verbose=True)
@@ -76,23 +73,30 @@ class UtteranceView(viewsets.ModelViewSet):
 
 
 class CategoryCounterView(views.APIView):
-    file_path = path.join(settings.BASE_DIR, "song/data", "data.json")
+    cat_counter = {}
 
-    def get(self, request):
-        with open(self.file_path, 'r') as jsonfile:
-            json_data = json.load(jsonfile)
-        return response.Response(json_data)
+    def __init__(self, *args, **kwargs):
+        super(CategoryCounterView, self).__init__(*args, **kwargs)
+
+        #  Initialize cat_counter with relevant categories
+        for cat in Category.objects.all():
+            if cat.name != clf.UNCLASSIFIABLE:
+                self.cat_counter[cat.name] = {'count': 0, 'limit': 0}
+
+    def get(self, _):
+        return response.Response(self.cat_counter)
 
     def post(self, request):
+        self.cat_counter = request.data
+
         #  inform connected channels
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             UtteranceConsumer.group_name, {
                 "type": "category_counter",
-                "text": request.data
+                "text": self.cat_counter
             }
         )
-
         return response.Response("Ok")
 
 
