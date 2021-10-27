@@ -1,12 +1,12 @@
 import pickle
 import random
-import json
 
 from django.http import JsonResponse
 
-from rest_framework import viewsets, views, response
-from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
-from .models import Utterance, Category, TrainingUtterance
+from rest_framework import viewsets, response, status
+from rest_framework.decorators import api_view
+from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer, SongStateSerializer
+from .models import Utterance, Category, TrainingUtterance, SongState
 from .consumers import UtteranceConsumer
 
 from channels.layers import get_channel_layer
@@ -68,40 +68,6 @@ class UtteranceView(viewsets.ModelViewSet):
             send_to_music_server(text.encode("utf-8"), category.name)
 
 
-class CategoryCounterView(views.APIView):
-    cat_counter = {}
-    is_locked = False
-
-    def __init__(self, *args, **kwargs):
-        super(CategoryCounterView, self).__init__(*args, **kwargs)
-
-        #  Initialize cat_counter with relevant categories
-        for cat in Category.objects.all():
-            if cat.name != clf.UNCLASSIFIABLE:
-                self.cat_counter[cat.name] = {'count': 0, 'limit': 0}
-
-    def get(self, _):
-        return response.Response({
-            "category_counter": self.cat_counter,
-            "is_locked": self.is_locked
-        })
-
-    def post(self, request):
-        data = json.loads(request.data)
-        self.cat_counter = data["category_counter"]
-        self.is_locked = data["is_locked"]
-
-        #  inform connected channels
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            UtteranceConsumer.group_name, {
-                "type": "category_counter",
-                "text": request.data
-            }
-        )
-        return response.Response("Ok")
-
-
 class CategoryView(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
@@ -110,6 +76,29 @@ class CategoryView(viewsets.ModelViewSet):
 class TrainingUtteranceView(viewsets.ModelViewSet):
     serializer_class = TrainingUtteranceSerializer
     queryset = TrainingUtterance.objects.all()
+
+
+@api_view(['GET', 'POST'])
+def song_state(request):
+    if request.method == 'POST':
+        serializer = SongStateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            #  inform connected channels
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                UtteranceConsumer.group_name, {
+                    "type": "category_counter",
+                    "text": request.data['state']
+                }
+            )
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'GET':
+        prev = SongState.objects.last()
+        return response.Response(prev.state)
 
 
 def trigger_category(request, pk):

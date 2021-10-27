@@ -25,3 +25,10 @@ class TrainingUtterance(models.Model):
 
     def _str_(self):
         return self.text
+
+
+class SongState(models.Model):
+    state = models.JSONField()
+
+    def _str_(self):
+        return self.state

@@ -17,7 +17,7 @@ export default function sketch(p){
 
   function fetchData() {
     let url = "http://127.0.0.1:8000";  // TODO remove hardcoded url
-    p.httpGet(url + "/api/category_counter", "json", false,
+    p.httpGet(url + "/api/song_state/", "json", false,
       function (response) {
         counterData = response;
         counter = counterData['category_counter'];
@@ -49,7 +49,7 @@ export default function sketch(p){
    if (content.type === 'confirmation') {
      console.log(content.body);
    } else if (content.type === 'category_counter') {
-     counterData = JSON.parse(content.body);
+     counterData = content.body;
      counter = counterData['category_counter'];
      locked = counterData['is_locked'];
    } else {
