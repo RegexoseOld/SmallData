@@ -21,6 +21,7 @@ export default function sketch(p){
       function (response) {
         counterData = response;
         counter = counterData['category_counter'];
+        locked = counterData['is_locked'];
       },
       function (response) { // Handle unsuccessful loading of data.json
         console.log('Fetching data.json unsuccessfull!')
@@ -48,7 +49,9 @@ export default function sketch(p){
    if (content.type === 'confirmation') {
      console.log(content.body);
    } else if (content.type === 'category_counter') {
-     counter = JSON.parse(content.body);
+     counterData = JSON.parse(content.body);
+     counter = counterData['category_counter'];
+     locked = counterData['is_locked'];
    } else {
      console.log('Unknown message type ' + content.type)
    }

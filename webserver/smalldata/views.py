@@ -1,8 +1,8 @@
 import pickle
 import random
+import json
 
 from django.http import JsonResponse
-from django.shortcuts import render
 
 from rest_framework import viewsets, views, response
 from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
@@ -83,14 +83,15 @@ class CategoryCounterView(views.APIView):
         return response.Response(self.cat_counter)
 
     def post(self, request):
-        self.cat_counter = request.data
+        data = json.loads(request.data)
+        self.cat_counter = data["category_counter"]
 
         #  inform connected channels
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
             UtteranceConsumer.group_name, {
                 "type": "category_counter",
-                "text": self.cat_counter
+                "text": request.data
             }
         )
         return response.Response("Ok")

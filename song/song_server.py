@@ -199,14 +199,13 @@ class SongServer:
     def _send_utterance(self, input_dict, send_to_audience=True):
         input_dict['category_counter'] = self.song_machine.get_counter_for_visuals()
         input_dict['is_locked'] = self.song_machine.is_locked()
+        data = json.dumps(input_dict)
 
         #  Inform django-backend about changes
         requests.post('http://localhost:8000/api/category_counter',
                       data={},
-                      json=json.dumps(input_dict["category_counter"])
+                      json=data
                       )
-
-        data = json.dumps(input_dict)
 
         self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)
         if send_to_audience:
