@@ -13,6 +13,7 @@ class UtteranceConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
+        #  TODO send current cat_counter after socket is connected
         await self.channel_layer.group_send(
             self.group_name, {
                 "type": "confirmation",

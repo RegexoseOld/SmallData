@@ -70,6 +70,7 @@ class UtteranceView(viewsets.ModelViewSet):
 
 class CategoryCounterView(views.APIView):
     cat_counter = {}
+    is_locked = False
 
     def __init__(self, *args, **kwargs):
         super(CategoryCounterView, self).__init__(*args, **kwargs)
@@ -80,11 +81,15 @@ class CategoryCounterView(views.APIView):
                 self.cat_counter[cat.name] = {'count': 0, 'limit': 0}
 
     def get(self, _):
-        return response.Response(self.cat_counter)
+        return response.Response({
+            "category_counter": self.cat_counter,
+            "is_locked": self.is_locked
+        })
 
     def post(self, request):
         data = json.loads(request.data)
         self.cat_counter = data["category_counter"]
+        self.is_locked = data["is_locked"]
 
         #  inform connected channels
         channel_layer = get_channel_layer()
