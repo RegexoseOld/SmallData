@@ -44,8 +44,6 @@ class App extends Component {
     }
 }
 
-
-
 export default App;
  /*  line 28   <ColoredLine color="blue" />
                     <div>

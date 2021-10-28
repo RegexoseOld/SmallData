@@ -34,8 +34,6 @@ The entire application consists of several apps that communicate via OSC. The in
 ### Osculator
  * A mock to simulate the operation of the osculator, sends beat-information to the display.
  * start by running `python run.py osculator`
-### Redis server (for websockets)
- * start by running `redis-server`
 
 
 
@@ -49,7 +47,8 @@ The entire application consists of several apps that communicate via OSC. The in
  - django-import-export
  - django-cors-headers
  - django-rest-framework
+ - django-channels
  - sklearn
  - npm
  - pyttsx3
- - redis-server
+
