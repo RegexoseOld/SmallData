@@ -36,6 +36,7 @@ The entire application consists of several apps that communicate via OSC. The in
  * start by running `python run.py osculator`
 
 
+
 ## Dependencies
  - python 3
  - python-osc
@@ -46,6 +47,8 @@ The entire application consists of several apps that communicate via OSC. The in
  - django-import-export
  - django-cors-headers
  - django-rest-framework
+ - django-channels
  - sklearn
  - npm
  - pyttsx3
+

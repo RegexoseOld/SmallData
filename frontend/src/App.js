@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import P5Wrapper from 'react-p5-wrapper';
-import sketch from './sketch';
+import sketch from './components/sketch';
 import Utterance from './components/Utterance';
 import TriggerCategory from './components/TriggerCategory';
 
@@ -20,6 +20,14 @@ const ColoredLine = ({ color }) => (
 
 
 class App extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            messages: [],
+        };
+    }
+
     render() {
         return (
             <main className="content">

@@ -3,13 +3,17 @@ import random
 
 from django.http import JsonResponse
 
-from rest_framework import viewsets, views, response
-from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer
-from .models import Utterance, Category, TrainingUtterance
+from rest_framework import viewsets, response, status
+from rest_framework.decorators import api_view
+from .serializers import UtteranceSerializer, CategorySerializer, TrainingUtteranceSerializer, SongStateSerializer
+from .models import Utterance, Category, TrainingUtterance, SongState
+from .consumers import UtteranceConsumer
+
+from channels.layers import get_channel_layer
 
 from os import path
 import sys
-import json
+from asgiref.sync import async_to_sync
 
 sys.path.append(path.abspath(path.dirname(__file__) + '/../..'))  # hack top make sure webserver can be imported
 sys.path.reverse()  # hack to make sure the project's config is used instead of a config from the package 'odf'
@@ -41,9 +45,7 @@ class UtteranceView(viewsets.ModelViewSet):
     queryset = Utterance.objects.all()
 
     def perform_create(self, serializer):
-        #  First detect the correct category,
-        # Fetch sent data:
-
+        # Fetch sent data
         text = serializer.validated_data["text"]
         # send text to clf to return a category
         cat, prob = clf.predict_proba(text, verbose=True)
@@ -61,17 +63,9 @@ class UtteranceView(viewsets.ModelViewSet):
         super(UtteranceView, self).perform_create(serializer)
         print('cat: {}\ntext {}'.format(category.name, text))
 
+        #  send to relevant other services
         if cat[0] != clf.UNCLASSIFIABLE:
             send_to_music_server(text.encode("utf-8"), category.name)
-
-
-class JSONFileView(views.APIView):
-    file_path = path.join(settings.BASE_DIR, "song/data", "data.json")
-
-    def get(self, request):
-        with open(self.file_path, 'r') as jsonfile:
-            json_data = json.load(jsonfile)
-        return response.Response(json_data)
 
 
 class CategoryView(viewsets.ModelViewSet):
@@ -82,6 +76,29 @@ class CategoryView(viewsets.ModelViewSet):
 class TrainingUtteranceView(viewsets.ModelViewSet):
     serializer_class = TrainingUtteranceSerializer
     queryset = TrainingUtterance.objects.all()
+
+
+@api_view(['GET', 'POST'])
+def song_state(request):
+    if request.method == 'POST':
+        serializer = SongStateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            #  inform connected channels
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                UtteranceConsumer.group_name, {
+                    "type": "category_counter",
+                    "text": request.data['state']
+                }
+            )
+            return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'GET':
+        prev = SongState.objects.last()
+        return response.Response(prev.state)
 
 
 def trigger_category(request, pk):
