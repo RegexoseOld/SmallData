@@ -15,20 +15,8 @@ export default function sketch(p){
     fetchData();
   }
 
-  function fetchData() {
-    let url = "http://127.0.0.1:8000";  // TODO remove hardcoded url
-    p.httpGet(url + "/api/song_state/", "json", false,
-      function (response) {
-        counterData = response;
-        counter = counterData['category_counter'];
-        locked = counterData['is_locked'];
-      },
-      function (response) { // Handle unsuccessful loading of data.json
-        console.log('Fetching data.json unsuccessfull!')
-      });
-  }
 
- function findColor(cat) {
+  function findColor(cat) {
     let col = p.color(0);
     if (cat === "praise") {
       col = p.color(196, 128, 79);
@@ -42,7 +30,20 @@ export default function sketch(p){
       col = p.color(133, 138, 37);
     }
     return col;
- }
+  }
+
+  function fetchData() {
+    let url = "http://127.0.0.1:8000";  // TODO remove hardcoded url
+    p.httpGet(url + "/api/song_state/", "json", false,
+      function (response) {
+        counterData = response;
+        counter = counterData['category_counter'];
+        locked = counterData['is_locked'];
+      },
+      function (response) { // Handle unsuccessful loading of data.json
+        console.log('Fetching data.json unsuccessfull!')
+      });
+  }
 
  function onmessage_handler(e) {
    let content = JSON.parse(e["data"]);
@@ -93,7 +94,11 @@ export default function sketch(p){
   }
 
   function displayCounter() {
-    for (let i = 0; i < categories.length; i++) {
+    if (locked) {
+      p.textSize(25);
+      p.text('neuer Songpart wird geladen. \nEingabe hat gerade keinen Effekt', 200, yOff , p.width / 2, 200);
+    } else {
+      for (let i = 0; i < categories.length; i++) {
         let cat = categories[i];
         var limit = p.int(counter[cat].limit);
         var barCount = p.int(counter[cat].count);
@@ -102,26 +107,23 @@ export default function sketch(p){
         p.fill(col);
         p.textSize(tSize);
         p.noStroke();
-      if (limit < 0) {
+        if (limit < 0) {
           barWidth = 0;
           p.text("läuft gerade " + cat + " hat keinen effekt", barOff, yOff + (yPos) * i);
-      } else if (limit < 0 && locked) {
-          barWidth = 0;
-          p.textSize(15);
-          p.text('neuer Songpart wird geladen. Eingabe hat gerade keinen Effekt', 200, yOff + (yPos * i), p.width / 3, 200);
-      } else {
-        barWidth = 60
-   }
-      p.text(cat, xOff, yOff + (yPos * i));
-      p.rectMode(p.CORNER);
-      p.rect(xOff + barOff, yOff + (yPos * i), barCount * barWidth, barHeight);
-      // p.rect(xOff + barOff, yOff + (yPos * i), 200, barHeight);
-      p.noFill();
-      p.rect(xOff + barOff, yOff + (yPos * i), limit * barWidth, barHeight + 5);
-      p.fill(2);
-      if (barCount >= limit - 2 && limit > 0) {
-        p.textSize(18);
-        p.text("noch " + (limit + 1 - barCount) + " x " + cat + " bis zum " + cat + "-part", 200 , yOff + (yPos * i));
+        } else {
+          barWidth = 60
+        }
+        p.text(cat, xOff, yOff + (yPos * i));
+        p.rectMode(p.CORNER);
+        p.rect(xOff + barOff, yOff + (yPos * i), barCount * barWidth, barHeight);
+        // p.rect(xOff + barOff, yOff + (yPos * i), 200, barHeight);
+        p.noFill();
+        p.rect(xOff + barOff, yOff + (yPos * i), limit * barWidth, barHeight + 5);
+        p.fill(2);
+        if (barCount >= limit - 2 && limit > 0) {
+          p.textSize(18);
+          p.text("noch " + (limit + 1 - barCount) + " x " + cat + " bis zum " + cat + "-part", 200 , yOff + (yPos * i));
+        }
       }
     }
   }
