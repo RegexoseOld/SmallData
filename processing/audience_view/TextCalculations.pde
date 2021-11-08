@@ -79,19 +79,20 @@ class TextCalculations {
     lastVelocity += acceleration;
     if (this.tSize > abs(lastVelocity)) {
       this.tSize += lastVelocity;
-      println("update fade" + this.tSize);
+      // println("update fade" + this.tSize);
       k.tSize = int(this.tSize);
     } else {
-      println("time to disappear" + k.name);
-      mL.update();
+      k.matched = false;
+      println("time to disappear  " + k.name + "  matched?   " + k.matched );
+    
     }
     acceleration = 0;
   }
 
   void reset() {
     this.tSize = 1.0;
-    this.tWidth = incSurf.w/6;
-    this.tHeight = incSurf.h/6;
+    this.tWidth = .w/6;
+    this.tHeight = .h/6;
     this.velocity = 0;
     this.acceleration = 0;
   }

@@ -1,4 +1,4 @@
-import java.util.Timer;  //<>//
+import java.util.Timer; 
 import java.util.TimerTask;
 import java.util.Map;
 import java.util.List;
@@ -10,17 +10,18 @@ import netP5.*;
 OscP5 oscP5;
 NetAddress loc;
 
-final Timer t = new Timer();
+final Timer timer = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
 Article articleSurf;
 Rauschen rauschSurf;
 Kinship incSurf, matchSurf;
 Info infoSurf;
 Sculpture sculptureSurf;
-Lock mL;
+VisibilityMachine visibilityMachine;
 ArrayList<SurfaceBase> surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
+
 Areas areas;
 // MessageHighlight mH; // Environment for growing Text display
 TextCalculations tc;
@@ -52,6 +53,7 @@ void setup() {
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[25], 20, true);
+  VisibilityMachine visibilityMachine = new VisibilityMachine();
   buildSurfaces();
   oscP5 = new OscP5(this, 5040); //Audience Port
   loc = new NetAddress(ip, 5040); // send to self
@@ -62,7 +64,6 @@ void setup() {
   areas = new Areas(cats);
   buildUtts(480);
   tc = new TextCalculations(20, incSurf.surf);
-  mL = new Lock("matchlock", 2);
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
   noiseInc = 5; // put in DisplayTD
@@ -91,11 +92,11 @@ void draw() {
     utt.update();
     utt.matchInput(incomingText);
   }
-
-  if (mL.theLock) {
+  // mL sollte eine funktion haben, die alle wichtigen parameter prüft, und dann die visibility ändert
+  if (sM.checkLock()){
     incSurf.update();
     matchSurf.update();
-  }
+  } 
 
   sculptureSurf.updateSculpture();
   for (int i=0; i<surfs.size(); i++) {
@@ -113,15 +114,7 @@ void draw() {
   }
 }
 
-void createScheduleTimer(final float ms) {
-  activeTimer = true;
-  t.schedule(new TimerTask() {
-    public void run() {
-      activeTimer = false;
-    }
-  }
-  , (long) (ms));
-}
+
 
 void buildUtts(int amount) {
   shapeMapping.set("praise", "knacks01.svg");

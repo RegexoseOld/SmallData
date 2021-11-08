@@ -1,4 +1,4 @@
-class SurfaceBase { //<>// //<>//
+class SurfaceBase { //<>//
   String name;
   int w, h;
   PVector pos;
@@ -26,6 +26,12 @@ class SurfaceBase { //<>// //<>//
     this.surf.background(222);
     this.surf.endDraw();
   }
+  void clearSurf() {
+    println("clearSurf   " + this.name);
+    this.surf.beginDraw();
+    this.surf.clear();
+    this.surf.endDraw();
+  }
 }
 
 class Kinship extends SurfaceBase {
@@ -34,7 +40,7 @@ class Kinship extends SurfaceBase {
   float tSize;
   PGraphics titleSurf;
   color col;
-  String title, currentMessage;
+  String title, text, cat;
   boolean stopGrow, matched;
 
   Kinship(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
@@ -58,8 +64,13 @@ class Kinship extends SurfaceBase {
     tc.applyForce(gravity);
     tc.updateFade(this);
   }
+  
+  void setTexts(String text, String cat) {
+    this.text = text;
+    this.cat = cat;
+  }
 
-  void matched(String msg, color c) {
+  void setMatched(String msg, color c) {
     this.currentMessage = msg;
     this.col = c;
     this.matched = true;
@@ -67,10 +78,12 @@ class Kinship extends SurfaceBase {
   }
 
   void update() {
+     // println("update  " + this.name);
     if (this.matched) {
       if (!this.stopGrow) {
         grow();
       } else if (this.stopGrow && !activeTimer) {
+        println("update shrink  " + this.name);
         shrink();
       }
       this.surf.beginDraw();
@@ -83,9 +96,10 @@ class Kinship extends SurfaceBase {
       makeTitle();
       this.surf.image(this.titleSurf, this.pos.x, this.pos.y);
       this.surf.endDraw();
-    } else {
-      clearSurf();
-      //Todo  wo muss matchLock ausgeschaltet werden?
+    } else {  
+     println("update noMatch  " + this.name);
+      mL.update();
+      this.visible = false;
     }
   }
 
@@ -106,13 +120,6 @@ class Kinship extends SurfaceBase {
     this.titleSurf.fill(20);
     this.titleSurf.text(this.title, this.w/2, this.h/2);
     this.titleSurf.endDraw();
-  }
-
-  void clearSurf() {
-    // println("clearSurf   " + this.name);
-    this.surf.beginDraw();
-    this.surf.background(222);
-    this.surf.endDraw();
   }
 
   void setDark() {
@@ -266,8 +273,8 @@ class Sculpture extends SurfaceBase {
 void buildSurfaces() {
   PFont articleFont = createFont("Courier", 30, true);
   surfs = new ArrayList<SurfaceBase>();
-  rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true);
-  incSurf = new Kinship("incoming", width/30, height/2, width *3/7, height/3, messageFont, false);
+  rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true); 
+  incSurf  = new Kinship("incoming", width/30, height/2, width *3/7, height/3, messageFont, false);
   matchSurf = new Kinship("matching", width *5/9, height/2, width *3/7, height/3, messageFont, false);
   infoSurf = new Info("infoSurf", 0, height-height/12, width, height/12, infoFont, true);
   articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30);
@@ -287,30 +294,4 @@ StringList makeList(String type) {
     list.append(line);
   }
   return list;
-}
-
-class Lock {
-  boolean theLock;
-  String name;
-  int needed, counter;
-
-
-  Lock(String name, int n) {
-    this.name = name;
-    this.needed = n;
-    this.theLock = false;
-    this.counter = 0;
-  }
-
-  void update() {
-    this.counter +=1;
-    if (this.counter == this.needed) {
-      println("lock is  " + this.theLock);
-      this.theLock = true;
-    } else if (this.counter == this.needed * 2) {
-      this.counter = 0;
-      this.theLock = false;
-      println("Lock is  " + this.theLock);
-    }
-  }
 }
