@@ -17,7 +17,7 @@ Rauschen rauschSurf;
 Kinship incSurf, matchSurf;
 Info infoSurf;
 Sculpture sculptureSurf;
-VisibilityMachine visibilityMachine;
+VisibilityMachine visibilityMachine; // class to make Surfaces visible
 ArrayList<SurfaceBase> surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
@@ -53,7 +53,7 @@ void setup() {
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[25], 20, true);
-  VisibilityMachine visibilityMachine = new VisibilityMachine();
+  visibilityMachine = new VisibilityMachine();
   buildSurfaces();
   oscP5 = new OscP5(this, 5040); //Audience Port
   loc = new NetAddress(ip, 5040); // send to self
@@ -76,11 +76,12 @@ void setup() {
 
 void draw() {
   if (frameCount%30 == 0) {
-    //  pickIncoming(); //automatische messages werden ausgesucht
+    // pickIncoming(); //automatische messages werden ausgesucht
     for (SculptElement e : sculptureSurf.elements) {
       e.changeAlpha();
     }
   } 
+  
   if (messageIn) {
     rauschSurf.clearBackground();
     messageIn = !messageIn;
@@ -90,14 +91,14 @@ void draw() {
   for (int x=noiseStart; x<noiseLimit; x++) {
     DisplayTD utt = utts.get(x);
     utt.update();
-    utt.matchInput(incomingText);
   }
-  // mL sollte eine funktion haben, die alle wichtigen parameter prüft, und dann die visibility ändert
-  if (sM.checkLock()){
-    incSurf.update();
-    matchSurf.update();
-  } 
-
+  
+  println("vm pre" + visibilityMachine.state);
+  
+  visibilityMachine.update();
+  incSurf.update();
+  matchSurf.update();
+    
   sculptureSurf.updateSculpture();
   for (int i=0; i<surfs.size(); i++) {
     SurfaceBase surf = surfs.get(i);
@@ -105,6 +106,7 @@ void draw() {
       surf.display();
     }
   }
+  
   if (noiseLimit <= utts.size() - noiseInc) {
     noiseStart = noiseLimit;
     noiseLimit += noiseInc;
@@ -113,8 +115,6 @@ void draw() {
     noiseLimit = noiseInc;
   }
 }
-
-
 
 void buildUtts(int amount) {
   shapeMapping.set("praise", "knacks01.svg");

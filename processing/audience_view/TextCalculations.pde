@@ -6,7 +6,6 @@ class TextCalculations {
   float mass;  
   float velocity, lastVelocity, acceleration, tSize, angle; 
   int tWidth, tHeight; // growing area of text. starts low; ends if area is approaching the maximum width of this client surface
-  boolean stopGrow;
 
   TextCalculations(float _m, PGraphics _s) {
     this.mass = _m;
@@ -17,7 +16,6 @@ class TextCalculations {
     this.tSize = 10.0;
     this.tWidth = this.s.width/6; // starting point for font calculation
     this.tHeight = this.s.height/6;
-    this.stopGrow = false;
   }
 
   void applyForce(float force) {
@@ -39,18 +37,18 @@ class TextCalculations {
     acceleration = 0;
   }
 
-  void checkEdge(int w, PFont font, float tSize, String t, Kinship k) {
+  boolean checkEdge(int w, PFont font, float tSize, String t, Kinship k) {
     if (this.tWidth <= w - 50 ) {
-      calculateTSize(this.tWidth, this.tHeight, tSize, t, this.stopGrow, font, k);
+      calculateTSize(this.tWidth, this.tHeight, tSize, t, font, k);
+      return false;
     } else {
-      println("checkEdge:  " + this.tWidth);
-      k.stopGrow = true;
+      // println("checkEdge:  " + this.tWidth);
       k.setDark();
-      createScheduleTimer(3000.0); // stops growing but displays for 3 more seconds
+      return true;
     }
   }
 
-  void calculateTSize(float w, float h, float fontSize, String text2fit, boolean grow, PFont font, Kinship k) {
+  void calculateTSize(float w, float h, float fontSize, String text2fit, PFont font, Kinship k) {
     // println("\ncalculate size" + k.name);
     // make temp objects to fill until right fontsize is found
     // all tempsingle Arrays can later be manipulated with their alpha color
@@ -67,7 +65,7 @@ class TextCalculations {
       y = spacing ;
     }
     for (int i=0; i<textBreak.size(); i++) {
-      SingleLine sl = new SingleLine(textBreak.get(i), y, grow);
+      SingleLine sl = new SingleLine(textBreak.get(i), y);
       tempsingle.add(sl);
       y += spacing;
     }
@@ -83,7 +81,7 @@ class TextCalculations {
       k.tSize = int(this.tSize);
     } else {
       k.matched = false;
-      println("time to disappear  " + k.name + "  matched?   " + k.matched );
+      //println("time to disappear  " + k.name + "  matched?   " + k.matched );
     
     }
     acceleration = 0;
@@ -91,8 +89,8 @@ class TextCalculations {
 
   void reset() {
     this.tSize = 1.0;
-    this.tWidth = .w/6;
-    this.tHeight = .h/6;
+    this.tWidth = incSurf.w/6;
+    this.tHeight = incSurf.h/6;
     this.velocity = 0;
     this.acceleration = 0;
   }
@@ -151,22 +149,18 @@ class SingleLine {
   float yPos, r, g, b, a;
   color col;
 
-  SingleLine(String _l, float _y, boolean _grow) {
+  SingleLine(String _l, float _y) {
     line = _l;
     yPos = _y;
-    makeColor(_grow);
+    this.makeColor();
   }
 
-  void makeColor(boolean grow) {
-    if (!grow) {
+  void makeColor() {
       int r = (currentCol >> 16) & 0xFF;
       int g = (currentCol >> 8) & 0xFF;
       int b = currentCol & 0xFF;
       int a = (currentCol >> 24) & 0xFF;
       col = color(r, g, b, a);
-    } else {
-      col = color(230);
-    }
   }
 
   void setDark() {

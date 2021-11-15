@@ -43,20 +43,22 @@ class Kinship extends SurfaceBase {
   String title, text, cat;
   boolean stopGrow, matched;
 
-  Kinship(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
+  Kinship(String name, String title, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
     super(name, _x, _y, _w, _h, _font, _visible);
     this.uttLines = new ArrayList<SingleLine>();
     this.titleSurf = createGraphics(_w, _h/10);
     this.tSize = 10.0;
-    this.stopGrow = false;
+    this.title = title;
   }
 
   void grow() {
     float gravity = 3 * tc.mass;
     tc.applyForce(gravity);
     tc.update(this.w);
-    tc.checkEdge(this.w, this.font, this.tSize, this.currentMessage, this);
-    this.visible = true;
+    boolean sizeReached = tc.checkEdge(this.w, this.font, this.tSize, this.text, this);
+    if (sizeReached) {
+      visibilityMachine.setSizeReached(sizeReached);  
+    }
   }
 
   void shrink() {
@@ -64,51 +66,40 @@ class Kinship extends SurfaceBase {
     tc.applyForce(gravity);
     tc.updateFade(this);
   }
-  
+
   void setTexts(String text, String cat) {
     this.text = text;
     this.cat = cat;
   }
 
-  void setMatched(String msg, color c) {
-    this.currentMessage = msg;
-    this.col = c;
-    this.matched = true;
-    mL.update();
-  }
-
   void update() {
-     // println("update  " + this.name);
-    if (this.matched) {
-      if (!this.stopGrow) {
-        grow();
-      } else if (this.stopGrow && !activeTimer) {
-        println("update shrink  " + this.name);
-        shrink();
+    this.visible = visibilityMachine.isVisible;
+    
+    if (this.visible) {
+      switch (visibilityMachine.state) {
+      case VisibilityMachine.STATE_GROW:
+        this.grow();
+      case VisibilityMachine.STATE_SHRINK:
+        this.shrink();
       }
-      this.surf.beginDraw();
-      this.surf.background(222);
-      for (SingleLine sl : this.uttLines) {
-        this.surf.textFont(this.font, this.tSize);
-        this.surf.fill(sl.col);
-        this.surf.text(sl.line, 10, sl.yPos + 30);
-      }
-      makeTitle();
-      this.surf.image(this.titleSurf, this.pos.x, this.pos.y);
-      this.surf.endDraw();
-    } else {  
-     println("update noMatch  " + this.name);
-      mL.update();
-      this.visible = false;
+      this.updateSurface();
     }
   }
+  
+  void updateSurface() {
+    this.surf.beginDraw();
+    this.surf.background(222);
+    for (SingleLine sl : this.uttLines) {
+      this.surf.textFont(this.font, this.tSize);
+      this.surf.fill(sl.col);
+      this.surf.text(sl.line, 10, sl.yPos + 30);
+    }
+    this.makeTitle();
+    this.surf.image(this.titleSurf, this.pos.x, this.pos.y);
+    this.surf.endDraw();
+  } 
 
   void makeTitle() {
-    if (this.name.equals("incoming")) {
-      this.title = "Dein Kommentar ähnelt ...";
-    } else { 
-      this.title= " ... diesem hier";
-    }
     this.titleSurf.beginDraw();
     // remove alpha color
     int alpha = (this.col >> 24) & 0xFF;
@@ -131,7 +122,7 @@ class Kinship extends SurfaceBase {
   }
 }
 
-class Article extends Kinship {
+class Article extends SurfaceBase {
   String currentLine;
   int tSize;
   ArrayList<SingleLine> articleLines;
@@ -274,8 +265,8 @@ void buildSurfaces() {
   PFont articleFont = createFont("Courier", 30, true);
   surfs = new ArrayList<SurfaceBase>();
   rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true); 
-  incSurf  = new Kinship("incoming", width/30, height/2, width *3/7, height/3, messageFont, false);
-  matchSurf = new Kinship("matching", width *5/9, height/2, width *3/7, height/3, messageFont, false);
+  incSurf  = new Kinship("incoming", "Dein Kommentar ähnelt", width/30, height/2, width *3/7, height/3, messageFont, false);
+  matchSurf = new Kinship("matching", "diesem hier", width *5/9, height/2, width *3/7, height/3, messageFont, false);
   infoSurf = new Info("infoSurf", 0, height-height/12, width, height/12, infoFont, true);
   articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30);
   sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true);
