@@ -63,11 +63,12 @@ class SongServer:
     timer_lock = False
     rack_fade_val = 0
 
-    def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager,
+    def __init__(self, osculator_client, audience_client, performer_client, sc_client, machine, beat_manager,
                  tonality, server_ip):
         self.osculator_client = osculator_client
         self.audience_client = audience_client
         self.performer_client = performer_client
+        self.sc_client = sc_client
         self.song_machine = machine
         self.beat_manager = beat_manager
         self.tonality = tonality
@@ -87,7 +88,7 @@ class SongServer:
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.song_machine.parser.INTRO_NOTE, 0.0))
         self.osculator_client.send_message('/mid_{}'.format('praise'), self.tonality.synth.ctrl_message)
         self._send_init_to_display()
-        self.__send_state_to_backend()
+        # self.__send_state_to_backend()
 
     def interpreter_handler(self, _, content):
         self.received_utts += 1
@@ -144,6 +145,8 @@ class SongServer:
 
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
+        print("note ", note)
+        self.sc_client.send_message('/sc', note)
         if self.beat_manager.update_beat_counter(counter):
 
             # update performer view (show counter and next part)
@@ -185,7 +188,7 @@ class SongServer:
 
     def _send_part_info(self, counter, next_part):
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
-        print('SongerServer. sending: ', message)
+        # print('SongerServer. sending: ', message)
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
         if next_part.name != self.beat_manager.current_part.name:
             with open('frontend/public/assets/parts.json', 'w', encoding='utf-8') as f:
