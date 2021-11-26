@@ -41,10 +41,12 @@ class Kinship extends SurfaceBase {
   PGraphics titleSurf;
   color col;
   String title, text, cat;
-  boolean stopGrow, matched;
+  boolean stopGrow;
+  TextCalculations tc;
 
   Kinship(String name, String title, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
     super(name, _x, _y, _w, _h, _font, _visible);
+    this.tc = new TextCalculations(this.w, this.h);
     this.uttLines = new ArrayList<SingleLine>();
     this.titleSurf = createGraphics(_w, _h/10);
     this.tSize = 10.0;
@@ -52,19 +54,27 @@ class Kinship extends SurfaceBase {
   }
 
   void grow() {
-    float gravity = 3 * tc.mass;
-    tc.applyForce(gravity);
-    tc.update(this.w);
-    boolean sizeReached = tc.checkEdge(this.w, this.font, this.tSize, this.text, this);
-    if (sizeReached) {
-      visibilityMachine.setSizeReached(sizeReached);  
+    float gravity = 3 * this.tc.mass;
+    this.tc.applyForce(gravity);
+    this.tc.update(this.w, this.font, this.tSize, this.text);
+    if (this.w < this.tc.tWidth) {
+      this.uttLines = this.tc.tempsingle;
+      this.tSize = int(floor(this.tc.tSize));
+    } else {
+      visibilityMachine.setSizeReached(true);
+      this.setDark();
     }
   }
 
   void shrink() {
-    float gravity = - 2 * tc.mass;
-    tc.applyForce(gravity);
-    tc.updateFade(this);
+    float gravity = - 2 * this.tc.mass;
+    this.tc.applyForce(gravity);
+    boolean sizeReached = this.tc.updateFade();
+    if (sizeReached) {
+      visibilityMachine.setSizeReached(sizeReached);
+    } else {
+      this.tSize = int(floor(this.tc.tSize));
+    }
   }
 
   void setTexts(String text, String cat) {
@@ -74,7 +84,7 @@ class Kinship extends SurfaceBase {
 
   void update() {
     this.visible = visibilityMachine.isVisible;
-    
+
     if (this.visible) {
       switch (visibilityMachine.state) {
       case VisibilityMachine.STATE_GROW:
@@ -85,7 +95,7 @@ class Kinship extends SurfaceBase {
       this.updateSurface();
     }
   }
-  
+
   void updateSurface() {
     this.surf.beginDraw();
     this.surf.background(222);
@@ -241,7 +251,6 @@ class Sculpture extends SurfaceBase {
     }
   }
 
-
   void updateSculpture() {
     checkElements();
     this.canUpdate = false;
@@ -264,7 +273,7 @@ class Sculpture extends SurfaceBase {
 void buildSurfaces() {
   PFont articleFont = createFont("Courier", 30, true);
   surfs = new ArrayList<SurfaceBase>();
-  rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true); 
+  rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true);
   incSurf  = new Kinship("incoming", "Dein Kommentar ähnelt", width/30, height/2, width *3/7, height/3, messageFont, false);
   matchSurf = new Kinship("matching", "diesem hier", width *5/9, height/2, width *3/7, height/3, messageFont, false);
   infoSurf = new Info("infoSurf", 0, height-height/12, width, height/12, infoFont, true);

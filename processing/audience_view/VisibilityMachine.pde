@@ -18,11 +18,11 @@ class VisibilityMachine {
 
   public void start() {
     this.isVisible = true;
+    this.setSizeReached(false);
     this.setState(VisibilityMachine.STATE_GROW);
   }
 
   void update() {
-    
     switch (this.state) {
     case VisibilityMachine.STATE_HIDE:
       this.isVisible = false;
@@ -66,6 +66,6 @@ class VisibilityMachine {
   }
 
   boolean checkShrinkCriteria() {
-    return false;
+    return this.sizeReached;
   }
 }

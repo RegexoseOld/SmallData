@@ -2,57 +2,49 @@ class TextCalculations {
 
   // tc  hat die Aufgabe, fontsizes und SingleLine Objekte zu animieren
   // tc bekommt w, h, text, font
-  PGraphics s; // surface to calculate text sizes
-  float mass;  
+  int fontsize;
+  float mass = 20;  
   float velocity, lastVelocity, acceleration, tSize, angle; 
   int tWidth, tHeight; // growing area of text. starts low; ends if area is approaching the maximum width of this client surface
+  ArrayList<SingleLine> tempsingle;
 
-  TextCalculations(float _m, PGraphics _s) {
-    this.mass = _m;
-    this.s = _s;
+  TextCalculations(int sWidth, int sHeight) {
     velocity = 0;
     acceleration = 0;
     angle = 0;
     this.tSize = 10.0;
-    this.tWidth = this.s.width/6; // starting point for font calculation
-    this.tHeight = this.s.height/6;
+    this.tWidth = sWidth/6; // starting point for font calculation
+    this.tHeight = sHeight/6;
   }
 
   void applyForce(float force) {
     acceleration += force/mass;
   }
 
-  void update(int w) {
+  void update(int w, PFont font, float tSize, String t) {
     // Velocity changes according to acceleration
     velocity += acceleration;
     // println("tSize  " + tSize + "  velocity  " + velocity + "  accel  " + acceleration);
     // velocity increases the area tWidth to calculate the fontSize for
+
+    this.tWidth +=  velocity;
+
+
     if (this.tWidth < w) {
-      this.tWidth +=  velocity;   
       this.tHeight += velocity *2/3;
       lastVelocity = velocity/9;
-      // println("update  tWidth: " + this.tWidth + "  height " + this.tHeight);
+
+      this.calculateTSize(this.tWidth, this.tHeight, tSize, t, font);
     } 
     // We must clear acceleration each frame
     acceleration = 0;
   }
 
-  boolean checkEdge(int w, PFont font, float tSize, String t, Kinship k) {
-    if (this.tWidth <= w - 50 ) {
-      calculateTSize(this.tWidth, this.tHeight, tSize, t, font, k);
-      return false;
-    } else {
-      // println("checkEdge:  " + this.tWidth);
-      k.setDark();
-      return true;
-    }
-  }
-
-  void calculateTSize(float w, float h, float fontSize, String text2fit, PFont font, Kinship k) {
+  void calculateTSize(float w, float h, float fontSize, String text2fit, PFont font) {
     // println("\ncalculate size" + k.name);
     // make temp objects to fill until right fontsize is found
     // all tempsingle Arrays can later be manipulated with their alpha color
-    ArrayList<SingleLine> tempsingle = new ArrayList<SingleLine>();
+
     StringList textBreak = lineBreak(text2fit, w, fontSize, font);
     float spacing = textAscent() * 1.5; // font Height
     float y = spacing ;   
@@ -64,27 +56,28 @@ class TextCalculations {
       spacing = textAscent() * 1.5; // font Height
       y = spacing ;
     }
+    this.tSize = fontSize;
+
+    this.tempsingle = new ArrayList<SingleLine>();
     for (int i=0; i<textBreak.size(); i++) {
       SingleLine sl = new SingleLine(textBreak.get(i), y);
-      tempsingle.add(sl);
+      this.tempsingle.add(sl);
       y += spacing;
     }
-    k.uttLines = tempsingle;
-    k.tSize = int(floor(fontSize));
   }
 
-  void updateFade(Kinship k) {
+  boolean updateFade() {
     lastVelocity += acceleration;
     if (this.tSize > abs(lastVelocity)) {
       this.tSize += lastVelocity;
       // println("update fade" + this.tSize);
-      k.tSize = int(this.tSize);
+      acceleration = 0;
+      return false;
     } else {
-      k.matched = false;
+      acceleration = 0;
+      return true;
       //println("time to disappear  " + k.name + "  matched?   " + k.matched );
-    
     }
-    acceleration = 0;
   }
 
   void reset() {
@@ -156,11 +149,11 @@ class SingleLine {
   }
 
   void makeColor() {
-      int r = (currentCol >> 16) & 0xFF;
-      int g = (currentCol >> 8) & 0xFF;
-      int b = currentCol & 0xFF;
-      int a = (currentCol >> 24) & 0xFF;
-      col = color(r, g, b, a);
+    int r = (currentCol >> 16) & 0xFF;
+    int g = (currentCol >> 8) & 0xFF;
+    int b = currentCol & 0xFF;
+    int a = (currentCol >> 24) & 0xFF;
+    col = color(r, g, b, a);
   }
 
   void setDark() {

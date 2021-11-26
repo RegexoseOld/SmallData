@@ -63,7 +63,7 @@ void setup() {
   vector = true;
   areas = new Areas(cats);
   buildUtts(480);
-  tc = new TextCalculations(20, incSurf.surf);
+  
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
   noiseInc = 5; // put in DisplayTD
