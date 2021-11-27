@@ -1,6 +1,6 @@
 import pickle
 import json
-import os
+import random
 import requests
 import pyttsx3
 from pythonosc.osc_server import ThreadingOSCUDPServer
@@ -146,7 +146,9 @@ class SongServer:
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
         print("note ", note)
+        random_val = random.randint(10, note)
         self.sc_client.send_message('/sc', note)
+        self.sc_client.send_message('/fad1', random_val)
         if self.beat_manager.update_beat_counter(counter):
 
             # update performer view (show counter and next part)
