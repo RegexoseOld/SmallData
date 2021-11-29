@@ -57,7 +57,7 @@ class Kinship extends SurfaceBase {
     float gravity = 3 * this.tc.mass;
     this.tc.applyForce(gravity);
     this.tc.update(this.w, this.font, this.tSize, this.text);
-    if (this.w < this.tc.tWidth) {
+    if (this.w > this.tc.tWidth) {
       this.uttLines = this.tc.tempsingle;
       this.tSize = int(floor(this.tc.tSize));
     } else {

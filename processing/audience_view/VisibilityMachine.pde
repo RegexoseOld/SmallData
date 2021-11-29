@@ -5,7 +5,7 @@ class VisibilityMachine {
   static final int STATE_GROW = 1;
   static final int STATE_HOLD = 2;
   static final int STATE_SHRINK = 3;
-  
+
   boolean lock = false;
   int state;
   boolean isVisible = false;
@@ -23,27 +23,26 @@ class VisibilityMachine {
   }
 
   void update() {
-    switch (this.state) {
-    case VisibilityMachine.STATE_HIDE:
+    if (this.state == VisibilityMachine.STATE_HIDE) {
       this.isVisible = false;
-    case VisibilityMachine.STATE_GROW:
+    } else if (this.state == VisibilityMachine.STATE_GROW) {
       if (this.checkGrowCriteria() == true) {
         this.setState(VisibilityMachine.STATE_HOLD);
         this.startHoldTimer();
       }
-    case VisibilityMachine.STATE_HOLD:
-      if (holdTimerPassed) {
+    } else if (this.state == VisibilityMachine.STATE_HOLD) {
+      if (holdTimerPassed == true) {
         holdTimerPassed = false;
         this.setState(VisibilityMachine.STATE_SHRINK);
       }
-    case VisibilityMachine.STATE_SHRINK:
+    } else if (this.state == VisibilityMachine.STATE_SHRINK) {
       if (this.checkShrinkCriteria() == true) {
         this.isVisible = false;
         this.setState(VisibilityMachine.STATE_HIDE);
       }
     }
   }
-
+  
   void startHoldTimer() {
     timer.schedule(new TimerTask() {
       public void run() {
@@ -52,11 +51,12 @@ class VisibilityMachine {
     }
     , this.holdDurationMs);
   }
-  
+
   public void setState(int state) {
+    //println("settings state to " +  state + this);
     this.state = state;
   }
-  
+
   public void setSizeReached(boolean value) {
     this.sizeReached = value;
   }
