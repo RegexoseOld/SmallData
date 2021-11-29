@@ -41,7 +41,6 @@ class Kinship extends SurfaceBase {
   PGraphics titleSurf;
   color col;
   String title, text, cat;
-  boolean stopGrow;
   TextCalculations tc;
 
   Kinship(String name, String title, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
@@ -69,6 +68,7 @@ class Kinship extends SurfaceBase {
   void shrink() {
     float gravity = - 2 * this.tc.mass;
     this.tc.applyForce(gravity);
+
     boolean sizeReached = this.tc.updateFade();
     if (sizeReached) {
       visibilityMachine.setSizeReached(sizeReached);
@@ -84,15 +84,18 @@ class Kinship extends SurfaceBase {
 
   void update() {
     this.visible = visibilityMachine.isVisible;
-
-    if (this.visible) {
-      switch (visibilityMachine.state) {
-      case VisibilityMachine.STATE_GROW:
-        this.grow();
-      case VisibilityMachine.STATE_SHRINK:
-        this.shrink();
-      }
+    switch (visibilityMachine.state) {
+    case VisibilityMachine.STATE_HIDE:
+      this.clearSurf(); // TODO for some reason this does not hide the surface...
+      break;
+    case VisibilityMachine.STATE_GROW:
+      this.grow();
       this.updateSurface();
+      break;
+    case VisibilityMachine.STATE_SHRINK:
+      this.shrink();
+      this.updateSurface();
+      break;
     }
   }
 

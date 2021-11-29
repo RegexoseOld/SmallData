@@ -53,8 +53,8 @@ void setup() {
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[25], 20, true);
-  visibilityMachine = new VisibilityMachine();
   buildSurfaces();
+  visibilityMachine = new VisibilityMachine();
   oscP5 = new OscP5(this, 5040); //Audience Port
   loc = new NetAddress(ip, 5040); // send to self
   RG.init(this);
@@ -71,7 +71,7 @@ void setup() {
   noiseLimit = noiseInc;// put in DisplayTD
   moderation = "moderation";
   matchedUtts = new StringList();
-  // frameRate(20);
+  //frameRate(3);
 }
 
 void draw() {
@@ -93,9 +93,8 @@ void draw() {
     utt.update();
   }
   
-  println("vm pre" + visibilityMachine.state);
-  
   visibilityMachine.update();
+  //println("vm post update " + visibilityMachine.state);
   incSurf.update();
   matchSurf.update();
     

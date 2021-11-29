@@ -23,26 +23,25 @@ class VisibilityMachine {
   }
 
   void update() {
-    if (this.state == VisibilityMachine.STATE_HIDE) {
-      this.isVisible = false;
-    } else if (this.state == VisibilityMachine.STATE_GROW) {
+    switch (this.state) {
+    case VisibilityMachine.STATE_GROW:
       if (this.checkGrowCriteria() == true) {
         this.setState(VisibilityMachine.STATE_HOLD);
-        this.startHoldTimer();
       }
-    } else if (this.state == VisibilityMachine.STATE_HOLD) {
+      break;
+    case VisibilityMachine.STATE_HOLD:
       if (holdTimerPassed == true) {
-        holdTimerPassed = false;
         this.setState(VisibilityMachine.STATE_SHRINK);
       }
-    } else if (this.state == VisibilityMachine.STATE_SHRINK) {
+      break;
+    case VisibilityMachine.STATE_SHRINK:
       if (this.checkShrinkCriteria() == true) {
-        this.isVisible = false;
         this.setState(VisibilityMachine.STATE_HIDE);
       }
+      break;
     }
   }
-  
+
   void startHoldTimer() {
     timer.schedule(new TimerTask() {
       public void run() {
@@ -53,6 +52,20 @@ class VisibilityMachine {
   }
 
   public void setState(int state) {
+    switch (state) {
+    case VisibilityMachine.STATE_HIDE:
+      this.isVisible = false;
+      break;
+    case VisibilityMachine.STATE_GROW:
+      this.isVisible = true;
+      break;
+    case VisibilityMachine.STATE_HOLD:
+      this.setSizeReached(false);
+      this.startHoldTimer();
+    case  VisibilityMachine.STATE_SHRINK:
+      holdTimerPassed = false;
+      break;
+    }
     //println("settings state to " +  state + this);
     this.state = state;
   }

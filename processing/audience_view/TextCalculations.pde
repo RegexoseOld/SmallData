@@ -5,7 +5,7 @@ class TextCalculations {
   int fontsize;
   float mass = 20;  
   float velocity, lastVelocity, acceleration, tSize, angle; 
-  int tWidth, tHeight; // growing area of text. starts low; ends if area is approaching the maximum width of this client surface
+  int tWidth, tHeight, minSize; // growing area of text. starts low; ends if area is approaching the maximum width of this client surface
   ArrayList<SingleLine> tempsingle;
 
   TextCalculations(int sWidth, int sHeight) {
@@ -14,6 +14,7 @@ class TextCalculations {
     angle = 0;
     this.tSize = 10.0;
     this.tWidth = sWidth/6; // starting point for font calculation
+    this.minSize = 10;
     this.tHeight = sHeight/6;
   }
 
@@ -28,7 +29,6 @@ class TextCalculations {
     // velocity increases the area tWidth to calculate the fontSize for
 
     this.tWidth +=  velocity;
-
 
     if (this.tWidth < w) {
       this.tHeight += velocity *2/3;
@@ -67,8 +67,9 @@ class TextCalculations {
   }
 
   boolean updateFade() {
-    lastVelocity += acceleration;
-    if (this.tSize > abs(lastVelocity)) {
+    //println("tc, lastVelocity / acceleration: " + lastVelocity + " / " + acceleration); 
+    lastVelocity += acceleration;  // TODO this is weired, because if lastVelocity>acceleration, then Kinship.shrink() will cause increase of text size 
+    if (this.tSize > this.minSize) {
       this.tSize += lastVelocity;
       // println("update fade" + this.tSize);
       acceleration = 0;
