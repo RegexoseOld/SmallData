@@ -16,18 +16,21 @@ SynthDef(\bass, { |out, freq = 440, gate = 1, amp = 0.5, slideTime = 0.1, ffreq 
 
 (
 SynthDef.new(\being, {
-	|out, fund=80, max=220, atk=0.8, rls=1.5, gate=1|
-	var sig, env;
-	env = EnvGen.kr(Env.linen(atk, 0.2, rls), gate, doneAction:2);
-	sig = SinOsc.ar({ExpRand(fund, max)}! 4) * env;
-	sig = Splay.ar(sig) * 0.5;
+	|out, fund=150, max=220, atk=0.8, rls=1.5,
+	|vfreq=300, vrate= 3, vdepth=0.03 |
+	var sig, flt, env;
+	env = EnvGen.kr(Env.linen(atk, 0.2, rls), 1, doneAction:2);
+	flt = Vibrato.kr(vfreq,vrate, vdepth);
+	sig = SinOsc.ar({ExpRand(fund, max)}! 4) * env * flt;
+	sig = Splay.ar(sig) * 0.2;
 	Out.ar(out, sig);
 	}).add;
 )
 
 
 // Uses the bass and being synth above
-// make Dictionay to address Pdefs
+// make Dictionary to address Pdefs
+~being = Synth(\being);
 
 (
 ~phrases2 = Dictionary.new();
@@ -64,9 +67,10 @@ SynthDef.new(\being, {
 )
 (
 ~phrases2.put(\insinuation,
-		Pdef(\dim, Pmono(\being,
-        \midinote, Pseq([36, 39, 76, 42], 1),
-        \dur, Pseq([0.25, 0.5, 0.25, 0.5], 1),
+		Pdef(\dim, Pbind(
+		\instrument, \being,
+        \midinote, Pseq([36, 39, 96, 42], 3),
+        \dur, Pseq([0.25, 0.5, 0.25, 0.5], 3),
 		\amp, 0.5, \detune, 1.005)
     )
 )
@@ -80,9 +84,9 @@ SynthDef.new(\being, {
 ~phrases2.put(\concession,
 	Pdef(\s_change,
 		Pmono(\bass,
-        \midinote, Pseq([36, 42, 41, 33], 1),
-        \dur, Pseq([0.25, 0.25, 0.25, 0.75], 1),
-			\freq, Prand([80, 1000], 1) ,
+        \midinote, Pseq([36, 42, 41, 33], 3),
+        \dur, Pseq([0.25, 0.25, 0.25, 0.75], 3),
+		\freq, Prand([80, 1000], 1) ,
 		\amp, 0.5,
 		\detune, 0.3,
 			\ffreq, 900
@@ -93,15 +97,18 @@ SynthDef.new(\being, {
 
 (
 ~phrases2.put(\insinuation,
-	Pdef(\s_change,
-		Pmono(\being,
-        \midinote, Pseq([36], 1),
-        \dur, Pseq([0.25], 1),
-		\fund, 70 ,
-		\max, 333,
-		\amp, 0.5,
-		\atk, 0.2,
-		\rls, 0.3
+		Pdef(\dim,
+		Pbind(
+			\instrument, \being,
+        \midinote, Pseq([36, 39, 96, 42], inf),
+        \dur, Pseq([0.25, 0.5, 0.25, 0.5], inf),
+		\amp, 0.2,
+		\detune, 0.6,
+			\rls, 0.7,
+			\atk, 0.7,
+			\fund, 400,
+			\max, 900,
+			\vrate, 3
 		)
     )
 )
@@ -113,33 +120,59 @@ n = NetAddr("127.0.0.1", NetAddr.langPort); // local machine
 
 (
 OSCdef.new(
-	\notes,
+	\cat,
 	{ arg msg, time, addr, recvPort;
 		msg[1].postln;
 // toDo sublte sound changes in the \being synth
-			if (msg[1].even, {
-			~phrases2[\dissence].play;
-		},{
-			~phrases2[\insinuation].play;
-		})
+
 
 	},
-	'\sc'
+	'\cat'
 );
 )
 
 (
 OSCdef.new(
-	\fader01,
+	\quitt,
 	{ arg msg, time, addr, recvPort;
 		msg[1].postln;
-		/*x.set(\freq1, msg[1]);
-		x.set(\freq2, msg[1] *8);
-		x.set(\speed, msg[1] /8);*/
-		y.set(\speed, msg[1]/400);
-
 	},
-	'/fad1'
+	'/quitt'
 );
 )
-~phrases2[\praise].play;
+
+(
+OSCdef.new(
+	\controller,
+	{ arg msg, time, addr, recvPort;
+		msg[1..].postln;
+
+	/*	msg[1..].do({ arg item, i;
+			[i, item].postln;
+
+
+		});*/
+		/*	if (msg[1].even, {
+			~phrases2[\dissence].play;
+		},{
+			~phrases2[\insinuation].play;
+		})*/
+
+	},
+	'/control'
+);
+)
+~phrases2[\concession].play;
+~phrases2[\insinuation].play;
+(
+Pbind(
+	\instrument, \being,
+	\fund, 500,
+	\max, 900,
+	\vfreq, 200,
+	\vdepth, 0.6
+)
+)
+
+
+

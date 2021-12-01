@@ -145,10 +145,7 @@ class SongServer:
 
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
-        print("note ", note)
-        random_val = random.randint(10, note)
-        self.sc_client.send_message('/sc', note)
-        self.sc_client.send_message('/fad1', random_val)
+        #print("note ", note)
         if self.beat_manager.update_beat_counter(counter):
 
             # update performer view (show counter and next part)
@@ -187,6 +184,9 @@ class SongServer:
         self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 0.0))
         self.osculator_client.send_message('/quittRec', (c_note, 0.0))
         self.osculator_client.send_message('/mid_{}'.format(cat), controllers)
+        self.sc_client.send_message('/cat', cat)
+        self.sc_client.send_message('/quitt', c_note)
+        self.sc_client.send_message('/control', controllers)
 
     def _send_part_info(self, counter, next_part):
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
