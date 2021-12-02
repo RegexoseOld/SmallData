@@ -47,6 +47,32 @@ p = Pbind(
 
 // check den als Alternatice
 {Pan2.ar(Gendy1.ar)}.play
+	{Gendy1.ar}.play
+(
+		SynthDef.new(\nagger, {
+			|maxF=1300, durD= 1, minF=300, adp=1.0, gate=1|
+			var sig, env;
+			env = EnvGen.kr(Env.adsr(0.2, 0.2, 0.9, 0.2), gate, doneAction:2);
+			sig = Pan2.ar(Gendy1.ar(ampdist:1.0, durdist: durD, minfreq:minF, maxfreq:maxF));
+			sig = sig * env;
+			// sig = Pan2.ar(Gendy1.ar(dist, durD, 1.0, 1.0, minF));
+			Out.ar(0, sig);
+		}).add;
+
+)
+
+(
+Pbind(
+	\instrument, \nagger,
+    \note,  1,
+    \dur, 0.1,
+	\minF, Pwhite(500, 1000, 10),
+    \maxF, 1300,
+	\durD, 2
+).play
+)
+
+
 (
 SynthDef.new(\q2, {
 	|freq=300, detune=1, gate=1, atk=0.1, rel=0.5, iter=4|
@@ -63,7 +89,7 @@ SynthDef.new(\q2, {
 	sig = sig * env * 0.2;
 	Out.ar(0, sig!2);
 }).add;
-)
+	)
  // pattern guide cookbook 02, manipulation patterns
 (
 ~degree_01 = PatternProxy(Pwrand([1, 2, 7], [0.75, 0.18, 0.07], 16));
