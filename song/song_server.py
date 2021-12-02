@@ -118,7 +118,7 @@ class SongServer:
             for name, part in self.song_machine.parser.song_parts.items():
                 if part.category == cat:
                     cat_note = part.fb_note
-            self.send_quittung(synth_note, cat_note, cat, controllers)
+            self.send_quittung(synth_note, cat_note, cat, controllers, self.tonality.tonality_counter[cat])
 
             # Update part
             if self.song_machine.update_part(cat):
@@ -162,7 +162,7 @@ class SongServer:
             self.send_fx(self.rack_fade_val)
         else:
             self.timer.cancel()
-            self.timer_lock = False
+            self.timer_lock = FalseDic
             # print("closing fader Thread", threading.enumerate())
 
     def send_fx(self, val):
@@ -176,7 +176,8 @@ class SongServer:
             self.timer.start()
             self.timer_lock = True
 
-    def send_quittung(self, s_note, c_note, cat, controllers):
+    def send_quittung(self, s_note, c_note, cat, controllers, count):
+        print("sending quittung" , cat, count)
         self.osculator_client.send_message('/quitt', (60, 1.0))
         self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 1.0))
         self.osculator_client.send_message('/quittRec', (c_note, 1.0))
@@ -184,7 +185,7 @@ class SongServer:
         self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 0.0))
         self.osculator_client.send_message('/quittRec', (c_note, 0.0))
         self.osculator_client.send_message('/mid_{}'.format(cat), controllers)
-        self.sc_client.send_message('/cat', cat)
+        self.sc_client.send_message('/cat', [cat, count])
         self.sc_client.send_message('/quitt', c_note)
         self.sc_client.send_message('/control', controllers)
 
