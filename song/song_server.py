@@ -162,7 +162,7 @@ class SongServer:
             self.send_fx(self.rack_fade_val)
         else:
             self.timer.cancel()
-            self.timer_lock = FalseDic
+            self.timer_lock = False
             # print("closing fader Thread", threading.enumerate())
 
     def send_fx(self, val):
@@ -185,7 +185,7 @@ class SongServer:
         self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 0.0))
         self.osculator_client.send_message('/quittRec', (c_note, 0.0))
         self.osculator_client.send_message('/mid_{}'.format(cat), controllers)
-        self.sc_client.send_message('/cat', [cat, count])
+        self.sc_client.send_message('/{}'.format(cat), count)
         self.sc_client.send_message('/quitt', c_note)
         self.sc_client.send_message('/control', controllers)
 

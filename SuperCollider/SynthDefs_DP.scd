@@ -8,6 +8,33 @@ s.reboot;
 
 
 ~phrases = Dictionary.new();
+
+// der Nagger
+(
+		SynthDef.new(\nagger, {
+			|maxF=1300, durD= 1, minF=300, adp=1.0, gate=1|
+			var sig, env;
+			env = EnvGen.kr(Env.adsr(0.2, 0.2, 0.9, 0.2), gate, doneAction:2);
+			sig = Pan2.ar(Gendy1.ar(ampdist:1.0, durdist: durD, minfreq:minF, maxfreq:maxF));
+			sig = sig * env;
+			// sig = Pan2.ar(Gendy1.ar(dist, durD, 1.0, 1.0, minF));
+			Out.ar(0, sig);
+		}).add;
+
+)
+
+(
+Pbind(
+	\instrument, \nagger,
+    \note,  1,
+    \dur, 2,
+	\minF, Pwhite(100, 500, 2),
+			\maxF, Pkey(\minF) * 2.5,
+	\durD, 2
+).play
+)
+
+
 {Pulse.ar([400, 500, 600],[0.5, 0.1, 0.1], 0.2)}.play;(
 
 (
@@ -45,32 +72,7 @@ p = Pbind(
 ).play;
 )
 
-// check den als Alternatice
-{Pan2.ar(Gendy1.ar)}.play
-	{Gendy1.ar}.play
-(
-		SynthDef.new(\nagger, {
-			|maxF=1300, durD= 1, minF=300, adp=1.0, gate=1|
-			var sig, env;
-			env = EnvGen.kr(Env.adsr(0.2, 0.2, 0.9, 0.2), gate, doneAction:2);
-			sig = Pan2.ar(Gendy1.ar(ampdist:1.0, durdist: durD, minfreq:minF, maxfreq:maxF));
-			sig = sig * env;
-			// sig = Pan2.ar(Gendy1.ar(dist, durD, 1.0, 1.0, minF));
-			Out.ar(0, sig);
-		}).add;
 
-)
-
-(
-Pbind(
-	\instrument, \nagger,
-    \note,  1,
-    \dur, 0.1,
-	\minF, Pwhite(500, 1000, 10),
-    \maxF, 1300,
-	\durD, 2
-).play
-)
 
 
 (
@@ -112,6 +114,7 @@ SynthDef.new(\q2, {
 )
 )
 )
+	~phrases["praise"]
 	(
 ~degree_01.source =  Pseq([4], inf);
 ~detune_01.source = Pgauss(1.0, 0.04, inf);
@@ -139,7 +142,7 @@ SynthDef.new(\q2, {
 )
 )
 )
-~phrases["pr aise"].play;
+~phrases["praise"].play;
 ~phrases["praise"].stop;
 
 
