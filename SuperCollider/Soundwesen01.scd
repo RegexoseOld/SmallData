@@ -20,7 +20,7 @@ Lassen die sich dann noch steuern? In welchen Container kann man sie speichern?
 
 //Simple Blips, von Metronom, Echolot mit Telefontuten
 (
-SynthDef.new(\dissence, {
+SynthDef.new('dissence', {
 			|rsch1= 0.3, rsch2=0.5, freq=200, num=2, blipMul= 0.5, atk= 0.1, sus=0.2, rls=1.0, gate=1, amp=0.4|
 			var sig, rausch, env;
 			env = EnvGen.kr(Env.adsr(atk, 0.2, sus, rls), gate, doneAction:2);
@@ -30,7 +30,7 @@ SynthDef.new(\dissence, {
 			Out.ar(0, sig!2);
 		}).add;
 
-SynthDef.new(\insinuation, {
+SynthDef.new('insinuation', {
 	|minF=150, maxF=600, modRate=5, gate=1, atk=0.4, sus=1, rls=2, ampMod1=0.05, ampMod2=1.6|
 	var temp, sig, env, mod, amp;
 	env = EnvGen.kr(Env.adsr(atk,0.2,sus, rls), gate, doneAction:2);
@@ -46,7 +46,7 @@ SynthDef.new(\insinuation, {
 // der bass für lecture
 
 
-SynthDef(\lecture, {
+SynthDef('lecture', {
 	|minF = 220, gate = 1, amp = 0.5, slideTime = 0.1, maxF = 1100, width = 0.15,
         detune = 1.005, preamp = 4|
     var  sig, env, freq;
@@ -60,7 +60,7 @@ SynthDef(\lecture, {
 
 // ein default für concession
 
-SynthDef(\concession, {
+SynthDef('concession', {
 	|freq = 440, gate = 1, detune=0.8, atk=0.3, rls=0.9, amp=0.8, iter=5, pan=0.6|
     var sig, env, temp;
 	sig = 0;
@@ -75,7 +75,7 @@ SynthDef(\concession, {
 
 // ein arpeggio für praise
 
-SynthDef(\praise, {
+SynthDef('praise', {
 	|ampHz=4, pulWidth= 0.12, minF=40, fMul=80, fRate= 4, width=0.4, gate=1, atk=0.5, rls=0.9, gain=0.7|
 	var amp1, amp2, freq1, freq2, sig1, sig2;
 	amp1 = LFPulse.kr(ampHz, 0, pulWidth) * 0.75;
@@ -114,7 +114,7 @@ Jeder Synth hat andere Parameter, die bestimmte Werte brauchen.
 (
 
 Pbindef(\dissence,
-	\instrument, \dissence,
+	\instrument, 'dissence',
 	\dur, 3,
 	\freq, Pseq([200, 200, 200, 500], inf),
 	\rsch1, 0.2,
@@ -129,7 +129,7 @@ Pbindef(\dissence,
 );
 
 Pbindef(\insinuation,
-	\instrument, \insinuation,
+	\instrument, 'insinuation',
 	\dur, Pwhite(3.0, 8.0, inf).trace,
 	\minF, 150,
 	\maxF, 40,
@@ -143,7 +143,7 @@ Pbindef(\insinuation,
 );
 
 Pbindef(\lecture,
-	\instrument, \lecture,
+	\instrument, 'lecture',
 	\dur, 1,
 	\minF, Pwhite(200, 400, inf),
 	\gate , 1,
@@ -156,7 +156,7 @@ Pbindef(\lecture,
 );
 
 Pbindef(\concession,
-	\instrument, \concession,
+	\instrument, 'concession',
 	\dur, 2,
 	\atk , 0.03,
 	\rls, 0.8,
@@ -168,7 +168,7 @@ Pbindef(\concession,
 );
 
 Pbindef(\praise,
-	\instrument, \praise,
+	\instrument, 'praise',
 	\dur, 2,
 	\ampHz , Pgauss(0.8, 0.5, inf),
 	\minF, 100,
@@ -194,7 +194,7 @@ Pbindef(\praise,
 )
  /// testing
 )
-Pbindef(\dissence).play;
+Pbindef('dissence').play;
 Pbindef(\dissence).stop;
 Pbindef(\insinuation).play;
 Pbindef(\concession).stop;
@@ -244,11 +244,11 @@ n = NetAddr("127.0.0.1", NetAddr.langPort); // local machine
 	catName.asSymbol,
 	{ arg msg, time, addr, recvPort;
 		Pbindef(~cat).stop;
-		postf("\nnew cat: %", msg[0]);
-		postf("\nnew count: %", msg[1]);
-		~cat = msg[0];
+		postf("\nnew cat: %", msg[1]);
+		postf("\nnew count: %", msg[2]);
+		~cat = msg[1];
 		postf("\n~cat renamed %\n", ~cat);
-		Pbindef(msg[0]).play;
+		Pbindef(~cat).play;
 	},
 	catName
 );
@@ -290,13 +290,6 @@ OSCdef.new(
 	'/control'
 );
 )
-
-// set functions
-setPdef = {
-	arg name, count;
-
-	Pdef(name,)
-}
 
 
 

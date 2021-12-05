@@ -177,7 +177,7 @@ class SongServer:
             self.timer_lock = True
 
     def send_quittung(self, s_note, c_note, cat, controllers, count):
-        print("sending quittung" , cat, count)
+        print("sending quittung", [cat, count])
         self.osculator_client.send_message('/quitt', (60, 1.0))
         self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 1.0))
         self.osculator_client.send_message('/quittRec', (c_note, 1.0))
@@ -185,7 +185,7 @@ class SongServer:
         self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 0.0))
         self.osculator_client.send_message('/quittRec', (c_note, 0.0))
         self.osculator_client.send_message('/mid_{}'.format(cat), controllers)
-        self.sc_client.send_message('/{}'.format(cat), count)
+        self.sc_client.send_message('/{}'.format(cat), [cat, count])
         self.sc_client.send_message('/quitt', c_note)
         self.sc_client.send_message('/control', controllers)
 
