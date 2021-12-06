@@ -67,18 +67,14 @@ class TextCalculations {
   }
 
   boolean updateFade() {
-    //println("tc, lastVelocity / acceleration: " + lastVelocity + " / " + acceleration); 
     lastVelocity += acceleration;  // TODO this is weired, because if lastVelocity>acceleration, then Kinship.shrink() will cause increase of text size 
+    acceleration = 0;
     if (this.tSize > this.minSize) {
-      this.tSize += lastVelocity;
-      // println("update fade" + this.tSize);
-      acceleration = 0;
+      float tSize = this.tSize +lastVelocity;
+      this.tSize = ((tSize > 0) ? tSize: 0); // prevent negative font size
       return false;
-    } else {
-      acceleration = 0;
-      return true;
-      //println("time to disappear  " + k.name + "  matched?   " + k.matched );
-    }
+    } 
+    return true;
   }
 
   void reset() {
