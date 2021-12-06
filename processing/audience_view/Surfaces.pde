@@ -1,4 +1,4 @@
-class SurfaceBase { //<>//
+class SurfaceBase { //<>// //<>//
   String name;
   int w, h;
   PVector pos;
@@ -66,14 +66,19 @@ class Kinship extends SurfaceBase {
   }
 
   void shrink() {
-    float gravity = - 2 * this.tc.mass;
-    this.tc.applyForce(gravity);
-
-    boolean sizeReached = this.tc.updateFade();
-    if (sizeReached) {
-      visibilityMachine.setSizeReached(sizeReached);
+    if (visibilityMachine.sizeReached == true) {
+      this.tc.reset(); // make sure to reset tc in case the other kinship class stopped shrinking
     } else {
-      this.tSize = int(floor(this.tc.tSize));
+      float gravity = - 2 * this.tc.mass;
+      this.tc.applyForce(gravity);
+
+      boolean sizeReached = this.tc.updateFade();
+      if (sizeReached) {
+        visibilityMachine.setSizeReached(sizeReached);
+        this.tc.reset();
+      } else {
+        this.tSize = int(floor(this.tc.tSize));
+      }
     }
   }
 
@@ -85,9 +90,6 @@ class Kinship extends SurfaceBase {
   void update() {
     this.visible = visibilityMachine.isVisible;
     switch (visibilityMachine.state) {
-    case VisibilityMachine.STATE_HIDE:
-      this.clearSurf(); // TODO for some reason this does not hide the surface...
-      break;
     case VisibilityMachine.STATE_GROW:
       this.grow();
       this.updateSurface();
@@ -101,7 +103,7 @@ class Kinship extends SurfaceBase {
 
   void updateSurface() {
     this.surf.beginDraw();
-    this.surf.background(222);
+    this.surf.clear();
     for (SingleLine sl : this.uttLines) {
       this.surf.textFont(this.font, this.tSize);
       this.surf.fill(sl.col);
@@ -162,6 +164,9 @@ class Rauschen extends SurfaceBase {
 
   Rauschen(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
     super(name, _x, _y, _w, _h, _font, _visible);
+    this.surf.beginDraw();
+    this.surf.background(222);
+    this.surf.endDraw();
   }
   void updateDisplay(PShape s, PVector p, float size, float a, color col ) {
     this.surf.beginDraw();

@@ -8,7 +8,7 @@ class VisibilityMachine {
 
   boolean lock = false;
   int state;
-  boolean isVisible = false;
+  boolean isVisible = true;
   boolean sizeReached = false;
   long holdDurationMs = 2000;
 
@@ -54,8 +54,7 @@ class VisibilityMachine {
   public void setState(int state) {
     switch (state) {
     case VisibilityMachine.STATE_HIDE:
-      incSurf.clearSurf(); // TODO for some reason this does not hide the surface...
-      matchSurf.clearSurf();
+      this.setSizeReached(false);
       this.isVisible = false;
       break;
     case VisibilityMachine.STATE_GROW:
@@ -68,7 +67,6 @@ class VisibilityMachine {
       holdTimerPassed = false;
       break;
     }
-    //println("settings state to " +  state + this);
     this.state = state;
   }
 

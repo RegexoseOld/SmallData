@@ -71,7 +71,7 @@ void setup() {
   noiseLimit = noiseInc;// put in DisplayTD
   moderation = "moderation";
   matchedUtts = new StringList();
- frameRate(3);
+ //frameRate(3);
 }
 
 void draw() {

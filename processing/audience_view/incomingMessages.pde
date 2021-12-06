@@ -4,14 +4,17 @@ void oscEvent(OscMessage m) {
     oscTextIn = parseJSONObject((String) m.arguments()[0]);
     incomingText = oscTextIn.getString("text");
     incomingCat = oscTextIn.getString("cat");
+    
     JSONObject kin = oscTextIn.getJSONObject("kin");
     String kinText = kin.getString("text");
     String kinCat = kin.getString("cat");
 
     // TODO only set properties if cycle is not running
-    incSurf.setTexts(incomingText, incomingCat);
-    matchSurf.setTexts(kinText, kinCat);
-    visibilityMachine.start();
+    if (visibilityMachine.state == visibilityMachine.STATE_HIDE) { 
+      incSurf.setTexts(incomingText, incomingCat);
+      matchSurf.setTexts(kinText, kinCat);
+      visibilityMachine.start();
+    }
     //vcprintln("incoming CAt  " + incomingCat);
     currentCol = findColor(incomingCat);
     category_counter = oscTextIn.getJSONObject("category_counter");
@@ -80,8 +83,5 @@ void pickIncoming() {
   
   incSurf.setTexts(utterance, category);
   matchSurf.setTexts(utterance, category);
-  
   visibilityMachine.start();
-  // println("new incoming: " + incomingText);
-  background(222);
 }
