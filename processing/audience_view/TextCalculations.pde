@@ -70,8 +70,8 @@ class TextCalculations {
     lastVelocity += acceleration;  // TODO this is weired, because if lastVelocity>acceleration, then Kinship.shrink() will cause increase of text size 
     acceleration = 0;
     if (this.tSize > this.minSize) {
-      float tSize = this.tSize +lastVelocity;
-      this.tSize = ((tSize > 0) ? tSize: 0); // prevent negative font size
+      float tSize = this.tSize + lastVelocity;
+      this.tSize = ((tSize > 1) ? tSize: 1); // prevent negative font size
       return false;
     } 
     return true;
