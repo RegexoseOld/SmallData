@@ -1,33 +1,35 @@
-(s.boot;
-ServerOptions.devices;
-Server.default.options.device_("Fireface 400 (BEF)");
-s.options.numAudioBusChannels;
-s.options.numOutputBusChannels = 4;
-s.options.numInputBusChannels;
-s.reboot;
-)
-
-/* Das Soundwesen
-5 SynthDefs die von eingehenden Categories mit passenden messages beliefert werden.
-Jede SynthDef wechselt Noten/Akkorde (die alte \advance message), Klangeffekte 8Volume, FX, Modulationen)
-
-Frage: Was ist mit mehreren Instanzen von SynthDefs? Klanglich eben sehr interessant.
-Lassen die sich dann noch steuern? In welchen Container kann man sie speichern?
+/* ab minute 30
+https://www.youtube.com/watch?v=ztVLMS15n1c&t=1585s
 */
-
-~cat = '';
-~instruments = Dictionary.new();
-
-//Simple Blips, von Metronom, Echolot mit Telefontuten
 (
+// löscht alle funktionen
+ServerTree.removeAll;
+s.newBusAllocators; // Busse machen
+~fx1Bus = Bus.audio(s,2);
+
+// wird später in ServerTree angemeldet
+~makeNodes = {
+	s.bind(
+		~fxGroup = Group.new;
+	//später: Fx Synth machen und hier instantiieren zB ....
+		~reverb = Synth('reverb', [\in, ~fx1Bus], ~fxGroup);
+
+	)};
+// wenn gebooted wird, passiert alles folgende, Synthdefs etc
+s.waitForBoot({
+	s.freeAll;
+	Buffer.freeAll;
+	s.sync;
+
 SynthDef.new('dissence', {
-	|rsch1= 0.5, rsch2=0.5, freq=10, num=2, blipMul= 0.5, atk= 0.1, sus=0.2, rls=1.0, gate=1, amp=0.4|
 	var sig, rausch, env;
-	env = EnvGen.kr(Env.adsr(atk, 0.2, sus, rls), gate, doneAction:2);
-	rausch = BrownNoise.ar(LFNoise1.kr(rsch1, rsch2));
-	sig = Blip.ar(freq, num, blipMul) + rausch;
-	sig = sig * env * amp;
-	Out.ar(0, sig!2);
+	// env = EnvGen.kr(Env.adsr(\atk.ir(0.1), 0.2, \sus.ir(0.2), \rls.ir(1.0)), \gate.ir(1), doneAction:2);
+    env = Env([0, 1, 1, 0], [\atk.ir(0), \sus.ir(0), \rls.ir(1)], \lin).ar(2);
+	rausch = BrownNoise.ar(LFNoise1.kr(\rsch1.ir(0.5), \rsch2.ir(0.5)));
+	sig = Blip.ar(\freq.ir(10), \num.ir(2), \blipMul.ir(0.5)) + rausch;
+	sig = sig * env * \amp.ir(0.4);
+	Out.ar(\out.ir(0), sig!2);
+	Out.ar(\outfx.ir(0), sig * \send.ir(-30).dbamp);
 	}).add;
 
 SynthDef.new('insinuation', {
@@ -40,40 +42,36 @@ SynthDef.new('insinuation', {
 	sig = sig * amp * env * mod;
 	sig = Splay.ar(sig) * 0.5;
 	Out.ar(0, sig);
+	Out.ar(\outfx.ir(0), sig * \send.ir(-30).dbamp);
 }).add;
 
 
-// der bass für lecture
-
-
 SynthDef('lecture', {
-	|freq = 220, gate = 1, amp = 0.5, slideTime = 0.1, maxF = 1100, modWidth = 0.15,
+	|freq = 220, gate = 1, slideTime = 0.1, maxF = 1100, modWidth = 0.15,
         detune = 1.005, preamp = 1, atk=0.5, rls= 0.1, ffreq = 3|
     var  sig, env, frq;
     env = EnvGen.kr(Env.adsr(atk, 0.3, 0.7, rls), gate, doneAction: 2) ;
     frq = Lag.kr(freq, slideTime);
-    sig = PMOsc.ar( frq * detune, LFNoise2.ar(slideTime, maxF), SinOsc.ar(ffreq), pmindex:modWidth, mul:preamp) * amp
+    sig = PMOsc.ar( frq * detune, LFNoise2.ar(slideTime, maxF), SinOsc.ar(ffreq), pmindex:modWidth, mul:preamp) * \amp.ir(0.6)
         * env ;
-    sig = FreqShift.ar(sig, maxF, );
-    Out.ar(0, sig ! 2)
+	sig = FreqShift.ar(sig, maxF);
+    Out.ar(0, sig ! 2);
+	Out.ar(\outfx.ir(0), sig * \send.ir(-30).dbamp);
 }).add;
 
-// ein default für concession
 
 SynthDef('concession', {
-	|freq = 440, maxF=500, gate = 1, detune=0.8, atk=0.3, rls=0.9, amp=0.8, iter=5, pan=0.6|
-    var sig, env, temp;
-	sig = 0;
-	env = EnvGen.kr(Env.adsr(atk, 0.2, 0.8, rls), gate, doneAction: 2);
-	iter.do({
-		temp = VarSaw.ar({ExpRand(freq, freq * Rand(0.98, 1.2))}!2);
-		sig = sig + temp ;
-	});
-    sig = Pan2.ar(sig, SinOsc.kr(pan)) * amp * env;
-    Out.ar(0, sig!2)
+	var sig, env;
+	sig = PlayBuf.ar(2, \buf.ir(0), \rate.ir(1)*BufRateScale.ir(\buf.ir(0)), 1, \spos.ir(0));
+	//die Env muss wohl .ar sein, um bufnums austauschen zu können
+	env = Env([0, 1, 1, 0], [\atk.ir(0), \sus.ir(0), \rls.ir(1)], \lin).ar(2);
+	sig = XFade2.ar(sig, BPF.ar(sig, \freq.ir(440), \rq.ir(1), 1/\rq.ir(1).sqrt), \bpfmix.ir(0)*2-1);
+	sig = sig * env;
+	sig = Pan2.ar(sig, \pan.ir(0), \amp.ir(0.5));
+	Out.ar(\out.ir(0), sig);
+	Out.ar(\outfx.ir(0), sig * \send.ir(-30).dbamp);
 }).add;
 
-// ein arpeggio für praise
 
 SynthDef('praise', {
 	|ampHz=4, ampScale=0.01, pulWidth= 0.12, pulRate=4, freq=40, fMul=80, rnd=1, fRate= 4, width=0.4, gate=1, atk=0.5, rls=0.9, gain=0.7,
@@ -91,21 +89,63 @@ SynthDef('praise', {
 	sig2 = RHPF.ar(Pulse.ar(freq2, width) + Pulse.ar(freq2, width, amp2), ffreq, rq) * env2 * gain;
 	Out.ar(0, sig1);
 	Out.ar(1, sig2);
+	Out.ar(\outfx.ir(0), [sig1, sig2] * \send.ir(-30).dbamp);
 }).add;
 
+SynthDef('reverb', {
+		var sig, wet;
+		sig = In.ar(\in.ir(0), 2);
+		sig = FreeVerb2. ar(sig[0], sig[1], mix:1, room:0.99, damp:0.99);
+		sig = LPF.ar(sig, 900);
+		Out.ar(\out.ir(0), sig);
+	}).add;
+
+b= Dictionary.new;
+PathName("/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01/").entries.do({
+	arg subfolder;
+	b.add(
+		subfolder.folderName.asSymbol ->
+		Array.fill(
+			subfolder.entries.size,
+			{
+				arg i;
+				Buffer.read(s, subfolder.entries[i].fullPath);
+			}
+		)
+	)
+});
+    //Server wartet, bis dieser Block fertig ist
+	s.sync;
+	// Funktionen, die bei jedem cmd-. oder freeAll Aufruf automatisch neu gestartet werden
+	ServerTree.add(~makeNodes);
+	ServerTree.run;
+	s.sync;
+	// jetzt kommen theoretisch noch die Patterns hier her
+}
+);
 )
 
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 (
-Pbind(
-	\instrument, 'praise',
-    \fRate, 1,
-    \dur, 1.5,
-	\atk, 0.2,
-	\rls, 0.3,
-	\ampHz, 0 ,
-	\minF, 80
-).play
+ServerOptions.devices;
+Server.default.options.device_("Fireface 400 (BEF)");
+s.options.numAudioBusChannels;
+s.options.numOutputBusChannels = 4;
+s.reboot;
+
 )
+/* Das Soundwesen
+5 SynthDefs die von eingehenden Categories mit passenden messages beliefert werden.
+Jede SynthDef wechselt Noten/Akkorde (die alte \advance message), Klangeffekte 8Volume, FX, Modulationen)
+
+Frage: Was ist mit mehreren Instanzen von SynthDefs? Klanglich eben sehr interessant.
+Lassen die sich dann noch steuern? In welchen Container kann man sie speichern?
+*/
 
 // basic patterns
 /*
@@ -114,11 +154,12 @@ Problem: Wie schaffe ich es, gezielt die richtigen Paramenter der Synths mit den
 Jeder Synth hat andere Parameter, die bestimmte Werte brauchen.
 */
 
+
 (
 
-~resetDissence = {Pbindef(\dissence,
+~resetDissence = Pbindef(\dissence,
 	\instrument, 'dissence',
-	\dur, Pseq([3, 1], inf),
+	\dur, Pn(3, 2),
 	\freq, 80,
 	\rsch1, 0.5,
 	\rsch2 , 0.5,
@@ -129,11 +170,11 @@ Jeder Synth hat andere Parameter, die bestimmte Werte brauchen.
 	\rls, 1,
 	\gate, 1,
 	\amp, 0.4
-);};
+);
 
-~resetInsinuation = {Pbindef(\insinuation,
+~resetInsinuation = Pbindef(\insinuation,
 	\instrument, 'insinuation',
-	\dur, 10,
+	\dur, Pn(10, 2),
 	\freq, 100,
 	\maxF, 200,
 	\modRate, 50,
@@ -144,95 +185,96 @@ Jeder Synth hat andere Parameter, die bestimmte Werte brauchen.
 	\ampMod1, 0.01,
 	\ampMod2, 1,
 	\pmindx, pi,
-);};
+);
 
-~resetLecture = {Pbindef(\lecture,
+~resetLecture = Pbindef(\lecture,
 	\instrument, 'lecture',
-	\dur, 2,
-	\freq, 20,
-	\modWidth, 1,
+	\dur, Pn(2, 5),
+	\freq, 50,
+	\modWidth, 0.5,
 	\rls, 0.4,
 	\atk, 0.2,
-	\preamp, 0.7,
+	\preamp, 2.5,
 	\slideTime, pi,
 	\ffreq, 10,
 	\maxF, 50,
 	\detune, 1
 );
-};
-~resetConcession = {Pbindef(\concession,
-	\instrument, 'concession',
-	\dur, 2,
-	\atk , 0.03,
-	\rls, 0.8,
-	\freq, Prand([100, 150, 300], inf),
-	\detune, Pwrand([0.3, 1.01, 2.1], [0.2, 0.7, 0.1], inf),
-	\amp, 0.7,
-	\iter, Prand([2, 4, 6], inf),
-	\pan, Pgauss(3, 2.5, inf)
-);};
 
-~resetPraise =  {Pbindef(\praise,
+
+
+/*~resetConcession = {
+	~bdPat = Pbindef(\bd, \instrument, 'concession', \type, \note, \buf, Prand([b[\bd]], inf), \rate, Pwhite(-12, 12, inf).midiratio, \pan, Pwhite([-1,0, 1], inf));
+	~snPat = Pbindef (\sn, \instrument, 'concession', \type, \note, \buf, Prand([b[\sn]], inf), \rate, Pwhite(-12, 12, inf).midiratio, \pan, Pwhite([-1,0, 1], inf));
+	~miscPat = Pbindef(\misc, \instrument, 'concession', \type, \note, \buf, Prand([b[\misc]], inf ), \rate, Pwhite(-12, 12, inf).midiratio, \pan, Pwhite([-1,0, 1], inf));
+
+	~playConcession = Ptpar([0.0, ~bdPat, 0.0, ~snPat, 0.0, ~miscPat]);
+
+};*/
+~resetConcession = Ptpar(
+	[
+		0.0, Pbindef(\bd, \instrument, 'concession', \type, \note, \buf, Prand([b[\bd]], inf), \rate, Pwhite(-12, 12, inf).midiratio, \pan, Pwhite([-1,0, 1], inf)),
+		0.0, 	Pbindef (\sn, \instrument, 'concession', \type, \note, \buf, Prand([b[\sn]], inf), \rate, Pwhite(-12, 12, inf).midiratio, \pan, Pwhite([-1,0, 1], inf)),
+		0.0, 	Pbindef(\misc, \instrument, 'concession', \type, \note, \buf, Prand([b[\misc]], inf ), \rate, Pwhite(-12, 12, inf).midiratio, \pan, Pwhite([-1,0, 1], inf));
+	]
+);
+
+
+~resetPraise =  Pbindef(\praise,
 	\instrument, 'praise',
-
-	\dur, Pn(0.3, 3),
+	\dur, Pn(5, 3),
 	\ampHz , 0.3,
 	\ampScale, 0.03,
-	\freq, 100,
+	\freq, 70,
 	\fMul, 10,
 	\pulWidth, 0.24,
 	\fRate, 0.5,
 	\width, 0.3,
 	\gain, 0.6,
-	\atk, 2.8,
-	\rls, 3,
-	\ffreq, 40,
+	\atk, 3.5,
+	\rls, 3.5,
+	\ffreq, 1000,
 	\rq, 3,
 	\pulWidth, 5,
-	\pulRate, 0.15,
+	\pulRate, 0.1,
 	\gain, 0.3
-);};
+);
+
 )
+
+Pbindef(\bd, \instrument, 'concession', \type, \note, \buf, Prand([b[\bd]], inf), \rate, Pwhite(-12, 12, inf).midiratio, \pan, Pwhite([-1,0, 1], inf)).play;
 
 
 (
-~setBasicDuration = {
-	arg dur;
-	[\dissence, \praise, \insinuation, \concession, \lecture].do(
-	{arg item;
-		Pbindef(item, \dur, dur);
-});
-};
-)
- /// testing
-)
-(~resetConcession.value;
+~resetConcession.value;
 ~resetDissence.value;
 ~resetInsinuation.value;
 ~resetPraise.value;
 ~resetLecture.value;)
-Pbindef('praise').play;
 
-(
-Pbindef('praise', \dur, Pn(0.3, 3), \gain, 0.3,
-	\ampHz, 0.3, \ampScale, 0.03, \fMul, 10, \pulWidth, 0.24, \atk, 2.9, \rls, 3, \fRate, 0.5, \freq, 100, \ffreq, 40, \rq, 3, \pulRate, 0.15, \width, 0.2);
-)
-Pbindef(\dissence).stop;
-Pbindef(\insinuation).play;
-Pbindef(\concession).stop;
-Pbindef('dissence', \blipMul, 0.01, \freq, 150);
-Pbindef(\dissence, \rsch2, 0.9, \rls, 6, \legato, 2, \blipMul, Pn(Pseries(0.08, 0.05, 16), inf));
-Pbindef(\dissence, \atk, Pn(Pseries(0.04, 0.02, 8), inf), \rls, 4);
-Pbindef(\insinuation, \sus, 0.7 );
-(
-Pbindef('concession').clear;
-Pbindef('praise').clear;
-Pbindef('lecture').clear;
-Pbindef('dissence').clear;
-Pbindef('insinuation').clear;
+Pbindef(\bd).play(quant:1);
+Pbindef(\sn).play(quant:1);
+Pbindef(\misc).play(quant:1);
+~perc.set(\dur, 0.25);
+Pbindef(\misc, \outfx, ~fx1Bus, \send, -10);
+~playPraise = ~resetPraise.play(quant:1);
+~setPraise = Pbindef(\praise, \dur, Pn(5, inf), \atk, 3.5, \rls, 3.5, \fRate, 0.5);
+~setPraise = Pbindef(\praise, \pulWidth, 0.8, \ampScale, 0.7, \fRate, 4, \freq, 175, \outfx, ~fx1Bus, \send, Pwhite(-35, 0, inf), \atk, 0.04, \rls, 0.3, \width, Pwhite(0.05, 0.6, inf));
+~playLecture = ~resetLecture.play(quant:1);
+~setLecture = Pbindef(\lecture, \freq, 50, \preamp, 3, \modWidth, 0.4);
 
-)
+~playInsinuation = ~resetInsinuation.play(quant:1);
+~setLecture = Pbindef(\lecture);
 
+
+~playDissence = ~resetDissence.play(quant:1);
+~setDissence = Pbindef(\dissence, \dur, Pn(2, 4));
+~playDissence.stop;
+
+~playConcession.play(quant:1);
+Pbindef(\misc, \dur, Pn(1, 4), \outfx, ~fx1Bus, \send, -3);
+Pbindef(\sn, \dur, Pn(1, 4), \outfx, ~fx1Bus, \send, -40);
+Pbindef(\bd, \dur, Pn(1, 4));
 
 // clock
 
@@ -241,10 +283,6 @@ t = TempoClock.new(108, 60);
 ~postBeats = {t.beats.postln; 1};
 // t.schedAbs(t.nextBar, {~postBeats.value});
 )
-//case functions
-
-(
-// die erste Message?
 
 
 (
@@ -264,10 +302,6 @@ t = TempoClock.new(108, 60);
 
 })
 
-
-
-
-~init.value(\dissence, 1);
 
 // set Functions section
 // diese Funktionen wandeln eingehende Signale in Patterns für die SynthDefs um
@@ -335,6 +369,14 @@ OSCdef.new(
 );
 )
 
-
+(
+~setBasicDuration = {
+	arg dur;
+	[\dissence, \praise, \insinuation, \concession, \lecture].do(
+	{arg item;
+		Pbindef(item, \dur, dur);
+});
+};
+)
 
 
