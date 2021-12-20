@@ -31,9 +31,9 @@ class Classifier:
 
     def word_to_vect(self, word):
         word = str(word)
-        if word in self.model.index2word:
+        if word in self.model.index_to_key:
             return self.model.word_vec(word)
-        elif word.capitalize() in self.model.index2word:
+        elif word.capitalize() in self.model.index_to_key:
             return self.model.word_vec(word.capitalize())
         else:
             return None
@@ -78,10 +78,10 @@ class Classifier:
         return sorted(agg, key=lambda t: t[1], reverse=True)
 
     def get_similar_words(self, word):
-        if word in self.model.index2word:
+        if word in self.model.index_to_key:
             for sim in self.model.most_similar(word):
                 print(sim)
-        elif word.capitalize() in self.model.index2word:
+        elif word.capitalize() in self.model.index_to_key:
             for sim in self.model.most_similar(word.capitalize()):
                 print(sim)
         else:
