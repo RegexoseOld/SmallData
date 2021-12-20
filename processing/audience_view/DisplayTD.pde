@@ -40,17 +40,6 @@ class DisplayTD{
     this.pos = this.area.areaPos.get(rIndex);
     this.angle += random(-0.05, 0.05);
   }
-
-  void matchInput(String incoming) {
-    if (this.utt.equals(incoming) && !messageLock && !matchedUtts.hasValue(incoming) && !mFade) {
-      messageLock = true;
-      mH.related = this.utt;
-      // println("matched!  " + incoming + "    with index  " + this.index);
-      matchedUtts.append(incoming);
-      incSurf.col = shapeColor;
-      matchSurf.col = findColor(cat);
-    }
-  }
 }
 
 

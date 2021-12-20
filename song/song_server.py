@@ -144,6 +144,7 @@ class SongServer:
 
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
+        print('receiving beat', note)
         if self.beat_manager.update_beat_counter(counter):
 
             # update performer view (show counter and next part)
@@ -185,7 +186,7 @@ class SongServer:
 
     def _send_part_info(self, counter, next_part):
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
-        print('SongerServer. sending: ', message)
+        # print('SongerServer. sending: ', message)
         self.performer_client.send_message(settings.SONG_BEAT_ADDRESS, message)
         if next_part.name != self.beat_manager.current_part.name:
             with open('frontend/public/assets/parts.json', 'w', encoding='utf-8') as f:
@@ -203,6 +204,10 @@ class SongServer:
 
         data = json.dumps(input_dict)
         self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)
+
+        input_dict["kin"] = {"text": " dingens",
+                             "cat": "praise"}
+        data = json.dumps(input_dict)
         if send_to_audience:
             self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, data)
 

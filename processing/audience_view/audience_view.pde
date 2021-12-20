@@ -1,4 +1,4 @@
-import java.util.Timer;  //<>// //<>//
+import java.util.Timer; 
 import java.util.TimerTask;
 import java.util.Map;
 import java.util.List;
@@ -10,18 +10,21 @@ import netP5.*;
 OscP5 oscP5;
 NetAddress loc;
 
-final Timer t = new Timer();
+final Timer timer = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
 Article articleSurf;
 Rauschen rauschSurf;
 Kinship incSurf, matchSurf;
 Info infoSurf;
 Sculpture sculptureSurf;
+VisibilityMachine visibilityMachine; // class to make Surfaces visible
 ArrayList<SurfaceBase> surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
+
 Areas areas;
-MessageHighlight mH; // Environment for growing Text display
+// MessageHighlight mH; // Environment for growing Text display
+TextCalculations tc;
 String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
@@ -30,10 +33,9 @@ JSONObject TD; // TrainingData is stored here
 JSONObject oscTextIn, category_counter, ip_config, translatedCats; 
 String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
 color currentCol;
-boolean messageLock = false; //turns true if incomingText matches an utt chosen in ScaledRotated.draw()
 boolean messageIn = false; // background reset
 boolean updateUtts = false;
-boolean mFade, vector;
+boolean activeTimer, vector;
 StringDict shapeMapping = new StringDict(); // mapping to attribute categories to SVG filenames
 int maxUtts = 1;
 int cat_limit, cat_counts, noiseStart, noiseLimit, noiseInc;
@@ -52,6 +54,7 @@ void setup() {
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[25], 20, true);
   buildSurfaces();
+  visibilityMachine = new VisibilityMachine();
   oscP5 = new OscP5(this, 5040); //Audience Port
   loc = new NetAddress(ip, 5040); // send to self
   RG.init(this);
@@ -60,24 +63,25 @@ void setup() {
   vector = true;
   areas = new Areas(cats);
   buildUtts(480);
-  mH = new MessageHighlight(20, messageFont); // adapted from https://processing.org/examples/forceswithvectors.html
+  
   pickIncoming(); // pick first utt
   prgIncrement = 1.2;
-  mFade = false;
-  noiseInc = 5;
-  noiseStart = 0;
-  noiseLimit = noiseInc;
+  noiseInc = 5; // put in DisplayTD
+  noiseStart = 0;// put in DisplayTD
+  noiseLimit = noiseInc;// put in DisplayTD
   moderation = "moderation";
-
-
   matchedUtts = new StringList();
-  // frameRate(20);
+ //frameRate(3);
 }
 
 void draw() {
-  //if (frameCount%80 == 0) {
-  //  pickIncoming(); //automatische messages werden ausgesucht
-  //} 
+  if (frameCount%30 == 0) {
+    // pickIncoming(); //automatische messages werden ausgesucht
+    for (SculptElement e : sculptureSurf.elements) {
+      e.changeAlpha();
+    }
+  } 
+  
   if (messageIn) {
     rauschSurf.clearBackground();
     messageIn = !messageIn;
@@ -87,28 +91,21 @@ void draw() {
   for (int x=noiseStart; x<noiseLimit; x++) {
     DisplayTD utt = utts.get(x);
     utt.update();
-    utt.matchInput(incomingText);
   }
-
-  if (messageLock && !mFade) {
-    float gravity = 3 * mH.mass;
-    mH.applyForce(gravity);
-    mH.update();
-    mH.checkEdge();
-  }
-  if (mFade) {
-    // ausblenden der surfaces
-    float gravity = - 2 * mH.mass;
-    mH.applyForce(gravity);
-    mH.updateFade();
-  }
-
+  
+  visibilityMachine.update();
+  //println("vm post update " + visibilityMachine.state);
+  incSurf.update();
+  matchSurf.update();
+    
+  sculptureSurf.updateSculpture();
   for (int i=0; i<surfs.size(); i++) {
     SurfaceBase surf = surfs.get(i);
     if (surf.visible) {
       surf.display();
     }
   }
+  
   if (noiseLimit <= utts.size() - noiseInc) {
     noiseStart = noiseLimit;
     noiseLimit += noiseInc;
@@ -116,16 +113,6 @@ void draw() {
     noiseStart = 0;
     noiseLimit = noiseInc;
   }
-}
-
-void createScheduleTimer(final float ms) {
-  messageLock = true;
-  t.schedule(new TimerTask() {
-    public void run() {
-      mFade = true;
-    }
-  }
-  , (long) (ms));
 }
 
 void buildUtts(int amount) {

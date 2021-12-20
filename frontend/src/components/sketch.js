@@ -40,8 +40,8 @@ export default function sketch(p){
         counter = counterData['category_counter'];
         locked = counterData['is_locked'];
       },
-      function (response) { // Handle unsuccessful loading of data.json
-        console.log('Fetching data.json unsuccessfull!')
+      function (response) {
+        console.log('Fetching of data unsuccessfull!')
       });
   }
 
