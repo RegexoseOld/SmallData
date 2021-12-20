@@ -24,7 +24,7 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-nlp = spacy.load('de')
+nlp = spacy.load('de_core_news_sm')
 
 
 def load_model():

@@ -24,7 +24,7 @@ class Classifier:
         self.model = gensim.models.KeyedVectors.load_word2vec_format(os.path.join(data_dir, 'german.model'),
                                                                      binary=True)
         self.clf = joblib.load(os.path.join(data_dir, 'sgd_clf.pkl'))
-        self.nlp = spacy.load('de')
+        self.nlp = spacy.load('de_core_news_sm')
         self.regex_mapping = joblib.load(os.path.join(data_dir, 'regex_mapping.pkl'))
         self.filter_stop_words = False
         self.verbose = False
