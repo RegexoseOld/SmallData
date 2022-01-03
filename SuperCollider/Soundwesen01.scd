@@ -6,7 +6,7 @@ ServerOptions.inDevice_(0);
 ~fxGroup = nil
 (
 Server.default.options.numInputBusChannels_(0);
-Server.default.options.outDevice_("BeatsSolo Wireless");
+//Server.default.options.outDevice_("BeatsSolo Wireless");
 // Server.default.options.inDevice_("Built-in Microph");
 // löscht alle funktionen
 ServerTree.removeAll;
@@ -33,7 +33,7 @@ s.waitForBoot({
 		var sig, rausch, env;
 		env = Env([0, 1, 1, 0], [\atk.ir(0.1), \sus.ir(0.2), \rls.ir(0.5)], \lin).ar(2);
 		rausch = BPF.ar(BrownNoise.ar(\nois.ir(0.2)), \ffreq.kr(200),\rq.kr(0.7));
-		sig = LFSaw.ar(XLine.kr(\freq.ir(400), \freqEnd.ir(500), \lag.ir(0.5)) * \detune.ir(1.0), 0.0, \blipMul.ir(0.01)) + rausch;
+		sig = LFSaw.ar(\freq.kr(400), 0.0, \blipMul.kr(0.3)) + rausch;
 		sig = sig * env * \amp.ir(0.6);
 		Out.ar(\out.ir(~out), sig!2);
 		Out.ar(\outfx.ir(4), sig * \send.ir(-30).dbamp);
@@ -108,7 +108,7 @@ s.waitForBoot({
 	}).add;
 
 	b= Dictionary.new;
-	~path = PathName(thisProcess.nowExecutingPath).parentPath ++ "percSamples01/";
+	~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";
 	PathName(~path).entries.do({
 		arg subfolder;
 		b.add(
@@ -162,13 +162,14 @@ s.waitForBoot({
 	~reset.add(\dissence01 -> {
 		Pbind(
 			\instrument, 'dissence',
-			\dur, Pn(1, inf),
+			\dur, 1,
+			\freq, 666
 		);
 	});
 	~reset.add(\insinuation02 -> {
 		Pbind(
 			\instrument, 'insinuation',
-			\dur, Pn(1, 5),
+			\dur, Pn(1.4, 5),
 			\freq, 100,
 			\maxF, 400,
 			\modRate, 5,
@@ -258,28 +259,30 @@ Jeder Synth hat andere Parameter, die bestimmte Werte brauchen.
 // test
 b[\dry][0].play;
 
-~reset[\insinuation02].value.play(t, quant:1)
-Synth.new(\lecture)
+~reset[\dissence01].value.play(t, quant:1)
+Synth(\dissence, [\freq, 200])
 currentEnvironment
 
 (
 g = Pbind(
-	\instrument, 'concession',
-	\dur, Pseq([0.25, 0.5], 5),
-	\rls, Pkey(\dur),
-	\atk, Pseq([0.1, 0.7], 5),
-);
-f = g.asStream;
+	\instrument, \dissence,
+	\dur, Pseq([1, 0.5], inf),
+	\amp, Pkey(\dur),
+	\freq, Pwhite(90, 500, inf),
+	\ffreq, Pkey(\freq) * 1.3,
+	\blipMul, 0.1,
+	\atk, 0.03,
+	\rls, 0.2
+).play(t, quant:1)
 )
-f.next(())
-g.play
-g.stop
+
 
 (~dissenceNow = ~reset[\dissence01].value;
 ~dissencePlay = ~dissenceNow.play(t, quant:1);
 )
+
 ~dissencePlay.stop;
-~setDissence.value('dissence', 4);
+~setDissence.value('dissence', 8);
 (
 ~insinuationNow = ~reset[\insinuation02].value;
 ~insinuationPlay = ~insinuationNow.play(t, quant:1);
@@ -295,21 +298,15 @@ g.stop
 ~concessionNow = ~reset[\concession04].value;
 ~concessionPlay = ~concessionNow.play(t, quant:1);
 )
-
+~setConcession.value('concession', 7);
 (
-if (~concessionPlay.isPlaying, {~concessionPlay.stop;});
-~hhPat = Pbindf(~hhPat, \buf, b[\hh][0], \dur, 0.25, \pan, Pwhite([-1,0, 1], inf), \amp, Pseq([0.05, 0.05, 0.05, 0.08, 0.1, 0.05, 0.05, 0.1] * 0.3, inf), \freq, Pseq([Array.series(8, 1000, -50)], inf));
-~bdPat = Pbindf(~bdPat, \dur, Pseq([4, 4, 2.5, 0.5, 1], inf), \freq, Pwhite(50, 200, inf), \amp, 0.8);
-~snPat = Pbindf(~snPat, \dur, 2 , \buf, b[\sn][0], \amp, Pseq([0.01, 0.6], inf), \send, -25);
-~dryPat = Pbindf(~dryPat, \dur, 5, \amp, 0.005, \send, -10);
-~tonalPat = Pbindf(~tonalPat, \dur, 0.5, \rls, 0.2, \freq, Pxrand([333, 555, 777], inf));
-
-~concessionPlay = Pbus(Pgpar([~bdPat, ~tonalPat, ~snPat,  ~hhPat, ~dryPat])).play(t, quant:1);
-
+~praiseNow = ~reset[\praise05].value;
+~praisePlay = ~praiseNow.play(t, quant:1);
 )
-Pgpar([~bdPat, ~tonalPat, ~snPat,  ~hhPat, ~dryPat]).numberOfGroups
+~setPraise.value('praise', 4);
 
-);
+
+
 d = nil;
 ~dissenceNow.isPlaying;
 d = ~dissenceNow.asStream;
@@ -326,20 +323,23 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 	Der Parameter \dur kann nur mit Proxies oder Pdefn verändert werden.
 */
 	|s_name, count|
-	var c;
+	var c, dura;
 	postf("\nsetting %\t with count %\n", s_name, count);
 	postf("\ndissence runnung %\t \n", ~dissencePlay.isPlaying);
 	// wie regeln man diese Pdefn?
 	//muss man zwischen Pdefs und Pbindf usw switschen???
+	dura = count;
 	c = case
-	{(count > 0) && (count < 3)} {
-		Pdefn(\dur01, Pn(2, 5));
-		~dissenceNow = Pbindf(~dissenceNow, \dur, Pdefn(\dur01))}
-	{(count >= 3) && (count < 5) } {
-		~dissenceNow = Pbindf(~dissenceNow, \blipMul, Pseq([0.4, 0.8, 1.2], 3), \dur, Pseq([3.0, 4.0], 3), \rls, Pkey(\dur, 3))}
-	{true} {"end of dissence reached".postln;};
+	{(count > 0) && (count < 5)} {
+		~dissenceNow = Pbindf(~dissenceNow, \dur, Pif(Ptime(inf) <= dura, Pn(1, inf)), \freq, Pn(Pif(Ptime(inf) < dura, Prand([200, 400, 666], inf))))}
+	{(count >= 5) && (count < 10) } {
+		postf("\nsetting %\t", count);
+		~dissenceNow = Pbindf(~dissenceNow, \dur, Pif(Ptime(inf) < dura, Pn(1.0, inf)), \freq, Pif(Ptime(inf) < dura, Prand([200, 400, 666], inf)));
+	}
+
+	{true} {"end of dissence reached".postln};
 	if(~dissencePlay.isPlaying, {~dissencePlay.stop});
-	postf("\ndissence runnung after %\t \n", ~dissenceNow.isPlaying);
+	postf("\ndissence running after %\t \n", ~dissenceNow.isPlaying);
 	~dissencePlay = ~dissenceNow.play(t, quant:1);
 
 };
@@ -351,11 +351,10 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 	postf("\n% runnung %\t \n", s_name, ~insinuationPlay.isPlaying);
 	c = case
 	{(count > 0) && (count < 3)} {
-		Pdefn(\dur02, Pn(1, 10));
 		~insinuationNow = Pbindf(~insinuationNow, \dur, Pn(1, 10))}
 	{(count >= 3) && (count < 5) } {
 		~insinuationNow = Pbindf(~insinuationNow, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.9, \atk, Pseq([0.1, 0.7], 5)).trace}
-	{true} {"end of insinuation reached".postln;};
+	{true} {"end of insinuation reached".postln};
 	if(~insinuationPlay.isPlaying, {~insinuationPlay.stop});
 	postf("\n% running after %\t \n", s_name, ~insinuationNow.isPlaying);
 	~insinuationPlay = ~insinuationNow.play(t, quant:1);
@@ -376,6 +375,41 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 	postf("\n% running after %\t \n", s_name, ~ilectureNow.isPlaying);
 	~lecturePlay = ~lectureNow.play(t, quant:1);
 
+};
+~setConcession = {
+	|s_name, count|
+	var c;
+	postf("\nsetting %\t with count %\n", s_name, count);
+	postf("\n% runnung %\t \n", s_name, ~concessionPlay.isPlaying);
+	c = case
+	{(count > 0) && (count < 5)} {
+		~tonalPat = Pbindf(~tonalPat, \dur, Pwhite(0.1, 0.3, (count * 5)));
+		~concessionNow = Pbus(Pgpar([~tonalPat]))}
+	{(count >= 5) && (count < 10) } {
+		~hhPat = Pbindf(~hhPat, \buf, b[\hh][0], \dur, 0.5, \pan, Pwhite([-1,0, 1], count), \amp, Pwhite(0.05, 0.1, count), \freq, Pseq([Array.series(8, 1000, -50)], count));
+		~dryPat = Pbindf(~dryPat, \dur, Pwhite(0.1, 0.3, count), \amp, 0.5, \send, -10);
+		~tonalPat = Pbindf(~tonalPat, \dur, 2, \rls, 0.2, \freq, Pxrand([333, 555, 777], count), \send, -10);
+		~concessionNow = Pbus(Pgpar([~dryPat, ~hhPat, ~tonalPat]))}
+	{true} {"end of insinuation reached".postln;};
+	if(~concessionPlay.isPlaying, {~concessionPlay.stop});
+	postf("\n% running after %\t \n", s_name, ~concessionNow.isPlaying);
+	~concessionPlay =  ~concessionNow.play(t, quant:1);
+
+};
+~setPraise = {
+	|s_name, count|
+	var c;
+	postf("\nsetting %\t with count %\n", s_name, count);
+	postf("\n% runnung %\t \n", s_name, ~praisePlay.isPlaying);
+	c = case
+	{(count > 0) && (count < 3)} {
+		~praiseNow = Pbindf(~praiseNow, \dur, Pn(1, 10))}
+	{(count >= 3) && (count < 5) } {
+		~praiseNow = Pbindf(~praiseNow, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.9, \atk, Pseq([0.1, 0.7], 5)).trace}
+	{true} {"end of insinuation reached".postln;};
+	if(~praisePlay.isPlaying, {~praisePlay.stop});
+	postf("\n% running after %\t \n", s_name, ~ilectureNow.isPlaying);
+	~praisePlay = ~praiseNow.play(t, quant:1);
 };
 
 ~allocateSynth = {
