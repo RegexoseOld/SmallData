@@ -204,7 +204,9 @@ class SongServer:
         self.tonality.synth.reset_synth()
 
     def _send_utterance(self, input_dict, send_to_audience=True):
-        state_data = self.__send_state_to_backend()
+        # state_data = self.__send_state_to_backend() # backend umgehen
+        state_data = {'category_counter': self.song_machine.get_counter_for_visuals(),
+                'is_locked': self.song_machine.is_locked()}
         input_dict.update(state_data)
 
         data = json.dumps(input_dict)

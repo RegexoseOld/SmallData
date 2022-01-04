@@ -50,7 +50,7 @@ elif args.app == 'song':
     oscul_client = udp_client.SimpleUDPClient(settings.ips['song_server'], settings.OSCULATOR_PORT)
     audience_client = udp_client.SimpleUDPClient(settings.ips['audience'], settings.AUDIENCE_PORT)
     performer_client = udp_client.SimpleUDPClient(settings.ips['performer'], settings.PERFORMER_PORT)
-    sc_client = udp_client.SimpleUDPClient("127.0.0.1", 57120)
+    sc_client = udp_client.SimpleUDPClient("127.0.0.1", 57121)
 
     machine_instance = song_machine.create_instance(settings.song_path)
     synth_fb = machine_instance.parser.data[machine_instance.parser.SYNTH_CC]
