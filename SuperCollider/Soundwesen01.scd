@@ -30,10 +30,10 @@ s.waitForBoot({
 	s.sync;
 
 	SynthDef.new('dissence', {
-		var sig, rausch, env;
+		var sig, gend, env;
 		env = Env([0, 1, 1, 0], [\atk.ir(0.1), \sus.ir(0.2), \rls.ir(0.5)], \lin).ar(2);
-		rausch = BPF.ar(BrownNoise.ar(\nois.ir(0.2)), \ffreq.kr(200),\rq.kr(0.7));
-		sig = LFSaw.ar(\freq.kr(400), 0.0, \blipMul.kr(0.3)) + rausch;
+		gend = BPF.ar(Gendy1.ar(1, 1, 1.0, 1.0, \minfreq.kr(600), \maxfreq.kr(1000), 0.3, \gendmul.kr(0.05), 5), \ffreq.kr(300), \rq.kr(0.9));
+		sig = LFSaw.ar(\freq.kr(400), 0.0, \blipMul.kr(0.3)) + gend;
 		sig = sig * env * \amp.ir(0.6);
 		Out.ar(\out.ir(~out), sig!2);
 		Out.ar(\outfx.ir(4), sig * \send.ir(-30).dbamp);
@@ -163,7 +163,8 @@ s.waitForBoot({
 		Pbind(
 			\instrument, 'dissence',
 			\dur, 1,
-			\freq, 666
+			\freq, 666,
+			\ffreq, 300
 		);
 	});
 	~reset.add(\insinuation02 -> {
@@ -196,11 +197,13 @@ s.waitForBoot({
 			\detune, 1
 		);
 	});
+
 	~bdPat = Pbind(\instrument, 'concession', \buf, Pxrand(b[\bd], inf), \dur, 5, \sustain, 0.4, \freq, 100);
 	~snPat = Pbind (\instrument, 'concession', \buf, b[\sn][0], \dur, 3, \sustain, 0.4, \freq, 600);
 	~dryPat = Pbind(\instrument, 'concession', \buf, b[\dry][0], \dur, 1, \sustain, 0.4, \freq, 440);
 	~hhPat = Pbind(\instrument, 'concession', \buf, Pxrand(b[\hh], inf), \dur, 1.5, \sustain, 0.4, \freq, 1200);
 	~tonalPat = Pbind(\instrument, 'concession', \buf, Pxrand(b[\tonal], inf), \dur, 4, \sustain, 0.4);
+
  	~reset.add(\concession04 -> {
 		Pbus(Pgpar([~bdPat, ~snPat, ~dryPat, ~hhPat, ~tonalPat]));
 	});
@@ -265,12 +268,13 @@ currentEnvironment
 
 (
 g = Pbind(
-	\instrument, \dissence,
+	\instrument, 'dissence',
 	\dur, Pseq([1, 0.5], inf),
 	\amp, Pkey(\dur),
 	\freq, Pwhite(90, 500, inf),
 	\ffreq, Pkey(\freq) * 1.3,
-	\blipMul, 0.1,
+	\minfreq, Pwhite(200, 800, inf),
+	\maxfreq, Pkey(\minfreq) + 500,
 	\atk, 0.03,
 	\rls, 0.2
 ).play(t, quant:1)
@@ -328,15 +332,13 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 	postf("\ndissence runnung %\t \n", ~dissencePlay.isPlaying);
 	// wie regeln man diese Pdefn?
 	//muss man zwischen Pdefs und Pbindf usw switschen???
-	dura = count;
+	dura = Env.new([1,0], [count], [-2]).asPseg;
 	c = case
 	{(count > 0) && (count < 5)} {
-		~dissenceNow = Pbindf(~dissenceNow, \dur, Pif(Ptime(inf) <= dura, Pn(1, inf)), \freq, Pn(Pif(Ptime(inf) < dura, Prand([200, 400, 666], inf))))}
+		~dissenceNow = Pbind(\instrument, \dissence, \freq, Prand([600, 666, 699], inf), \detune, 0.92, \amp, 0.4 * dura, \ffreq, 1000, \send, -10).trace}
 	{(count >= 5) && (count < 10) } {
 		postf("\nsetting %\t", count);
-		~dissenceNow = Pbindf(~dissenceNow, \dur, Pif(Ptime(inf) < dura, Pn(1.0, inf)), \freq, Pif(Ptime(inf) < dura, Prand([200, 400, 666], inf)));
-	}
-
+		~dissenceNow = Pbind(\instrument, \dissence, \dur, 0.33, \atk, 0.02, \rls, Pwhite(0.1, 0.3, inf), \amp, 0.7 * dura).trace}
 	{true} {"end of dissence reached".postln};
 	if(~dissencePlay.isPlaying, {~dissencePlay.stop});
 	postf("\ndissence running after %\t \n", ~dissenceNow.isPlaying);
@@ -346,14 +348,15 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 
 ~setInsinuation = {
 	|s_name, count|
-	var c;
+	var c, dura;
 	postf("\nsetting %\t with count %\n", s_name, count);
 	postf("\n% runnung %\t \n", s_name, ~insinuationPlay.isPlaying);
+	dura = Env.new([1,0], [count], [-2]).asPseg;
 	c = case
 	{(count > 0) && (count < 3)} {
-		~insinuationNow = Pbindf(~insinuationNow, \dur, Pn(1, 10))}
+		~insinuationNow = Pbind(\instrument, \insinuation, \dur, Pn(1, 10))}
 	{(count >= 3) && (count < 5) } {
-		~insinuationNow = Pbindf(~insinuationNow, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.9, \atk, Pseq([0.1, 0.7], 5)).trace}
+		~insinuationNow = Pbind(\instrument, \insinuation,, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.9, \atk, Pseq([0.1, 0.7], 5)).trace}
 	{true} {"end of insinuation reached".postln};
 	if(~insinuationPlay.isPlaying, {~insinuationPlay.stop});
 	postf("\n% running after %\t \n", s_name, ~insinuationNow.isPlaying);
@@ -362,14 +365,15 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 };
 ~setLecture = {
 	|s_name, count|
-	var c;
+	var c, dura;
 	postf("\nsetting %\t with count %\n", s_name, count);
 	postf("\n% runnung %\t \n", s_name, ~lecturePlay.isPlaying);
+	dura = Env.new([1,0], [count], [-2]).asPseg;
 	c = case
 	{(count > 0) && (count < 3)} {
-		~lectureNow = Pbindf(~lectureNow, \dur, Pn(1, 10))}
+		~lectureNow = Pbind(\instrument, \lecture, \dur, Pn(1, 10))}
 	{(count >= 3) && (count < 5) } {
-		~lectureNow = Pbindf(~lectureNow, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.9, \atk, Pseq([0.1, 0.7], 5)).trace}
+		~lectureNow = Pbind(\instrument, \lecture, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.9, \atk, Pseq([0.1, 0.7], 5)).trace}
 	{true} {"end of insinuation reached".postln;};
 	if(~lecturePlay.isPlaying, {~lecturePlay.stop});
 	postf("\n% running after %\t \n", s_name, ~ilectureNow.isPlaying);
@@ -383,12 +387,12 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 	postf("\n% runnung %\t \n", s_name, ~concessionPlay.isPlaying);
 	c = case
 	{(count > 0) && (count < 5)} {
-		~tonalPat = Pbindf(~tonalPat, \dur, Pwhite(0.1, 0.3, (count * 5)));
+		~tonalPat = Pbindf(~tonalPat, \dur, Pif(Ptime(inf) < count, Pwhite(0.1, 0.3, inf)));
 		~concessionNow = Pbus(Pgpar([~tonalPat]))}
 	{(count >= 5) && (count < 10) } {
 		~hhPat = Pbindf(~hhPat, \buf, b[\hh][0], \dur, 0.5, \pan, Pwhite([-1,0, 1], count), \amp, Pwhite(0.05, 0.1, count), \freq, Pseq([Array.series(8, 1000, -50)], count));
-		~dryPat = Pbindf(~dryPat, \dur, Pwhite(0.1, 0.3, count), \amp, 0.5, \send, -10);
-		~tonalPat = Pbindf(~tonalPat, \dur, 2, \rls, 0.2, \freq, Pxrand([333, 555, 777], count), \send, -10);
+			~dryPat = Pbindf(~dryPat, \dur, Pif(Ptime(inf) < count, Pwhite(0.1, 0.3, inf)), \amp, 0.5, \send, -10);
+			~tonalPat = Pbindf(~tonalPat, \dur, 2, \rls, 0.2, \freq, Pif(Ptime(inf) < count, Pxrand([333, 555, 777], inf)), \send, -10);
 		~concessionNow = Pbus(Pgpar([~dryPat, ~hhPat, ~tonalPat]))}
 	{true} {"end of insinuation reached".postln;};
 	if(~concessionPlay.isPlaying, {~concessionPlay.stop});
@@ -403,9 +407,9 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 	postf("\n% runnung %\t \n", s_name, ~praisePlay.isPlaying);
 	c = case
 	{(count > 0) && (count < 3)} {
-		~praiseNow = Pbindf(~praiseNow, \dur, Pn(1, 10))}
+		~praiseNow = Pbind(\instrument, \praise, \dur, Pn(1, 10))}
 	{(count >= 3) && (count < 5) } {
-		~praiseNow = Pbindf(~praiseNow, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.9, \atk, Pseq([0.1, 0.7], 5)).trace}
+		~praiseNow = Pbindf(\instrument, \praise, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.9, \atk, Pseq([0.1, 0.7], 5)).trace}
 	{true} {"end of insinuation reached".postln;};
 	if(~praisePlay.isPlaying, {~praisePlay.stop});
 	postf("\n% running after %\t \n", s_name, ~ilectureNow.isPlaying);
