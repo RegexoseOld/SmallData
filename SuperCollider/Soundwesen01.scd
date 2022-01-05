@@ -12,6 +12,7 @@ Server.default.options.numInputBusChannels_(0);
 ServerTree.removeAll;
 s.newBusAllocators; // Busse machen
 ~fx1Bus = Bus.audio(s,2);
+~fx2Bus = Bus.audio(s,2);
 ~cat = "";
 ~out = 0;
 
@@ -21,6 +22,7 @@ s.newBusAllocators; // Busse machen
 		~fxGroup = Group.new;
 		//später: Fx Synth machen und hier instantiieren zB ....
 		~reverb = Synth('reverb', [\in, ~fx1Bus], ~fxGroup);
+		~delay = Synth('delay', [\in, ~fx2Bus], ~fxGroup);
 
 )};
 // Env([0, 1, 1, 0], [1.5, 0.2, 0.5, 2.5], [1, 0, -2, -3]).plot
@@ -101,8 +103,10 @@ s.waitForBoot({
 		freq2 = LFNoise0.kr(\fRate.kr(4.0)).exprange(\freq.kr(40), \freq.kr(40) * \fMul.kr(80)).round(\freq.kr(40) * \rnd.kr(1.0));
 		freq1 = freq1 * LFPulse.kr(\pulRate.kr(4.0));
 		freq2 = freq2 * LFPulse.kr(\pulRate.kr(4.0));
-		sig1 = RHPF.ar(Pulse.ar(freq1, \width.kr(0.4)), amp1, \ffreq.kr(150), \rq.kr(1.0)) * env1 * amp ;
-		sig2 = RHPF.ar(Pulse.ar(freq2, \width.kr(0.4)), amp2, \ffreq.kr(150), \rq.kr(1.0)) * env2 * amp;
+		sig1 = RHPF.ar(Pulse.ar(freq1, \width.kr(0.4)), amp1, \ffreq.kr(90), \rq.kr(1.0)) * env1 * amp ;
+		sig2 = RHPF.ar(Pulse.ar(freq2, \width.kr(0.4)), amp2, \ffreq.kr(90), \rq.kr(1.0)) * env2 * amp;
+		sig1 = LPF.ar(sig1, \lpf.kr(120));
+		sig2 = LPF.ar(sig2, \lpf.kr(120));
 		Out.ar(~out, sig1);
 		Out.ar(~out +1, sig2);
 		Out.ar(\outfx.ir(~fx1Bus), [sig1, sig2] * \send.ir(-30).dbamp);
@@ -112,6 +116,14 @@ s.waitForBoot({
 		var sig, wet;
 		sig = In.ar(\in.ir(~fx1Bus), 2);
 		sig = FreeVerb2.ar(sig[0], sig[1], mix:1, room:0.99, damp:0.99);
+		sig = LPF.ar(sig, 900);
+		Out.ar(\out.ir(~out), sig);
+	}).add;
+
+	SynthDef('delay', {
+		var sig, wet;
+		sig = In.ar(\in.ir(~fx2Bus), 2);
+		sig = CombL.ar(sig, \maxdel.kr(0.2), \deltime.kr(0.2), \decayT.kr(1.0),\mul.kr(0.1));
 		sig = LPF.ar(sig, 900);
 		Out.ar(\out.ir(~out), sig);
 	}).add;
@@ -249,10 +261,11 @@ s.waitForBoot({
 			\amp, 0.6,
 			\atk, 0.05,
 			\rls, 1.9,
-			\ffreq, 400,
+			\ffreq, 90,
 			\rq, 0.3,
 			\pulWidth, 5,
-			\pulRate, 0.1
+			\pulRate, 0.1,
+			\lpf, 100
 		)
 	});
 
@@ -403,9 +416,11 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 	{(count > 0) && (count < 2)} {
 		now = Pbindf(base, \amp, Pkey(\amp) *dura)}
 	{(count >= 2) && (count < 5)} {
-		now = Pbindf(base, \dur, Pn(0.98, count), \midinote, Pseq([60,72,48], count)).trace}
+		now = Pbindf(base, \dur, Pn(0.98, count), \lpf, Pseries(100, 50, count), \midinote, Pseq([60,72,48], count)).trace}
 	{(count >= 5) && (count < 10) } {
-		now = Pbindf(base, \dur, Pseries(0.9, -0.05, count), \detune, Pseries(1.6, -0.3, inf), \amp, Pkey(\amp) * dura)}
+		now = Pbindf(base, \dur, Pseries(0.9, -0.05, count), \detune, Pseries(1.6, -0.3, inf), \lpf, Pseries(500, 50, count), \amp, Pkey(\amp) * dura)}
+	{(count >= 10) && (count < 30) } {
+		now = Pbindf(base, \dur, Pseq((0.4, 0.38 .. 0.1).reverse.mirror, count), \detune, Pwhite(0.95, 1.05, inf), \midinote, Pseq([60,72,48], count) +12, \lpf, Pseries(400, 60, count), \amp, Pkey(\amp) * dura).trace}
 	{true} {"end of insinuation reached".postln;};
 	if(~praisePlay.isPlaying, {~praisePlay.stop});
 	postf("\n% running after %\t \n", s_name, ~praiseNow.isPlaying);
@@ -478,7 +493,7 @@ g = Pbind(
 ~praiseNow = ~reset[\praise05].value;
 ~praisePlay = ~praiseNow.play(t, quant:1);
 )
-~setPraise.value('praise', 3);
+~setPraise.value('praise', 12);
 (
 ~rauschenNow = ~reset[\rauschen].value;
 ~rauschenPlay = ~rauschenNow.play(t, quant:1)
