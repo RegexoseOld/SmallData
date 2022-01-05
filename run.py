@@ -9,7 +9,6 @@ from config import settings
 import joblib
 from song.song_machine import SongValidator
 
-
 def check_model_song_cats():
     #  validate consistency of trained model and song
     with open(settings.song_path, 'r') as f:
@@ -50,7 +49,8 @@ elif args.app == 'song':
     oscul_client = udp_client.SimpleUDPClient(settings.ips['song_server'], settings.OSCULATOR_PORT)
     audience_client = udp_client.SimpleUDPClient(settings.ips['audience'], settings.AUDIENCE_PORT)
     performer_client = udp_client.SimpleUDPClient(settings.ips['performer'], settings.PERFORMER_PORT)
-    sc_client = udp_client.SimpleUDPClient("127.0.0.1", 57121)
+    sc_client = udp_client.SimpleUDPClient(settings.SC_ADDRESS, settings.SC_PORT)
+    print('sc port', settings.SC_PORT)
 
     machine_instance = song_machine.create_instance(settings.song_path)
     synth_fb = machine_instance.parser.data[machine_instance.parser.SYNTH_CC]
