@@ -44,49 +44,49 @@ s.waitForBoot({
 
 	SynthDef.new('dissence', {
 		var sig, gend, env;
-		env = Env([0, 1, 1, 0], [\atk.ir(0.1), \sus.ir(0.2), \rls.ir(0.5)], \lin).ar(2);
-		gend = BPF.ar(Gendy1.ar(1, 1, 1.0, 1.0, \minfreq.kr(600), \maxfreq.kr(1000), 0.3, \gendmul.kr(0.05), 5), \ffreq.kr(300), \rq.kr(0.9));
+		env = Env([0, 1, 1, 0], [\atk.ir(0.1), \sus.ir(0.2), \rls.ir(0.9)], \lin).ar(2);
+		gend = BPF.ar(Gendy1.ar(1, 1, 1.0, 1.0, \minfreq.kr(400), \maxfreq.kr(1000), 0.3, \gendmul.kr(0.05), 5), \ffreq.kr(300), \rq.kr(0.9));
 		sig = LFSaw.ar(\freq.kr(400), 0.0, \sawMul.kr(0.3)) + gend;
-		sig = sig * env * \amp.ir(0.6);
+		sig = sig * env * \amp.kr(0.6);
 		Out.ar(\out.ir(~out), sig!2);
 		Out.ar(\outfx.ir(~fx1Bus), sig * \send.ir(-30).dbamp);
 	}).add;
 
-	SynthDef.new('insinuation', {
-		|atk=1.5, sus=0.8, rls=1, gate=1|
+	SynthDef.new('lecture', {
+		|gate = 1|
 		var temp, sig, env, mod, ampMod;
-		env = EnvGen.kr(Env.adsr(atk, 0.8, sus, rls, curve:\crv.ir(-4.0)), gate, doneAction: 2);
-		mod = SinOsc.kr(\modRate.ir(50));
-		ampMod = Saw.kr({ExpRand(\ampMod1.ir(0.01), \ampMod2.ir(1.0))}).range(0, 2);
-		sig = PMOsc.ar({Rand(\freq.ir(100), \maxF.ir(200))}!4, LFNoise0.kr(\modRate.ir(50))!4, pmindex:\pmindx.ir(pi));
-		sig = sig * ampMod * env * mod;
-		sig = Splay.ar(sig * \amp.ir(0.4));
+		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(3.0), \rls.kr(1.0), curve:\crv.ir(-4.0)), gate, doneAction: 2);
+		mod = SinOsc.kr(\modRate.kr(1.2));
+		// ampMod = Saw.kr(ExpRand(\ampMod1.kr(0.01), \ampMod2.ir(0.3))).range(0, 1);
+		sig = VarSaw.ar({\freq.kr(80) * ExpRand(0.99, 1.01)}, 0, LFTri.kr(\filTime.kr(0.3)).range(0,1))!4;
+		sig = sig * env;
+		sig = Splay.ar(sig * \amp.kr(0.25));
 		Out.ar(~out, sig);
 		Out.ar(\outfx.ir(~fx1Bus), sig * \send.ir(-30).dbamp);
 	}).add;
 
 
-	SynthDef('lecture', {
+	SynthDef('insinuation', {
 		| gate = 1|
 		var  sig, env, frq;
-		env = EnvGen.kr(Env.adsr(\atk.kr(0.05), 0.3, 0.7, \rls.kr(0.9)), gate, doneAction: 2) ;
+		env = EnvGen.kr(Env([0,1,1,0], [\atk.kr(0.05), 0.3, \sustain.kr(0.5), \rls.kr(0.4)], \linear), gate, doneAction: 2) ;
 		frq = Lag.kr(\freq.kr(220), \slideTime.kr(0.6));
-		sig = PMOsc.ar(frq, LFNoise2.ar(\noisFreq.kr(0.1), \maxF.kr(600)), SinOsc.ar(\ffreq.kr(3.0)), pmindex:\modWidth.kr(0.15), mul:\preamp.kr(0.9)) * \amp.kr(0.6)
+		sig = PMOsc.ar(frq, LFNoise2.ar(\noisFreq.kr(0.1), \maxF.kr(600)), SinOsc.ar(\ffreq.kr(3.0)), pmindex:\modWidth.kr(0.15), mul:\preamp.kr(0.6)) * \amp.kr(0.6)
 		* env ;
-		sig = FreqShift.ar(sig, \fShift.kr(300));
+		sig = FreqShift.ar(sig, \fShift.kr(100));
 		Out.ar(~out, sig ! 2);
-		Out.ar(\outfx.ir(~fx1Bus), sig * \send.ir(-30).dbamp);
+		Out.ar(\outfx.ir(~fx1Bus), sig * \send.kr(-30).dbamp);
 	}).add;
 
 
 	SynthDef('concession', {
 		var sig, env;
-		sig = PlayBuf.ar(2, \buf.ir(0), \rate.ir(1)*BufRateScale.ir(\buf.ir(0)), \trig.kr(1), \spos.ir(0));
+		sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1)*BufRateScale.ir(\buf.kr(0)), \trig.kr(1), \spos.kr(0));
 		//die Env muss wohl .ar sein, um bufnums austauschen zu können
-		env = Env([0, 1, 1, 0], [\atk.ir(0), 0.2,  \sus.ir(0), \rls.ir(1)], [0, 0, 0]).kr(2);
-		sig = LPF.ar(sig, \freq.ir(440), \bpfmix.ir(0)*2-1);
+		env = Env([0, 1, 1, 0], [\atk.kr(0), 0.2,  \sus.kr(0), \rls.kr(1)], [0, 0, 0]).kr(2);
+		sig = LPF.ar(sig, \freq.kr(440));
 		sig = sig * env;
-		sig = Pan2.ar(sig, \pan.ir(0), \amp.ir(0.5));
+		sig = Pan2.ar(sig, \pan.kr(0), \amp.kr(0.5));
 		Out.ar(\out.ir(~out), sig) ;
 		Out.ar(\outfx.ir(~fx1Bus), sig * \send.ir(-30).dbamp);
 	}).add;
@@ -123,8 +123,8 @@ s.waitForBoot({
 	SynthDef('delay', {
 		var sig, wet;
 		sig = In.ar(\in.ir(~fx2Bus), 2);
-		sig = CombL.ar(sig, \maxdel.kr(0.2), \deltime.kr(0.2), \decayT.kr(1.0),\mul.kr(0.1));
-		sig = LPF.ar(sig, 900);
+		sig = CombL.ar(sig, \maxdel.kr(0.6), \deltime.kr(0.8), \decayT.kr(3.0),\mul.kr(1.2));
+		sig = LPF.ar(sig, 1200);
 		Out.ar(\out.ir(~out), sig);
 	}).add;
 
@@ -200,36 +200,34 @@ s.waitForBoot({
 	~reset.add(\dissence01 -> {
 		Pbind(
 			\instrument, 'dissence',
-			\dur, Pn(1, 2),
-			\freq, 666,
+			\dur, 1.0,
+			\freq, 333,
 			\ffreq, 300,
-			\sawMul, 0.1
+			\sawMul, 0.2
 		);
 	});
-	~reset.add(\insinuation02 -> {
-		Pbind(
-			\instrument, 'insinuation',
-			\dur, Pn(1.4, 1),
-			\freq, 100,
-			\maxF, 400,
-			\modRate, 5,
-			\gate, 1,
-			\atk, 0.01,
-			\sus, 0.8,
-			\rls, 3,
-			\ampMod1, 0.01,
-			\ampMod2, 0.3
-		);
-	});
-	~reset.add(\lecture03 -> {
+	~reset.add(\lecture02 -> {
 		Pbind(
 			\instrument, 'lecture',
-			\dur, Pn(2, 5),
+			\dur, 2.4,
+			\midinote, 36,
+			\atk, 0.3,
+			\rls, 1.6,
+			\ampMod1, 0.1,
+			\ampMod2, 0.1,
+			\modRate, 0.3,
+			\amp, 0.15
+		);
+	});
+	~reset.add(\insinuation03 -> {
+		Pbind(
+			\instrument, 'insinuation',
+			\dur, Pn(2, 1),
 			\freq, 100,
 			\modWidth, 0.5,
-			\rls, 0.4,
-			\atk, 0.2,
-			\preamp, 2.5,
+			\rls, 0.8,
+			\atk, 0.5,
+			\preamp, 2,
 			\slideTime, pi,
 			\ffreq, 10,
 			\maxF, 50,
@@ -237,14 +235,14 @@ s.waitForBoot({
 		);
 	});
 
-	~bdPat = Pbind(\instrument, 'concession', \buf, Pxrand(b[\bd], inf), \dur, 5, \sustain, 0.4, \freq, 100);
-	~snPat = Pbind (\instrument, 'concession', \buf, b[\sn][0], \dur, 3, \sustain, 0.4, \freq, 600);
-	~dryPat = Pbind(\instrument, 'concession', \buf, b[\dry][0], \dur, 1, \sustain, 0.4, \freq, 440);
-	~hhPat = Pbind(\instrument, 'concession', \buf, Pxrand(b[\hh], inf), \dur, 1.5, \sustain, 0.4, \freq, 1200);
-	~tonalPat = Pbind(\instrument, 'concession', \buf, Pxrand(b[\tonal], inf), \dur, 4, \sustain, 0.4);
-
  	~reset.add(\concession04 -> {
-		Pbus(Pgpar([~bdPat, ~snPat, ~dryPat, ~hhPat, ~tonalPat]));
+		 (
+			bd: Pbind(\instrument, 'concession', \buf, b[\bd][1], \dur, 5, \freq, 100),
+			sn: Pbind (\instrument, 'concession', \buf, b[\sn][0], \dur, 3, \freq, 600),
+			dry: Pbind(\instrument, 'concession', \buf, b[\dry][0], \dur, 1,  \freq, 440),
+			hh: Pbind(\instrument, 'concession', \buf, Pxrand(b[\hh], inf), \dur, 1.5, \freq, 1200),
+			tonal: Pbind(\instrument, 'concession', \buf, Pxrand(b[\tonal], inf), \dur, Pwhite(0.1, 0.3, inf)),
+		)
 	});
 
 	~reset.add(\praise05-> {
@@ -253,7 +251,7 @@ s.waitForBoot({
 			\dur, 1,
 			\ampHz , 0.1,
 			\ampScale, 0.03,
-			\freq, 80,
+			\midinote, 80,
 			\fMul, 5,
 			\pulWidth, 0.24,
 			\fRate, 1,
@@ -309,8 +307,8 @@ Jeder Synth hat andere Parameter, die bestimmte Werte brauchen.
 */
 
 // test
-b[\dry][0].play;
 
+b[\dry][0].play;
 
 
 /// set functions
@@ -322,94 +320,105 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 	Der Parameter \dur kann nur mit Proxies oder Pdefn verändert werden.
 */
 	|s_name, count|
-	var c, dura;
+	var c, dura, now, base;
 	postf("\nsetting %\t with count %\n", s_name, count);
-	postf("\ndissence runnung %\t \n", ~dissencePlay.isPlaying);
+	base = ~reset[\dissence01].value;
 	// wie regeln man diese Pdefn?
 	//muss man zwischen Pdefs und Pbindf usw switschen???
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	c = case
-	{(count > 0) && (count < 5)} {
-		~dissenceNow = Pbind(\instrument, \dissence, \freq, Pwhite(600, 666, inf), \sawMul, 0.3, \amp, 0.2 * dura, \ffreq, 1000)}
+	{(count > 0) && (count < 2)} {
+		now = Pbindf(base, \amp, Pkey(\amp)* dura)}
+	{(count >= 2) && (count < 5) } {
+		now = Pbindf(base, \dur, Pn(1.5, count), \atk, 0.6, \rls, 6.2, \amp, 0.25 * dura, \send, -35)}
 	{(count >= 5) && (count < 10) } {
-		postf("\nsetting %\t", count);
-		~dissenceNow = Pbindf(~dissenceNow, \dur, 0.33, \atk, 0.02, \rls, Pwhite(0.1, 0.2, inf), \amp, 0.25 * dura, \send, -25.dbamp)}
+		now = Pbindf(base, \dur, Pn(1.4, count), \atk, 0.4, \rls, 4.2, \freq, 666, \minffreq, 600, \amp, 0.25 * dura, \send, -35).trace}
 	{count >= 10 } {
-		postf("\nsetting %\t", count);
-		~dissenceNow = Pbindf(~dissenceNow, \dur, 0.15, \atk, 0.02, \freq, Pwhite(900, 1111, inf), \amp, 0.25 * dura, \send, -25.dbamp)}
+		var syn;
+		now = Routine({
+			5.do({
+				var f =rrand(300, 666);
+				syn = Synth(\dissence, [\freq, f, \minfreq, f *2,  \atk, 0.6, \rls, 2]);
+				2.wait;
+			})
+	})}
 	{true} {"end of dissence reached".postln};
 	if(~dissencePlay.isPlaying, {~dissencePlay.stop});
-	postf("\ndissence running after %\t \n", ~dissenceNow.isPlaying);
-	~dissencePlay = ~dissenceNow.play(t, quant:1);
+	//postf("\ndissence running after %\t \n", ~dissenceNow.isPlaying);
+	~dissencePlay = now.play(t, quant:1);
 
 };
 
 ~setInsinuation = {
 	|s_name, count|
-	var c, dura;
+	var c, dura, now, base;
 	postf("\nsetting %\t with count %\n", s_name, count);
-	postf("\n% runnung %\t \n", s_name, ~insinuationPlay.isPlaying);
+	base = ~reset[\insinuation03].value;
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	c = case
-	{(count > 0) && (count < 3)} {
-		~insinuationNow = Pbind(\instrument, \insinuation, \dur, Pn(1, 10))}
-	{(count >= 3) && (count < 5) } {
-		~insinuationNow = Pbind(\instrument, \insinuation, \dur, Pseq([3.0, 4.0], count), \rls, Pkey(\dur, count) * 0.9, \atk, Pseq([0.1, 0.7], count)).trace}
+	{(count > 0) && (count < 5)} {
+		var syn;
+		now = Routine.new({
+			count.do({
+				syn = Synth(\insinuation, [\freq, 111 *count, \modWidth, 0.2 * count.reciprocal, \fShift, 66 * count, \outfx, ~fx2Bus, \send, -10.dbamp]);
+				0.3.wait;
+		})})
+	}
+	{(count >= 5) && (count < 10) } {
+			now = Pbind(\instrument, \insinuation, \dur, Pseq([3.0, 4.0], count), \rls, Pkey(\dur, count) *1.2, \atk, Pseq([0.1, 0.7], count), \amp, 0.5).trace}
 	{(count >= 5) && (count < 10) } {
 		~insinuationNow = Pbind(\instrument, \insinuation, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.4, \atk, Pseq([0.1, 0.7], 5)).trace}
 	{count >= 10 } {
 		~insinuationNow = Pbind(\instrument, \insinuation, \dur, 0.8, \rls, \midinote, Pseq([24,48], count), \atk, Pseq([0.1, 0.7], 5)).trace}
 	{true} {"end of insinuation reached".postln};
 	if(~insinuationPlay.isPlaying, {~insinuationPlay.stop});
-	postf("\n% running after %\t \n", s_name, ~insinuationNow.isPlaying);
-	~insinuationPlay = ~insinuationNow.play(t, quant:1);
+	//postf("\n% running after %\t \n", s_name, ~insinuationNow.isPlaying);
+	~insinuationPlay = now.play(t, quant:1);
 
 };
 ~setLecture = {
 	|s_name, count|
-	var c, dura;
+	var c, dura, base, now;
 	postf("\nsetting %\t with count %\n", s_name, count);
-	postf("\n% runnung %\t \n", s_name, ~lecturePlay.isPlaying);
 	dura = Env.new([1,0], [count], [-2]).asPseg;
+	base = ~reset[\lecture02].value;
 	c = case
-	{(count > 0) && (count < 5)} {
-		~lectureNow = Pbind(\instrument, \lecture, \dur, Pn(1.5, count), \amp, 0.6 * dura)}
-	{(count >= 3) && (count < 10) } {
-		~lectureNow = Pbind(\instrument, \lecture, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.9, \atk, Pseq([0.1, 0.7], 5)).trace}
-	{count >= 10 } {
-		~lectureNow = Pbind(\instrument, \lecture, \dur, Pseq([1.0, 1.2], 5), \rls, 0.5, \atk, 0.1).trace}
-	{true} {"end of insinuation reached".postln;};
+	{(count > 0) && (count < 2)} {now = Pbindf(base, \amp, Pkey(\amp)*dura)}
+	{(count >=2) && (count < 5)} {
+		now = Pbindf(base, \dur, Pn(1.8, count), \midinote, Pxrand([60,48], count)).trace}
+	{(count >= 5) && (count < 10) } {
+		now = Pbindf(base, \dur, Pn(1.2, count), \midinote, Pseq([48, 32, 40, 35], inf)).trace}
+	{(count >= 10) && (count < 30) } {
+		now = Pbindf(base, \dur, Pn(1.2, count), \midinote, Pxrand([48, 32, 40, 35], count)).trace}
+
+	{true} {"end of lecture reached".postln;};
 	if(~lecturePlay.isPlaying, {~lecturePlay.stop});
-	postf("\n% running after %\t \n", s_name, ~lecturePlay.isPlaying);
-	~lecturePlay = ~lectureNow.play(t, quant:1);
+	~lecturePlay = now.play(t, quant:1);
 
 };
 ~setConcession = {
 	|s_name, count|
-	var c, dura;
+	var c, dura, now, basePats;
 	postf("\nsetting %\t with count %\n", s_name, count);
-	postf("\n% runnung %\t \n", s_name, ~concessionPlay.isPlaying);
 	dura = Env.new([1,0], [count], [-2]).asPseg;
+	basePats = ~reset[\concession04].value;
 	c = case
-	{(count > 0) && (count < 5)} {
-		~tonalPat = Pbind(\instrument, \concession, \buf, Pxrand(b[\tonal], inf), \dur, Pwhite(0.1, 0.3, inf), \amp, 0.5 * dura);
-		~concessionNow = Pbus(Pgpar([~tonalPat]))}
-	{(count >= 5) && (count < 10) } {
-	~hhPat = Pbind(\instrument, \concession, \buf, b[\hh][0], \dur, 0.5, \pan, Pwhite([-1,0, 1], count), \amp, Pwhite(0.05, 0.1, inf) * dura, \freq, Pseq([Array.series(8, 1000, -50)], count));
-		~dryPat = Pbind(\instrument, \concession, \dur,  Pwhite(0.1, 0.3, inf), \amp, 0.5 * dura);
-		~tonalPat = Pbind(\instrument, \concession, \dur, 2, \rls, 0.2, \freq, Pxrand([333, 555, 777], inf), \amp, 0.5 * dura, \send, -15);
-		~concessionNow = Pbus(Pgpar([~dryPat, ~hhPat, ~tonalPat]))}
+	{count.even} {
+		now = Pbindf(basePats[\tonal], \buf, Pxrand(b[\tonal], inf), \dur, Pwhite(0.1, 0.3, inf), \amp, 1.0 * dura)}
+	{count.odd } {
+			var tonal;
+		tonal = Pbind(\instrument, \concession, \buf, b[\tonal][9], \dur, Pseq((0.8,0.78 ..0.04), 1), \rate, Pseries(1.3, 0.15, count), \send, Pseq((-30, -28 .. -12),inf), \amp, 0.7);
+			now = Ppar([ tonal])}
 	{true} {"end of insinuation reached".postln;};
 	if(~concessionPlay.isPlaying, {~concessionPlay.stop});
-	postf("\n% running after %\t \n", s_name, ~concessionNow.isPlaying);
-	~concessionPlay =  ~concessionNow.play(t, quant:1);
+	//postf("\n% running after %\t \n", s_name, ~concessionNow.isPlaying);
+	~concessionPlay =  now.play(t, quant:1);
 
 };
 ~setPraise = {
 	|s_name, count|
 	var c, base, now, dura;
 	postf("\nsetting %\t with count %\n", s_name, count);
-	//postf("\n% runnung %\t \n", s_name, ~praisePlay.isPlaying);
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	base = ~reset[\praise05].value;
 	c = case
@@ -420,9 +429,9 @@ man kann ~dissenceNow nicht einfach so mit Pbindf ersetzen.
 	{(count >= 5) && (count < 10) } {
 		now = Pbindf(base, \dur, Pseries(0.9, -0.05, count), \detune, Pseries(1.6, -0.3, inf), \lpf, Pseries(500, 50, count), \amp, Pkey(\amp) * dura)}
 	{(count >= 10) && (count < 30) } {
-		now = Pbindf(base, \dur, Pseq((0.4, 0.38 .. 0.1).reverse.mirror, count), \detune, Pwhite(0.95, 1.05, inf), \midinote, Pseq([60,72,48], count) +12, \lpf, Pseries(400, 60, count), \amp, Pkey(\amp) * dura).trace}
+		now = Pbindf(base, \dur, Pseq((0.4, 0.38 .. 0.1).reverse.mirror, count), \detune, Pwhite(0.95, 1.05, inf), \midinote, Pseq([24, 36], count) + count, \lpf, Pseries(400, 80, count), \amp, Pkey(\amp) * dura, \outfx, ~fx2Bus, \send, Pseq((-35, -33 .. -5), count)).trace}
 	{true} {"end of insinuation reached".postln;};
-	if(~praisePlay.isPlaying, {~praisePlay.stop});
+	//if(~praisePlay.isPlaying, {~praisePlay.stop});
 	postf("\n% running after %\t \n", s_name, ~praiseNow.isPlaying);
 	~praisePlay = now.play(t, quant:1);
 };
@@ -467,33 +476,14 @@ g = Pbind(
 
 
 
-(~dissenceNow = ~reset[\dissence01].value;
-~dissencePlay = ~dissenceNow.play(t, quant:1);
-)
 
-~dissencePlay.stop;
-~setDissence.value('dissence', 5);
-(
-~insinuationNow = ~reset[\insinuation02].value;
-~insinuationPlay = ~insinuationNow.play(t, quant:1);
-)
-~insinuationPlay.stop
-~setInsinuation.value('insinuation', 4);
-(
-~lectureNow = ~reset[\lecture03].value;
-~lecturePlay = ~lectureNow.play(t, quant:1);
-)
-~setLecture.value('lecture', 7)
-(
-~concessionNow = ~reset[\concession04].value;
-~concessionPlay = ~concessionNow.play(t, quant:1);
-)
-~setConcession.value('concession', 2);
-(
-~praiseNow = ~reset[\praise05].value;
-~praisePlay = ~praiseNow.play(t, quant:1);
-)
-~setPraise.value('praise', 12);
+
+
+~setDissence.value('dissence',10);
+~setInsinuation.value('insinuation', 5);
+~setLecture.value('lecture', 12)
+~setConcession.value('concession', 7);
+~setPraise.value('praise', 10);
 (
 ~rauschenNow = ~reset[\rauschen].value;
 ~rauschenPlay = ~rauschenNow.play(t, quant:1)
@@ -504,7 +494,6 @@ d = nil;
 d = ~dissenceNow.asStream;
 d.next(());
 
-~setLecture.value('lecture', 1);
 
 (
 OSCdef.new(
