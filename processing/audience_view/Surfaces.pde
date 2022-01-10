@@ -1,4 +1,4 @@
-class SurfaceBase { //<>//
+class SurfaceBase { //<>// //<>//
   String name;
   int w, h;
   PVector pos;
@@ -26,33 +26,127 @@ class SurfaceBase { //<>//
     this.surf.background(222);
     this.surf.endDraw();
   }
+  void clearSurf() {
+    println("clearSurf   " + this.name);
+    this.surf.beginDraw();
+    this.surf.clear();
+    this.surf.endDraw();
+  }
+}
 
-  void fadeGraphics(PGraphics c, String name, int fadeAmount) {
-    c.beginDraw();
-    c.loadPixels();
-    // iterate over pixels
-    for (int i =0; i<c.pixels.length; i++) {
-      // get alpha value
-      int alpha = (c.pixels[i] >> 24) & 0xFF ;
-      // reduce alpha value
-      alpha = max(0, alpha-fadeAmount);
-      // assign color with new alpha-value
-      c.pixels[i] = alpha<<24 | (c.pixels[i]) & 0xFFFFFF ;
+class Kinship extends SurfaceBase {
+  //class to show messages that are related to each other
+  ArrayList<SingleLine> uttLines;
+  float tSize;
+  PGraphics titleSurf;
+  color col;
+  String title, text, cat;
+  TextCalculations tc;
+
+  Kinship(String name, String title, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
+    super(name, _x, _y, _w, _h, _font, _visible);
+    this.tc = new TextCalculations(this.w, this.h);
+    this.uttLines = new ArrayList<SingleLine>();
+    this.titleSurf = createGraphics(_w, _h/10);
+    this.tSize = 10.0;
+    this.title = title;
+  }
+
+  void grow() {
+    float gravity = 3 * this.tc.mass;
+    this.tc.applyForce(gravity);
+    this.tc.update(this.w, this.font, this.tSize, this.text);
+    if (this.w > this.tc.tWidth) {
+      this.uttLines = this.tc.tempsingle;
+      this.tSize = int(floor(this.tc.tSize));
+    } else {
+      visibilityMachine.setSizeReached(true);
+      this.setDark();
     }
-    c.updatePixels();
-    c.endDraw();
-    // println("fading   " + name );
+  }
+
+  void shrink() {
+    if (visibilityMachine.sizeReached == true) {
+      this.tc.reset(); // make sure to reset tc in case the other kinship class stopped shrinking
+    } else {
+      float gravity = - 2 * this.tc.mass;
+      this.tc.applyForce(gravity);
+
+      boolean sizeReached = this.tc.updateFade();
+      if (sizeReached) {
+        visibilityMachine.setSizeReached(sizeReached);
+        this.tc.reset();
+      } else {
+        this.tSize = int(floor(this.tc.tSize));
+      }
+    }
+  }
+
+  void setTexts(String text, String cat) {
+    this.text = text;
+    this.cat = cat;
+  }
+
+  void update() {
+    this.visible = visibilityMachine.isVisible;
+    switch (visibilityMachine.state) {
+    case VisibilityMachine.STATE_GROW:
+      this.grow();
+      this.updateSurface();
+      break;
+    case VisibilityMachine.STATE_SHRINK:
+      this.shrink();
+      this.updateSurface();
+      break;
+    }
+  }
+
+  void updateSurface() {
+    this.surf.beginDraw();
+    this.surf.clear();
+    for (SingleLine sl : this.uttLines) {
+      this.surf.textFont(this.font, this.tSize);
+      this.surf.fill(sl.col);
+      this.surf.text(sl.line, 10, sl.yPos + 30);
+    }
+    this.makeTitle();
+    this.surf.image(this.titleSurf, this.pos.x, this.pos.y);
+    this.surf.endDraw();
+  } 
+
+  void makeTitle() {
+    this.titleSurf.beginDraw();
+    // remove alpha color
+    int alpha = (this.col >> 24) & 0xFF;
+    alpha = 255;
+    this.col = alpha<<24 | this.col & 0xFFFFFF ;
+    this.titleSurf.background(this.col);
+    this.titleSurf.textFont(this.font);
+    this.titleSurf.textAlign(CENTER, CENTER);
+    this.titleSurf.fill(20);
+    this.titleSurf.text(this.title, this.w/2, this.h/2);
+    this.titleSurf.endDraw();
+  }
+
+  void setDark() {
+    this.surf.beginDraw();
+    for (SingleLine l : this.uttLines) {
+      l.setDark();
+    }
+    this.surf.endDraw();
   }
 }
 
 class Article extends SurfaceBase {
   String currentLine;
   int tSize;
+  ArrayList<SingleLine> articleLines;
 
   Article(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible, int _tSize) {
     super(name, _x, _y, _w, _h, _font, _visible);
     this.currentLine = "";
     this.tSize = _tSize;
+    this.articleLines = new ArrayList<SingleLine>();
   }
 
   void updateLine(String l) {
@@ -70,6 +164,9 @@ class Rauschen extends SurfaceBase {
 
   Rauschen(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
     super(name, _x, _y, _w, _h, _font, _visible);
+    this.surf.beginDraw();
+    this.surf.background(222);
+    this.surf.endDraw();
   }
   void updateDisplay(PShape s, PVector p, float size, float a, color col ) {
     this.surf.beginDraw();
@@ -97,61 +194,6 @@ class Rauschen extends SurfaceBase {
   }
 }
 
-class Kinship extends SurfaceBase {
-  ArrayList<SingleLine> uttLines;
-  int tSize;
-  boolean reset;
-  PGraphics titleSurf;
-  color col;
-  String title;
-
-  Kinship(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
-    super(name, _x, _y, _w, _h, _font, _visible);
-    this.uttLines = new ArrayList<SingleLine>();
-    this.titleSurf = createGraphics(_w, _h/10);
-    this.reset = false;
-  }
-  void updateMatch() {
-    makeTitle();
-    this.surf.beginDraw();
-    // this.s.clear();
-    this.surf.background(222);
-    for (SingleLine sl : this.uttLines) {
-      this.surf.textFont(this.font, this.tSize);
-      this.surf.fill(sl.col);
-      this.surf.text(sl.line, 10, sl.yPos);
-    }
-    this.surf.endDraw();
-  }
-
-  void makeTitle() {
-    if (this.name.equals("incoming")) {
-      this.title = "Dein Kommentar ähnelt ...";
-    } else { 
-      this.title= " ... diesem hier";
-    }
-    this.titleSurf.beginDraw();
-    // remove alpha color
-    int alpha = (this.col >> 24) & 0xFF;
-    alpha = 255;
-    this.col = alpha<<24 | this.col & 0xFFFFFF ;
-    this.titleSurf.background(this.col);
-    this.titleSurf.textFont(this.font);
-    this.titleSurf.textAlign(CENTER, CENTER);
-    this.titleSurf.fill(20);
-    this.titleSurf.text(this.title, this.w/2, this.h/2);
-    this.titleSurf.endDraw();
-  }
-
-  void setDark() {
-    this.surf.beginDraw();
-    for (SingleLine l : this.uttLines) {
-      l.setDark();
-    }
-    this.surf.endDraw();
-  }
-}
-
 class Info extends SurfaceBase {
 
   Info(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
@@ -175,43 +217,73 @@ class Info extends SurfaceBase {
 }
 
 class Sculpture extends SurfaceBase {
+  ArrayList<SculptElement> elements, elements2;
+  boolean canUpdate;
 
   Sculpture(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
     super(name, _x, _y, _w, _h, _font, _visible);
+    this.elements = new ArrayList<SculptElement>();
+    this.elements2 = new ArrayList<SculptElement>();
+    this.canUpdate = true;
   }
 
-  void displaySculpture(String msg) {
+  void addElements(String msg, String incomingCat) {
     Area a = areas.findArea(incomingCat);
-    a.sculptureText();
-    // println("area name  " + a.name + "   pos  " + pos);
+    a.changeAngle(); // textAngle ändert sich, abhängig von der Area
+    PVector angles = new PVector(a.firstAngle, a.secondAngle, a.textAngle); // für jedes neue Element werden die Angles festgeschrieben
+    // todo einfach area übergeben und daraus die Angles und die color ableiten
+    SculptElement sE = new SculptElement(msg, this.font, a, this.surf.width, this.surf.height);
+    if (this.canUpdate) {
+      elements.add(sE);
+    } else if (!this.canUpdate) {
+      // use elements2 when loop in updateSculpture is busy to avoid concurrency
+      elements2.add(sE);
+    }
+  }
+
+  void checkElements() {
+    Iterator itr = this.elements.iterator();
+    while (itr.hasNext()) {
+      SculptElement e =  (SculptElement)itr.next();
+      if (e.alpha <= 10) {
+        itr.remove();
+        break;
+      }
+    }
+    // add elements of elements2 to elements and clear Array
+    if (this.elements2.size() > 0) { 
+      println("before adding elements2" + this.elements2.size() + "  to elements  " + this.elements.size());
+      this.elements.addAll(this.elements2);
+      println("after addingAll to elements  " + this.elements.size());
+      this.elements2.clear();
+    }
+  }
+
+  void updateSculpture() {
+    checkElements();
+    this.canUpdate = false;
     this.surf.beginDraw();
-    this.surf.textFont(this.font);
-    this.surf.textSize(20);
-    this.surf.textAlign(TOP, TOP);
-    this.surf.pushMatrix();
-    this.surf.translate(a.sC.x, a.sC.y);
-    this.surf.rotate(a.textAngle);
-    this.surf.fill(255);
-    this.surf.noStroke();
-    println("text Ascent " + textAscent() + "text Width:  " + textWidth(msg) );
-    this.surf.rect(0, 0, textWidth(msg), textAscent() * 0.7);
-    this.surf.fill(a.col);
-    this.surf.text(msg, 0, 0);
-    this.surf.popMatrix();
-
-
+    this.surf.clear();
+    for (SculptElement e : this.elements) {
+      // println("area name  " + a.name + "   pos  " + pos);
+      this.surf.pushMatrix(); 
+      this.surf.translate(width/2, height/2);
+      this.surf.rotate(e.current);
+      this.surf.tint(255, e.alpha);
+      this.surf.image(e.element, 0, 0);
+      this.surf.popMatrix();
+    }
     this.surf.endDraw();
-    a.textAngle += a.progressAngle;
+    this.canUpdate = true;
   }
 }
-
 
 void buildSurfaces() {
   PFont articleFont = createFont("Courier", 30, true);
   surfs = new ArrayList<SurfaceBase>();
   rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true);
-  incSurf = new Kinship("incoming", width/30, height/2, width *3/7, height/5, messageFont, true);
-  matchSurf = new Kinship("matching", width *5/9, height/2, width *3/7, height/5, messageFont, true);
+  incSurf  = new Kinship("incoming", "Dein Kommentar ähnelt", width/30, height/2, width *3/7, height/3, messageFont, false);
+  matchSurf = new Kinship("matching", "diesem hier", width *5/9, height/2, width *3/7, height/3, messageFont, false);
   infoSurf = new Info("infoSurf", 0, height-height/12, width, height/12, infoFont, true);
   articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30);
   sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true);

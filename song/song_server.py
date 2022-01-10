@@ -146,7 +146,7 @@ class SongServer:
 
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
-        # print("note ", note)
+        print('receiving beat', note)
         if self.beat_manager.update_beat_counter(counter):
 
             # update performer view (show counter and next part)
@@ -210,6 +210,10 @@ class SongServer:
 
         data = json.dumps(input_dict)
         self.performer_client.send_message(settings.PERFORMER_COUNTER_ADDRESS, data)
+
+        input_dict["kin"] = {"text": " dingens",
+                             "cat": "praise"}
+        data = json.dumps(input_dict)
         if send_to_audience:
             self.audience_client.send_message(settings.DISPLAY_UTTERANCE_ADDRESS, data)
 

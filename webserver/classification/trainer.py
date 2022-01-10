@@ -24,7 +24,7 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-nlp = spacy.load('de')
+nlp = spacy.load('de_core_news_sm')
 
 
 def load_model():
@@ -69,9 +69,9 @@ def sentence_to_vec_german_model(sentence):
     """
     data_matrix = []
     for word in sentence.split(' '):
-        if word in model.index2word:
+        if word in model.index_to_key:
             data_matrix.append(model.word_vec(word))
-        elif word.capitalize() in model.index2word:
+        elif word.capitalize() in model.index_to_key:
             data_matrix.append(model.word_vec(word.capitalize()))
     return np.mean(np.asarray(data_matrix), axis=0)
 
