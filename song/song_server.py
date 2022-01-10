@@ -146,7 +146,7 @@ class SongServer:
 
     def beat_handler(self, _, note):
         counter = settings.note_to_beat[note]
-        #print("note ", note)
+        # print("note ", note)
         if self.beat_manager.update_beat_counter(counter):
 
             # update performer view (show counter and next part)
@@ -205,9 +205,7 @@ class SongServer:
         self.tonality.synth.reset_synth()
 
     def _send_utterance(self, input_dict, send_to_audience=True):
-        # state_data = self.__send_state_to_backend() # backend umgehen
-        state_data = {'category_counter': self.song_machine.get_counter_for_visuals(),
-                'is_locked': self.song_machine.is_locked()}
+        state_data = self.__send_state_to_backend() # backend umgehen
         input_dict.update(state_data)
 
         data = json.dumps(input_dict)
