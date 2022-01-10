@@ -1,6 +1,6 @@
 import pickle
 import json
-import os
+import random
 import requests
 import pyttsx3
 from pythonosc.osc_server import ThreadingOSCUDPServer
@@ -63,11 +63,12 @@ class SongServer:
     timer_lock = False
     rack_fade_val = 0
 
-    def __init__(self, osculator_client, audience_client, performer_client, machine, beat_manager,
+    def __init__(self, osculator_client, audience_client, performer_client, sc_client, machine, beat_manager,
                  tonality, server_ip):
         self.osculator_client = osculator_client
         self.audience_client = audience_client
         self.performer_client = performer_client
+        self.sc_client = sc_client
         self.song_machine = machine
         self.beat_manager = beat_manager
         self.tonality = tonality
@@ -87,7 +88,8 @@ class SongServer:
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.song_machine.parser.INTRO_NOTE, 0.0))
         self.osculator_client.send_message('/mid_{}'.format('praise'), self.tonality.synth.ctrl_message)
         self._send_init_to_display()
-        self.__send_state_to_backend()
+        self.sc_client.send_message('/init', ['rauschen', 1])
+        # self.__send_state_to_backend()
 
     def interpreter_handler(self, _, content):
         self.received_utts += 1
@@ -117,7 +119,7 @@ class SongServer:
             for name, part in self.song_machine.parser.song_parts.items():
                 if part.category == cat:
                     cat_note = part.fb_note
-            self.send_quittung(synth_note, cat_note, cat, controllers)
+            self.send_quittung(synth_note, cat_note, cat, controllers, self.tonality.tonality_counter[cat])
 
             # Update part
             if self.song_machine.update_part(cat):
@@ -175,7 +177,8 @@ class SongServer:
             self.timer.start()
             self.timer_lock = True
 
-    def send_quittung(self, s_note, c_note, cat, controllers):
+    def send_quittung(self, s_note, c_note, cat, controllers, count):
+        print("sending quittung", [cat, count])
         self.osculator_client.send_message('/quitt', (60, 1.0))
         self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 1.0))
         self.osculator_client.send_message('/quittRec', (c_note, 1.0))
@@ -183,6 +186,9 @@ class SongServer:
         self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 0.0))
         self.osculator_client.send_message('/quittRec', (c_note, 0.0))
         self.osculator_client.send_message('/mid_{}'.format(cat), controllers)
+        self.sc_client.send_message('/{}'.format(cat), [cat, count])
+        self.sc_client.send_message('/quitt', c_note)
+        self.sc_client.send_message('/control', controllers)
 
     def _send_part_info(self, counter, next_part):
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
@@ -199,7 +205,7 @@ class SongServer:
         self.tonality.synth.reset_synth()
 
     def _send_utterance(self, input_dict, send_to_audience=True):
-        state_data = self.__send_state_to_backend()
+        state_data = self.__send_state_to_backend() # backend umgehen
         input_dict.update(state_data)
 
         data = json.dumps(input_dict)
