@@ -144,7 +144,7 @@ class SongServer:
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_end, 1.0))
             self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (settings.note_end, 0.0))
 
-    def beat_handler(self, _, note):
+    def beat_handler(self, val, note):
         counter = settings.note_to_beat[note]
         print('receiving beat', note)
         if self.beat_manager.update_beat_counter(counter):

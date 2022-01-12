@@ -50,7 +50,6 @@ elif args.app == 'song':
     audience_client = udp_client.SimpleUDPClient(settings.ips['audience'], settings.AUDIENCE_PORT)
     performer_client = udp_client.SimpleUDPClient(settings.ips['performer'], settings.PERFORMER_PORT)
     sc_client = udp_client.SimpleUDPClient(settings.SC_ADDRESS, settings.SC_PORT)
-    print('sc port', settings.SC_PORT)
 
     machine_instance = song_machine.create_instance(settings.song_path)
     synth_fb = machine_instance.parser.data[machine_instance.parser.SYNTH_CC]
