@@ -33,7 +33,7 @@ s.waitForBoot({
 	s.sync;
 	SynthDef.new(\rauschen, {
 		var sig, env;
-		env = EnvGen.kr(Env([0, 1, 1, 0], [\atk.kr(1.5), \dec.kr(0.2), \sus.kr(0.2), \rls.kr(2.0)], [1, 0, -2, -3]), doneAction:2);
+		env = EnvGen.kr(Env([0, 1, 1, 0], [\atk.kr(1.5), 0.2, \sus.kr(0.2), \rls.kr(2.0)], [1, 0, -2, -3]), doneAction:2);
 		sig = BPF.ar(BrownNoise.ar(\mul.kr(0.4)), \ffreq.kr(666), \rq.kr(0.6));
 		sig = sig * env * \amp.kr(0.2);
 		Out.ar(\out.kr(~out), sig!2);
@@ -44,10 +44,10 @@ s.waitForBoot({
 	SynthDef.new('dissence', {
 		var sig, gend, env;
 		env = Env([0, 1, 1, 0], [\atk.ir(0.1), \sus.ir(0.2), \rls.ir(0.9)], \lin).ar(2);
-		gend = BPF.ar(Gendy1.ar(1, 1, 1.0, 1.0, \minfreq.kr(400), \maxfreq.kr(1000), 0.3, \gendmul.kr(0.05), 5), \ffreq.kr(300), \rq.kr(0.9));
-		sig = LFSaw.ar(\freq.kr(400), 0.0, \sawMul.kr(0.3)) + gend;
-		sig = sig * env * \amp.kr(0.6);
-		Out.ar(\out.ir(~out), sig!2);
+		gend = BPF.ar(Gendy1.ar(\ampDist.kr(1.0), \durDist.kr(1.0), 1.0, 1.0, \minfreq.kr(400), \maxfreq.kr(1000), 0.3, \gendmul.kr(0.05), 5), \ffreq.kr(300), \rq.kr(0.9));
+		sig = LFPulse.ar(\freq.kr(400), \pPhase.kr(0.0), \width.kr(0.5),\pulseMul.kr(0.3)) + gend;
+		sig = Pan2.ar(sig * env * \amp.kr(0.6), \pan.kr(0.0));
+		Out.ar(\out.ir(~out), sig);
 		Out.ar(\outfx.ir(~fx1Bus), sig * \send.ir(-30).dbamp);
 	}).add;
 
@@ -56,9 +56,8 @@ s.waitForBoot({
 		var temp, sig, env, mod, ampMod;
 		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(3.0), \rls.kr(1.0), curve:\crv.ir(-4.0)), gate, doneAction: 2);
 		mod = SinOsc.kr(\modRate.kr(1.2));
-		// ampMod = Saw.kr(ExpRand(\ampMod1.kr(0.01), \ampMod2.ir(0.3))).range(0, 1);
-		sig = VarSaw.ar({\freq.kr(80) * ExpRand(0.99, 1.01)}, 0, LFTri.kr(\filTime.kr(0.3)).range(0,1))!4;
-		sig = sig * env;
+		sig = VarSaw.ar({\freq.kr(80) * ExpRand(0.99, 1.01)}!4, 0, LFTri.kr(\filTime.kr(0.3)).range(0,1));
+		sig = sig * env * mod;
 		sig = Splay.ar(sig * \amp.kr(0.25));
 		Out.ar(~out, sig);
 		Out.ar(\outfx.ir(~fx1Bus), sig * \send.ir(-30).dbamp);
@@ -344,16 +343,16 @@ b[\dry][0].play;
 		var syn;
 		now = Routine.new({
 			count.do({
-				syn = Synth(\insinuation, [\freq, 111 *count, \modWidth, 0.2 * count.reciprocal, \fShift, 66 * count, \outfx, ~fx2Bus, \send, -10.dbamp]);
-				0.3.wait;
+				syn = Synth(\insinuation, [\freq, 60 * count, \modWidth, 0.2 * count.reciprocal, \fShift, 12 * count, \outfx, ~fx2Bus, \send, -10.dbamp]);
+				0.8.wait;
 		})})
 	}
 	{(count >= 5) && (count < 10) } {
-			now = Pbind(\instrument, \insinuation, \dur, Pseq([3.0, 4.0], count), \rls, Pkey(\dur, count) *1.2, \atk, Pseq([0.1, 0.7], count), \amp, 0.5).trace}
+			now = Pbind(\instrument, \insinuation, \dur, Pseq([3.0, 4.0], count), \rls, Pkey(\dur, count) *1.2, \atk, Pseq([0.1, 0.7], count), \amp, 0.4).trace}
 	{(count >= 5) && (count < 10) } {
-		~insinuationNow = Pbind(\instrument, \insinuation, \dur, Pseq([3.0, 4.0], 5), \rls, Pkey(\dur, 5) * 0.4, \atk, Pseq([0.1, 0.7], 5)).trace}
+		now = Pbind(\instrument, \insinuation, \dur, Prand([2.0, 4.0], count ), \midinote, Pxrand([37, 49], count), \rls, Pkey(\dur) * 0.4, \atk, 0.8, \noisFreq, 9.0).trace}
 	{count >= 10 } {
-		~insinuationNow = Pbind(\instrument, \insinuation, \dur, 0.8, \rls, \midinote, Pseq([24,48], count), \atk, Pseq([0.1, 0.7], 5)).trace}
+		now = Pbind(\instrument, \insinuation, \dur, 0.8, \rls,0.4, \midinote, Pseq([24,48], count), \atk, Pseq([0.1, 0.7], count)).trace}
 	{true} {"end of insinuation reached".postln};
 	if(~insinuationPlay.isPlaying, {~insinuationPlay.stop});
 	//postf("\n% running after %\t \n", s_name, ~insinuationNow.isPlaying);
@@ -373,7 +372,7 @@ b[\dry][0].play;
 	{(count >= 5) && (count < 10) } {
 		now = Pbindf(base, \dur, Pwrand([0.25, 0.5], [0.8, 0.2], count), \midinote, Pwrand([28, 40, 52, 29, 41 ], [0.45, 0.25, 0.2, 0.1], count), \atk, Pkey(\dur) /2, \amp, Pkey(\amp)*dura).trace}
 	{(count >= 10) && (count < 30) } {
-		now = Pbindf(base, \dur, Pn(0.25, count), \midinote, Pxrand([28, 32, 40, 35], count)).trace}
+		now = Pbindf(base, \dur, Pn(0.25, count), \midinote, Pxrand([28, 40, 52, 29, 41, 53], count), \atk, 0.1, \rls, 0.1, \filTime, 4.1, \sus, 0)}
 
 	{true} {"end of lecture reached".postln;};
 	if(~lecturePlay.isPlaying, {~lecturePlay.stop});
@@ -445,26 +444,111 @@ Synth(\rauschen, [\ffreq, 666])
 currentEnvironment
 
 (
-g = Pbind(
-	\instrument, 'dissence',
-	\dur, Pseq([1, 0.5], inf),
-	\amp, Pkey(\dur),
-	\freq, Pwhite(90, 500, inf),
-	\ffreq, Pkey(\freq) * 1.3,
-	\minfreq, Pwhite(200, 800, inf),
-	\maxfreq, Pkey(\minfreq) + 500,
-	\atk, 0.03,
-	\rls, 0.2
+Pbindef(\ins,
+	\instrument, \insinuation,
+	\dur, Prand([2.0, 4.0], inf),
+	\amp, Pkey(\amp),
+	\midinote, Pxrand([37, 49, 61], inf) ,
+	\ffreq, 10.0,
+	\modWidth, 0.9,
+	\preamp, 1.2,
+	\noisFreq, Pwrand([0.05, 0.5, 0.9], [0.8, 0.15, 0.05], inf),
+	\maxF, 600,
+	\atk, 0.13,
+	\rls, 0.2,
+	\sustain, 1,
+	\slideTime, 4.2,
+	\fShift, Pkey(\midinote).midicps
 ).play(t, quant:1)
 )
 
+Pbindef(\ins).stop;
 
+(
+Pbindef(\pr,
+	\instrument, \praise,
+	\dur, t.tempo /2,
+	\ampHz , 0.1,
+	\ampScale, 0.38,
+	\midinote, Pwrand([20, 32, 22], [0.75, 0.15, 0.1], inf) + rrand(12, 24),
+	\fMul, 2,
+	\rnd, 0.999,
+	\pulWidth, 0.9,
+	\fRate, t.tempo *4.0,
+	\width, Pwhite(0.05, 0.4, inf),
+	\atk, 0.01,
+	\rls, 0.36,
+	\sustain, Pkey(\rls) + 0.1,
+	\ffreq, 100,
+	\rq, 0.9,
+	\pulRate, 0.6,
+	\lpf, Pn(Pseries(100, 80, 10), inf) +500,
+	\outfx, ~fx1Bus,
+	\send, -10,
+	\amp, 0.5
+).play(t, quant:1)
+)
+Pbindef(\pr).stop;
+
+(
+Pbindef(\dis,
+	\instrument, \dissence,
+	\dur, t.tempo /2,
+	\freq, Pseq((1000,900 .. 100), inf),
+	\pPhase, 0.3,
+	\width, Pwhite(0.4, 1.7, inf),
+	\pulseMul, 0.32,
+	\atk, 0.03,
+	\sus, 0.1,
+	\rls, 0.08,
+	\pan, Pwhite(-1, 1, inf),
+	\ffreq, 200,
+	\ampDist, Pxrand([0.2, 1.0, 1.9], inf),
+	\durDist, Pwhite(0.1, 0.3, inf),
+	\minfreq, Pkey(\freq),
+	\maxfreq, Pkey(\minfreq) *2,
+	\rq, 0.9,
+	\gendmul, 0.9,
+	\send, -12,
+	\amp, 0.7
+).play(t, quant:1)
+)
+Pbindef(\dis).stop
+
+(
+Pbindef(\lec,
+	\instrument, \lecture,
+	\dur, t.tempo *2,
+	\midinote, 32,
+	\filTime, 0.8,
+	\sustain, 0.6,
+	\atk, 0.3,
+	\rls, 2.5,
+	\modRate, Pkey(\filTime) * 4,
+	\amp, 0.6
+).play(t, quant:1)
+)
+Pbindef(\lec).stop
+
+(
+Pbindef(\con,
+	\instrument, \concession,
+	\buf, Prand(b[\tonal], inf),
+	\dur, t.tempo,
+	\rate, Pwhite(0.2, 1.8, inf),
+	\pan, Pwhite(-0.5, 0.5, inf),
+	\amp, 0.8,
+	\outfx, ~fx1Bus,
+	\send, Pseq((-35, -30 .. -10), inf)
+).play(t, quant:1)
+)
+Pbindef(\con).stop
 
 
 
 
 ~setDissence.value('dissence',1);
-~setInsinuation.value('insinuation', 5);
+~setInsinuation.value('insinuation', 6);
 ~setLecture.value('lecture', 20);
 ~setConcession.value('concession', 17);
 ~setPraise.value('praise', 9);
@@ -472,10 +556,26 @@ g = Pbind(
 ~rauschenNow = ~reset[\rauschen].value;
 ~rauschenPlay = ~rauschenNow.play(t, quant:1)
 )
+//// dies sind die "Parts" die als Hinter
+(
+Pbindef(\ins,
+	\instrument, \insinuation,
+	\dur, Prand([2.0, 4.0], inf),
+	\amp, Pkey(\amp),
+	\midinote, Pxrand([37, 49, 61], inf) ,
+	\ffreq, 10.0,
+	\modWidth, 0.9,
+	\preamp, 0.2,
+	\noisFreq, Pwrand([0.05, 0.5, 0.9], [0.8, 0.15, 0.05], inf),
+	\maxF, 600,
+	\atk, 0.13,
+	\rls, 0.2,
+	\sustain, 1,
+	\slideTime, 4.2,
+	\fShift, Pkey(\midinote).midicps,
+	\amp, 0.6
+).play(t, quant:1)
+)
 
-d = nil;
-~dissenceNow.isPlaying;
-d = ~dissenceNow.asStream;
-d.next(());
-
+Pbindef(\ins).stop;
 
