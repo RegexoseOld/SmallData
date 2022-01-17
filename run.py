@@ -59,7 +59,7 @@ elif args.app == 'song':
     beat_manager = BeatAdvanceManager(machine_instance.current_part)
 
     song_server = SongServer(oscul_client, audience_client, performer_client, sc_client, machine_instance, beat_manager,
-                             tonality, settings.ips['song_server'])
+                             settings.ips['song_server'])
     song_parts = list(machine_instance.parser.song_parts.keys())
     [audience_client.send_message('/parts', part) for part in song_parts]
     audience_client.send_message('/parts', 'all_sent')
@@ -70,7 +70,7 @@ elif args.app == 'frontend':
 elif args.app == 'interpreter':
     # from mocks import mock_interpreter_client
     from mocks import mock_interpreter_keyboard, mock_interpreter_client
-    mock_interpreter_client.run_mock()
+    mock_interpreter_keyboard.run_mock()
 elif args.app == 'osculator':
     from mocks import beat_mock
     beat_mock.run_mock()

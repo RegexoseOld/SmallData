@@ -59,12 +59,13 @@ class Tonality:
         '''
 
         #  an FX chain is selected, if more than 5 entries have occured
+        self.most_common = self.tonality_counter.most_common(1)[0][0]
+        print("cat {}   most common: {}".format(cat, self.most_common))
         if sum(self.tonality_counter.values()) > self.min_utts:
 
             # find most_common, define the chain to  be used
             # das lock verlangsamt die Häufigkeit der most_common Suche
-            self.most_common = self.tonality_counter.most_common(1)[0][0]
-            print("cat {}   most common: {}".format(cat,  self.most_common))
+
             self.FX_KEY = self.category_to_chain[self.most_common][0]
 
             # self.tonality_lock = True  warum gibt es dieses Lock?

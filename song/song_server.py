@@ -1,6 +1,6 @@
 import pickle
 import json
-import random
+from collections import Counter
 import requests
 import pyttsx3
 from pythonosc.osc_server import ThreadingOSCUDPServer
@@ -62,21 +62,22 @@ class SongServer:
     timer = None
     timer_lock = False
     rack_fade_val = 0
+    tonality_counter = Counter()
 
     def __init__(self, osculator_client, audience_client, performer_client, sc_client, machine, beat_manager,
-                 tonality, server_ip):
+                 server_ip):
         self.osculator_client = osculator_client
         self.audience_client = audience_client
         self.performer_client = performer_client
         self.sc_client = sc_client
         self.song_machine = machine
         self.beat_manager = beat_manager
-        self.tonality = tonality
+        self.most_common = ''
 
         dispatcher = Dispatcher()
         dispatcher.map(settings.INTERPRETER_TARGET_ADDRESS, self.interpreter_handler)
         dispatcher.map(settings.SONG_BEAT_ADDRESS, self.beat_handler)
-        dispatcher.map(settings.SONG_SYNTH_RESET_ADDRESS, self.reset_handler)
+        # dispatcher.map(settings.SONG_SYNTH_RESET_ADDRESS, self.reset_handler)
         self.server = ThreadingOSCUDPServer((server_ip, settings.SONG_SERVER_PORT), dispatcher)
 
         self.song_scenes = {k: v for k, v in zip(
@@ -84,10 +85,6 @@ class SongServer:
             range(len(self.song_machine.parser.song_parts)
                   ))}
 
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.song_machine.parser.INTRO_NOTE, 1.0))
-        self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (self.song_machine.parser.INTRO_NOTE, 0.0))
-        self.osculator_client.send_message('/mid_{}'.format('praise'), self.tonality.synth.ctrl_message)
-        self._send_init_to_display()
         self.sc_client.send_message('/init', ['rauschen', 1])
         # self.__send_state_to_backend()
 
@@ -109,17 +106,14 @@ class SongServer:
             speak(osc_map['text'])
 
             # Update tonality
-            self.tonality.update_tonality(cat)
-            self.send_fx(self.tonality.ctrl_val)
+            self.tonality_counter[cat] += 1
+            temp_most_common = self.tonality_counter.most_common(1)[0][0]
+            print("cat {}   most common: {} counter {}".format(cat, temp_most_common, self.tonality_counter))
 
             # Send Quittung
-            controllers = self.tonality.synth.ctrl_message
             current_part = self.beat_manager.current_part.name
-            synth_note = self.song_machine.parser.song_parts[current_part].fb_note
-            for name, part in self.song_machine.parser.song_parts.items():
-                if part.category == cat:
-                    cat_note = part.fb_note
-            self.send_quittung(synth_note, cat_note, cat, controllers, self.tonality.tonality_counter[cat])
+            #  synth_note = self.song_machine.parser.song_parts[current_part].fb_note
+            self.send_quittung(temp_most_common, cat, self.tonality_counter[cat])
 
             # Update part
             if self.song_machine.update_part(cat):
@@ -127,12 +121,6 @@ class SongServer:
 
             self._send_utterance(osc_map)
 
-    def reset_handler(self, _, content):
-        # resets both FX chain and synth controllers
-        self.tonality.reset_tonality()
-        self.osculator_client.send_message(settings.SONG_RACK_ADDRESS, self.tonality.chain_value)
-        self.osculator_client.send_message(settings.SONG_MIDICC_ADDRESS + '{}'.format(self.tonality.ccnr),
-                                           self.tonality.synth.reset_values[str(self.tonality.ccnr)])
 
     def end_of_song(self, end_message):
         input_dict = {'text': end_message,
@@ -146,7 +134,7 @@ class SongServer:
 
     def beat_handler(self, val, note):
         counter = settings.note_to_beat[note]
-        print('receiving beat', note)
+        # print('receiving beat', note)
         if self.beat_manager.update_beat_counter(counter):
 
             # update performer view (show counter and next part)
@@ -177,18 +165,13 @@ class SongServer:
             self.timer.start()
             self.timer_lock = True
 
-    def send_quittung(self, s_note, c_note, cat, controllers, count):
-        print("sending quittung", [cat, count])
-        self.osculator_client.send_message('/quitt', (60, 1.0))
-        self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 1.0))
-        self.osculator_client.send_message('/quittRec', (c_note, 1.0))
-        self.osculator_client.send_message('/quitt', (60, 0.0))
-        self.osculator_client.send_message('/q_{}'.format(cat), (s_note, 0.0))
-        self.osculator_client.send_message('/quittRec', (c_note, 0.0))
-        self.osculator_client.send_message('/mid_{}'.format(cat), controllers)
+    def send_quittung(self, temp_most_common, cat,  count):
+        print("sending quittung", [cat, count, temp_most_common])
+        if self.most_common != temp_most_common:
+            self.sc_client.send_message('/common', temp_most_common)
+            self.most_common = temp_most_common
         self.sc_client.send_message('/{}'.format(cat), [cat, count])
-        self.sc_client.send_message('/quitt', c_note)
-        self.sc_client.send_message('/control', controllers)
+
 
     def _send_part_info(self, counter, next_part):
         message = (counter, str(self.beat_manager.is_warning()), self.beat_manager.current_part.name, next_part.name)
@@ -202,7 +185,7 @@ class SongServer:
         print("next_part.note", next_part.note)
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 1.0))
         self.osculator_client.send_message(settings.SONG_ADVANCE_ADDRESS, (int(next_part.note), 0.0))
-        self.tonality.synth.reset_synth()
+        # self.tonality.synth.reset_synth()
 
     def _send_utterance(self, input_dict, send_to_audience=True):
         state_data = self.__send_state_to_backend() # backend umgehen
