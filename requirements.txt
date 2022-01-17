@@ -3,6 +3,7 @@ channels
 django-cors-headers
 djangorestframework
 django-import-export
+numpy
 spacy
 gensim
 joblib
