@@ -85,7 +85,7 @@ class SongServer:
             range(len(self.song_machine.parser.song_parts)
                   ))}
 
-        self.sc_client.send_message('/init', ['rauschen', 1])
+        self.sc_client.send_message('/init', ['rauschen'])
         # self.__send_state_to_backend()
 
     def interpreter_handler(self, _, content):
@@ -170,7 +170,7 @@ class SongServer:
         if self.most_common != temp_most_common:
             self.sc_client.send_message('/common', temp_most_common)
             self.most_common = temp_most_common
-        self.sc_client.send_message('/{}'.format(cat), [cat, count])
+        self.sc_client.send_message('/{}'.format(cat), [cat, count, self.received_utts])
 
 
     def _send_part_info(self, counter, next_part):
