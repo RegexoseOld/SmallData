@@ -1,4 +1,9 @@
 import tkinter as tk
+import os
+import csv
+
+
+TEMPLATE_FILE = "Kommentarvorlage.csv"
 
 
 class Gui(tk.Tk):
@@ -13,21 +18,17 @@ class Gui(tk.Tk):
 
         self.__create_dropdown()
         self.__create_article_areas()
-        self.send_button = tk.Button(self, text="Send", command=self.__send_cb)
-        self.send_button.pack()
+        self.__create_send_button()
 
     def __create_dropdown(self):
-        tk.Label(self, text="Article selector", width=10).pack()
+        with open(os.path.join('config', TEMPLATE_FILE), mode='r') as file:
+            csv_file = csv.DictReader(file, delimiter=";")
+            self.article_collection = {line["Name"]: line["Text"] for line in csv_file}
 
-        self.article_collection = {
-            "Erster": "Ein erster artikle",
-            "Zweiter": "Kontroverser Diskussionsbeitrag nr. 2",
-            "Dritter": "Dieser Dritte Vorschlag"
-        }
         self.article = tk.StringVar(self)
-        self.article.set("Erster")
         self.article.trace("w", self.__select_article_cb)
 
+        tk.Label(self, text="Article selector", width=10).pack()
         self.article_selector = tk.OptionMenu(self, self.article, *self.article_collection.keys())
         self.article_selector.pack()
 
@@ -39,6 +40,10 @@ class Gui(tk.Tk):
         self.next_article = tk.Text(self, width=80, height=10)
         self.next_article.pack()
 
+    def __create_send_button(self):
+        self.send_button = tk.Button(self, text="Send", command=self.__send_cb)
+        self.send_button.pack()
+
     def __send_cb(self, *args):
         self.current_article.delete("1.0", "end")
         self.current_article.insert("1.0", self.next_article.get("1.0", "end - 1 chars"))
@@ -49,11 +54,11 @@ class Gui(tk.Tk):
         self.next_article.insert("1.0", self.article_collection[self.article.get()])
 
     def start(self):
-        # self.after(500, self.__update_balance)
+        self.article.set(list(self.article_collection.keys())[0])
+        self.__select_article_cb()
         self.mainloop()
 
 
 if __name__ == "__main__":
     gui = Gui()
     gui.start()
-
