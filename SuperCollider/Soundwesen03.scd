@@ -24,6 +24,10 @@ s.newBusAllocators; // Busse machen
 ~cat = "";
 ~out = 0;
 ~totalUtts = 0;
+~sharedValues = (
+	key: 60,
+	tempo: 90/60
+);
 ~uttDict = Dictionary.new;
 ~categories = ['dissence', 'praise', 'insinuation', 'concession', 'lecture'];
 ~synthDict = Dictionary.new;
@@ -165,9 +169,8 @@ s.waitForBoot({
 		sig2 = RHPF.ar(Pulse.ar(freq2, \width.kr(0.4)), amp2, \ffreq.kr(90), \rq.kr(1.0)) * env2 * \amp.kr(0.1);
 		sig1 = LPF.ar(sig1, \lpf.kr(120));
 		sig2 = LPF.ar(sig2, \lpf.kr(120)) ;
-		Out.ar(~out, sig1);
-		Out.ar(~out +1, sig2);
-		Out.ar(\outfx.ir(~fx1Bus), [sig1, sig2] * \send.ir(-30).dbamp);
+		Out.ar(~out, [sig1, sig2]);
+		Out.ar(\outfx.kr(~fx1Bus), [sig1, sig2] * \send.kr(-30).dbamp);
 	}).add;
 
 	SynthDef('reverb', {
@@ -213,7 +216,7 @@ s.waitForBoot({
 	s.options.numOutputBusChannels = 6;
 	s.sync;
 
-	t = TempoClock.new(90/60).permanent = true;
+	t = TempoClock.new(90/60).permanent_(true);
 
 	/// Osc Section
 
@@ -281,6 +284,146 @@ s.waitForBoot({
 	// send beat
 	t.schedAbs(t.nextTimeOnGrid, { m.sendMsg("/beat", (t.elapsedBeats.floor % 8).asInteger + 120); 1});
 
+
+~makeSynth = {
+	|cat, count|
+	var params, index;
+	params = List.new;
+	~reset[cat].keys.do({
+		|k|
+		params.addAll([k, ~reset[cat][k]])
+	});
+	params.asArray.postln;
+	Synth(cat, params.asArray);
+};
+
+	s.sync;
+	"done".postln;
+}
+);
+)
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/* Das Soundwesen
+
+
+*/
+///start////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//start all Pbindefs with minimal volume and a 10 second delay
+(
+Routine.new({~categories.scramble.do({|cat| cat.postln; Pbindef(cat).play(t, quant:1); postf("pattern % is playing % \n", cat, Pbindef(cat).isPlaying); 10.wait})}).play;
+// continuousFadeOut(min, step)
+t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
+
+)
+
+
+/// reset ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(
+
+	Pbindef(\rausch,
+		\instrument, \rauschen,
+		\dur, t.tempo *4,
+		\ffreq, Pseq([666, 150], inf),
+		\pan, Pwhite(-1,1, inf),
+		\amp, 0.3
+	);
+	Pbindef(\lecture,
+		\instrument, \lecture,
+		\dur, t.tempo *3,
+		\midinote, ~sharedValues[\key] /2,
+		\filTime, 0.6,
+		\sustain, Pseq((0.6, 0.58 .. 0.2).mirror, inf),
+		\atk, 0.3,
+		\rls, 2.5,
+		\modRate, Pkey(\filTime) * 2,
+		\amp, 0.05);
+
+
+	Pbindef(\praise,
+		\instrument, \praise,
+	    \root, ~sharedValues[\key],
+	    \scale, Scale.minorPentatonic,
+	    \degree, Pwhite(0,7, inf),
+		\dur, t.tempo *2,
+		\ampHz , 1,
+		\ampScale, 0.01,
+		\fMul, 2,
+		\rnd, 1.0,
+		\pulWidth, 0.01,
+		\fRate, t.tempo * 3,
+		\width, Pwhite(0.05, 0.4, inf),
+		\atk, 1.0,
+		\rls, 2.66,
+		\sustain, Pkey(\rls) + 0.1,
+		\ffreq, 400,
+		\rq, 0.6,
+		\pulRate, 0.2,
+		\lpf, Pn(Pseries(1000, 80, 20), inf) ,
+		\outfx, ~fx1Bus,
+		\send, -10,
+		\amp, 0.05
+
+);
+
+	Pbindef(\dissence,
+		\instrument, \dissence,
+		\dur, 8,
+		\freq, Pseq([[48, 52, 40], [60, 63, 50]], inf).midicps  * 2,
+		\pPhase, 0.3,
+		\width, Pseq([0.5, 0.7], inf),
+		\pulseMul, 0.13,
+		\atk, 3.2,
+		\sus, 0.8,
+		\rls, 4,
+		\pan, Pwhite(-1, 1, inf),
+		\ffreq, 500,
+		\ampDist, Pxrand([0.2, 1.0, 1.9], inf),
+		\durDist, Pwhite(0.1, 0.3, inf),
+		\minfreq, Pkey(\freq),
+		\maxfreq, Pkey(\minfreq) *2,
+		\rq, 0.9,
+		\gendmul, 0.9,
+		\send, -12,
+		\amp, 0.05
+);
+
+	Pbindef(\insinuation,
+		\instrument, \insinuation,
+		\dur, Pxrand([2.0, 4.0, 6.0], inf),
+		\amp, 0.05,
+		\midinote, Pxrand([[37, 49, 61], [32, 45, 58]], inf) *1.6,
+		\ffreq, 10.0,
+		\modWidth, 0.7,
+		\preamp, 0.3,
+		\noisFreq, Pwrand([0.05, 0.5, 0.9], [0.8, 0.15, 0.05], inf),
+		\maxF, 600,
+		\atk, 2,
+		\rls, 3,
+		\sustain, 1,
+		\slideTime, 4.2,
+		\fShift, Pkey(\midinote).midicps
+);
+
+	Pbindef(\concession,
+		\instrument, \concession,
+		\buf, Prand(b[\tonal], inf),
+		\dur, t.tempo,
+		\rate, Pwhite(0.2, 1.8, inf),
+		\pan, Pwhite(-0.5, 0.5, inf),
+		\amp, 0.05,
+		\lpf, Pseq((220, 270 .. 1270), inf),
+		\outfx, ~fx1Bus,
+		\send, Pseq((-35, -30 .. -10), inf)
+);
+
 	~reset = (
 		dissence: (
 			instrument: 'dissence',
@@ -345,167 +488,7 @@ s.waitForBoot({
 		tonal: (buf: Pxrand(b[\tonal], inf), dur: Pwhite(0.1, 0.3, inf))
 	)
 );
-
-~makeSynth = {
-	|cat, count|
-	var params, index;
-	params = List.new;
-	~reset[cat].keys.do({
-		|k|
-		params.addAll([k, ~reset[cat][k]])
-	});
-	params.asArray.postln;
-	Synth(cat, params.asArray);
-};
-
-
-	Pbindef(\rausch,
-		\instrument, \rauschen,
-		\dur, t.tempo *4,
-		\ffreq, Pseq([666, 150], inf),
-		\pan, Pwhite(-1,1, inf),
-		\amp, 0.3
-	);
-	Pbindef(\lecture,
-		\instrument, \lecture,
-		\dur, t.tempo *3,
-		\midinote, 28,
-		\filTime, 0.6,
-		\sustain, Pseq((0.6, 0.58 .. 0.2).mirror, inf),
-		\atk, 0.3,
-		\rls, 2.5,
-		\modRate, Pkey(\filTime) * 2,
-		\amp, 0.05);
-
-
-	Pbindef(\praise,
-		\instrument, \praise,
-		\dur, t.tempo *2,
-		\ampHz , 1,
-		\ampScale, 0.01,
-		\midinote, Pwrand([92, 94, 104, 32], [0.75, 0.15, 0.1, 0.002], inf),
-		\fMul, 2,
-		\rnd, 1.0,
-		\pulWidth, 0.01,
-		\fRate, t.tempo * 3,
-		\width, Pwhite(0.05, 0.4, inf),
-		\atk, 1.0,
-		\rls, 2.66,
-		\sustain, Pkey(\rls) + 0.1,
-		\ffreq, 400,
-		\rq, 0.6,
-		\pulRate, 0.2,
-		\lpf, Pn(Pseries(1000, 80, 20), inf) ,
-		\outfx, ~fx1Bus,
-		\send, -10,
-		\amp, 0.05);
-
-	Pbindef(\dissence,
-		\instrument, \dissence,
-		\dur, 8,
-		\freq, Pseq([[48, 52, 40], [60, 63, 50]], inf).midicps  *2,
-		\pPhase, 0.3,
-		\width, Pseq([0.5, 0.7], inf),
-		\pulseMul, 0.13,
-		\atk, 3.2,
-		\sus, 0.8,
-		\rls, 4,
-		\pan, Pwhite(-1, 1, inf),
-		\ffreq, 500,
-		\ampDist, Pxrand([0.2, 1.0, 1.9], inf),
-		\durDist, Pwhite(0.1, 0.3, inf),
-		\minfreq, Pkey(\freq),
-		\maxfreq, Pkey(\minfreq) *2,
-		\rq, 0.9,
-		\gendmul, 0.9,
-		\send, -12,
-		\amp, 0.05);
-
-	Pbindef(\insinuation,
-		\instrument, \insinuation,
-		\dur, Pxrand([2.0, 4.0, 6.0], inf),
-		\amp, 0.05,
-		\midinote, Pxrand([[37, 49, 61], [32, 45, 58]], inf) *1.6,
-		\ffreq, 10.0,
-		\modWidth, 0.7,
-		\preamp, 0.3,
-		\noisFreq, Pwrand([0.05, 0.5, 0.9], [0.8, 0.15, 0.05], inf),
-		\maxF, 600,
-		\atk, 2,
-		\rls, 3,
-		\sustain, 1,
-		\slideTime, 4.2,
-		\fShift, Pkey(\midinote).midicps);
-
-	Pbindef(\concession,
-		\instrument, \concession,
-		\buf, Prand(b[\tonal], inf),
-		\dur, t.tempo,
-		\rate, Pwhite(0.2, 1.8, inf),
-		\pan, Pwhite(-0.5, 0.5, inf),
-		\amp, 0.05,
-		\lpf, Pseq((220, 270 .. 1270), inf),
-		\outfx, ~fx1Bus,
-		\send, Pseq((-35, -30 .. -10), inf));
-
-	s.sync;
-	//start all Pbindefs with minimal volume and a 10 second delay
-	Routine.new({~categories.scramble.do({|cat| cat.postln; Pbindef(cat).play(t, quant:1); postf("pattern % is playing % \n", cat, Pbindef(cat).isPlaying); 10.wait})}).play;
-	// continuousFadeOut(min, step)
-	t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.05, 0.005); 1});
-	"done".postln;
-}
-);
 )
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/* Das Soundwesen
-
-*/
-// test
-// http://sc3howto.blogspot.com/2010/06/pfunc.html  beispiel für ein Fade
-3.do({|item, i| Pbind(\instrument, \insinuation, \amp, 0.4, \lfreq, [exprand(100, (200 + (item * 5))), 50], \rls, Pn(3, 1)).play})
-
-~addVolume.value(\insinuation, 0.1, 0.98);
-~addVolume.value(\praise, 0.1, 0.98);
-~addVolume.value(\dissemce, 0.1, 0.98);
-
-Pbindef(\praise).play(t, quant:1);
-Pbindef(\praise, \amp, Pfunc({~fadeIn.value('praise', 1.1, 0.4)}));
-Pbindef(\praise, \amp, Pfunc({~fadeOut.value('praise', 0.4, 0.3)}));
-
-
-Pbindef(\praise).play;
-Pbindef(\praise, \amp, Pgeom(0.01, 1.01, inf));
-Pbindef(\praise, \fRate, t.tempo);
-Pbindef(\praise).isPlaying
-Pbindef(\dissence).play(t, quant:1);
-Pbindef(\dissence, \amp, Pgeom(0.4, 0.99, inf));
-Pbindef(\dissence, \freq, Pkey(\freq))
-Pbindef(\dissence).stop
-Pbindef(\lecture).play(t, quant:1);
-Pbindef(\lecture, \amp, 0.3);
-Pbindef(\lecture, \midinote,Pxrand([28, 35, 40, 52, 47], inf));
-Pbindef(\lecture).isPlaying
-Pbindef(\insinuation).play(t, quant:1);
-Pbindef(\insinuation).isPlaying;
-Pbindef(\insinuation, \amp, Pgeom(0.5, 0.93, inf), \rls, 3.3);
-Pbindef(\insinuation).stop
-Pbindef(\concession).play(t, quant:1);
-Pbindef(\concession, \amp, 0.4);
-Pbindef(\concession).stop
-
-
-
-b[\dry][0].play;
-~synthDict['dissence']
 
 /// set functions
 (
@@ -644,11 +627,58 @@ b[\dry][0].play;
 	{true}{"end of setCommon".postln};
 };
 
+~stopList = {arg list;
+	postf("\nstopped list \t  % ", list);
+	list.do{|s| s.set(\gate, 0) };
+	list.clear;
+};
+
 )
 
-Synth(\rauschen, [\ffreq, 500])
+
 
 currentEnvironment
+
+
+// test
+// http://sc3howto.blogspot.com/2010/06/pfunc.html  beispiel für ein Fade
+3.do({|item, i| Pbind(\instrument, \insinuation, \amp, 0.4, \lfreq, [exprand(100, (200 + (item * 5))), 50], \rls, Pn(3, 1)).play})
+
+~addVolume.value(\insinuation, 0.1, 0.98);
+~addVolume.value(\praise, 0.1, 0.98);
+~addVolume.value(\dissence, 0.1, 0.98);
+~addVolume.value(\concession, 0.1, 0.98);
+~addVolume.value(\lecture, 0.1, 0.98);
+
+Pbindef(\praise).play(t, quant:1);
+Pbindef(\praise, \amp, Pfunc({~fadeIn.value('praise', 1.1, 0.4)}));
+Pbindef(\praise, \amp, Pfunc({~fadeOut.value('praise', 0.4, 0.3)}));
+
+
+Pbindef(\praise).play;
+Pbindef(\praise, \amp, Pgeom(0.01, 1.01, inf));
+Pbindef(\praise, \fRate, t.tempo);
+Pbindef(\praise).isPlaying
+Pbindef(\dissence).play(t, quant:1);
+Pbindef(\dissence, \amp, Pgeom(0.4, 0.99, inf));
+Pbindef(\dissence, \freq, Pkey(\freq))
+Pbindef(\dissence).stop
+Pbindef(\lecture).play(t, quant:1);
+Pbindef(\lecture, \amp, 0.3);
+Pbindef(\lecture, \midinote,Pxrand([28, 35, 40, 52, 47], inf));
+Pbindef(\lecture).isPlaying
+Pbindef(\insinuation).play(t, quant:1);
+Pbindef(\insinuation).isPlaying;
+Pbindef(\insinuation, \amp, Pgeom(0.5, 0.93, inf), \rls, 3.3);
+Pbindef(\insinuation).stop
+Pbindef(\concession).play(t, quant:1);
+Pbindef(\concession, \amp, 0.4);
+Pbindef(\concession).stop
+
+
+
+b[\dry][0]play;
+~synthDict['dissence']
 Pbindef(\lec).play(t, quant:1);
 Pbindef(\concession).stop;
 Pbindef(\rausch).stop;
@@ -657,10 +687,7 @@ Pbindef(\rausch).stop;
 ~setLecture.value('lecture', 9);
 ~setConcession.value('concession', 9);
 ~setPraise.value('praise', 9);
-(
-~rauschenNow = ~reset[\rauschen].value;
-~rauschenPlay = ~rauschenNow.play(t, quant:1)
-)
+Synth(\rauschen, [\ffreq, 1500])
 ~stopList.value(~synthDict[\dissence][\synth]);
 
 (
@@ -686,9 +713,5 @@ fork {
 };
 )
 (
-~stopList = {arg list;
-	postf("\nstopped list \t  % ", list);
-	list.do{|s| s.set(\gate, 0) };
-	list.clear;
-};
+
 )
