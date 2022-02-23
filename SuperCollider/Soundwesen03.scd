@@ -18,6 +18,7 @@ Server.default.options.numInputBusChannels_(0);
 // Server.default.options.inDevice_("Built-in Microph");
 // löscht alle funktionen
 ServerTree.removeAll;
+OSCFunc.trace(false);
 s.newBusAllocators; // Busse machen
 ~fx1Bus = Bus.audio(s,2);
 ~fx2Bus = Bus.audio(s,2);
@@ -165,10 +166,10 @@ s.waitForBoot({
 		freq2 = LFNoise0.kr(\fRate.kr(4.0)).exprange(\freq.kr(40), \freq.kr(40) * \fMul.kr(8)).round(\freq.kr(40) * \rnd.kr(1.0));
 		freq1 = freq1 * LFPulse.kr(\pulRate.kr(4.0));
 		freq2 = freq2 * LFPulse.kr(\pulRate.kr(4.0));
-		sig1 = RHPF.ar(Pulse.ar(freq1, \width.kr(0.4)), amp1, \ffreq.kr(90), \rq.kr(1.0)) * env1 * \amp.kr(0.1) ;
-		sig2 = RHPF.ar(Pulse.ar(freq2, \width.kr(0.4)), amp2, \ffreq.kr(90), \rq.kr(1.0)) * env2 * \amp.kr(0.1);
-		sig1 = LPF.ar(sig1, \lpf.kr(120));
-		sig2 = LPF.ar(sig2, \lpf.kr(120)) ;
+		sig1 = RHPF.ar(Pulse.ar(freq1, \width.kr(0.2)), \ffreq.kr(300),  \rq.kr(1.0)) * amp1 * env1 * \amp.kr(0.1) ;
+		sig2 = RHPF.ar(Pulse.ar(freq2, \width.kr(0.2)), \ffreq.kr(300), \rq.kr(1.0)) * amp2 * env2 * \amp.kr(0.1);
+		sig1 = BPF.ar(sig1, \bpf.kr(120));
+		sig2 = BPF.ar(sig2, \bpf.kr(120)) ;
 		Out.ar(~out, [sig1, sig2]);
 		Out.ar(\outfx.kr(~fx1Bus), [sig1, sig2] * \send.kr(-30).dbamp);
 	}).add;
@@ -220,9 +221,10 @@ s.waitForBoot({
 
 	/// Osc Section
 
-	n = NetAddr("127.0.0.1", NetAddr.langPort); // local machine
-	m = NetAddr("127.0.0.1", 5020); // beat send
-
+	// n = NetAddr("127.0.0.1", NetAddr.langPort); // local machine
+	n = NetAddr("127.0.0.1", 57120); // local machine
+	m = NetAddr("127.0.0.1", 5010); // beat send
+/*
 	f = { |msg, time, addr|
 		if(msg[0] != '/status.reply') {
 			"time: % sender: %\nmessage: %\n".postf(time, addr, msg);
@@ -230,54 +232,32 @@ s.waitForBoot({
 	};
 	//thisProcess.addOSCRecvFunc(f);
 	// stop posting.
-	thisProcess.removeOSCRecvFunc(f);
-	OSCFunc.trace(false);
-
-	~categories.do(
-		{
-			arg catName;
-			OSCdef.new(
-				catName.asSymbol,
-				{ arg msg;
-					var c;
-					postf("\nnew cat: %", msg[1]);
-					postf("\nnew count: %", msg[2]);
-					~cat = msg[1];
-					~totalUtts = ~totalUtts + 1;
-					~uttDict[~cat] = ~uttDict[~cat] + 1;
-					postf("\n~uttDict changed %\n", ~uttDict);
-					//add volume to incoming cat Pattern
-					~addVolume.value(~cat, 0.1, 0.99);
-					c = case
-					{~totalUtts < 2} {~setRauschen.value(msg[3])}
-					{~totalUtts >= 2} {~allocateSynth.value(msg[1], msg[2]); ~setRauschen.value(msg[3])}
-					{true}{postf("\nend of cases %\n", ~totalUtts)};
+	//thisProcess.removeOSCRecvFunc(f);
+	*/
 
 
-				},
-				catName
-			);
-	});
+	OSCdef.newMatching(
+		\interpreter,
+		{ arg msg;
+			var c;
+			postf("\nnew cat: %", msg[1]);
+			postf("\nnew count: %", msg[2]);
+			~cat = msg[1];
+			~totalUtts = ~totalUtts + 1;
+			~uttDict[~cat] = ~uttDict[~cat] + 1;
+			postf("\n~uttDict changed %\n", ~uttDict);
+			//add volume to incoming cat Pattern
+			~addVolume.value(~cat, 0.1, 0.99);
+			c = case
+			{~totalUtts < 2} {~setRauschen.value(msg[2])}
+			{~totalUtts >= 2} {~allocateSynth.value(msg[1], msg[2]); ~setRauschen.value(msg[2])}
+			{true}{postf("\nend of cases %\n", ~totalUtts)};
 
-	OSCdef.new(
-		\init,
-		{arg msg;
-			postf("\n init %\t", msg);
-			msg[1].postln;
-			Pbindef(\rausch).play(t, quant:1);
-			~setRauschen.value(1)
+
 		},
-		'/init'
+		'/interpreter_input'
 	);
 
-	OSCdef.new(
-		\common,
-		{arg msg;
-			postf("\n common % \t", msg);
-			//~playCommon.value(msg[1]);
-		},
-		'/common'
-	);
 
 	CmdPeriod.add(s.freeAll);
 	// https://composerprogrammer.com/teaching/supercollider/sctutorial/Technicalities/05%20Clocks%20and%20Scheduling.html
@@ -323,6 +303,7 @@ Routine.new({~categories.scramble.do({|cat| cat.postln; Pbindef(cat).play(t, qua
 t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 
 )
+	OSCFunc.trace(true);
 
 
 /// reset ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -351,13 +332,13 @@ t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 		\instrument, \praise,
 	    \root, ~sharedValues[\key],
 	    \scale, Scale.minorPentatonic,
-	    \degree, Pwhite(0,7, inf),
+	    \freq, Pxrand([[120, 240], [140, 280], [333, 666]], inf),
 		\dur, t.tempo *2,
 		\ampHz , 1,
 		\ampScale, 0.01,
 		\fMul, 2,
 		\rnd, 1.0,
-		\pulWidth, 0.01,
+		\pulWidth, 0.1,
 		\fRate, t.tempo * 3,
 		\width, Pwhite(0.05, 0.4, inf),
 		\atk, 1.0,
@@ -366,10 +347,10 @@ t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 		\ffreq, 400,
 		\rq, 0.6,
 		\pulRate, 0.2,
-		\lpf, Pn(Pseries(1000, 80, 20), inf) ,
+		\bpf, Pn(Pseries(1000, 80, 20), inf) ,
 		\outfx, ~fx1Bus,
 		\send, -10,
-		\amp, 0.05
+		\amp, 0.15
 
 );
 
@@ -561,7 +542,7 @@ t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 	c = case
 	{(count > 0) && (count < 10)} {5.do({|i|
 		Pbind(\instrument, s_name,
-			\freq, [exprand(120, (120 * 2)), exprand(240, (120 *count))], \amp, 0.2, \pulRate, 12, \lpf, 500, \rls, Pn(1, 1)).trace.play});
+			\freq, [exprand(120, (120 * 2)), exprand(240, (240 * 2))], \amp, 0.2, \pulRate, 4, \bpf, 500, \rls, Pn(1, 1)).trace.play});
 	Pbindef(\praise, )
 	}
 	{(count >= 10) && (count < 20) } {Pbind(\instrument, \praise, \fMul, 1 + count, \detune, Pseq((1.2 ,1.18 .. 0.8).mirror, inf), \rls, Pseq((0.36, 0.35 .. count.reciprocal).mirror, inf)).play(t)}
@@ -643,6 +624,12 @@ currentEnvironment
 // test
 // http://sc3howto.blogspot.com/2010/06/pfunc.html  beispiel für ein Fade
 3.do({|item, i| Pbind(\instrument, \insinuation, \amp, 0.4, \lfreq, [exprand(100, (200 + (item * 5))), 50], \rls, Pn(3, 1)).play})
+(
+var test;
+test = ExpRand(40, 320).round(20);
+
+
+)
 
 ~addVolume.value(\insinuation, 0.1, 0.98);
 ~addVolume.value(\praise, 0.1, 0.98);
@@ -656,8 +643,9 @@ Pbindef(\praise, \amp, Pfunc({~fadeOut.value('praise', 0.4, 0.3)}));
 
 
 Pbindef(\praise).play;
+Pbindef(\praise).stop;
 Pbindef(\praise, \amp, Pgeom(0.01, 1.01, inf));
-Pbindef(\praise, \fRate, t.tempo);
+Pbindef(\praise, \pulRate, t.tempo);
 Pbindef(\praise).isPlaying
 Pbindef(\dissence).play(t, quant:1);
 Pbindef(\dissence, \amp, Pgeom(0.4, 0.99, inf));
@@ -677,16 +665,15 @@ Pbindef(\concession).stop
 
 
 
-b[\dry][0]play;
+b[\dry][0].play;
 ~synthDict['dissence']
-Pbindef(\lec).play(t, quant:1);
 Pbindef(\concession).stop;
 Pbindef(\rausch).stop;
 ~setDissence.value('dissence', 9);
 ~setInsinuation.value('insinuation', 9);
 ~setLecture.value('lecture', 9);
 ~setConcession.value('concession', 9);
-~setPraise.value('praise', 9);
+~setPraise.value('praise', 3);
 Synth(\rauschen, [\ffreq, 1500])
 ~stopList.value(~synthDict[\dissence][\synth]);
 
