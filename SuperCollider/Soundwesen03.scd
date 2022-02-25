@@ -27,7 +27,9 @@ s.newBusAllocators; // Busse machen
 ~totalUtts = 0;
 ~sharedValues = (
 	key: 60,
-	tempo: 90/60
+	tempo: 90/60,
+	transpose: 0,
+	scale: Scale.major
 );
 ~uttDict = Dictionary.new;
 ~categories = ['dissence', 'praise', 'insinuation', 'concession', 'lecture'];
@@ -118,7 +120,7 @@ s.waitForBoot({
 	SynthDef.new('lecture', {
 		|gate = 1|
 		var detune, sig, env, mod, ampMod;
-		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(3.0), \rls.kr(1.0), curve:\crv.ir(-4.0)), gate, doneAction: 2);
+		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(0.8), \rls.kr(1.0), curve:\crv.ir(-4.0)), gate, doneAction: 2);
 		mod = SinOsc.kr(\modRate.kr(1.2));
 		detune = {ExpRand(\det1.kr(0.99), \det2.kr(1.01))}!4;
 		sig = VarSaw.ar(\freq.kr(41.2)!4 * detune, 0, LFTri.kr(\filTime.kr(0.3)).range(0,1));
@@ -133,7 +135,7 @@ s.waitForBoot({
 		| gate = 1|
 		var  sig, env, lagfrq;
 		env = EnvGen.kr(Env([0,1,1,0], [\atk.kr(0.05), 0.3, \sustain.kr(0.5), \rls.kr(0.4)], \linear), gate, doneAction: 2) ;
-		lagfrq = Lag.kr(\lfreq.kr(220), \slideTime.kr(0.6));
+		lagfrq = Lag.kr(\freq.kr(220), \slideTime.kr(0.6));
 		sig = PMOsc.ar(lagfrq, LFNoise2.ar(\noisFreq.kr(0.1), \maxF.kr(600)), SinOsc.ar(\ffreq.kr(3.0)), pmindex:\modWidth.kr(0.15), mul:\preamp.kr(0.2)) * \amp.kr(0.4)
 		* env ;
 		sig = FreqShift.ar(sig, \fShift.kr(100));
@@ -158,8 +160,8 @@ s.waitForBoot({
 	SynthDef('praise', {
 		|gate=1|
 		var amp1, amp2, freq1, freq2, sig1, sig2, env1, env2;
-		amp1 = LFPulse.kr(\ampHz.kr(4.0), 0, \pulWidth.kr(0.12)) * \ampScale.kr(0.01);
-		amp2 = LFPulse.kr(\ampHz.kr(4.0), 0, \pulWidth.kr(0.12)) * \ampScale.kr(0.01);
+		amp1 = LFPulse.kr(\ampHz.kr(4.0), 0, \pulWidth.kr(0.12)) * \ampScale.kr(0.75);
+		amp2 = LFPulse.kr(\ampHz.kr(4.0), 0, \pulWidth.kr(0.12)) * \ampScale.kr(0.75);
 		env1 = EnvGen.kr(Env.adsr(\atk.kr(0.5), 0.2, 0.7, \rls.kr(0.9)), gate, doneAction:2);
 		env2 = EnvGen.kr(Env.adsr(\atk.kr(0.5), 0.1, 0.7, \rls.kr(0.9)), gate, doneAction:2);
 		freq1 = LFNoise0.kr(\fRate.kr(4.0)).exprange(\freq.kr(40), \freq.kr(40) * \fMul.kr(8)).round(\freq.kr(40) * \rnd.kr(1.0));
@@ -190,11 +192,11 @@ s.waitForBoot({
 		Out.ar(\out.ir(~out), sig);
 	}).add;
 
-	b= Dictionary.new;
+	~buffers= Dictionary.new;
 	~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";
 	PathName(~path).entries.do({
 		arg subfolder;
-		b.add(
+		~buffers.add(
 			subfolder.folderName.asSymbol ->
 			Array.fill(
 				subfolder.entries.size,
@@ -249,8 +251,8 @@ s.waitForBoot({
 			//add volume to incoming cat Pattern
 			~addVolume.value(~cat, 0.1, 0.99);
 			c = case
-			{~totalUtts < 2} {~setRauschen.value(msg[2])}
-			{~totalUtts >= 2} {~allocateSynth.value(msg[1], msg[2]); ~setRauschen.value(msg[2])}
+			//{~totalUtts < 2} {~setRauschen.value(msg[2])}
+			{~totalUtts >= 2} {~allocateSynth.value(msg[1], msg[2]); ~setGlobal.value.(~cat)}
 			{true}{postf("\nend of cases %\n", ~totalUtts)};
 
 
@@ -303,170 +305,133 @@ Routine.new({~categories.scramble.do({|cat| cat.postln; Pbindef(cat).play(t, qua
 t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 
 )
+(
+~categories.do({|cat| Pbindef(cat).stop})
+)
 	OSCFunc.trace(true);
 
 
 /// reset ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 (
 
-	Pbindef(\rausch,
-		\instrument, \rauschen,
-		\dur, t.tempo *4,
-		\ffreq, Pseq([666, 150], inf),
-		\pan, Pwhite(-1,1, inf),
-		\amp, 0.3
-	);
-	Pbindef(\lecture,
-		\instrument, \lecture,
-		\dur, t.tempo *3,
-		\midinote, ~sharedValues[\key] /2,
-		\filTime, 0.6,
-		\sustain, Pseq((0.6, 0.58 .. 0.2).mirror, inf),
-		\atk, 0.3,
-		\rls, 2.5,
-		\modRate, Pkey(\filTime) * 2,
-		\amp, 0.05);
+Pbindef(\rausch,
+	\instrument, \rauschen,
+	\dur, t.tempo *4,
+	\ffreq, Pseq([666, 150], inf),
+	\pan, Pwhite(-1,1, inf),
+	\amp, 0.3
+);
+Pbindef(\lecture,
+	\instrument, \lecture,
+	\scale, Pfunc({~sharedValues[\scale]}),
+	\degree, Pseq([0, [3, 7], [4, 2, 7], 7].mirror, inf),
+	\ctranspose, Pfunc({~sharedValues[\transpose]}),
+	\dur, t.tempo *3,
+	\amp, 0.05);
 
 
-	Pbindef(\praise,
-		\instrument, \praise,
-	    \root, ~sharedValues[\key],
-	    \scale, Scale.minorPentatonic,
-	    \freq, Pxrand([[120, 240], [140, 280], [333, 666]], inf),
-		\dur, t.tempo *2,
-		\ampHz , 1,
-		\ampScale, 0.01,
-		\fMul, 2,
-		\rnd, 1.0,
-		\pulWidth, 0.1,
-		\fRate, t.tempo * 3,
-		\width, Pwhite(0.05, 0.4, inf),
-		\atk, 1.0,
-		\rls, 2.66,
-		\sustain, Pkey(\rls) + 0.1,
-		\ffreq, 400,
-		\rq, 0.6,
-		\pulRate, 0.2,
-		\bpf, Pn(Pseries(1000, 80, 20), inf) ,
-		\outfx, ~fx1Bus,
-		\send, -10,
-		\amp, 0.15
+Pbindef(\praise,
+	\instrument, \praise,
+	\scale, Pfunc({~sharedValues[\scale]}),
+	\degree, Pseq([[0, 4, 7], [0, 3, 7], [0, 2, 7]], inf),
+	\ctranspose, Pfunc({~sharedValues[\transpose]}),
+	\dur, t.tempo *2,
+	\amp, 0.15
 
 );
 
-	Pbindef(\dissence,
-		\instrument, \dissence,
-		\dur, 8,
-		\freq, Pseq([[48, 52, 40], [60, 63, 50]], inf).midicps  * 2,
-		\pPhase, 0.3,
-		\width, Pseq([0.5, 0.7], inf),
-		\pulseMul, 0.13,
-		\atk, 3.2,
-		\sus, 0.8,
-		\rls, 4,
-		\pan, Pwhite(-1, 1, inf),
-		\ffreq, 500,
-		\ampDist, Pxrand([0.2, 1.0, 1.9], inf),
-		\durDist, Pwhite(0.1, 0.3, inf),
-		\minfreq, Pkey(\freq),
-		\maxfreq, Pkey(\minfreq) *2,
-		\rq, 0.9,
-		\gendmul, 0.9,
-		\send, -12,
-		\amp, 0.05
+Pbindef(\dissence,
+	\instrument, \dissence,
+	\scale, Pfunc({~sharedValues[\scale]}),
+	\degree, Pseq([[0, 4, 7], [0, 3, 7], [0, 2, 7]], inf),
+	\ctranspose, Pfunc({~sharedValues[\transpose]}),
+	\dur, t.tempo *3,
+	\amp, 0.05
 );
 
-	Pbindef(\insinuation,
-		\instrument, \insinuation,
-		\dur, Pxrand([2.0, 4.0, 6.0], inf),
-		\amp, 0.05,
-		\midinote, Pxrand([[37, 49, 61], [32, 45, 58]], inf) *1.6,
-		\ffreq, 10.0,
-		\modWidth, 0.7,
-		\preamp, 0.3,
-		\noisFreq, Pwrand([0.05, 0.5, 0.9], [0.8, 0.15, 0.05], inf),
-		\maxF, 600,
-		\atk, 2,
-		\rls, 3,
-		\sustain, 1,
-		\slideTime, 4.2,
-		\fShift, Pkey(\midinote).midicps
+Pbindef(\insinuation,
+	\instrument, \insinuation,
+	\scale, Pfunc({~sharedValues[\scale]}),
+	\degree, Pseq([[0, 4, 7], [0, 3, 7], [0, 2, 7]], inf),
+	\ctranspose, Pfunc({~sharedValues[\transpose]}),
+	\dur, t.tempo *3,
+	\amp, 0.05
 );
 
-	Pbindef(\concession,
-		\instrument, \concession,
-		\buf, Prand(b[\tonal], inf),
-		\dur, t.tempo,
-		\rate, Pwhite(0.2, 1.8, inf),
-		\pan, Pwhite(-0.5, 0.5, inf),
-		\amp, 0.05,
-		\lpf, Pseq((220, 270 .. 1270), inf),
-		\outfx, ~fx1Bus,
-		\send, Pseq((-35, -30 .. -10), inf)
+Pbindef(\concession,
+	\instrument, \concession,
+	\buf, Prand(~buffers[\tonal], inf),
+	\dur, t.tempo,
+	\rate, Pwhite(0.2, 1.8, inf),
+	\pan, Pwhite(-0.5, 0.5, inf),
+	\amp, 0.05,
+	\lpf, Pseq((220, 270 .. 1270), inf),
+	\outfx, ~fx1Bus,
+	\send, Pseq((-35, -30 .. -10), inf)
 );
 
-	~reset = (
-		dissence: (
-			instrument: 'dissence',
-			atk:0.3,
-			sus: 0.7,
-			rls: 1.9,
-			ampDist: 0.5,
-			durDist: 1.0,
-			minfreq: 400,
-			maxfreq: 750,
-			ffreq: 300,
-			gendAmp: 0.2,
-			rq: 0.9,
-			freq:  110,
-			pPhase: 0.0,
-			width: 0.1,
-			pulseMul: 0.2,
-			amp: 0.3,
-			pan:0.0,
-			send: -30
-		),
+~reset = (
+	dissence: (
+		instrument: 'dissence',
+		atk:0.3,
+		sus: 0.7,
+		rls: 1.9,
+		ampDist: 0.5,
+		durDist: 1.0,
+		minfreq: 400,
+		maxfreq: 750,
+		ffreq: 300,
+		gendAmp: 0.2,
+		rq: 0.9,
+		freq:  110,
+		pPhase: 0.0,
+		width: 0.1,
+		pulseMul: 0.2,
+		amp: 0.3,
+		pan:0.0,
+		send: -30
+	),
 
-		lecture: (
-			instrument: 'lecture',
-			atk: 0.01,
-			sus: 3.0,
-			rls: 1.0,
-			crv: -4.0,
-			modRate: 1.2,
-			det1: 0.99,
-			det2: 1.01,
-			freq: 41.2,
-			filTime: 0.3,
-			amp: 0.15,
-			send: -30
-		),
+	lecture: (
+		instrument: 'lecture',
+		atk: 0.01,
+		sus: 3.0,
+		rls: 1.0,
+		crv: -4.0,
+		modRate: 1.2,
+		det1: 0.99,
+		det2: 1.01,
+		freq: 41.2,
+		filTime: 0.3,
+		amp: 0.15,
+		send: -30
+	),
 
-		insinuation: (
-			instrument: 'insinuation',
-			atk: 0.05,
-			sustain: 0.5,
-			rls: 0.4,
-			freq: 220,
-			slideTime: 0.6,
-			noisFreq: 0.1,
-			maxF: 600,
-			ffreq: 3.0,
-			modWidth: 0.15,
-			preamp: 0.3,
-			amp: 0.4,
-			fShift: 100,
-			send: -30
-		),
+	insinuation: (
+		instrument: 'insinuation',
+		atk: 0.05,
+		sustain: 0.5,
+		rls: 0.4,
+		freq: 220,
+		slideTime: 0.6,
+		noisFreq: 0.1,
+		maxF: 600,
+		ffreq: 3.0,
+		modWidth: 0.15,
+		preamp: 0.3,
+		amp: 0.4,
+		fShift: 100,
+		send: -30
+	),
 
 	concession: (
 		instrument: 'concession',
 		freq: 440,
-		bd: (buf: b[\bd][1], dur: 1),
-		sn: (buf: b[\sn][0], dur: 3),
-		dry: (buf: b[\dry][0], dur: 1),
-		hh: (buf: Pxrand(b[\hh], inf), dur: 1.5),
-		tonal: (buf: Pxrand(b[\tonal], inf), dur: Pwhite(0.1, 0.3, inf))
+		bd: (buf: ~buffers[\bd][1], dur: 1),
+		sn: (buf: ~buffers[\sn][0], dur: 3),
+		dry: (buf: ~buffers[\dry][0], dur: 1),
+		hh: (buf: Pxrand(~buffers[\hh], inf), dur: 1.5),
+		tonal: (buf: Pxrand(~buffers[\tonal], inf), dur: Pwhite(0.1, 0.3, inf))
 	)
 );
 )
@@ -480,10 +445,12 @@ t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 	postf("\nsetting %\t with count %\n and amp %\n", s_name, count, amp);
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	c = case
-	{(count > 0) && (count < 10)} {// 1. Feedback Sound
+	{(count > 0) && (count < 30)} {// 1. Feedback Sound
 				count.do({|i|
 					 Pbind(\instrument, \dissence,
-				\width, exprand(0.4, 0.9), \freq, exprand(200, (200 + count + i)), \amp, amp, \rls, Pn(1, 1)).play})}
+				\width, exprand(0.4, 0.9), \freq, exprand(200, (200 + count + i)), \amp, amp, \rls, Pn(1, 1)).play});
+		~addVolume.value(s_name, 0.1, 0.98);
+	}
 	{true} {"end of dissence reached".postln};
 
 };
@@ -496,10 +463,12 @@ t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 	//base = ~reset[\insinuation03].value;
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	c = case
-	{(count > 0) && (count < 10)} {
+	{(count > 0) && (count < 30)} {
 		count.do({|i|
 			Pbind(\instrument, \insinuation,
-				\lfreq, [exprand(100, 120 + i), exprand(200, (200 + i))],\amp, amp/2, \rls, Pn(1, 1)).play})}
+				\lfreq, [exprand(100, 120 + i), exprand(200, (200 + i))],\amp, amp/2, \rls, Pn(1, 1)).play});
+		~addVolume.value(s_name, 0.1, 0.98);
+	}
 {true} {"end of insinuation reached".postln};
 
 
@@ -511,9 +480,11 @@ t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 	postf("\nsetting %\t with count %\n", s_name, count);
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	c = case
-	{(count > 0) && (count < 10)} {count.do({|i|
+	{(count > 0) && (count < 30)} {count.do({|i|
 			Pbind(\instrument, \lecture,
-				\freq, [exprand(80, 90 + i), exprand(160, (160 + i))],\amp, amp/count, \filTime, 0.8, \rls, Pn(1, 1)).play})}
+				\freq, [exprand(80, 90 + i), exprand(160, (160 + i))],\amp, amp/count, \filTime, 0.8, \rls, Pn(1, 1)).play});
+	~addVolume.value(s_name, 0.1, 0.98);
+	}
 
 	{true} {"end of lecture reached".postln;};
 
@@ -525,10 +496,12 @@ t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 	postf("\nsetting %\t with count %\n", s_name, count);
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	c = case
-	{count < 10} {
-		Pbind(\instrument, \concession, \buf, Pxrand(b[\tonal], 10), \dur, 0.1, \amp, amp * dura).play(t)}
-	{ (count >= 10) && (count.odd) } {
-		Pbind(\instrument, \concession, \buf, b[\tonal][9], \dur, Pseq((0.8,0.78 ..0.04), 1) /2, \rate, Pseries(1.3, 0.15, count), \send, Pseq((-30, -28 .. -20).mirror,inf), \amp, 0.7).play(t)}
+	{count < 30} {
+		Pbind(\instrument, \concession, \buf, Pxrand(~buffers[\tonal], 10), \dur, 0.1, \amp, amp * dura).play(t)}
+	{ (count >= 30) && (count.odd) } {
+		Pbind(\instrument, \concession, \buf, ~buffers[\tonal][9], \dur, Pseq((0.8,0.78 ..0.04), 1) /2, \rate, Pseries(1.3, 0.15, count), \send, Pseq((-30, -28 .. -20).mirror,inf), \amp, 0.7).play(t);
+		~addVolume.value(s_name, 0.1, 0.98);
+	}
 	{true} {"end of insinuation reached".postln};
 
 };
@@ -540,14 +513,11 @@ t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	// sl = ~synthDict['praise'][\synth];
 	c = case
-	{(count > 0) && (count < 10)} {5.do({|i|
+	{(count > 0) && (count < 30)} {5.do({|i|
 		Pbind(\instrument, s_name,
 			\freq, [exprand(120, (120 * 2)), exprand(240, (240 * 2))], \amp, 0.2, \pulRate, 4, \bpf, 500, \rls, Pn(1, 1)).trace.play});
-	Pbindef(\praise, )
+	~addVolume.value(s_name, 0.1, 0.98);
 	}
-	{(count >= 10) && (count < 20) } {Pbind(\instrument, \praise, \fMul, 1 + count, \detune, Pseq((1.2 ,1.18 .. 0.8).mirror, inf), \rls, Pseq((0.36, 0.35 .. count.reciprocal).mirror, inf)).play(t)}
-	{(count >= 20) && (count < 30) } {
-		Pbind(\instrument, \praise, \dur, Pseq((0.4, 0.38 .. 0.1).reverse.mirror, count), \detune, Pwhite(0.95, 1.05, inf), \midinote, Pseq([24, 36], count) + count, \lpf, Pseries(400, 80, count), \amp, Pkey(\amp) * dura, \outfx, ~fx2Bus, \send, Pseq((-35, -33 .. -5), count)).trace.play(t)}
 	{true} {"end of insinuation reached".postln;};
 
 };
@@ -577,18 +547,19 @@ t.schedAbs(t.nextTimeOnGrid, { ~continuousFadeOut.value(0.001, 0.0052); 1});
 	// ~setCommon.value(~commonNow, count)
 
 };
-~playCommon = {
+~setGlobal = {
 	|s_name|
 	var c;
 
-	postf("\nallocation common  %\t ", s_name);
+	postf("\nglobal settings  %\t ", s_name);
 	c = case
-	{s_name == \lecture} {Pbindef(\lecture).play(t, quant:3)}
-	{s_name == \praise} {Pbindef(\praise).play(t, quant:3)}
-	{s_name == \dissence} {Pbindef(\dissence).play(t, quant:3)}
-	{s_name == \insinuation} {Pbindef(\insinuation).play(t, quant:3)}
-	{s_name == \concession} {Pbindef(\concession).play(t, quant:3)}
-	{true} {"end of play allocation".postln};
+	{~totalUtts >= 30} {Scale.choose}
+	{~totalUtts % 5 ==0} {Scale.choose}
+	{~totalUtts >=20} {~sharedValues[\transpose] = -3}
+	{~totalUtts >=15} {~sharedValues[\transpose] = 0}
+	{~totalUtts >=10} {~sharedValues[\transpose] = -1}
+	{~totalUtts >=4} {~sharedValues[\transpose] = 3}
+	{true} {"end of global settings".postln};
 	if (s_name != ~commonNow, {Pbindef(~commonNow).stop;
 		~commonNow = s_name
 	});
