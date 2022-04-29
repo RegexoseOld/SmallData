@@ -18,13 +18,19 @@ Utts = 10: Feedback variieren + Patterns randomize
 SynthDescLib.global.browse;
 ServerOptions.devices;
 ServerOptions.inDevices;
+ServerOptions.outDevices;
 ~fxGroup = nil
 (
 Server.default.options.numInputBusChannels_(2);
 //Server.default.options.outDevice_("BeatsSolo Wireless");
-// Server.default.options.outDevice_("SoundFlower (2ch)");
-// Server.default.options.outDevice.postln;
+s.options.sampleRate;
+s.options.sampleRate = 48000;
 Server.default.options.inDevice_("Fireface 400 (BEF)");
+//Server.default.options.outDevice_("SoundFlower (2ch)");
+Server.default.options.outDevice_("Gerät mit mehreren Ausgäng");
+Server.default.options.outDevice.postln;
+// Server.default.options.outDevice.postln;
+
 
 ServerTree.removeAll; // löscht alle funktionen
 OSCFunc.trace(false);
@@ -247,7 +253,7 @@ s.waitForBoot({
 	// Funktionen, die bei jedem cmd-. oder freeAll Aufruf automatisch neu gestartet werden
 	ServerTree.add(~makeNodes);
 	ServerTree.run;
-	Server.default.options.device_("Fireface 400 (BEF)");
+	//Server.default.options.device_("Fireface 400 (BEF)");
 	s.options.numOutputBusChannels = 6;
 	s.sync;
 
@@ -465,8 +471,8 @@ s.waitForBoot({
 			~reset.keys.asList.scramble.do({
 				|cat|
 				~patternDict[cat].play(t, quant:4);
-				postf("pattern % is playing % \n", cat,
-					Pbindef(cat).isPlaying); (t.tempo*10).wait})
+				//postf("pattern % is playing % \n", cat, ~patternDict[cat].isPlaying);
+				(t.tempo*10).wait})
 		}).play;
 		// continuousFadeOut(min, step)
 		t.schedAbs(t.nextTimeOnGrid, {~continuousFadeOut.value(0.01, 0.005); 1});
@@ -792,6 +798,7 @@ s.waitForBoot({
 	};
 
 	s.sync;
+	Server.default.options.outDevice.postln;
 	"done".postln;
 
 });
