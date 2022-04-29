@@ -46,41 +46,6 @@ s.newBusAllocators; // Busse machen
 
 )};
 
-~fadeIn = {
-	|cat, step, max|
-	// das geht nicht. braucht ich globale variable fürs volume?
-	var vol = ~synthDict[cat][\vol];
-	vol.postln;
-	if (vol < max, {~synthDict[cat][\vol] = vol* step; vol = vol * step}, {~synthDict[cat][\vol] = max; vol = max});
-
-};
-
-~fadeOut = {
-	|cat, step, min|
-	// das geht nicht. braucht ich globale variable fürs volume?
-	var vol = ~synthDict[cat][\vol];
-	vol.postln;
-	if (vol > min, {~synthDict[cat][\vol] = vol* step; vol = vol * step}, {~synthDict[cat][\vol] = min; vol = min});
-
-};
-
-~continuousFadeOut = {
-	|min, step|
-	~categories.do({|cat|
-		var vol, c;
-		vol = ~synthDict[cat][\patternVol];
-		// postf("\nthe vol %  of the pattern   %\n", vol, cat);
-		c = case
-		{(vol > min) && (Pbindef(cat).isPlaying)} {~synthDict[cat][\patternVol] = vol - step; vol = vol-step} // make sure only playing Patterns are faded
-		{(vol <= min) && (Pbindef(cat).isPlaying)} {~synthDict[cat][\patternVol] = min; vol = min}
-		{true} {"end of fade Cases"};
-		//if (vol > min, {~synthDict[cat][\pattern] = vol - step; vol = vol-step}, {~synthDict[cat][\pattern] = min; vol = min});
-		Pbindef(cat, \amp, vol);
-	});
-
-};
-
-
 ~addVolume = {
 	|cat, add, max|
 	if (~synthDict[cat][\patternVol] < max, {~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + add}, {~synthDict[cat][\patternVol] = max};
@@ -97,17 +62,28 @@ s.waitForBoot({
 	~totalUtts = 0;
 	~sharedValues = (
 		key: 60,
-		tempo: t.tempo/4,
+		tempo: t.tempo,
 		transpose: 0,
 		scale: Scale.major,
 		vol: 0.2
 	);
 	~uttDict = Dictionary.new;
-	~categories = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'];
+	~catDict = Dictionary.new;
+	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({
+		|cat|
+		var c;
+		cat.postln;
+		c = case
+		{cat=='dissent'}{~catDict.add(cat-> \dis)}
+		{cat=='praise'}{~catDict.add(cat-> \pr)}
+		{cat=='insinuation'}{~catDict.add(cat-> \ins)}
+		{cat=='concession'}{~catDict.add(cat-> \con)}
+		{cat=='lecture'}{~catDict.add(cat-> \lec)}
+		{true}{"end of catDict".postln};
+		 });
 	~synthDict = Dictionary.new;
 	~patternDict = Dictionary.new;
-	~categories.do({arg cat;
-		~synthDict.add(cat -> (synth: List.new, vol: 0.5, patternVol: 0.2));
+	~catDict.keys.do({arg cat;
 		~uttDict.add(cat -> 0);
 	});
 	s.sync;
@@ -211,6 +187,7 @@ s.waitForBoot({
 		var sig, verb;
 		sig = SoundIn.ar(1) * \amp.kr(0.3);
 		sig = LPF.ar(sig, \ffreq.kr(200));
+		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(5));
 		Out.ar(~out, sig!2);
 		Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-40).dbamp);
 	}).add;
@@ -219,7 +196,8 @@ s.waitForBoot({
 		var sig, wet;
 		sig = In.ar(\in.ir(~fx1Bus), 2);
 		sig = FreeVerb2.ar(sig[0], sig[1], mix:1, room:\room.kr(0.99), damp:\damp.kr(0.99));
-		sig = LPF.ar(sig, \lpf.kr(900));
+		sig = BPF.ar(sig, SinOsc.kr(\bpf.kr(0.0001), 0, 600, 900));
+		sig = LPF.ar(sig, 500);
 		Out.ar(\out.ir(~out), sig);
 	}).add;
 
@@ -236,7 +214,8 @@ s.waitForBoot({
 		//https://www.youtube.com/watch?v=MnD8stNB5tE&list=PLPYzvS8A_rTaNDweXe6PX4CXSGq4iEWYC&index=27
 		var sig, grain;
 		sig = In.ar(\in.kr(~fx3Bus), 2);
-		sig = GrainIn.ar(2, Dust.ar(30), \gDur.kr(0.09), sig);
+		sig = GrainIn.ar(2, Dust.ar(20), \gDur.kr(0.1), sig, mul:2.0);
+		sig = BPF.ar(sig, Line.kr(\start.kr(100), \end.kr(1300), \sweep.kr(1.5)));
 		Out.ar(\out.ir(~out), sig);
 	}).add;
 
@@ -278,6 +257,7 @@ s.waitForBoot({
 	n = NetAddr("127.0.0.1", 57120); // local machine
 	m = NetAddr("127.0.0.1", 5010); // beat send
 
+
 	OSCdef.newMatching(
 		\interpreter,
 		{ arg msg;
@@ -288,9 +268,9 @@ s.waitForBoot({
 			~uttDict[~cat] = ~uttDict[~cat] + 1;
 			postf("\n~uttDict changed %\n", ~uttDict);
 			//add volume to incoming cat Pattern
-			~addVolume.value(~cat, 0.1, 0.99);
+			~addVolume.value(~catDict[~cat], 0.1, 0.99);
 			~allocateSynth.value(~cat, msg[2]);
-			~setGlobal.value(~cat);
+			~setGlobal.value();
 
 		},
 		'/interpreter_input'
@@ -303,7 +283,7 @@ s.waitForBoot({
 	// t.schedAbs(t.nextTimeOnGrid, { m.sendMsg("/beat", (t.elapsedBeats.floor % 8).asInteger + 120); 1});
 
 	~reset = (
-		dissent: (
+		dis: (
 			instrument: 'dissent',
 			scale: Pfunc({~sharedValues[\scale]}),
 			degree: Pseq([0, Pseq([\], 7)], inf),
@@ -328,7 +308,7 @@ s.waitForBoot({
 			send: -30,
 		),
 
-	lecture: (
+	lec: (
 			instrument: 'lecture',
 			scale: Pfunc({~sharedValues[\scale]}),
 			ctranspose: Pfunc({~sharedValues[\transpose]}) -12,
@@ -346,12 +326,13 @@ s.waitForBoot({
 			det1: 0.98,
 			det2: 1.02,
 			filTime: 0.6,
-			amp: Pfunc({~sharedValues[\vol]}),
+			amp: 0.5,
+			distort: 2.5,
 			send: -30,
 			sustain: 0.2
 		),
 
-		fmBass: (
+		fm: (
 			instrument: \fmBass,
 			scale: Pfunc({~sharedValues[\scale]}),
 			ctranspose: Pfunc({~sharedValues[\transpose]}),
@@ -372,7 +353,7 @@ s.waitForBoot({
 
 		),
 
-		insinuation: (
+		ins: (
 			instrument: 'insinuation',
 			scale: Pfunc({~sharedValues[\scale]}),
 			ctranspose: Pfunc({~sharedValues[\transpose]}) +12,
@@ -398,7 +379,7 @@ s.waitForBoot({
 			send: -30
 		),
 
-		concession: (
+		con: (
 			instrument: 'concession',
 	    	buf: Pseq(~percArray,inf),
 			dur: 1 ,
@@ -411,7 +392,7 @@ s.waitForBoot({
 			send: -35
 		),
 
-		praise: (
+		pr: (
 			instrument:'praise',
 			ampHz: 0.2,
 			pulWidth: 0.9,
@@ -449,29 +430,43 @@ s.waitForBoot({
 
 	//makePatterns
 	~makePatterns = {
-		~categories.do({
-			|cat|
-			var c;
-			cat.postln;
-			c = case
-			{cat == 'praise'}{ ~patternDict.add(\pr -> Pbindef(cat, *~reset[cat].asPairs))}
-			{cat == 'insinuation'}{ ~patternDict.add(\ins -> Pbindef(cat, *~reset[cat].asPairs))}
-			{cat == 'dissent'}{ ~patternDict.add(\dis -> Pbindef(cat, *~reset[cat].asPairs))}
-			{cat == 'concession'}{ ~patternDict.add(\con -> Pbindef(cat, *~reset[cat].asPairs))}
-			{cat == 'lecture'}{ ~patternDict.add(\lec -> Pbindef(cat, *~reset[cat].asPairs))}
-			{true}{"end of makePatters".postln};
-			Pbindef(cat, \amp, 0.2);
-		});
+		~reset.keys.do({
+			|name|
+			name.postln;
+			~patternDict.add(name -> Pbindef(name, *~reset[name].asPairs));
+		    ~synthDict.add(name -> (synth: List.new, vol: 0.5, patternVol: 0.2));
+		}
+
+			//Pbindef(cat, \amp, 0.2);
+		);
 	};
 	~makePatterns.();
+
+~continuousFadeOut = {
+	|min, step|
+
+	~reset.keys.do({|cat|
+		var vol, c;
+		vol = ~synthDict[cat][\patternVol];
+		//postf("\nthe vol %  of the pattern   %\n", vol, cat);
+		c = case
+		{(vol > min) && (Pbindef(cat).isPlaying)} {~synthDict[cat][\patternVol] = vol - step; vol = vol-step} // make sure only playing Patterns are faded
+		{(vol <= min) && (Pbindef(cat).isPlaying)} {~synthDict[cat][\patternVol] = min; vol = min}
+		{true} {"end of fade Cases"};
+		//if (vol > min, {~synthDict[cat][\pattern] = vol - step; vol = vol-step}, {~synthDict[cat][\pattern] = min; vol = min});
+		Pbindef(cat, \amp, vol);
+	});
+
+};
+
 	~startAllPatterns = {
 		//start all Pbindefs with minimal volume and a 10 second delay
 		Routine.new({
-			~categories.scramble.do({
+			~reset.keys.asList.scramble.do({
 				|cat|
 				~patternDict[cat].play(t, quant:4);
 				postf("pattern % is playing % \n", cat,
-					Pbindef(cat).isPlaying); 10.wait})
+					Pbindef(cat).isPlaying); (t.tempo*10).wait})
 		}).play;
 		// continuousFadeOut(min, step)
 		t.schedAbs(t.nextTimeOnGrid, {~continuousFadeOut.value(0.01, 0.005); 1});
@@ -481,7 +476,7 @@ s.waitForBoot({
 
 	Pbindef(\rausch,
 		\instrument, \rauschen,
-		\dur, t.tempo *5,
+		\dur, 5,
 		\ffreq, Pseq([666, 150], inf),
 		\pan, Pwhite(-1,1, inf),
 		\amp, 0.3
@@ -492,66 +487,70 @@ s.waitForBoot({
 	~setDissent = {
 		|s_name, count|
 		var c, dura, now, amp;
-		amp = ~synthDict[\dissent][\vol];
+		amp = ~synthDict[\dis][\vol];
 		postf("\nsetting %\t with count %\n and amp %\n", s_name, count, amp);
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		5.do({|i|
 			Pbind(\instrument, \dissent,
-				\width, Pwhite(0.4, 0.9, 1), \freq, Pxrand([200, 300], 1), \amp, 0.6, \atk, Pn(Pwhite(0.01, 0.05), 1), \rls, Pn(Pwhite(0.02, 0.59), 1), \sustain, 0.15, \pulseMul, 0.35, \resoFreq, 3000).play});
+				\width, Pwhite(0.4, 0.9, 1), \freq, Pxrand([200, 300], 1), \amp, 0.8, \atk, Pn(Pwhite(0.01, 0.05), 1), \rls, Pn(Pwhite(0.02, 0.59), 1), \sustain, 0.15, \pulseMul, 0.35, \resoFreq, 3000).play});
 		c = case
 		{(count > 0) && (count <= 5)} {// 1. Feedback Sound
-			~dis = Pbindef(\dissent, *~reset[\dissent].asPairs);
-			~dis = Pbindef(\dissent, \resoFreq, 1200 + (100*count), \modF, 0.8  + (count * 0.22));
+			~dis = Pbindef(\dis, *~reset[\dis].asPairs);
+			~dis = Pbindef(\dis, \resoFreq, 1200 + (100*count), \modF, 0.8  + (count * 0.22));
 
 		}
 		{(count > 5) && (count <=10)} {
-			~dis = Pbindef(\dissent, \dur, 1, \amp, 0.6, \rls, (0.35 * count), \sustain, Pkey(\rls), \pulseMul, count.reciprocal, \gendAmp, 0.9, \ampDist, 6, \durDist, 4, \modF, 0.4, \maxfreq, 120 *count, \ffreq, count*160);
+			~dis = Pbindef(\dis, \dur, 1, \amp, 0.6, \rls, (0.35 * count), \sustain, Pkey(\rls), \pulseMul, count.reciprocal, \gendAmp, 0.9, \ampDist, 6, \durDist, 4, \modF, 0.4, \maxfreq, 120 *count, \ffreq, count*160);
 		}
 		{(count > 10) && (count <=20)} {
-			~dis = Pbindef(\dissent,
-				\degree, Prand([[0, 4, 7], [4, 8, 12], [-2, 2, 6], [count%5, ((count%5) +3), ((count%5) + 5)]], inf),
-				\dur, Pwrand([ 0.4, t.tempo *2, t.tempo*3], [0.05, 0.35, 0.6].normalizeSum, inf),
-				\amp, amp,
-				\rls, 1.5 - (count * 0.02),
+			~dis = Pbindef(\dis,
+				\degree, Prand([[0, 4, 7], [0, 3, 7]], inf) * Pif(count.even, 2, 1, 1),
+				\dur, Pif(count.even, 2, 0.25, 1),
+				\rls, Pif(count.even, 2.5, 0.1, 0.5),
 				\sustain, Pkey(\rls),
-				\atk, Pwhite(0.02, 0.1, inf)
+				\atk, 0.02,
+				\minfreq, 200 * (count.linlin(0, count, 1.1, 1.9)),
+				\maxfreq, Pkey(\minfreq) * 4,
+				\gendAmp, 1.0,
+				\pulseMul, Pif(count.even, 0.6, 1.3, 0.4),
+			    \modF, Pif(count.even, 0.5, 0.9, 0.5),
+				\outfx, ~fx3Bus,
+				\send, Pif(count.even, -10, -40, -35)
 			);
 		}
 		{(count > 20) && (count <= 30)} {
 
-			~dis = Pbindef(\dissent, \degree, Pxrand([
+			~dis = Pbindef(\dis, \degree, Pxrand([
 				Pseq([[0, 1, 2], [0, 1, 3, 4], [0, 3, 8]], 1),
 				Pseq([[2, 3, 5], [2, 4, 5], [2, 3, 4]], 1),
 				Pseq([[7, 9, 10], [7, 8, 9], [7, 11, 13]], 1)],inf),
 			\sustain, 0.3,
 			\rls, Pwhite(0.05, 1.1, inf),
 			\width, Pwhite(0.1, 0.5, inf),
-			\amp, amp,
 			\dur, Pwrand([0.8, 1.0, 1.5, 1.6, t.tempo], [0.3, 0.1, 0.05, 0.1, 0.4].normalizeSum, inf),
 			);
 		}
 		{count > 30} {
 
-			~dis = Pbindef(\dissent,
+			~dis = Pbindef(\dis,
 				\degree, Pseq((24, 22 .. (-12)), inf) ,
 				\sustain, 0.3,
 				\rls, Pwhite(0.05, 1.1, inf),
 				\width, Pwhite(0.1, 0.5, inf),
 				\minFreq, Pwhite(100, 600, inf),
 				\maxFreq, Pkey(\minFreq) *2,
-				\amp, amp,
 				\dur, 1
 			);
 		}
 		{true} {"end of dissent reached".postln};
-		~addVolume.value(s_name, 0.2, 0.98);
+		~addVolume.value(\dis, 0.2, 0.98);
 		~dis.quant_(16);
 
 	};
 
 	~setInsinuation = {
 		|s_name, count|
-		var c, dura, now, amp;
+		var c, dura, oneShot, amp;
 		postf("\nsetting %\t with count %\n", s_name, count);
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		5.do({|i|
@@ -559,18 +558,31 @@ s.waitForBoot({
 				\freq, [exprand(100, 250), exprand(1700, 2300)], \amp, 0.15, \rls, Pn(3, 1)).play});
 		c = case
 		{(count > 0) && (count <= 5)} {
-			~ins = Pbindef(\insinuation,  *~reset[\insinuation].asPairs);
-			~ins = Pbindef(\insinuation, \fShift, 100 + (50 *count));
+			~ins = Pbindef(\ins,  *~reset[\ins].asPairs);
+			~ins = Pbindef(\ins, \fShift, 100 + (50 *count));
 		}
-		{(count > 5) && (count <= 10)} {~ins = Pbindef(\insinuation, \slideTime, count * 0.7, \dur, 4, \atk, 0.8, \rls, 4.0, \sustain, 4.0, \preamp, 0.9, \amp, 0.4, \degree, Pseq([(0 -count),-5, 0, (2 -count)], inf) );}
-		{(count > 10) && (count <= 20)} {}
+		{(count > 5) && (count <= 10)} {~ins = Pbindef(\ins, \slideTime, count * 0.7, \dur, 4, \atk, 0.8 , \rls, 4.0, \sustain, 4.0, \preamp, 0.9, \amp, 0.4, \degree, Pseq([(0 -count),-5, 0, (2 -count)], inf) );}
+		{(count > 10) && (count <= 20) && (count% 4 == 0)}{oneShot = Pbindef(\ins2, *~reset[\ins].asPairs);
+			oneShot = Pbindef(\ins2, \degree, Pseq([
+				Pseq([-5],5), Pseq([\r],13),
+					[-8, 0], Pseq([\r], 15),
+					[-5, 3], Pseq([\r],15),
+					Pseq([\r], 16)
+		], 2) + count, \amp, 0.4, \dur, 1/16).play(t);
+		}
+		{(count > 10) && (count <= 20)} {
+			~ins = Pbindef(\ins, \slideTime, 3.5 - (count* 0.02), \maxF, 600 + (count * 10), \dur, 4,
+				\atk, 0.8 - (count * 0.04), \rls, 4.0 - (count * 0.16), \sustain, Pkey(\rls),
+				\preamp, 0.9, \amp, 0.4,
+				\degree, Pseq([(10 - count),-5, 0, (2 -count)], inf) );
+		}
 		{(count > 20) && (count <= 30)} {}
 		{count < 30} {
-			~ins = Pbindef(\insinuation, \degree, Pseq([[0, 2, 4], [0, 4, 8], [2, 5, 9]], inf), \strum, Pseq([0.2, 0.4, 0.8], inf));
+			~ins = Pbindef(\ins, \degree, Pseq([[0, 2, 4], [0, 4, 8], [2, 5, 9]], inf), \strum, Pseq([0.2, 0.4, 0.8], inf));
 		}
 
 		{true} {"end of insinuation reached".postln};
-		~addVolume.value(s_name, 0.1, 0.98);
+		~addVolume.value(\ins, 0.1, 0.98);
 		~ins.quant_(16);
 
 	};
@@ -578,39 +590,50 @@ s.waitForBoot({
 	~setLecture = {
 		|s_name, count|
 		var c, dura, factor, amp;
-		amp = ~synthDict[\lecture][\vol];
+		amp = ~synthDict[\lec][\vol];
 		postf("\nsetting %\t with count %\n", s_name, count);
 		dura = Env.new([1,0], [count], [-2]).asPseg;
-		~lec = Pbindef(\lecture, *~reset[\lecture].asPairs);
+		~lec = Pbindef(\lec, *~reset[\lec].asPairs);
 		factor = count%5;
 		5.do({|i| Pbind(\instrument, \lecture,
 			\freq, [exprand(80, 90 + i), exprand(160, (160 + i))], \amp, amp/3, \filTime, 0.8, \rls, Pn(1, 1)).play});
 		c = case
-		{count ==1}	{~lec = Pbindef(\lecture, \degree, Pseq([0, Pseq([\r], 15)], inf))}
-		{count ==2}	{~lec = Pbindef(\lecture, \degree, Pseq([0, Pseq([\r], 7), -5, Pseq([\r], 7)], inf))}
-		{count ==3}	{~lec = Pbindef(\lecture, \degree, Pseq([0, \, \, \, -6, \, \, \, -5,Pseq([\r], 7)], inf))}
-		{count ==4}	{~lec = Pbindef(\lecture, \degree, Pseq([0, \, \, \, -6, \, \, \, -5, \, \, \, -6, \, \, \], inf))}
-		{count ==5}	{~lec = Pbindef(\lecture, \degree, Pseq([0, \, \, \, -6, \, \, \, -5, \, \, \, -7, \, \, \], inf))}
+		{count ==1}	{~lec = Pbindef(\lec, \degree, Pseq([0, Pseq([\r], 15)], inf))}
+		{count ==2}	{~lec = Pbindef(\lec, \degree, Pseq([0, Pseq([\r], 7), -5, Pseq([\r], 7)], inf))}
+		{count ==3}	{~lec = Pbindef(\lec, \degree, Pseq([0, \, \, \, -6, \, \, \, -5,Pseq([\r], 7)], inf))}
+		{count ==4}	{~lec = Pbindef(\lec, \degree, Pseq([0, \, \, \, -6, \, \, \, -5, \, \, \, -6, \, \, \], inf))}
+		{count ==5}	{~lec = Pbindef(\lec, \degree, Pseq([0, \, \, \, -6, \, \, \, -5, \, \, \, -7, \, \, \], inf))}
 
 
 		{(count > 5) && (count <= 10)} {
-			~lec = Pbindef(\lecture,
-				\degree, Pseq([0, \, \, \, -6, \, \, \, -5, \, \, \, -7, \, \, \], inf), \filTime, 0.3 + ((count -5) * 0.08), \amp, count.reciprocal);
-			~fmbass = Pbindef(\fmBass, \dur, 1/4, \degree, Pseq([0, \, \, \, -6, \, \, \, -5, \, \, \, -7, \, \, \], inf), \distort, 0.2, \amp, (count-4) * 0.04);
+			~lec = Pbindef(\lec,
+				\degree, Pseq([0, \, \, \, -6, \, \, \, -5, \, \, \, -7, \, \, \], inf), \filTime, 0.3 + ((count -5) * 0.08),
+				\amp, 0.5 - (count * 0.02), \distort, 3.0, \filTime, 0.69);
+			~fmbass = Pbindef(\fm, \dur, 1/4, \degree, Pseq([0, \, \, \, -6, \, \, \, -5, \, \, \, -7, \, \, \], inf), \distort, 0.2, \amp, (count-4) * 0.065);
 		}
-		{(count > 10) && (count <= 20)} {
-			~lec = Pbindef(\lecture, \filTime, Pwhite(0.6, 0.85, inf), \modRate, 1.2 + ((count-10) * 0.1), \sustain, 1.6, \dur, 1,
-				\degree, Pseq([0, \r, 0, \r, 3, \r, 2, \r, 0, \r, 0, \r, 4, \r, 2, \r ], inf));
-		}
+		{(count > 10) && (count <= 12)} {
+			~lec.pause;
+			~fmbass = Pbindef(\fm, \dur, 1/4, \degree, Pseq([0, \, \, \, -6, \, \, \, -5, \, \, \, -7, \, \, \], inf), \distort, 0.2, \amp, 0.4);}
+		{(count > 12) && (count <= 14)}{
+			~fmbass = Pbindef(\fm,\dur, 1/4, \degree, Pseq([0, \, \, \, -6, \, \, \, \, \, \, \, 6, \, \, \], inf))}
+		{(count > 14) && (count <= 16)}{
+			~fmbass = Pbindef(\fm,\dur, 1/4, \degree, Pseq([0, \, \, \, -6, \, \, \, \, \, 6, \, 11, \, \, \], inf))}
+		{(count > 16) && (count <= 18)}{
+			~fmbass = Pbindef(\fm,\dur, 1/4, \degree, Pseq([0, \, \, \, -6, \, -6, \, -6, \, 6, \, 11, \, \, \], inf))}
+		{(count > 18) && (count <= 20)}{
+			~fmbass = Pbindef(\fm,  \dur, Pseq([Pseq([1/4], 4), 6/4, Pseq([1/4], 6) ], inf), \degree, Pseq([0, \, 0, \, 0,  6, \, 11, \, \, \], inf))}
+
 		{(count > 20) && (count <= 30)} {
-			~lec = Pbindef(\lecture, \sustain, 0.3, \rls, 1.0 - ((count-20) * 0.03),
+			~lec = Pbindef(\lec, \sustain, 0.3, \rls, 1.0 - ((count-20) * 0.03),
 				\degree, Pseq([Pseq([12, 11, 11, 8, 8, \r, 6], 15), Pseq([6, 6, 8, 8, 3, \r, 8], 1)], inf), \dur, t.tempo);
+			~lec.resume;
 		}
 		{count > 30} {
-			~lec = Pbindef(\lecture, \dur, t.tempo/4, \modRate, exprand(0.8, 1.4), \filTime, exprand(0.55, 0.75), \degree, Pseq([0, \r, \r, \r, 2, \r, \r, -2, \r ], inf) +12, \atk, 0.08, \rls, 0.1, \sustain, 0.15)
+			~lec = Pbindef(\lec, \dur, t.tempo/4, \modRate, exprand(0.8, 1.4), \filTime, exprand(0.55, 0.75), \degree, Pseq([0, \r, \r, \r, 2, \r, \r, -2, \r ], inf) +12, \atk, 0.08, \rls, 0.1, \sustain, 0.15)
 		}
 		{true} {"end of lecture reached".postln;};
-		~addVolume.value(s_name, 0.1, 0.98);
+		~addVolume.value(\lec, 0.1, 0.98);
+		~addVolume.value(\fm, 0.1, 0.98);
 		~lec.quant_(16);
 	};
 
@@ -620,41 +643,48 @@ s.waitForBoot({
 		var c, dura, amp, bufs;
 		postf("\nsetting %\t with count %\n", s_name, count);
 		dura = Env.new([1,0], [count], [-2]).asPseg;
-
-
 		Pbind(\instrument, \concession, \buf, Pxrand(~buffers[\tonal], 10), \dur, 0.1, \fShift, 0.1,  \amp, 0.15).play(t);
 		c = case
 		{count ==1}{
 			~percArray.put(6, ~buffers[\himid][2]);
 			~percArray.put(10, ~buffers[\himid][3]);
 			~percArray.put(14, ~buffers[\low][2]);
-			~con = Pbindef(\concession,\buf, Pseq(~percArray,inf));
+			~con = Pbindef(\con,\buf, Pseq(~percArray,inf));
 
 		}
 		{(count > 1) && (count <=5)}{
 			~delay.set(\maxdel, 0.9, \deltime, 0.1, \lpf, 1200, \decayT, 3.6, \mul, 0.6);
 			~percArray.do({|n, i| if (n == ~buffers[\low][2], {[i + "  "+ n].postln; ~percArray[i] = ~buffers[\bd][1]})});
-			~con = Pbindef(\concession, \buf, Pseq(~percArray, inf), \send, -35 + (count * 5), \bpf, 100);
+			~con = Pbindef(\con, \buf, Pseq(~percArray, inf), \send, -35 + (count * 5), \bpf, 100);
 		}
 		{(count > 5) && (count <= 10)}{
 			~delay.set(\maxdel, 0.9, \deltime, 0.8, \sweep, 3.0, \decayT, 6, \mul, 0.6);
 			~percArray.do({|n, i| if (n == ~buffers[\low][2], {[i + "  "+ n].postln; ~percArray[i] = ~buffers[\bd][1]})});
-			~con = Pbindef(\concession, \dur, 1/4, \buf, Pseq(~percArray, inf), \send, -30 + ((count - 4) * 5), \rate, [0.51, 0.85, 1.54, 2.34, 3.5].choose, \amp, Prand([0.07, 0.11, 0.2], inf));
+			~con = Pbindef(\con, \dur, 1/4, \buf, Pseq(~percArray, inf), \send, -30 + ((count - 4) * 5), \rate, [0.51, 0.85, 1.54, 2.34, 3.5].choose, \amp, Prand([0.07, 0.11, 0.2], inf));
 		}
-		{(count > 10) && (count <= 20)}{~con = Pbindef(\concession,
+		{(count > 10) && (count <= 20)}{~con = Pbindef(\con,
 			\buf, Pseq([
 				Pn(Prand(~buffers[\low], 1), 3),
 				Pn(Prand(~buffers[\himid], 1), 1),
 				Pn(Prand(~buffers[\mid],1), 2),
 				Prand(~buffers[\hi], 1),
 				Pn(Prand(~buffers[\mid],1), 1)], inf),
-			\rate, Pwhite(0.9, 1.11, inf), \amp, Pwhite(0.2, 0.4, inf))}
-		{(count > 20) && (count <= 30)}{~con = Pbindef(\concession, \dur, Pseq([Pn(t.tempo/2, 15), Pn(0.25, 8)], inf), \send, -30)}
-		{count > 30} { ~con = Pbindef(\concession, \dur, t.tempo/4, \send, -30,
+			\rate, Pwhite(0.9, 1.11, inf), \amp, Pwhite(0.2, 0.4, inf),
+		    \dur, 1,
+			\outfx, ~fx1Bus,
+			\send, -30 + ((count%11) * 4)
+		);
+		~reverb.set(\bpf, (count * 0.3));
+		}
+
+		{(count > 20) && (count <= 30)}{
+			~reverb.set(\bpf, 0.0001);
+			~con = Pbindef(\con, \dur, Pseq([Pn(1/2, 15), Pn(0.25, 8)], inf), \send, -30)}
+		{count > 30} { ~con = Pbindef(\con, \dur, t.tempo/4, \send, -30,
 			\buf, Pseq([bufs[1], bufs[3], bufs[0], bufs[8], bufs[3], bufs[3], bufs[6], bufs[7]], inf), \rate, Pwhite(0.8, 1.1, inf), \amp, Pwhite(amp/3, amp, inf))
 		}
 		{true}{"end of setconcession reached".postln};
-		~addVolume.value(s_name, 0.1, 0.98);
+		~addVolume.value(\con, 0.1, 0.98);
 		~con.quant_(16);
 	};
 
@@ -662,15 +692,15 @@ s.waitForBoot({
 		|s_name, count|
 		var c, pat, dura, amp;
 		postf("\nsetting %\t with count %\n", s_name, count);
-		amp = ~synthDict[\praise][\vol];
+		amp = ~synthDict[\pr][\vol];
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		5.do({|i|
 			Pbind(\instrument, \praise,
-				\freq, Pxrand([Pwhite(120, 240, 1), Pwhite(240, 480, 1)], 1), \amp, amp/2, \pulRate, 20, \bpf, 500, \rls, Pn(0.3, 1), \sustain, 0.3).play});
+				\freq, Pxrand([Pwhite(120, 240, 1), Pwhite(240, 480, 1)], 1), \amp, 0.5, \pulRate, 20, \bpf, 500, \rls, Pn(0.3, 1), \sustain, 0.3).play});
 		c = case
 		{(count > 0) && (count <= 5)} {
-			~pr = Pbindef(\praise, *~reset[\praise].asPairs);
-			~pr = Pbindef(\praise, \ffreq, 800, \degree, Pif(
+			~pr = Pbindef(\pr, *~reset[\pr].asPairs);
+			~pr = Pbindef(\pr, \ffreq, 800, \degree, Pif(
 				count.even, Pseq([12, \r, \r, \r,
 						[9, 12], \r, \r, \r,
 					Pseq([\], 8)], inf),
@@ -680,19 +710,19 @@ s.waitForBoot({
 			);
 		}
 		{(count > 5) && (count <= 10)} {
-			~pr = Pbindef(\praise, \degree, Pseq([[0, 4, 7], [1, 3, 7], [4, 2, 5], [1, 3, 6]], inf) * Pwrand([1, count.reciprocal], [0.9, 0.1], inf), \dur, 3, \ampHz, count -4, \bpf, 120 + (count * 70));
+			~pr = Pbindef(\pr, \degree, Pseq([[0, 4, 7], [1, 3, 7], [4, 2, 5], [1, 3, 6]], inf) * Pwrand([1, count.reciprocal], [0.9, 0.1], inf), \dur, 3, \ampHz, count -4, \bpf, 120 + (count * 70));
 		}
 		{(count > 10) && (count <= 20)} {
-			~pr = Pbindef(\praise, \degree, Pseq([Pseq([-12, -10, -4, 0], 1), Pseq([[-12, -7], [-10, -10], [-4, -12], [0, 5]],1)], inf) * Pwrand([1, count.reciprocal], [0.9, 0.1], inf), \amp, 0.3,
-				\ampHz, count - 9,
-				\fRate, Pwrand([0.2, 4, 6], [0.8, 0.25, 0.05], inf),
-				\pulRate, Pkey(\fRate) / 4,
-				\dur, 2
-
+			~pr = Pbindef(\pr,
+			\degree, Pseq([[count]], inf),
+			\dur, 1,
+			\ampHz, 4,
+			\fRate, 8,
+			\pulRate, 2,
 			);
 		}
 		{(count > 20) && (count <= 30)} {
-			~pr = Pbindef(\praise,
+			~pr = Pbindef(\pr,
 				\degree, -12,
 				\ampHz, Pwhite(2, 8, inf),
 				\fRate, Pwrand([3, 18], [0.95, 0.05], inf),
@@ -705,7 +735,7 @@ s.waitForBoot({
 				\dur, t.tempo/4
 			);
 		}
-		{count > 30} {~pr = Pbindef(\praise,
+		{count > 30} {~pr = Pbindef(\pr,
 			\degree, Pwrand([-12, -24, 0], [0.75, 0.2, 0.05],inf),
 			\ampHz, 8,
 			\fRate, 12,
@@ -718,19 +748,20 @@ s.waitForBoot({
 			\dur, (count - 27).reciprocal
 		)}
 		{true} {"end of insinuation reached".postln;};
-		~addVolume.value(s_name, 0.1, 0.98);
+		~addVolume.value(\pr, 0.1, 0.98);
 		~pr.quant_(16);
 
 	};
+
 	~setRauschen = {
 		|count|
 		var c, dura, now;
 		postf("\nsetting rauschen with count %\t", count);
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		c = case
-		{(count > 1) && (count <= 10)}{Pbindef(\rausch, \ffreq, Pxrand([exprand(300, 666), 150], inf), \rq, Pxrand((0.05, 0.1 .. 2.0), inf), \rls, 0.3).trace;}
+		{(count > 5) && (count <= 10)}{Pbindef(\rausch, \ffreq, Pxrand([300, 666, 760], inf) , \rq, Pxrand((0.05, 0.1 .. 2.0), inf), \rls, 0.3).trace;}
 		{true} {"end of rauschen cases".postln};
-		~pr.quant_(4);
+		Pbindef(\rausch).quant_(4);
 	};
 
 	~allocateSynth = {
@@ -748,16 +779,13 @@ s.waitForBoot({
 	};
 
 	~setGlobal = {
-		|s_name|
 		var c;
-		postf("\nglobal settings  %\t ", s_name);
 		c = case
 		/*{~totalUtts >= 30} {Scale.choose}
 		{~totalUtts % 5 ==0} {Scale.choose}*/
-		{~totalUtts >=20} {~sharedValues[\transpose] = -3}
-		{~totalUtts >=15} {~sharedValues[\transpose] = 0}
-		{~totalUtts >=10} { ~startAllPatterns.()}
-		{~totalUtts >=5} {Pbindef(\rausch).play(t, quant:1); ~mic.set(\send, -8);}
+		{~totalUtts >=10} {~startAllPatterns.()}
+		{~totalUtts >=6} {~uttDict.keys.do({|k| k.postln; ~uttDict[k]= 0});  ~setRauschen.(~totalUtts)}
+		{~totalUtts >=5} {Pbindef(\rausch).play(t, quant:1); ~mic.set(\send, -20);}
 		{~totalUtts > 0 } {~mic.set(\send, (-35 + (~totalUtts * 6)));  }
 		{true} {"end of global settings".postln};
 
@@ -784,14 +812,15 @@ s.waitForBoot({
 */
 ///start////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //activate Mic
-~mic = Synth(\mic, [\amp, 0.75, \ffreq, 500, \outfx, ~fx3Bus, \send, -6]);
+~mic = Synth(\mic, [\amp, 0.75, \ffreq, 500, \outfx, ~fx3Bus, \send, -25]);
+~mic.set(\send, -30, \amp, 0.12, \outfx, ~fx1Bus, \ffreq, 400, \thr, 0.2);
 ~mic.free
 
 
 
 (
 // stop all patterns
-~categories.do({|cat| Pbindef(cat).stop})
+~catDict.do({|cat| Pbindef(cat).stop})
 )
 	OSCFunc.trace(true);
 
@@ -815,10 +844,8 @@ currentEnvironment
 // reset patterns and play the3
 ~patternDict.keys.do({|k| ~patternDict[k].postln; ~patternDict[k].clear});
 ~makePatterns.();
-
-
 ~con = ~patternDict[\con];
-~fmbass = Pbindef(\fmBass, *~reset[\fmBass].asPairs);
+~fmbass = ~patternDict[\fm];
 ~lec = ~patternDict[\lec];
 ~pr = ~patternDict[\pr];
 ~dis = ~patternDict[\dis];
@@ -830,23 +857,25 @@ Pbindef.all.do(_.stop);
 ~pr.quant_(4).play(t);
 ~dis.quant_(4).play(t);
 ~ins.quant_(4).play(t);
-//t.schedAbs(t.nextBar, {~continuousFadeOut.value(0.01, 0.01); 4;});
+t.schedAbs(t.nextBar, {~continuousFadeOut.value(0.01, 0.01); 4;});
 )
 (
+Pbindef.all.do(_.postln; "\n".postln);
 Pbindef.all.do(_.stop);
+Pbindef.all.do(_.clear);
 ~continuousFadeOut = {}
 )
 
 (
-~setDissent.value('dissent', 10);
-~setInsinuation.value('insinuation', 10);
-~setLecture.value('lecture', 9);
-~setConcession.value('concession', 11);
-~setPraise.value('praise', 7);
+~setDissent.value('dissent', 18);
+~setInsinuation.value('insinuation', 16);
+~setLecture.value('lecture', 17);
+~setConcession.value('concession', 20);
+~setPraise.value('praise', 16);
 )
 
-
-~sharedValues[\tempo] = t.tempo
+~synthDict[\fm]
+~sharedValues[\tempo] = 1
 ~sharedValues[\scale] = Scale.choose
 t.tempo = 1
 
@@ -864,28 +893,6 @@ t.schedAbs(t.nextBar, {{Blip.ar(500) * EnvGen.kr(Env.perc(0.01, 0.1),doneAction:
 // erklärung von TempoClock und Dur 1:08:00 https://www.youtube.com/watch?v=3o_MFZGQ1jw
 t.clear
 Synth(\rauschen, [\ffreq, 1500])
-~stopList.value(~synthDict[\dissent][\synth]);
-~sharedValues[\transpose] = 12
-
-(
-/*
-variablen liefern Arrays für Multichannel Expansion (akkorde)
-nicht verallgemeinbar, wenn gewünscht müssen diese Arrays - besonders die Synth parameter - manuell bestimmt werden
-*/
-var freq, minfreq, maxfreq, lag;
-
-freq = Array.exprand(8, 400, 600);
-minfreq = Array.exprand(8, 200, 500);
-maxfreq = Array.rand(8, 601, 800);
-lag = Array.rand(8, 0.3, 1.9);
 
 
-fork {
-    [\freq, freq, \minfreq, minfreq, \maxfreq, maxfreq, \amp, 0.2, \lag, \pulseMul, 0.1].flop.do { |args|
-        args.postln;
-		~disSynth.add(Synth(\dissent, args));
-		~disSynth.postln;
-        // 1.wait;
-    }
-};
-)
+
