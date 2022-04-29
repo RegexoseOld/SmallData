@@ -46,24 +46,6 @@ s.newBusAllocators; // Busse machen
 
 )};
 
-~fadeIn = {
-	|cat, step, max|
-	// das geht nicht. braucht ich globale variable fürs volume?
-	var vol = ~synthDict[cat][\vol];
-	vol.postln;
-	if (vol < max, {~synthDict[cat][\vol] = vol* step; vol = vol * step}, {~synthDict[cat][\vol] = max; vol = max});
-
-};
-
-~fadeOut = {
-	|cat, step, min|
-	// das geht nicht. braucht ich globale variable fürs volume?
-	var vol = ~synthDict[cat][\vol];
-	vol.postln;
-	if (vol > min, {~synthDict[cat][\vol] = vol* step; vol = vol * step}, {~synthDict[cat][\vol] = min; vol = min});
-
-};
-
 ~addVolume = {
 	|cat, add, max|
 	if (~synthDict[cat][\patternVol] < max, {~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + add}, {~synthDict[cat][\patternVol] = max};
