@@ -560,10 +560,10 @@ s.waitForBoot({
 			\dur, 1,
 			\pulseMul, 1,
 			\lag, 0.1,
-			\gendAmp, 1.8,
+			\gendAmp, 1.0,
 			\ffreq, 800,
 			\resoFreq, 1200,
-			\send, -6
+			\send, -12
 			);
 		}
 		{true} {"end of dissent reached".postln};
@@ -604,8 +604,9 @@ s.waitForBoot({
 			~ins = Pbindef(\ins, \ctranspose, 14, \dur, 2,
 				\degree, Pseq([[-5, 0], [0,5], [-5, 0], [-9,-5]], inf) -2,
 				\sus, 2, \c1, Pxrand([7, -7], inf),
-				\modWidth, Pxrand([0.3, 2.9], inf),
-				\fShift, 150 + ((count-20) * 80), \noiseFreq, 7.5
+				\modWidth, Pxrand([0.3, 2.4], inf),
+				\preamp, 0.22,
+				\fShift, 150 + ((count-20) * 80), \noiseFreq, 3.5
 			)
 		}
 
@@ -623,7 +624,7 @@ s.waitForBoot({
 		~lec = Pbindef(\lec, *~reset[\lec].asPairs);
 		~fmbass = Pbindef(\fm, *~reset[\fm].asPairs);
 		5.do({|i| Pbind(\instrument, \lecture,
-			\freq, [exprand(80, 90 + i), exprand(160, (160 + i))], \amp, 0.3, \filTime, 0.02, \rls, Pn(0.5, 1)).play});
+			\freq, [exprand(80, 90 + i), exprand(160, (160 + i))], \amp, 0.05, \filTime, 0.02, \rls, Pn(0.5, 1)).play});
 		c = case
 		{count ==1}	{
 			~lec = Pbindef(\lec, \dur, 1,
@@ -947,7 +948,7 @@ Pbindef.all.do(_.clear);
 ~allocateSynth.value('insinuation', ~uttDict['insinuation']);
 ~allocateSynth.value('lecture',~uttDict['lecture']);
 )
-~soloPattern.(\pr)
+~soloPattern.(\dis)
 
 ~synthDict[\fm]
 ~sharedValues[\tempo] = 1
