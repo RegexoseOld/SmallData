@@ -14,7 +14,7 @@ class Proxy(object):
         request.setHeader('Content-Type', 'application/json')
         body = json.loads(request.content.read())
         print('forwarding: ', body)
-        client.send_message(config('OSC_ROUTE'), ['praise'])
+        client.send_message(config('OSC_ROUTE'), body)
         return json.dumps({'success': True})
 
 
