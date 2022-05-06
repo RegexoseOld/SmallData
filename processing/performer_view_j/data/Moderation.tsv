@@ -1,31 +1,116 @@
-cat	utterance	type	link
-dissence	Nachrichten erzählen es fliesse Blut	lyrics	
-dissence	Kommentariat sei auf der Hut	lyrics	
-dissence	Noch so eine Zeile dann ist gut	lyrics	
-dissence	Aufgepeitscht zu werden macht uns Mut	lyrics	
-dissence	Gibt es einen Ort für meine Wut	lyrics	
-dissence	ja wir sitzen gern in eignem Sud	lyrics	
-insinuation	Hast du dich verwählt?	lyrics	
-insinuation	Stehst du nur im Weg?	lyrics	
-insinuation	Sag mir was dich gequält?	lyrics	
-insinuation	Bist du ausgewählt?	lyrics	
-insinuation	Hast dich gut erzählt?	lyrics	
-insinuation	Bei ner guten Tasse Tee	lyrics	
-concession	Im Meer zu schwimmen - Signale geben	lyrics	
-concession	Hervorzustechen - gefunden werden	lyrics	
-praise	Immer sagst du irgendwas	lyrics	
-praise	Und damit meinst du sicher dies und das	lyrics	
-praise	Komm und sag mir irgendwas	lyrics	
-praise	Und impliziere damit dies und das	lyrics	
-praise	Sicher war es nur aus Spass	lyrics	
-praise	Dass du mich abgrundtief beleidigt hast	lyrics	
-praise	Sag worauf ich achten soll	lyrics	
-praise	Damit ich dir genügend Achtung zoll	lyrics	
-lecture	Willst du es verstehen	lyrics	
-lecture	Musst du schon woanders stehen	lyrics	
-lecture	Hast du es gesehen	lyrics	
-lecture	Oder musst du woanders stehen?	lyrics	
-	Für viele Rapper gilt ein bisschen Zeit im Gefängnis als Ausweis der Street-Credibility. Nur in Spanien scheint die Sache anders zu liegen.	article	https://www.zeit.de/2021/09/pablo-hasel-spanien-gefaengnis-rap-texte
+title	utterance	type	link
+Dennis. Fabian. Philip. Sop ....	Dennis. Fabian. Philip. Sop. Benni und ich laden Euch jetzt ein, mit uns einen unbekannten neuen Raum zu betreten	moderation	
+Tatsächlich habt ihr mit dem KI Modul 	Tatsächlich habt ihr mit dem KI Modul eine wichtige Mechanik geliefert, damit es Räume wie diesen geben kann.	moderation	
+könnt ihr mal einen Testkommentar schreiben	Wenn ihr alle die App vor Euch habt, könnt ihr mal einen Testkommentar schreiben	moderation	
+hört ihr den Feedbackton	Habt Ihr gehört? Direkt nach dem Abschicken hört ihr den Feedbackton der erkannten Kategorie. Ausser der Satz wurde nicht erkannt, das ist für uns dann die Gaga Kategorie, die ignorierrt wirt	moderation	
+ob das Modul bei Euch einen Namen hatte?	Wir haben uns gefragt, ob das Modul bei Euch einen Namen hatte?	moderation	
+das  KI Modul heisst BERT	Wir denken, das  KI Modul heisst BERT, weil die Studenten auf Bert aus der Sesamstrasse verweisen wollen	article	
+BERT erkennt, was Kommentarier sagen wollen. 	BERT erkennt, was Kommentarier sagen wollen. 	article	
+BERTs technische Vorgehensweise	BERTs technische Vorgehensweise ist die, dass es die Wahrscheinlichkeiten von Wortkombinationen berechnet	article	
+Grundrauschen. Das ist der Beginn des Klangstücks	Jetzt hört ihr dieses Grundrauschen. Das ist der Beginn des Klangstücks	moderation	
+Die eingehenden Kommentare werden gezählt	Die eingehenden Kommentare werden gezählt und je nach erkannter Kategorie bestimmten musikalischen Funktionen zugeordnet	moderation	
+"neue ""Kommentarvorlage"""	"Hier kommt eine neue ""Kommentarvorlage"""	moderation	
+Mülheim an der Ruhr ist spannend und abwechslungsreich	Mülheim an der Ruhr ist spannend und abwechslungsreich und mit über 50 Prozent Grün- und Waldflächen ein attraktiver Wohnort zwischen Düsseldorf und dem Ruhrgebiet	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+Gibt es dazu Anmerkungen?	Die HRW präsentiert ihren Standort offensichtlich als lebenswert und attraktiv. Gibt es dazu Anmerkungen?	moderation	
+befindet ihr Euch in Beziehung zu den anderen Meinungen.	Wie ihr in dem Verlauf der App seht, befindet ihr Euch in Beziehung zu den anderen Meinungen.	moderation	
+ Klang spiegelt die Stimmung in Form dieser kleinen Melodien wider	 Und der Klang spiegelt die Stimmung in Form dieser kleinen Melodien wider. Übrigens ist jeder Klangerzeuger einer Kategorie zugeordnet	moderation	
+Die Stadt begeistert und reißt mit.	Vierzehn Kilometer Fluss. Die Stadt begeistert und reißt mit.	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+kurzweilige Stunden verbringen. 	In der Altstadt oder am Wasserbahnhof auf der Schleuseninsel lassen sich kurzweilige Stunden verbringen. 	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+"Die Kategorie ""praise"" klingt gerade so."	"Die Kategorie ""praise"" klingt gerade so. Wie klingt das für Euch?"	moderation	
+"Die Kategorie ""insinuation"" klingt gerade so."	"Die Kategorie ""insinuation"" klingt gerade so. Kommen Euch dazu Assoziationen? "	moderation	
+"Die Kategorie ""lecture"" ist heute der Bass."	"Die Kategorie ""lecture"" ist heute der Bass. Oder wie würde für Euch das spontan klingen"	moderation	
+"Die Kategorie ""dissent"" klingt gerade so. "	"Die Kategorie ""dissent"" klingt gerade so. Ist das ok so?"	moderation	
+"Die Kategorie ""concession"" macht einen Beat"	"Die Kategorie ""concession"" macht einen Beat. Hättet ihr das anders gedacht?"	moderation	
+Klangelemente gleichzeitig laufen, werden leiser	Insgesamt betrachtet ist es so, dass diese verschiedene Klangelemente gleichzeitig laufen, aber im Verlauf der Zeit immer leiser werden, wenn länger kein entsprechender Kommentar eingeht	moderation	
+am häufigsten eintreffenden Kategorie ist laut	Daraus folgt, die Stimmung favorisiert die am häufigsten eintreffenden Kategorie.	moderation	
+	Programmierer und Spieler haben eine innige Beziehung zur Pizza.	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	Kein anderes Fast Food ist so vielseitig und so unkompliziert.	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	Man kann sie mit allem Möglichen belegen und damit geschmacklich variieren. Mit Fleisch, mit ohne Fleisch. 	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	Könnt ihr hören, wie sich die Klangelemente mit jeder neuen Meinung ändern?	moderation	
+	"Manchmal passieren auch radikalere Änderungen, ungefähr in 10er Schritten. Allerdings nur in der entsprechenden Kategorie. Die Melodien für ""praise"" zB entwickeln sich dann weiter, die anderen bleiben, wo sie sind. Oder sie sind ganz leise."	moderation	
+	Findet Ihr das eine adäquate Übersetzung? Klingt das nachvollziehbar?	moderation	
+	Neben der Mülheimer Altstadt (u. a. Ronja und Mausefalle) und der Schlossstraße (mit u. a. Rick´s Café, Alex, Perfetto, Leonardo Cafe Mülheim) verfügt Mülheim mit der Sandstaße in der Nähe des S-Bahnhof Mülheim West über eine kleine Partymeile.	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+	Zwischen den Hausnummern 154 und 162 gibt es für jede/n etwas.	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+	Ballermann 6 (www.ballermann6.de)	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+	The inner Circle (www.tic-club.de)	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+	Luck in a Cup (www.luckinacup.com/mulheim	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+	Franky's am Güterbahnhof (www.frankys.tv)	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+	Laserball (www.laserball.de)	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+	Darüber hinaus locken dirket an der Ruhr die urige Kneipe Die Tomate (http://www.tomate-muelheim.de) und Franky's Bar im Ruhrkristall (www.frankys-bar.de)	article	https://www.hochschule-ruhr-west.de/studium-lehre/leben-an-der-hrw/freizeit/
+			
+			
+			
+	Der MüGa-Park, 1992 zur Landesgartenschau gestaltet, bietet Attraktionen für die ganze Familie	article	
+	Ob allein, mit Freunden oder mit Kindern: Tage in der MüGa sind ausgefüllte und erlebnisreiche Tage	article	
+	Natürlich gibt es auf einer Fläche von 65 Hektar auch ruhige Flecken, an denen man sich entspannen und die Landschaft, die Gartenanlagen oder die Kunstobjekte genießen kann.	article	
+	Ein Highlight hier in der MüGa ist die weltweit größte begehbare Kamera der Welt- die Camera Obscura.	article	
+	Zahlreiche Veranstaltungen verleihen Sommerabenden und Wochenenden zusätzliches Flair.	article	
+	Der Eintritt in Mülheims Parkanlagen ist frei; nur für einzelne Attraktionen und für Großveranstaltungen wird ein gesondertes Entgelt erhoben.   	article	
+	Software und IT Kompetenzen	article	
+	Die Beherrschung gängiger Büro-Software ist Voraussetzung für Lernen, Studieren und erst recht im Arbeitsleben - ohne sie geht nichts.	article	
+	Unsere Kurse bieten Ihnen die Möglichkeit noch vorhandene Lücken zu schließen oder auch komplexere Funktionen zu beherrschen!	article	
+	Schliesse deine Wissenslücken bei Microsoft Word 	article	
+	Beherrsche komplexere Funktionen von Excel	article	
+	Lerne die attraktivesten PowerPoint Tricks 	article	
+	Werde fit in Citavi	article	
+	Endlich Office auf Mac und Tablet benutzen	article	
+		article	
+	Sie ist leicht zu teilen. Besteck ist nicht nötig.	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	Man kann sie mit einer Hand essen (und mit der anderen tippen). 	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	Sie schmeckt auch noch am nächsten Tag. 	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	Man kann sie einfrieren und in der Mikrowelle wieder aufwärmen. 	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	Man kann sie einfrieren und in der Mikrowelle wieder aufwärmen. 	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	Kein Wunder, dass das bekannteste Symbol aus dem Reich der Spiele ein Pizza-Stück ist: Pac-Man. 	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	Der Legende nach kommt Toru Iwatani die Idee, als er in einem Restaurant auf eine Pizza starrt, der ein Stück fehlt. 	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	Zugleich erinnert der Kreis an das japanische Zeichen für Mund.	article	https://www.heise.de/hintergrund/Pizza-in-Videospielen-Will-Code-for-Pizza-6663401.html
+	In keinem Land der Welt ist Esports so bedeutend wie in Südkorea, nirgendwo bekam Gaming als sportliches Live-Event schon so früh so große Aufmerksamkeit. 	article	https://www.spiegel.de/sport/esports-in-suedkorea-gaming-sehnsuchtsort-seoul-podcast-a-a59076c0-46b3-4006-81ba-90bfe623d6ea
+	Nach wie vor gilt Seoul unter Gamern als der Ort, den man einmal besucht haben muss, wenn man es mit dem Esport ernst meint.	article	https://www.spiegel.de/sport/esports-in-suedkorea-gaming-sehnsuchtsort-seoul-podcast-a-a59076c0-46b3-4006-81ba-90bfe623d6ea
+	Man muss die PC Bangs gesehen haben, wo sich in endlosen Reihen Rechner an Rechner reiht. Denn dort hat alles begonnen.	article	https://www.spiegel.de/sport/esports-in-suedkorea-gaming-sehnsuchtsort-seoul-podcast-a-a59076c0-46b3-4006-81ba-90bfe623d6ea
+	»Starcraft« sorgte im Land für einen Esports-Boom. Weil nicht nur Millionen es selbst spielten, sondern sich TV-Sender Anfang der 2000er entschieden, die Wettbewerbe der besten Spieler auszustrahlen.	article	https://www.spiegel.de/sport/esports-in-suedkorea-gaming-sehnsuchtsort-seoul-podcast-a-a59076c0-46b3-4006-81ba-90bfe623d6ea
+	Die Spieler wurden zu Stars, der »League of Legends«-Profi Lee »Faker« Sang-hyeok zählt heute zu den populärsten Sportlern des Landes.	article	https://www.spiegel.de/sport/esports-in-suedkorea-gaming-sehnsuchtsort-seoul-podcast-a-a59076c0-46b3-4006-81ba-90bfe623d6ea
+	In den PC Bangs treffen sich vor allem männliche Koreaner, um miteinander Titel wie »League of Legends«, »Overwatch« oder »Fifa Online« zu spielen.	article	https://www.spiegel.de/sport/esports-in-suedkorea-gaming-sehnsuchtsort-seoul-podcast-a-a59076c0-46b3-4006-81ba-90bfe623d6ea
+	Hier kann man für wenig Geld stundenlang zocken, das Essen wird am Rechner bestellt und an den Platz geliefert. 	article	https://www.spiegel.de/sport/esports-in-suedkorea-gaming-sehnsuchtsort-seoul-podcast-a-a59076c0-46b3-4006-81ba-90bfe623d6ea
+	Viele kommen täglich hierher, um an ihrem Traum von einem Leben als Esports-Profi zu arbeiten.	article	https://www.spiegel.de/sport/esports-in-suedkorea-gaming-sehnsuchtsort-seoul-podcast-a-a59076c0-46b3-4006-81ba-90bfe623d6ea
+	Geredet wird schon lange darüber: Wie groß ist die psychische Belastung in der Esports-Szene? 	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Lukas »gla1ve« Rossander und Andreas »Xyp9x« Højsleth waren mit dem Team Astralis von Titel zu Titel gerast, jetzt traten beide auf die Notbremse.	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Erst Monate später waren beide wieder in der Lage, in das Team zurückzukehren. 	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Es sind keine Einzelfälle – und andere schaffen den Weg zurück nicht.	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Ihr Beruf verlangt professionellen Esportlerinnen und Esportlern eine Menge ab. 	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	In Wettkampf und Training vollbringen sie über viele Stunden kognitive und mentale Höchstleistungen.	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Dabei sitzen sie viel und bewegen sich oft zu wenig.	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Auch neben der Bühne kann der Stress enorm werden. Bereits in jungen Jahren ziehen die Talente in Gaminghäuser mit viel Training und teils wenig Privatsphäre.	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Sie müssen hart arbeiten, denn der Konkurrenzdruck ist enorm. 	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Nicht viele Spieler können vom Esport leben und täglich drängen neue Talente auf die raren Plätze in den Profiteams. 	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Es ist ein ständiger Kampf, damit die hart erarbeitete Karriere kein frühes Ende nimmt.	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Viele professionelle Organisationen haben das Problem der mentalen Belastung schon länger erkannt.	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Sie haben für ihre Profis ein Umfeld geschaffen, in dem diese professionelle Hilfe in verschiedenen Lebensbereichen bekommen. 	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	Ganze Mitarbeiterstäbe kümmern sich um Themen wie Ernährung, Schlaf, Bewegung und die psychische Betreuung.	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+	 Aber so ein Angebot ist teuer und längst nicht alle Teams können sich so viele und so qualifizierte Mitarbeiter leisten.	article	https://www.spiegel.de/sport/esport-und-burn-out-psychischer-druck-im-profi-gaming-podcast-a-08115a5a-ee60-4cdd-9caf-fd913cad539c
+			
+	HRW goes COIL - so funktioniert kollaboratives Lernen	article	
+	Heute sprechen wir mal übers Lernen. Und das kann richtig spannend sein, wenn es kollaborativ und virtuell passiert und sogar über Ländergrenzen hinweg geht	article	
+	Hier an der HRW lernen Student*innen. kollaborativ zu arbeiten	article	
+	Sie lernen auch, konfliktfähig zu sein, die Ideen anderer zuzulassen und damit zu neuen Ideen zu kommen	article	
+	Das Student Digital Office ist eine Gruppe von Studierenden, die uns hier an der HRW dabei berät, wie wir die Digitalisierung im Sinne der Studierenden gestalten können	article	
+	Wir haben das eingerichtet und freuen uns, wenn wir Student*innen finden, die uns helfen, ihre Perspektive auf die Digitalisierung mit zu transportieren	article	
+	Dafür gibt es ein kleines Büro, es gibt auch ein bißchen Ausstattung, die man braucht, um diese Aufgabe zu übernehmen	article	
+	Wenn Sie Lust haben, uns für ein oder zwei Semester hierbei zu unterstützen, melden Sie sich gerne beim e-Learning Team	article	
+	Wir sind jetzt hier das Kommentariat	moderation	
+	Das ist das Hintergrundrauschen, dh hier sieht man alle Kommentare, die in diesem Projekt schon gesagt und registriert wurden	moderation	
+	und hier unten sieht man den gerade aktuellen Kommentar	moderation	
+	Jetzt kommentiere ich mal was	moderation	
+	jetzt kommentiert Benni was	moderation	
+	Also wenn man kommentiert, gibts ein Feedback. Eure Meinung interessiert uns!	moderation	
+	Das heisst wir kommentieren	moderation	
+	Lass mich etwas kommentieren	moderation	
+	Was macht unser Austausch? Wo stehen wir?	moderation	
+	Wir sind jetzt im Teil für Ablehung / Dissence	moderation	
+	Wir sind jetzt im Teil für Lob / Praise	moderation	
+	Wir sind jetzt im Teil für Unterstellung / Insinuation	moderation	
+	Wir sind jetzt im Teil für Belehrung / Lecture	moderation	
+	Wir sind jetzt im Teil für Zugeständnis / Concession	moderation	
+	Gefällt Dir dieser Part ?	moderation	
+			
 	Seit der katalanische Rapper Pablo Hasél am Dienstag letzter Woche in seiner Heimatstadt Lleida verhaftet wurde, kommt es jede Nacht quer durchs Land zu Solidaritätskundgebungen.	article	https://www.zeit.de/2021/09/pablo-hasel-spanien-gefaengnis-rap-texte
 	In Barcelona versammelten sich am Wochenende 6000 Menschen, um seine Freilassung zu fordern.	article	https://www.zeit.de/2021/09/pablo-hasel-spanien-gefaengnis-rap-texte
 	aber auch die Abschaffung eines Gesetzes aus dem Jahr 2015, das die Verherrlichung von Terrorgruppen und die Beleidigung der Monarchie unter Strafe stellt.	article	https://www.zeit.de/2021/09/pablo-hasel-spanien-gefaengnis-rap-texte
@@ -45,42 +130,3 @@ lecture	Oder musst du woanders stehen?	lyrics
 	"Ich respektiere jeden, der mehr als ein Schwein getötet hat, hieß es darin in wiederum von Ulrike Meinhof geprägter Diktion (""wir sagen, natürlich, die Bullen sind Schweine ... und natürlich kann geschossen werden"")."	article	https://www.zeit.de/2021/09/pablo-hasel-spanien-gefaengnis-rap-texte
 	"Der große Satan USA tritt hier auf als Hauptschuldiger an aller Unbill der Welt, neben – natürlich – dem ""zionistischen Teufel"", der ""die Mehrheit der multinationalen Unternehmen in Hollywood kontrolliert"" und ""fast jedes Land an seinen Arsch geklebt hat"", wie es in einem Tweet von Hasél aus dem Jahr 2012 heißt."	article	https://www.zeit.de/2021/09/pablo-hasel-spanien-gefaengnis-rap-texte
 	200 spanische Künstler und Intellektuelle, darunter Pedro Almodóvar und Javier Bardem, haben einen Aufruf unterschrieben, in dem das Urteil gegen ihn als unerträglicher Eingriff in die Meinungsfreiheit kritisiert wird	article	https://www.zeit.de/2021/09/pablo-hasel-spanien-gefaengnis-rap-texte
-	 Wenn wir zulassen, dass Pablo verhaftet wird, kann es morgen jeden von uns treffen.	article	https://www.zeit.de/2021/09/pablo-hasel-spanien-gefaengnis-rap-texte
-			
-	Mitmachkunst: Raum für Kreativität		
-	Kunstprojekte stärken Selbstbewusstsein und Identifikation mit dem Umfeld		
-	Mitmachen schafft Identifikation: Diese Beobachtung steht im Zentrum aller Mitmachkunst-Angebote der GAG Immobilien AG.		
-	Mitmachkunst, das sind ausdrucksvolle, meist farbenfrohe Gemeinschaftswerke.		
-	Viele von ihnen haben Kinder und Jugendliche aus den GAG-Siedlungen unter professioneller Anleitung von Künstlern und Kunstpädagogen erschaffen		
-	Bei einigen Projekten, etwa Arbeiten mit Keramik, konnten auch Erwachsene sich einbringen.		
-	Die Projekte entfalten ihre positive Wirkung auf vielen Ebenen.		
-	Zum einen zeigen die Quartiere mit Elementen wie bunten Toreinfahrten oder Graffitikunst auf Stromhäuschen oder Müllboxen ihren familienfreundlichen Charakter noch deutlicher.		
-	Zum anderen sind die Kunstprojekte, die in der Regel während der Ferien stattfinden, eine schöne Abwechslung im Alltag der Kinder – schließlich sind spannende Reisen längst nicht für alle Familien eine Selbstverständlichkeit. 		
-	Die Arbeit mit professionellen Künstlern stärkt zudem das Selbstbewusstsein der jungen Teilnehmer, denn sie fühlen sich und ihr Werk ernst genommen.		
-	Kreativität und gute Ideen entwickeln sich, wo ihnen Raum geboten wird.		
-	So fördert die GAG als Kölns größte Vermieterin durch die Mitmachkunst auch die persönliche Entwicklung junger Kölnerinnen und Kölner		
-	Zu guter Letzt stärken die Projekte die Bindung der Jungen und Mädchen an ihre Umgebung.		
-	Wer mitgestaltet hat, wohnt in seinem Zuhause noch lieber – und geht auch pfleglicher damit um.		
-	Das strahlt auch auf das Umfeld ab: Vor den künstlerischen Arbeiten der eigenen Geschwister, Freunde oder Kinder hat man Respekt.		
-	Oft wird mit Graffiti gearbeitet. So haben die jungen Leute Gelegenheit, mit einer Technik zu hantieren, die für viele von ihnen ohnehin eine hohe Faszination hat.		
-	Indem sie das auf zur Verfügung gestellten Flächen mit Erlaubnis tun dürfen, sinkt der Reiz des Verbotenen – und andere Flächen bleiben so unberührt, wie sie sein sollen.		
-			
-			
-			
-			
-	Wir sind das Kommentariat	moderation	
-	Wir sind jetzt hier das Kommentariat	moderation	
-	Das ist das Hintergrundrauschen, dh hier sieht man alle Kommentare, die in diesem Projekt schon gesagt und registriert wurden	moderation	
-	und hier unten sieht man den gerade aktuellen Kommentar	moderation	
-	Jetzt kommentiere ich mal was	moderation	
-	jetzt kommentiert Benni was	moderation	
-	Also wenn man kommentiert, gibts ein Feedback. Eure Meinung interessiert uns!	moderation	
-	Das heisst wir kommentieren	moderation	
-	Lass mich etwas kommentieren	moderation	
-	Was macht unser Austausch? Wo stehen wir?	moderation	
-	Wir sind jetzt im Teil für Ablehung / Dissence	moderation	
-	Wir sind jetzt im Teil für Lob / Praise	moderation	
-	Wir sind jetzt im Teil für Unterstellung / Insinuation	moderation	
-	Wir sind jetzt im Teil für Belehrung / Lecture	moderation	
-	Wir sind jetzt im Teil für Zugeständnis / Concession	moderation	
-	Gefällt Dir dieser Part ?	moderation	
