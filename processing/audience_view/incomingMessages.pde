@@ -1,9 +1,11 @@
 void oscEvent(OscMessage m) {
   if (m.checkAddrPattern("/display_input") == true) {
-    // println("\tINCOMING :" + m.arguments()[0]);
-    oscTextIn = parseJSONObject((String) m.arguments()[0]);
-    incomingText = oscTextIn.getString("text");
-    incomingCat = oscTextIn.getString("cat");
+    println("\tINCOMING :" + m.arguments());
+    //oscTextIn = parseJSONObject((String) m.arguments()[0]);
+    incomingText = (String) m.arguments()[0];
+    incomingCat = (String) m.arguments()[1];
+    
+    println("Incomming: " + incomingText + ", " + incomingCat);
     
     JSONObject kin = oscTextIn.getJSONObject("kin");
     String kinText = kin.getString("text");
