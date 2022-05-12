@@ -11,3 +11,4 @@ pandas
 sklearn
 python-osc
 pyttsx3
+klein==21.8.0
