@@ -26,7 +26,7 @@ Server.default.options.numInputBusChannels_(2);
 s.options.sampleRate;
 s.options.sampleRate = 48000;
 Server.default.options.inDevice_("Fireface 400 (BEF)");
-//Server.default.options.outDevice_("SoundFlower (2ch)");
+//Server.default.options.outDevice_("SoundFlower (64ch)");
 Server.default.options.outDevice_("Gerät mit mehreren Ausgäng");
 Server.default.options.outDevice.postln;
 // Server.default.options.outDevice.postln;
@@ -54,7 +54,7 @@ s.newBusAllocators; // Busse machen
 
 ~addVolume = {
 	|cat, add, max|
-	if (~synthDict[cat][\patternVol] <= 1.0, {~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + add}, {~synthDict[cat][\patternVol] = max};
+	if (~synthDict[cat][\patternVol] <= max, {~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + add}, {~synthDict[cat][\patternVol] = max};
 		postf("new vol of %  is % \n", cat, (~synthDict[cat][\patternVol]) );
 	)
 };
@@ -111,9 +111,9 @@ s.waitForBoot({
 		gend = BPF.ar(Gendy1.ar(\ampDist.kr(1), \durDist.kr(1), 1.0, 1.0, \minfreq.kr(100), \maxfreq.kr(1000), 0.8, 0.05, 5), \ffreq.kr(300), \rq.kr(0.9)) * \gendAmp.kr(0.3);
 		sig = LFPulse.ar(\freq.kr(100).varlag(\lag.kr(0.3), \lagcrv.kr(5.0)), 0.0, \width.kr(0.4),\pulseMul.kr(0.15)) ;
 		sig = RLPF.ar(sig, \resoFreq.kr(900) ) + gend;
-		sig = Pan2.ar(sig * env * (\amp.kr(0.3) * mod), \pan.kr(0.0));
+		sig = Pan2.ar(sig * env * (\amp.kr(0.1) * mod), \pan.kr(0.0));
 		Out.ar(\out.ir(~out), sig);
-		Out.ar(\outfx.ir(~fx1Bus), sig * \send.ir(-30).dbamp);
+		Out.ar(\outfx.kr(~fx1Bus), sig * \send.ir(-30).dbamp);
 	}).add;
 
 
@@ -123,11 +123,11 @@ s.waitForBoot({
 		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(0.8), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
 		mod = SinOsc.kr(\modRate.kr(1.2));
 		detune = {ExpRand(\det1.kr(0.99), \det2.kr(1.01))}!4;
-		sig = VarSaw.ar(\freq.kr(100)!4 * detune, 0, LFTri.kr(\filTime.kr(0.3)).range(1));
+		sig = VarSaw.ar(\freq.kr(100)!4 * detune, 0, LFTri.kr(\filTime.kr(0.3)));
 		sig = (sig * \distort.kr(1.5)).tanh;
 		sig = sig * env * mod;
 		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(3));
-		sig = Splay.ar(sig * \amp.kr(0.15) * \fade.kr(1));
+		sig = Splay.ar(sig * \amp.kr(0.04) * \fade.kr(1));
 		Out.ar(~out, sig);
 		Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
 	}).add;
@@ -138,7 +138,7 @@ s.waitForBoot({
 		env = EnvGen.kr(Env.perc(\atk.kr(0.04), \rls.kr(0.2),  \crv.kr(-4.0)), 1, doneAction:2);
 		mod = SinOsc.ar(\freq.kr(100)/5,  mul: \modAmp.kr(20));
 		car = SinOsc.ar(\freq.kr(100));
-		sig = (car + mod) * env * \amp.kr(0.15);
+		sig = (car + mod) * env * \amp.kr(0.1);
 		sig = (sig * \distort.kr(1.5)).tanh;
 		sig = sig * \fade.kr(1);
 		sig = Splay.ar(sig);
@@ -151,7 +151,7 @@ s.waitForBoot({
 		var  sig, env, lagfrq;
 		env = EnvGen.kr(Env([0,1,1,0], [\atk.kr(0.05), \sus.kr(0.05), \rls.kr(0.4)], [\c1.kr(-2.0), \c2.kr(1), \c3.kr(-4)]), gate, doneAction: 2);
 		lagfrq = Lag.kr(\freq.kr(220), \slideTime.kr(0.6));
-		sig = PMOsc.ar(lagfrq, LFNoise2.ar(\noisFreq.kr(0.1), \maxF.kr(600)), SinOsc.ar(\ffreq.kr(3.0)), pmindex:\modWidth.kr(0.15), mul:\preamp.kr(0.2)) * \amp.kr(0.4)
+		sig = PMOsc.ar(lagfrq, LFNoise2.ar(\noisFreq.kr(0.1), \maxF.kr(600)), SinOsc.ar(\ffreq.kr(3.0)), pmindex:\modWidth.kr(0.15), mul:\preamp.kr(0.2)) * \amp.kr(0.2)
 		* env ;
 		sig = FreqShift.ar(sig, \fShift.kr(100))!2;
 		Out.ar(~out, sig * \fade.kr(1));
@@ -168,7 +168,7 @@ s.waitForBoot({
 		shift = FreqShift.ar(sig, LFNoise0.kr(\fShift.kr(0.45), 1000), 0, 1 );
 		sig = XFade2.ar(sig, shift, \mix.kr(0.0));
 		sig = BPF.ar(sig, \bpf.kr(440), \rq.kr(1.0));
-		sig = sig * env * \amp.kr(0.5);
+		sig = sig * env * \amp.kr(0.2);
 		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(5));
 		sig = Pan2.ar(sig, \pan.kr(0));
 		Out.ar(\out.kr(~out), sig) ;
@@ -187,7 +187,7 @@ s.waitForBoot({
 			freq1 = freq1 * LFPulse.kr(\pulRate.kr(0.2));
 			sig1 = RHPF.ar(Pulse.ar(freq1, \width.kr(0.2)), \ffreq.kr(300),  \rq.kr(1.0)) * amp1 * env1 ;
 			sig1 = BPF.ar(sig1, \bpf.kr(120));
-		}!2 * \amp.kr(0.3);
+		}!2 * \amp.kr(0.1);
 		Out.ar(~out, channels);
 		Out.ar(\outfx.kr(~fx1Bus), channels * \send.kr(-30).dbamp);
 	}).add;
@@ -195,7 +195,7 @@ s.waitForBoot({
 	SynthDef(\mic, {
 		var sig, verb;
 		sig = SoundIn.ar(1) * \amp.kr(0.3);
-		sig = LPF.ar(sig, \ffreq.kr(200));
+		sig = LPF.ar(sig, \ffreq.kr(1200));
 		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(5));
 		Out.ar(~out, sig!2);
 		Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-40).dbamp);
@@ -566,8 +566,8 @@ s.waitForBoot({
 			\send, -12
 			);
 		}
-		{true} {"end of dissent reached".postln};
-		~addVolume.value(\dis, 0.2, 1.0);
+		{true} {~dis = ~patternDict[\dis]; "end of dissent reached".postln};
+		~addVolume.value(\dis, 0.2, 0.65);
 		~dis.quant_(4);
 
 	};
@@ -610,8 +610,8 @@ s.waitForBoot({
 			)
 		}
 
-		{true} {"end of insinuation reached".postln};
-		~addVolume.value(\ins, 0.1, 0.98);
+		{true} {~ins = ~patternDict[\ins]; "end of insinuation reached".postln};
+		~addVolume.value(\ins, 0.1, 0.65);
 		~ins.quant_(4);
 
 	};
@@ -642,9 +642,9 @@ s.waitForBoot({
 		{(count > 5) && (count <= 10)} {
 			~lec = Pbindef(\lec,
 				\dur, 1,
-				\degree, Pseq([0, -6, -5, -7], inf), \filTime, 0.3 + ((count -5) * 0.09),
-				\fade, 0.5 - (count * 0.02), \distort, 3.0, \filTime, 0.69);
-			~fmbass = Pbindef(\fm, \dur, 1, \degree, Pseq([0, -6, -5, -7], inf), \fade, (count-5) * 0.07 , \atk, (count-4).reciprocal);
+				\degree, Pseq([0, -6, -5, -7], inf),
+				\fade, 0.4 - (count * 0.02), \distort, 1.4, \filTime, 0.6 -((count -5) * 0.05));
+			~fmbass = Pbindef(\fm, \dur, 1, \degree, Pseq([0, -6, -5, -7], inf), \fade, (count-5) * 0.05 , \atk, (count-4).reciprocal);
 		}
 		{(count > 10) && (count <= 12)} {
 			~lec = Pbindef(\lec, \fade, 0);
@@ -685,9 +685,9 @@ s.waitForBoot({
 			);
 
 		}
-		{true} {"end of lecture reached".postln;};
-		~addVolume.value(\lec, 0.1, 1.0);
-		~addVolume.value(\fm, 0.1, 1.0);
+		{true} {~fmbass = ~patternDict[\fm]; ~lec = ~patternDict[\lec]; "end of lecture reached".postln;};
+		~addVolume.value(\lec, 0.1, 0.65);
+		~addVolume.value(\fm, 0.1, 0.65);
 		~lec.quant_(4);
 		~fmbass.quant_(4);
 	};
@@ -698,7 +698,7 @@ s.waitForBoot({
 		var c, dura, amp, bufs, pat;
 		postf("\nsetting %\t with count %\n", s_name, count);
 		dura = Env.new([1,0], [count], [-2]).asPseg;
-		Pbind(\instrument, \concession, \buf, Pxrand(~buffers[\tonal], 10), \dur, 0.1, \fShift, 0.1,  \amp, 0.25).play(t);
+		Pbind(\instrument, \concession, \buf, Pxrand(~buffers[\tonal], 10), \dur, 0.1, \fShift, 0.1,  \amp, 0.14).play(t);
 		c = case
 		{count ==1}{
 			~percArray.put(6, ~buffers[\himid][2]);
@@ -754,14 +754,15 @@ s.waitForBoot({
 				{~percArray2.do({|n, i| if (n == ~buffers[\dry][4], {~percArray2[i] = ~buffers[\tonal].choose})})});
 
 			~con = Pbindef(\con, \dur, 1/4, \buf, Pif(count <=25, pat, Pseq(~percArray2, inf), ~buffers[\dry][4]), \send, -30, \rate, 1.0, \rls, 4, \sus, Pkey(\rls), \bpf, 800, \rq, 2.0, \fShift, 0.01, \mix, -0.9, \thr, 0.25, \outfx, ~fx3Bus, \send, -35 + ((count -20) * 3))}
-		{true}{"end of setconcession reached".postln};
-		~addVolume.value(\con, 0.1, 1.0);
+		{true}{	~con = ~patternDict[\con]; "end of setconcession reached".postln};
+		~addVolume.value(\con, 0.1, 0.65);
 		~con.quant_(4);
 	};
 
 	~setPraise = {
 		|s_name, count|
 		var c, pat, dura;
+
 		postf("\nsetting %\t with count %\n", s_name, count);
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		5.do({|i|
@@ -771,12 +772,13 @@ s.waitForBoot({
 		{(count > 0) && (count <= 5)} {
 			~pr = Pbindef(\pr, *~reset[\pr].asPairs);
 			~pr = Pbindef(\pr, \ffreq, 800, \degree, Pif(
-				count.even, Pseq([12, \r, \r, \r,
+				count.even, Pseq([[0, 12], \r, \r, \r,
 						[9, 12], \r, \r, \r,
-					Pseq([\], 8)], inf),
+					Pseq([\], [-4, 8])], inf),
 				Pseq([[12, 9 ,4], \r, \r, \r,
 						[9, 12], \r, \r, \r,
-					[12, 4, 10], \r, \r, \r], inf))
+					[12, 4, 10], \r, \r, \r], inf)),
+			\ampScale, 0.75 + (count * 0.15)
 			);
 		}
 		{(count > 5) && (count <= 10)} {
@@ -809,8 +811,8 @@ s.waitForBoot({
 				\rq, Pif(count.even, 0.2, 0.8, 1)
 			);
 		}
-		{true} {"end of insinuation reached".postln;};
-		~addVolume.value(\pr, 0.1, 0.98);
+		{true} {~pr = ~patternDict[\pr];"end of insinuation reached".postln;};
+		~addVolume.value(\pr, 0.1, 0.65);
 		~pr.quant_(4);
 
 	};
@@ -858,6 +860,7 @@ s.waitForBoot({
 	};
 
 	s.sync;
+	Pbindef.all.do(_.stop);
 	//Server.default.options.outDevice.postln;
 	"done".postln;
 
@@ -879,7 +882,7 @@ s.waitForBoot({
 */
 ///start////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //activate Mic
-~mic = Synth(\mic, [\amp, 0.75, \ffreq, 500, \outfx, ~fx3Bus, \send, -25]);
+~mic = Synth(\mic, [\amp, 0.75, \ffreq, 1500, \outfx, ~fx3Bus, \send, -25]);
 ~mic.set(\send, -10, \amp, 0.22, \outfx, ~fx2Bus, \ffreq, 1500, \thr, 0.2);
 ~mic.free
 
@@ -937,9 +940,9 @@ Pbindef.all.do(_.clear);
 (
 ~setDissent.value('dissent', 21);
 ~setInsinuation.value('insinuation', 28);
-~setLecture.value('lecture', 26);
+~setLecture.value('lecture', 6);
 ~setConcession.value('concession', 24);
-~setPraise.value('praise', 26);
+~setPraise.value('praise', 2);
 )
 (
 ~allocateSynth.value('praise', ~uttDict['praise']);
