@@ -3,7 +3,8 @@ from decouple import config
 from klein import Klein
 from pythonosc.udp_client import SimpleUDPClient
 
-client = SimpleUDPClient(config('OSC_IP'), int(config('OSC_PORT')))
+collider_client = SimpleUDPClient(config('COLLIDER_IP'), int(config('COLLIDER_PORT')))
+visuals_client = SimpleUDPClient(config('VISUALS_IP'), int(config('VISUALS_PORT')))
 
 
 class Proxy(object):
@@ -14,7 +15,8 @@ class Proxy(object):
         request.setHeader('Content-Type', 'application/json')
         body = json.loads(request.content.read())
         print('forwarding: ', body)
-        client.send_message(config('OSC_ROUTE'), body)
+        collider_client.send_message(config('COLLIDER_ROUTE'), body)
+        visuals_client.send_message(config('VISUALS_ROUTE'), body)
         return json.dumps({'success': True})
 
 
