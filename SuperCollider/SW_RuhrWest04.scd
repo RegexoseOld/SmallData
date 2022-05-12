@@ -283,21 +283,16 @@ s.waitForBoot({
 			postf("\nnew cat: %", msg[1]);
 			postf("\nnew count: %\n", msg[2]);
 			~updateUtts.(msg[1]);
-			~totalUtts = ~totalUtts + 1;
+			//~totalUtts = ~totalUtts + 1;
 			postf("\n~uttDict changed %\n", ~uttDict);
 
 			~allocateSynth.value(~cat, ~uttDict[~cat]);
-			~setGlobal.value();
+			//~setGlobal.value();
 
 		},
 		'/interpreter_input'
 	);
 
-
-	// CmdPeriod.add(s.freeAll);
-	// https://composerprogrammer.com/teaching/supercollider/sctutorial/Technicalities/05%20Clocks%20and%20Scheduling.html
-	// send beat
-	// t.schedAbs(t.nextTimeOnGrid, { m.sendMsg("/beat", (t.elapsedBeats.floor % 8).asInteger + 120); 1});
 
 	~reset = (
 		dis: (
