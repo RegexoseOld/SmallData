@@ -237,7 +237,8 @@ s.waitForBoot({
 	}).add;
 
 	~buffers= Dictionary.new;
-	~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";
+	/*~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";*/
+	~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
 	PathName(~path).entries.do({
 		arg subfolder;
 		~buffers.add(
