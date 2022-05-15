@@ -44,15 +44,18 @@ class Area {
   ArrayList<PVector> areaPos;
   PShape reset;
   RShape rS, screen, firstLine, secondLine;
+  RShape nameShape;
   RPoint sC, centerOfArea, horizontal, txt, frst, scnd;
-  RPoint[] points, handles;
+  RPoint[] points, handles, namePoints;
+  RFont nameFont;
   String name; 
   color col; 
+  float[] radi, nameAngles;
   float areaAngle, firstAngle, secondAngle, radius, progressAngle, textAngle;
   int transX, transY, resetCol;
 
   Area(String name, float angle, RShape screen) {
-    this.name = name;
+    this.name = translatedCats.getString(name);
     this.areaAngle = angle;
     this.screen = screen;
     this.sC = new RPoint(width/2, height/2);
@@ -69,6 +72,7 @@ class Area {
     makeAngles();
     resetShape();
     createAreaPositions();
+    makeNameShape();
   }
 
   RShape createRShape() {
@@ -94,6 +98,24 @@ class Area {
     return diff;
   }
 
+  void makeNameShape() {
+    nameFont = new RFont("Courier New Bold.ttf", 70, RFont.CENTER);
+    this.nameShape = nameFont.toShape(this.name) ;
+    this.namePoints = this.nameShape.getPoints();
+    shapePositions();
+    //println("name   " + this.name + "   points   " + namePoints.length);
+  }
+  
+  void shapePositions(){
+    this.nameAngles = new float[this.namePoints.length];
+    this.radi = new float[this.namePoints.length];
+    for (int i=0; i<this.namePoints.length; i++){
+      this.nameAngles[i] = this.namePoints[i].angle(this.centerOfArea);
+      this.radi[i] = this.namePoints[i].dist(this.centerOfArea);
+    }
+    
+  }
+  
   void makeAngles() {
     // hier wird für die Fläche der Area der erste und der letzte Winkel definiert
     // dient der Kalkulation der Textwinkel, die bei this.firstAngle beginnen und maximal bis this.secondAngle gehen
@@ -115,6 +137,7 @@ class Area {
     }
     this.textAngle = this.firstAngle;
   }
+
 
   void createAreaPositions() {
     loadPixels();

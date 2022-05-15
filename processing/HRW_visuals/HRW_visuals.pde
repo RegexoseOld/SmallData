@@ -14,16 +14,13 @@ final Timer timer = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
 Article articleSurf;
 Rauschen rauschSurf;
-Kinship incSurf, matchSurf;
 Info infoSurf;
 Sculpture sculptureSurf;
 VisibilityMachine visibilityMachine; // class to make Surfaces visible
 ArrayList<SurfaceBase> surfs;
 DisplayTD incomingUtt;
 DisplayTD currentUtt;
-
 Areas areas;
-// MessageHighlight mH; // Environment for growing Text display
 TextCalculations tc;
 String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
@@ -45,14 +42,14 @@ Table article;
 
 void setup() {
   size(1000, 700);
-  TD = loadJSONObject("TrainingDataPelle01.json");
   ip_config = loadJSONObject("../../config/ip_config.json");
+  TD = loadJSONObject("TrainingDataPelle01.json");
   translatedCats = loadJSONObject("../../config/category_translator.json");
   String ip = ip_config.getString("audience");
   article = loadTable("Moderation.tsv", "header");
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
-  infoFont = createFont(fontlist[25], 20, true);
+  infoFont = createFont(fontlist[39], 20, true);
   buildSurfaces();
   visibilityMachine = new VisibilityMachine();
   oscP5 = new OscP5(this, 5040); //Audience Port
@@ -63,15 +60,14 @@ void setup() {
   vector = true;
   areas = new Areas(cats);
   buildUtts(480);
-  
-  pickIncoming(); // pick first utt
   prgIncrement = 1.2;
   noiseInc = 5; // put in DisplayTD
   noiseStart = 0;// put in DisplayTD
   noiseLimit = noiseInc;// put in DisplayTD
   moderation = "moderation";
+  incomingCat = "dissence";
   matchedUtts = new StringList();
- //frameRate(3);
+  //frameRate(3);
 }
 
 void draw() {
@@ -80,8 +76,11 @@ void draw() {
     for (SculptElement e : sculptureSurf.elements) {
       e.changeAlpha();
     }
+    for (Area a : areas.areas){
+      rauschSurf.displayName(a);
+    }
   } 
-  
+
   if (messageIn) {
     rauschSurf.clearBackground();
     messageIn = !messageIn;
@@ -92,12 +91,11 @@ void draw() {
     DisplayTD utt = utts.get(x);
     utt.update();
   }
-  
+
+
+
   visibilityMachine.update();
-  //println("vm post update " + visibilityMachine.state);
-  incSurf.update();
-  matchSurf.update();
-    
+
   sculptureSurf.updateSculpture();
   for (int i=0; i<surfs.size(); i++) {
     SurfaceBase surf = surfs.get(i);
@@ -105,7 +103,7 @@ void draw() {
       surf.display();
     }
   }
-  
+
   if (noiseLimit <= utts.size() - noiseInc) {
     noiseStart = noiseLimit;
     noiseLimit += noiseInc;
@@ -140,10 +138,6 @@ void visibility(char k) {
 
   case '1':
     rauschSurf.visible = !rauschSurf.visible;
-    break;
-  case '2':
-    incSurf.visible = !incSurf.visible;
-    matchSurf.visible = !matchSurf.visible;
     break;
   case '3':
     infoSurf.visible = !infoSurf.visible;

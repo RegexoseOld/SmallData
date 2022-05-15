@@ -5,37 +5,14 @@ void oscEvent(OscMessage m) {
     incomingText = (String) m.arguments()[0];
     incomingCat = (String) m.arguments()[1];
     
-    println("Incomming: " + incomingText + ", " + incomingCat);
-    
-    JSONObject kin = oscTextIn.getJSONObject("kin");
-    String kinText = kin.getString("text");
-    String kinCat = kin.getString("cat");
-
-    // TODO only set properties if cycle is not running
-    if (visibilityMachine.state == visibilityMachine.STATE_HIDE) { 
-      incSurf.setTexts(incomingText, incomingCat);
-      matchSurf.setTexts(kinText, kinCat);
-      visibilityMachine.start();
-    }
-    //vcprintln("incoming CAt  " + incomingCat);
+    println("Incoming: " + incomingText + ", " + incomingCat);
     currentCol = findColor(incomingCat);
-    category_counter = oscTextIn.getJSONObject("category_counter");
-
-    for (String c : cats) {
-      JSONObject cat = category_counter.getJSONObject(c);
-      int lim = cat.getInt("limit");
-      if (lim == -1) {
-        currentPart = c;
-      }
-    }
-    JSONObject newIncomingCat = category_counter.getJSONObject(incomingCat);
-    cat_limit = newIncomingCat.getInt("limit");
-    cat_counts = newIncomingCat.getInt("count");
     println("new utt: " + incomingText);
     sculptureSurf.addElements(incomingText, incomingCat);
+    infoSurf.updateInfo();
     messageIn = true;
     PShape shape = loadShape(shapeMapping.get(incomingCat));
-    float shapeSize = cat_counts * 10;
+    float shapeSize = cat_counts * 5;
     // add new utterance to utts
     int newIndex = utts.size();
     incomingUtt = new DisplayTD(newIndex, incomingText, incomingCat, "kommentariat", shape, shapeSize, true);
@@ -73,17 +50,3 @@ void updateUtts() {
   utts.add(incomingUtt);
   // println(" still  updating2?   " + updateUtts + " " + frameCount);
 } 
-
-
-// mock for incoming String messages. 
-void pickIncoming() {
-
-  int index = int(random(TD.size()));
-  JSONObject row = TD.getJSONObject(str(index));
-  String utterance = row.getString("utterance");
-  String category = row.getString("category");
-  
-  incSurf.setTexts(utterance, category);
-  matchSurf.setTexts(utterance, category);
-  visibilityMachine.start();
-}

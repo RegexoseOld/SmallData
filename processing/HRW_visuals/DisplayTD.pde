@@ -5,7 +5,7 @@ class DisplayTD{
   PVector pos;
   String utt, cat, user, fontName;
   PShape shape;
-  RShape rS;
+  RShape rS, tempShape;// category-name Shape
   Area area;
   color shapeColor; 
   boolean isShape;
@@ -19,19 +19,33 @@ class DisplayTD{
     this.isShape = isShape;
     this.shape = shape;
     this.shape.disableStyle();
-    this.shapeSize = sSize;
+    this.shapeSize = adjustSize(sSize); // increases with incoming messages
     this.shapeColor = findColor(this.cat);
-    this.area = areas.findArea(this.cat);
-    this.rS = this.area.rS;
+    this.area = areas.findArea(translatedCats.getString(this.cat));
+    this.rS = this.area.nameShape;
     this.pos = this.area.areaPos.get(3);
     this.font_size = 25;
     this.angle = int(random(TWO_PI));
     this.fontName = fontlist[int(random(fontlist.length))];
     this.font = createFont(this.fontName, font_size, true);
   }
+  
+  float adjustSize(float s){
+    if (this.cat.equals("insinuation") || this.cat.equals("lecture")){
+      return s /2;
+    } else if (this.cat.equals("dissence")) {
+      return s *2;
+    }
+      else {
+      return s;
+    }
+  }
 
   void update() {
-    rauschSurf.updateDisplay(this.shape, this.pos, this.shapeSize, this.angle, this.shapeColor);
+    //rauschSurf.updateDisplay(this.shape, this.pos, this.shapeSize, this.angle, this.shapeColor);
+    // define the shape where the SVG should be placed on
+
+     rauschSurf.updateDisplay(this.shape, this.area, this.shapeSize, this.angle, this.shapeColor);
     move();
   }
 
