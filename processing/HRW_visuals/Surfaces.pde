@@ -174,14 +174,15 @@ class Sculpture extends SurfaceBase {
   }
 
   void addElements(String msg, String incomingCat) {
-    Area a = areas.findArea(incomingCat); 
+    Area a = areas.findArea(incomingCat);
     a.changeAngle(); // textAngle ändert sich, abhängig von der Area
     // PVector angles = new PVector(a.firstAngle, a.secondAngle, a.textAngle); // für jedes neue Element werden die Angles festgeschrieben
     // todo einfach area übergeben und daraus die Angles und die color ableiten
     SculptElement sE = new SculptElement(msg, this.font, a, this.surf.width, this.surf.height); 
+    
     if (this.canUpdate) {
       elements.add(sE);
-    } else if (!this.canUpdate) {
+    } else {
       // use elements2 when loop in updateSculpture is busy to avoid concurrency
       elements2.add(sE);
     }
