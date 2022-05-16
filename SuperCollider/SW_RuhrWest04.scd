@@ -23,11 +23,12 @@ ServerOptions.outDevices;
 (
 Server.default.options.numInputBusChannels_(2);
 //Server.default.options.outDevice_("BeatsSolo Wireless");
-s.options.sampleRate;
-s.options.sampleRate = 48000;
+//s.options.sampleRate = 48000;
 Server.default.options.inDevice_("Fireface 400 (BEF)");
-//Server.default.options.outDevice_("SoundFlower (64ch)");
-Server.default.options.outDevice_("Fireface 400 (BEF)");
+Server.default.options.outDevice_("SoundFlower (2ch)");
+//Server.default.options.outDevice_("Fireface 400 (BEF)");
+//Server.default.options.outDevice_("SuperCollider");
+
 Server.default.options.outDevice.postln;
 // Server.default.options.outDevice.postln;
 
@@ -392,7 +393,6 @@ s.waitForBoot({
 			ffreq: 3.0,
 			modWidth: 0.15,
 			preamp: 0.3,
-			amp: Pfunc({~sharedValues[\vol]}),
 			fShift: 100,
 			sustain: 0.1,
 			send: -30
@@ -607,16 +607,16 @@ s.waitForBoot({
 		{(count > 5) && (count <= 10)} {~ins = Pbindef(\ins, \slideTime, count * 0.7, \dur, 4, \atk, 0.8 , \rls, 4.0, \sustain, 4.0, \preamp, 0.9, \degree, Pseq([(0 -count),-5, 0, (2 -count)], inf) );
 			status = "Schlierenfigur";
 		}
-		{(count > 10) && (count <= 20) && (count% 4 == 0)}{oneShot = Pbindef(\ins2, *~reset[\ins].asPairs);
+
+		{(count > 10) && (count <= 20)} {
+			if (count% 4 == 0, {oneShot = Pbindef(\ins2, *~reset[\ins].asPairs);
 			oneShot = Pbindef(\ins2, \degree, Pseq([
 				Pseq([-5],5), Pseq([\r],13),
 					[-8, 0], Pseq([\r], 15),
 					[-5, 3], Pseq([\r],15),
 					Pseq([\r], 16)
-		], 2) + count, \amp, 0.4, \dur, 1/16).play(t);
-			"one shot Modulo 4".postln;
-		}
-		{(count > 10) && (count <= 20)} {
+		], 2) + count, \amp, 0.4, \dur, 1/16).play(t);"one shot Modulo 4".postln;} );
+
 			~ins = Pbindef(\ins, \slideTime, 3.5 - (count* 0.02), \maxF, 600 + (count * 10), \dur, 4,
 				\atk, 0.8 - (count * 0.04), \rls, 4.0 - (count * 0.16), \sustain, Pkey(\rls),
 				\preamp, 0.9,
@@ -905,8 +905,9 @@ s.waitForBoot({
 	~setGlobal = {
 		var c;
 		c = case
-		/*{~totalUtts >= 30} {Scale.choose}
-		{~totalUtts % 5 ==0} {Scale.choose}*/
+		{~totalUtts >= 40} {"changed Scale".postln; Scale.choose}
+		{~totalUtts >= 25} {"mic ohne hall".postln; ~mic.set(\send, -38);}
+		{~totalUtts == 20} {"mic mit hall".postln; ~mic.set(\send, -12);}
 		{~totalUtts ==10} {~uttDict.keys.do({|k| k.postln; ~uttDict[k]= 0});~startAllPatterns.()}
 		{~totalUtts >=6} {~setRauschen.(~totalUtts)}
 		{~totalUtts >=5} {Pbindef(\rausch).play(t, quant:1); ~mic.set(\send, -20);}
@@ -938,8 +939,8 @@ s.waitForBoot({
 */
 ///start////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //activate Mic
-~mic = Synth(\mic, [\amp, 0.35, \ffreq, 1500, \outfx, ~fx3Bus, \send, -25]);
-~mic.set(\send, -10, \amp, 0.32, \outfx, ~fx1Bus, \cgain, 2.5, \thr, 0.8, \ffreq, 2000);
+~mic = Synth(\mic, [\amp, 0.45, \ffreq, 1500, \outfx, ~fx3Bus, \send, -25]);
+~mic.set(\send, -40, \amp, 0.4, \outfx, ~fx1Bus, \cgain, 2.5, \thr, 0.8, \ffreq, 2000);
 ~mic.set(\send, -5, \amp, 0.22, \outfx, ~fx1Bus, \ffreq, 1500, \thr, 0.2);
 ~mic.free
 
@@ -995,10 +996,10 @@ Pbindef.all.do(_.clear);
 )
 (
 ~setDissent.value('dissent', 30);
-~setInsinuation.value('insinuation', 28);
+~setInsinuation.value('insinuation', 19);
 ~setLecture.value('lecture', 28);
-~setConcession.value('concession', 11);
-~setPraise.value('praise', 29 );
+~setConcession.value('concession', 19);
+~setPraise.value('praise', 30 );
 )
 
 (
@@ -1006,7 +1007,8 @@ Pbindef.all.do(_.clear);
 ~setInsinuation.value('insinuation', 30.rand);
 ~setLecture.value('lecture', 30.rand);
 ~setConcession.value('concession', 30.rand);
-~setPraise.value('praise', 30.rand);
+~setPraise.value('prai
+se', 30.rand);
 )
 (
 ~allocateSynth.value('praise', ~uttDict['praise']);
