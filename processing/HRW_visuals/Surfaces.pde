@@ -228,7 +228,7 @@ void buildSurfaces() {
   PFont articleFont = createFont("Courier", 30, true); 
   surfs = new ArrayList<SurfaceBase>(); 
   rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true); 
-  infoSurf = new Info("infoSurf", 0, height-height/12, width, height/12, infoFont, true); 
+  infoSurf = new Info("infoSurf", 0, height/12, width, height/12, infoFont, true); 
   articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30); 
   sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true); 
   surfs.add(rauschSurf); 
