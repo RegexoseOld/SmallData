@@ -55,7 +55,7 @@ class Area {
   int transX, transY, resetCol;
 
   Area(String name, float angle, RShape screen) {
-    this.name = translatedCats.getString(name);
+    this.name = name; 
     this.areaAngle = angle;
     this.screen = screen;
     this.sC = new RPoint(width/2, height/2);
@@ -100,7 +100,7 @@ class Area {
 
   void makeNameShape() {
     nameFont = new RFont("Courier New Bold.ttf", 70, RFont.CENTER);
-    this.nameShape = nameFont.toShape(this.name) ;
+    this.nameShape = nameFont.toShape(translatedCats.getString(this.name));
     this.namePoints = this.nameShape.getPoints();
     shapePositions();
     //println("name   " + this.name + "   points   " + namePoints.length);

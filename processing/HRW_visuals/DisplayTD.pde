@@ -21,7 +21,7 @@ class DisplayTD{
     this.shape.disableStyle();
     this.shapeSize = adjustSize(sSize); // increases with incoming messages
     this.shapeColor = findColor(this.cat);
-    this.area = areas.findArea(translatedCats.getString(this.cat));
+    this.area = areas.findArea(this.cat);
     this.rS = this.area.nameShape;
     this.pos = this.area.areaPos.get(3);
     this.font_size = 25;
