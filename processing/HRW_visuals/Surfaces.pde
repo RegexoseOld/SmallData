@@ -62,6 +62,7 @@ class Rauschen extends SurfaceBase {
   RShape[] rays;
   float[] angles;
   float[] radi;
+  int offset;
 
   Rauschen(String name, int _x, int _y, int _w, int _h, PFont _font, boolean _visible) {
     super(name, _x, _y, _w, _h, _font, _visible);
@@ -82,30 +83,25 @@ class Rauschen extends SurfaceBase {
     this.svgCount +=1;
     RPoint p = new RPoint();
     //println("svg count " + ths.svgCount);
-    if (this.svgCount < 4000) {
+    if (this.svgCount < 7000) {
       int ind = int(random(len));
       p = pts[ind];
       float angle = nAng[ind];
-      float radius = radi[ind];
       // println("dist  " + dist(center.x, center.y, p.x, p.y));
 
-      x1 = (center.x + p.x) + cos(angle) ;
+      x1 = (center.x + p.x ) + cos(angle) ;
       y1 = (center.y + p.y) + sin(angle) ;
     }  else {
+      area.nameOffset = 0;
       int ind = int(random(area.areaPos.size()));
       PVector pp = area.areaPos.get(ind);
       x1 = pp.x;
       y1 = pp.y;
     }
     this.surf.beginDraw();
-    //this.surf.stroke(255, 0, 0);
-    //this.surf.strokeWeight(5);
-    //this.surf.point(center.x, center.y);
-    //this.surf.strokeWeight(0.5);
-    //this.surf.line(center.x, center.y, x1, y1);
     this.surf.noStroke();
     this.surf.pushMatrix();
-    this.surf.translate(x1, y1);
+    this.surf.translate(x1 + area.nameOffset, y1);
     this.surf.rotate(a);
     this.surf.fill(col);
     this.surf.shape(s, 0, 0, size, size) ;
@@ -126,16 +122,6 @@ class Rauschen extends SurfaceBase {
     this.surf.text(this.name, c.x + offset, c.y); 
     this.surf.endDraw();
   }
-
-  void displayName(Area area) {
-    this.surf.beginDraw(); 
-    for (RPoint p : area.namePoints) {
-      //println("Point p.x " + p.x + "  point y  " + p.y);
-      this.surf.stroke(area.col); 
-      this.surf.point(area.centerOfArea.x + p.x, area.centerOfArea.y + p.y);
-    }
-    this.surf.endDraw();
-  }
 }
 
 
@@ -148,17 +134,28 @@ class Info extends SurfaceBase {
   void updateInfo() {
     String cat = translatedCats.getString(incomingCat); 
     this.surf.beginDraw(); 
-    this.surf.background(222); 
-    this.surf.textFont(this.font, 20); 
+    this.surf.background(200); 
+    this.surf.textFont(this.font, width/50); 
+    this.surf.textAlign(CENTER);
     this.surf.fill(20, 200); 
-    this.surf.rectMode(CORNER); 
-    // progress bar for remaining Timer
-    // this.surf.text(incomingText + "\t     " + cat, 0, this.surf.height/4, this.surf.width, this.surf.height);
-    this.surf.fill(189, 10, 10, 150); 
-    this.surf.rect(0, 0, uttCount * prgIncrement, this.surf.height/4); 
-    this.surf.text("kommentieren Sie auf - - \t Meinungsorgel.de", this.surf.width/2, this.surf.height *2/5, this.surf.width, this.surf.height); 
+    //this.surf.rectMode(CORNER); 
+    //// progress bar for remaining Timer
+    //// this.surf.text(incomingText + "\t     " + cat, 0, this.surf.height/4, this.surf.width, this.surf.height);
+    //this.surf.fill(189, 10, 10, 150); 
+    //this.surf.rect(0, 0, uttCount * prgIncrement, this.surf.height/4); 
+    this.surf.text("kommentieren Sie auf - - Meinungsorgel.de", 0, 0, this.surf.width, this.surf.height); 
     this.surf.endDraw(); 
     println("info updated with  " + cat);
+  }
+  
+  void displayName(Area a){
+  
+    this.surf.beginDraw(); 
+    this.surf.fill(100, 100);
+    this.surf.textFont(areaFont);
+    this.surf.text(a.name, a.centerOfArea.x - a.nameOffset, a.centerOfArea.y);
+    this.surf.endDraw();
+
   }
 }
 
@@ -228,11 +225,13 @@ class Sculpture extends SurfaceBase {
 void buildSurfaces() {
   PFont articleFont = createFont("Courier", 30, true); 
   surfs = new ArrayList<SurfaceBase>(); 
+  areaSurf = new Info("areaNames", 0, 0, width,height, areaFont, true);
   rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true); 
-  infoSurf = new Info("infoSurf", 0, height/12, width, height/12, infoFont, true); 
+  infoSurf = new Info("infoSurf", width *3/5, height/30, width/3, height/12, areaFont, true); 
   articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30); 
   sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true); 
   surfs.add(rauschSurf); 
+  surfs.add(areaSurf);
   surfs.add(infoSurf); 
   surfs.add(articleSurf); 
   surfs.add(sculptureSurf);

@@ -14,7 +14,7 @@ final Timer timer = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
 Article articleSurf;
 Rauschen rauschSurf;
-Info infoSurf;
+Info infoSurf, areaSurf;
 Sculpture sculptureSurf;
 VisibilityMachine visibilityMachine; // class to make Surfaces visible
 ArrayList<SurfaceBase> surfs;
@@ -25,7 +25,7 @@ TextCalculations tc;
 String[] fontlist;
 String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
-PFont messageFont, infoFont;
+PFont messageFont, infoFont, areaFont;
 JSONObject TD; // TrainingData is stored here
 JSONObject oscTextIn, category_counter, ip_config, translatedCats; 
 String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
@@ -50,6 +50,7 @@ void setup() {
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], 30, true);
   infoFont = createFont(fontlist[39], 20, true);
+  areaFont = createFont("Courier New Bold Italic.ttf", height/18, true);
   buildSurfaces();
   visibilityMachine = new VisibilityMachine();
   oscP5 = new OscP5(this, 5040); //Audience Port
@@ -67,7 +68,6 @@ void setup() {
   moderation = "moderation";
   incomingCat = "dissence";
   matchedUtts = new StringList();
-  //frameRate(3);
 }
 
 void draw() {
@@ -75,9 +75,6 @@ void draw() {
     // pickIncoming(); //automatische messages werden ausgesucht
     for (SculptElement e : sculptureSurf.elements) {
       e.changeAlpha();
-    }
-    for (Area a : areas.areas){
-      rauschSurf.displayName(a);
     }
   } 
 
@@ -143,7 +140,9 @@ void visibility(char k) {
     infoSurf.visible = !infoSurf.visible;
     break;
   case '4':
-    articleSurf.visible = !articleSurf.visible;
+    for (Area a : areas.areas) {
+      areaSurf.displayName(a);
+    } 
     break;
   case '5':
     sculptureSurf.visible = !sculptureSurf.visible;

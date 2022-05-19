@@ -44,7 +44,7 @@ class DisplayTD{
   void update() {
     //rauschSurf.updateDisplay(this.shape, this.pos, this.shapeSize, this.angle, this.shapeColor);
     // define the shape where the SVG should be placed on
-
+  
      rauschSurf.updateDisplay(this.shape, this.area, this.shapeSize, this.angle, this.shapeColor);
     move();
   }

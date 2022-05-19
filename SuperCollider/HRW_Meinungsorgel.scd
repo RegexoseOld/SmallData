@@ -239,8 +239,8 @@ s.waitForBoot({
 	}).add;
 
 	~buffers= Dictionary.new;
-	~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";
-	//~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
+	//~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";
+	~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
 	PathName(~path).entries.do({
 		arg subfolder;
 		~buffers.add(
@@ -464,7 +464,7 @@ s.waitForBoot({
 
 	};
 	~makePatterns.();
-	~fadeThres = 0.05;
+	~fadeThres = 0.07;
 
 ~continuousFadeOut = {
 	|min, step|
@@ -957,7 +957,10 @@ s.waitForBoot({
 ~delay.set(\maxdel, 0.9, \deltime, 0.8, \sweep, 3.0, \decayT, 10.6, \mul, 0.6);
 ~reverb.set(\room, 0.1, \damp, 1.1);
 )
-~factor = 0.9;
+(
+~factor = 1.3;
+postf("\nset factor % \n", ~factor);
+)
 
 (
 //Pbindef.all.do(_.postln; "\n".postln);
@@ -979,7 +982,7 @@ Pbindef.all.do(_.clear);
 ~allocateSynth.value('praise', ~uttDict['praise']);
 ~allocateSynth.value('dissent', ~uttDict['dissent']);
 ~allocateSynth.value('concession',~uttDict['concession']);
-~allocateSy nth.value('insinuation', ~uttDict['insinuation']);
+~allocateSynth.value('insinuation', ~uttDict['insinuation']);
 ~allocateSynth.value('lecture',~uttDict['lecture']);
 )
 (

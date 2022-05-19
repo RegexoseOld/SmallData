@@ -52,7 +52,7 @@ class Area {
   color col; 
   float[] radi, nameAngles;
   float areaAngle, firstAngle, secondAngle, radius, progressAngle, textAngle;
-  int transX, transY, resetCol;
+  int transX, transY, resetCol, nameOffset;
 
   Area(String name, float angle, RShape screen) {
     this.name = name; 
@@ -69,6 +69,8 @@ class Area {
     this.points = rS.getPoints();
     this.transX = 100;
     this.centerOfArea = this.rS.getCentroid();
+    this.nameFont = new RFont("Courier New Bold Italic.ttf", height/18, RFont.CENTER);
+    this.nameOffset = 0; // offset for the name of the area
     makeAngles();
     resetShape();
     createAreaPositions();
@@ -99,19 +101,20 @@ class Area {
   }
 
   void makeNameShape() {
-    nameFont = new RFont("Courier New Bold.ttf", 70, RFont.CENTER);
-    this.nameShape = nameFont.toShape(translatedCats.getString(this.name));
+    
+    this.nameShape = this.nameFont.toShape(translatedCats.getString(this.name));
     this.namePoints = this.nameShape.getPoints();
     shapePositions();
+    if (this.name.equals("insinuation")) {this.nameOffset = width/10;}
     //println("name   " + this.name + "   points   " + namePoints.length);
   }
   
   void shapePositions(){
-    this.nameAngles = new float[this.namePoints.length];
+    this.nameAngles = new float[this.namePoints.length]; // Liste mit dem spezifischen Winkel jedes Namepoints zum Mittelpunkt
     this.radi = new float[this.namePoints.length];
     for (int i=0; i<this.namePoints.length; i++){
-      this.nameAngles[i] = this.namePoints[i].angle(this.centerOfArea);
-      this.radi[i] = this.namePoints[i].dist(this.centerOfArea);
+      this.nameAngles[i] = this.namePoints[i].angle(this.centerOfArea); // RG Vector von jedem namePoint zum Mittelpunkt
+      this.radi[i] = this.namePoints[i].dist(this.centerOfArea); // Die distanz zwischen jedem namePoint im dem Mittelpunkt
     }
     
   }
