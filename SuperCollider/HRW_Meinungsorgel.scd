@@ -41,7 +41,7 @@ s.newBusAllocators; // Busse machen
 ~fx3Bus = Bus.audio(s,2);
 ~cat = "";
 ~out = 0;
-~factor = 0;
+~factor = 1;
 
 // wird später in ServerTree angemeldetn
 ~makeNodes = {
@@ -457,11 +457,14 @@ s.waitForBoot({
 		    ~synthDict.add(name -> (synth: List.new, vol: 0.5, patternVol: 0.2));
 		}
 
-			//Pbindef(cat, \amp, 0.2);
 		);
+		~metro = Pbindef(\metronom, \instrument, \concession, \buf, ~buffers[\hi][2], \dur, Pwrand([1, 0.5], [0.99, 0.01], inf),
+			\rate, Pwhite(0.5, 1.2, inf), \amp, Pwhite(0.02, 0.05, inf), \send, Prand([Pseq([-35], 64), Pseq([-20], 16)], inf)
+		);
+
 	};
 	~makePatterns.();
-	~fadeThres = 0.15;
+	~fadeThres = 0.05;
 
 ~continuousFadeOut = {
 	|min, step|
@@ -496,7 +499,7 @@ s.waitForBoot({
 			})
 		}).play;
 		// continuousFadeOut(min, step)
-		t.schedAbs(t.nextTimeOnGrid, {~continuousFadeOut.value(0.01, 0.002); 1});
+		t.schedAbs(t.nextTimeOnGrid, {~continuousFadeOut.value(0.001, 0.0001); 1});
 	};
 	// solo funktion, um einzelne Patterns zu präsentieren. mit Pbindef().pause und resume arbeiten. Idealerweise mit Tasten oder MIDI
 	~soloPattern = {
@@ -515,7 +518,7 @@ s.waitForBoot({
 		\dur, 5,
 		\ffreq, Pseq([666, 150], inf),
 		\pan, Pwhite(-1,1, inf),
-		\amp, 0.3
+		\amp, 0.1
 	);
 
 
@@ -523,12 +526,12 @@ s.waitForBoot({
 	~setDissent = {
 		|s_name, counter|
 		var c, dura, now, amp, status, count;
-		count = counter + ~factor;
+		count = floor(counter * ~factor).asInteger;
 		amp = ~synthDict[\dis][\vol];
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		5.do({|i|
 			Pbind(\instrument, \dissent,
-				\width, Pwhite(0.4, 0.9, 1), \freq, Pxrand([200, 300], 1), \amp, 0.8, \atk, Pn(Pwhite(0.01, 0.05), 1), \rls, Pn(Pwhite(0.02, 0.59), 1), \sustain, 0.15, \pulseMul, 0.35, \resoFreq, 3000).play});
+				\width, Pwhite(0.4, 0.9, 1), \freq, Pxrand([200, 300], 1), \amp, 0.06, \atk, Pn(Pwhite(0.01, 0.05), 1), \rls, Pn(Pwhite(0.02, 0.59), 1), \sustain, 0.15, \pulseMul, 0.35, \resoFreq, 3000).play});
 		c = case
 		{(count > 0) && (count <= 5)} {// 1. Feedback Sound
 			~dis = Pbindef(\dis, *~reset[\dis].asPairs);
@@ -586,7 +589,7 @@ s.waitForBoot({
 			status = "traurige Melodei, abwechselnd hell oder dunkel ";
 		}
 		{true} {~dis = ~patternDict[\dis]; "end of dissent reached".postln};
-		~addVolume.value(\dis, 0.2, 0.65);
+		~addVolume.value(\dis, 0.05, 0.2);
 		~dis.quant_(4);
 		postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 
@@ -595,11 +598,11 @@ s.waitForBoot({
 	~setInsinuation = {
 		|s_name, counter|
 		var c, dura, oneShot, amp, status, count;
-		count = counter + ~factor;
+		count = floor(counter * ~factor).asInteger;
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		5.do({|i|
 			Pbind(\instrument, \insinuation,
-				\freq, [exprand(100, 250), exprand(1700, 2300)], \amp, 0.25, \rls, Pn(3, 1)).play});
+				\freq, [exprand(100, 250), exprand(1700, 2300)], \amp, 0.04, \rls, Pn(3, 1)).play});
 		c = case
 		{(count > 0) && (count <= 5)} {
 			~ins = Pbindef(\ins,  *~reset[\ins].asPairs);
@@ -637,7 +640,7 @@ s.waitForBoot({
 		}
 
 		{true} {~ins = ~patternDict[\ins]; "end of insinuation reached".postln};
-		~addVolume.value(\ins, 0.15, 0.65);
+		~addVolume.value(\ins, 0.05, 0.2);
 		~ins.quant_(4);
 		postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 
@@ -646,12 +649,12 @@ s.waitForBoot({
 	~setLecture = {
 		|s_name, counter|
 		var c, dura, pat, status, count;
-		count = counter + ~factor;
+		count = floor(counter * ~factor).asInteger;
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		~lec = Pbindef(\lec, *~reset[\lec].asPairs);
 		~fmbass = Pbindef(\fm, *~reset[\fm].asPairs);
 		5.do({|i| Pbind(\instrument, \lecture,
-			\freq, [exprand(80, 90 + i), exprand(160, (160 + i))], \amp, 0.05, \filTime, 0.02, \rls, Pn(0.5, 1)).play});
+			\freq, [exprand(80, 90 + i), exprand(160, (160 + i))], \amp, 0.01, \filTime, 0.02, \rls, Pn(0.5, 1)).play});
 		c = case
 		{count ==1}	{
 			~lec = Pbindef(\lec, \dur, 1,
@@ -726,8 +729,8 @@ s.waitForBoot({
 
 		}
 		{true} {~fmbass = ~patternDict[\fm]; ~lec = ~patternDict[\lec]; "end of lecture reached".postln;};
-		~addVolume.value(\lec, 0.1, 0.65);
-		~addVolume.value(\fm, 0.1, 0.65);
+		~addVolume.value(\lec, 0.05, 0.15);
+		~addVolume.value(\fm, 0.05, 0.15);
 		postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 		~lec.quant_(4);
 		~fmbass.quant_(4);
@@ -739,8 +742,8 @@ s.waitForBoot({
 		var c, dura, pat, status, count;
 		postf("\nsetting %\t with count %\n", s_name, count);
 		dura = Env.new([1,0], [count], [-2]).asPseg;
-		count = counter + ~factor;
-		Pbind(\instrument, \concession, \buf, Pxrand(~buffers[\tonal], 10), \dur, 0.1, \fShift, 0.1,  \amp, 0.14).play(t);
+		count = floor(counter * ~factor).asInteger;
+		Pbind(\instrument, \concession, \buf, Pxrand(~buffers[\tonal], 10), \dur, 0.1, \fShift, 0.1,  \amp, 0.02).play(t);
 		c = case
 		{count ==1}{
 			~percArray.put(6, ~buffers[\himid][2]);
@@ -805,7 +808,7 @@ s.waitForBoot({
 			status = "drum 'n bass figurs";
 		}
 		{true}{	~con = ~patternDict[\con]; "end of setconcession reached".postln};
-		~addVolume.value(\con, 0.15, 0.65);
+		~addVolume.value(\con, 0.05, 0.2);
 		postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 		~con.quant_(4);
 	};
@@ -814,10 +817,10 @@ s.waitForBoot({
 		|s_name, counter|
 		var c, pat, dura, status, count;
 		dura = Env.new([1,0], [count], [-2]).asPseg;
-		count = counter + ~factor;
+		count = floor(counter * ~factor).asInteger;
 		5.do({|i|
 			Pbind(\instrument, \praise,
-				\freq, Pxrand([Pwhite(120, 240, 1), Pwhite(240, 480, 1)], 1), \amp, 0.6, \pulRate, 20, \bpf, 500, \rls, Pn(0.3, 1), \sustain, 0.3).play});
+				\freq, Pxrand([Pwhite(120, 240, 1), Pwhite(240, 480, 1)], 1), \amp, 0.1, \pulRate, 20, \bpf, 500, \rls, Pn(0.3, 1), \sustain, 0.3).play});
 		c = case
 		{(count > 0) && (count <= 5)} {
 			~pr = Pbindef(\pr, *~reset[\pr].asPairs);
@@ -869,7 +872,7 @@ s.waitForBoot({
 			status = "heavy Arpeggio, Wechselt bei gerade/ungeraden Counts";
 		}
 		{true} {~pr = ~patternDict[\pr];"end of insinuation reached".postln;};
-		~addVolume.value(\pr, 0.2, 0.65);
+		~addVolume.value(\pr, 0.05, 0.2);
 		~pr.quant_(4);
 		postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 
@@ -912,7 +915,7 @@ s.waitForBoot({
 		{~totalUtts == 20} {"mic mit hall".postln; ~mic.set(\send, -12);}
 		{~totalUtts ==10} {~uttDict.keys.do({|k| k.postln; ~uttDict[k]= 0});~startAllPatterns.()}
 		{~totalUtts >=6} {~setRauschen.(~totalUtts)}
-		{~totalUtts >=5} {Pbindef(\rausch).play(t, quant:1); ~mic.set(\send, -20);}
+		{~totalUtts >=5} {Pbindef(\rausch).play(t, quant:1); ~mic.set(\send, -20); ~metro.play(t, quant:1);}
 		{~totalUtts > 0 } {~mic.set(\send, (-35 + (~totalUtts * 6)));  }
 		{true} {"end of global settings".postln};
 
@@ -935,33 +938,78 @@ s.waitForBoot({
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/* Das Soundwesen
+/* Das Soundwesen*/
 
-
-*/
-///start////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //activate Mic
 ~mic = Synth(\mic, [\amp, 0.45, \ffreq, 1500, \outfx, ~fx3Bus, \send, -25]);
 ~mic.set(\send, -40, \amp, 0.4, \outfx, ~fx1Bus, \cgain, 2.5, \thr, 0.8, \ffreq, 2000);
 ~mic.set(\send, -5, \amp, 0.22, \outfx, ~fx1Bus, \ffreq, 1500, \thr, 0.2);
 ~mic.free
 
-	OSCFunc.trace(true);
 
 /// reset ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-currentEnvironment
 // tests
 ~buffers[\sweep][0].play;
-// http://sc3howto.blogspot.com/2010/06/pfunc.html  beispiel für ein Fade
-3.do({|item, i| Pbind(\instrument, \insinuation, \amp, 0.4, \lfreq, [exprand(100, (200 + (item * 5))), 50], \rls, Pn(3, 1)).play});
-~setGlobal.("praise")
-~totalUtts =5
+
 
 (
 ~delay.set(\maxdel, 0.9, \deltime, 0.8, \sweep, 3.0, \decayT, 10.6, \mul, 0.6);
 ~reverb.set(\room, 0.1, \damp, 1.1);
 )
+~factor = 0.9;
+
+(
+//Pbindef.all.do(_.postln; "\n".postln);
+Pbindef.all.do(_.stop);
+Pbindef.all.do(_.resume);
+Pbindef.all.do(_.quant_(4));
+Pbindef.all.do(_.clear);
+~continuousFadeOut = {}
+)
+(
+~setDissent.value('dissent', 30);
+~setInsinuation.value('insinuation', 19);
+~setLecture.value('lecture', 28);
+~setConcession.value('concession', 19);
+~setPraise.value('praise', 30 );
+)
+
+(
+~allocateSynth.value('praise', ~uttDict['praise']);
+~allocateSynth.value('dissent', ~uttDict['dissent']);
+~allocateSynth.value('concession',~uttDict['concession']);
+~allocateSy nth.value('insinuation', ~uttDict['insinuation']);
+~allocateSynth.value('lecture',~uttDict['lecture']);
+)
+(
+~soloPattern.(\dis);
+~soloPattern.(\pr);
+~soloPattern.(\con);
+~soloPattern.(\lec);
+~soloPattern.(\fm);
+~soloPattern.(\ins);
+)
+
+
+(
+~postinfo = {
+	("beats: "+ ((t.beats.floor) %t.beatsPerBar +1)).postln;
+	("bar: "+ (t.bar)).postln;
+	"".postln;
+	1;
+};
+t.schedAbs(t.nextBar, {{Blip.ar(500) * EnvGen.kr(Env.perc(0.01, 0.1),doneAction:2)}.play(); ~postinfo.(); });
+)
+
+(
+~setDissent.value('dissent', 30.rand);
+~setInsinuation.value('insinuation', 30.rand);
+~setLecture.value('lecture', 30.rand);
+~setConcession.value('concession', 30.rand);
+~setPraise.value('praise', 30.rand);
+)
+
 (
 // reset patterns and play the3
 ~patternDict.keys.do({|k| ~patternDict[k].postln; ~patternDict[k].clear});
@@ -981,57 +1029,5 @@ Pbindef.all.do(_.stop);
 ~ins.quant_(4).play(t);
 t.schedAbs(t.nextBar, {~continuousFadeOut.value(0.01, 0.002); 4;});
 )
-
-(
-Pbindef.all.do(_.postln; "\n".postln);
-Pbindef.all.do(_.stop);
-Pbindef.all.do(_.resume);
-Pbindef.all.do(_.quant_(4));
-Pbindef.all.do(_.clear);
-~continuousFadeOut = {}
-)
-(
-~setDissent.value('dissent', 30);
-~setInsinuation.value('insinuation', 19);
-~setLecture.value('lecture', 28);
-~setConcession.value('concession', 19);
-~setPraise.value('praise', 30 );
-)
-
-(
-~setDissent.value('dissent', 30.rand);
-~setInsinuation.value('insinuation', 30.rand);
-~setLecture.value('lecture', 30.rand);
-~setConcession.value('concession', 30.rand);
-~setPraise.value('praise', 30.rand);
-)
-(
-~allocateSynth.value('praise', ~uttDict['praise']);
-~allocateSynth.value('dissent', ~uttDict['dissent']);
-~allocateSynth.value('concession',~uttDict['concession']);
-~allocateSynth.value('insinuation', ~uttDict['insinuation']);
-~allocateSynth.value('lecture',~uttDict['lecture']);
-)
-(
-~soloPattern.(\dis);
-~soloPattern.(\pr);
-~soloPattern.(\con);
-~soloPattern.(\lec);
-~soloPattern.(\fm);
-~soloPattern.(\ins);
-)
-~factor = -5
-
-(
-~postinfo = {
-	("beats: "+ ((t.beats.floor) %t.beatsPerBar +1)).postln;
-	("bar: "+ (t.bar)).postln;
-	"".postln;
-	1;
-};
-t.schedAbs(t.nextBar, {{Blip.ar(500) * EnvGen.kr(Env.perc(0.01, 0.1),doneAction:2)}.play(); ~postinfo.(); });
-)
-
-
 
 
