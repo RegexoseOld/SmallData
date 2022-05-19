@@ -42,6 +42,10 @@ s.newBusAllocators; // Busse machen
 ~cat = "";
 ~out = 0;
 ~factor = 1;
+~volPlus = 0.009;
+~volMax = 0.2;
+~volMin = 0.001;
+~fadeThres = 0.07;
 
 // wird später in ServerTree angemeldetn
 ~makeNodes = {
@@ -54,18 +58,7 @@ s.newBusAllocators; // Busse machen
 
 )};
 
-~addVolume = {
-	|cat, add, max|
-	var c;
-	c = case
-	{~synthDict[cat][\patternVol] <= 0.1}{~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + (add *2) }
-	{(~synthDict[cat][\patternVol] <= max) && (~synthDict[cat][\patternVol] >= 0.1)}{~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + add}
-	{~synthDict[cat][\patternVol] >= max}{~synthDict[cat][\patternVol] = max}
-	{true}{"end of addVolume".postln};
 
-	postf("new vol of %  is % \n", cat, (~synthDict[cat][\patternVol]) );
-
-};
 
 // wenn gebooted wird, passiert alles folgende, Synthdefs etc
 s.waitForBoot({
@@ -79,7 +72,7 @@ s.waitForBoot({
 		tempo: 1,
 		transpose: 0,
 		scale: Scale.chromatic,
-		vol: 0.2
+		vol: 0.1
 	);
 	~uttDict = Dictionary.new;
 	~catDict = Dictionary.new;
@@ -100,6 +93,7 @@ s.waitForBoot({
 	~catDict.keys.do({arg cat;
 		~uttDict.add(cat -> 0);
 	});
+
 	s.sync;
 	SynthDef.new(\rauschen, {
 		var sig, env;
@@ -278,14 +272,11 @@ s.waitForBoot({
 	m = NetAddr("127.0.0.1", 5010); // beat send
 	~updateUtts = {
 		|cat|
-		cat.postln;
 		if (cat == 'dissence', {~cat = 'dissent'},{~cat = cat});
-        ~uttDict[cat].postln;
 		// for circular performance, reset counter values
 		if(~uttDict[~cat] >= 30, {~uttDict[~cat] = 0}, {~uttDict[~cat] = ~uttDict[~cat] + 1} );
 			//add volume to incoming cat Pattern
 			//~addVolume.value(~catDict[~cat], 0.1, 0.99);
-		postf("\nupdated UttDict %\t", ~uttDict);
 	};
 
 
@@ -454,7 +445,7 @@ s.waitForBoot({
 			|name|
 			//name.postln;
 			~patternDict.add(name -> Pbindef(name, *~reset[name].asPairs));
-		    ~synthDict.add(name -> (synth: List.new, vol: 0.5, patternVol: 0.2));
+		    ~synthDict.add(name -> (synth: List.new, vol: 0.5, patternVol: 0.1));
 		}
 
 		);
@@ -464,7 +455,20 @@ s.waitForBoot({
 
 	};
 	~makePatterns.();
-	~fadeThres = 0.07;
+
+	~addVolume = {
+	|cat, add, max|
+	var c;
+	postf("\nupdating volume of %  from % \n", cat, (~synthDict[cat][\patternVol]) );
+	c = case
+	{~synthDict[cat][\patternVol] <= ~fadeThres}{~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + (add *3) }// double enhance when pattern is very quiet
+	{(~synthDict[cat][\patternVol] <= max) && (~synthDict[cat][\patternVol] >= ~fadeThres)}{~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + add}
+	{~synthDict[cat][\patternVol] >= max}{~synthDict[cat][\patternVol] = max}
+	{true}{"end of addVolume".postln};
+
+	postf("new vol of %  is % \n", cat, (~synthDict[cat][\patternVol]) );
+
+};
 
 ~continuousFadeOut = {
 	|min, step|
@@ -476,15 +480,15 @@ s.waitForBoot({
 		vol = ~synthDict[cat][\patternVol];
 		//postf("\nthe vol %  of the pattern   %\n", vol, cat);
 		c = case
-		{(vol > min) && (vol >= ~fadeThres)} {~synthDict[cat][\patternVol] = vol - (step*3); vol = vol-(step*3)}
+		{(vol > min) && (vol >= ~fadeThres)} {~synthDict[cat][\patternVol] = vol - (step*4); vol = vol-(step*4)}
 		{(vol <= ~fadeThres) && (vol >= min)} { ~synthDict[cat][\patternVol] = vol - step ; vol = vol- step} // slower fade when below thres
-		{(vol <= min) && (Pbindef(cat).isPlaying)} {~synthDict[cat][\patternVol] = min; vol = min}
+		{vol <= min} {~synthDict[cat][\patternVol] = min; vol = min}
 		{true}{"end of fade Cases"};
 		//if (vol > min, {~synthDict[cat][\pattern] = vol - step; vol = vol-step}, {~synthDict[cat][\pattern] = min; vol = min});
 		Pbindef(cat, \amp, vol);
 	});
-		/*"+++ ++++\t \t +++ ++++".postln;
-		("tempo = " + t.tempo).postln;*/
+		//"+++ ++++\t \t +++ ++++".postln;/*
+		//("tempo = " + t.tempo).postln;*/
 };
 
 
@@ -493,13 +497,14 @@ s.waitForBoot({
 		Routine.new({
 			~reset.keys.asList.scramble.do({
 				|cat|
+
 				~patternDict[cat].play(t, quant:4);
 				//postf("pattern % is playing % \n", cat, ~patternDict[cat].isPlaying);
 				//(t.tempo*5).wait
 			})
 		}).play;
 		// continuousFadeOut(min, step)
-		t.schedAbs(t.nextTimeOnGrid, {~continuousFadeOut.value(0.001, 0.0001); 1});
+		t.schedAbs(t.nextTimeOnGrid, {~continuousFadeOut.value(0.001, 0.0003); 1});
 	};
 	// solo funktion, um einzelne Patterns zu präsentieren. mit Pbindef().pause und resume arbeiten. Idealerweise mit Tasten oder MIDI
 	~soloPattern = {
@@ -527,7 +532,7 @@ s.waitForBoot({
 		|s_name, counter|
 		var c, dura, now, amp, status, count;
 		count = floor(counter * ~factor).asInteger;
-		amp = ~synthDict[\dis][\vol];
+		status = "zero status";
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		5.do({|i|
 			Pbind(\instrument, \dissent,
@@ -589,7 +594,7 @@ s.waitForBoot({
 			status = "traurige Melodei, abwechselnd hell oder dunkel ";
 		}
 		{true} {~dis = ~patternDict[\dis]; "end of dissent reached".postln};
-		~addVolume.value(\dis, 0.05, 0.2);
+		~addVolume.value(\dis, ~volPlus, ~volMax);
 		~dis.quant_(4);
 		postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 
@@ -599,6 +604,7 @@ s.waitForBoot({
 		|s_name, counter|
 		var c, dura, oneShot, amp, status, count;
 		count = floor(counter * ~factor).asInteger;
+		status = "zero status";
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		5.do({|i|
 			Pbind(\instrument, \insinuation,
@@ -640,7 +646,7 @@ s.waitForBoot({
 		}
 
 		{true} {~ins = ~patternDict[\ins]; "end of insinuation reached".postln};
-		~addVolume.value(\ins, 0.05, 0.2);
+		~addVolume.value(\ins, ~volPlus, ~volMax);
 		~ins.quant_(4);
 		postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 
@@ -650,6 +656,7 @@ s.waitForBoot({
 		|s_name, counter|
 		var c, dura, pat, status, count;
 		count = floor(counter * ~factor).asInteger;
+		status = "zero status";
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		~lec = Pbindef(\lec, *~reset[\lec].asPairs);
 		~fmbass = Pbindef(\fm, *~reset[\fm].asPairs);
@@ -729,8 +736,8 @@ s.waitForBoot({
 
 		}
 		{true} {~fmbass = ~patternDict[\fm]; ~lec = ~patternDict[\lec]; "end of lecture reached".postln;};
-		~addVolume.value(\lec, 0.05, 0.15);
-		~addVolume.value(\fm, 0.05, 0.15);
+		~addVolume.value(\lec, ~volPlus, ~volMax);
+		~addVolume.value(\fm, (~volPlus * 0.8), ~volMax);
 		postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 		~lec.quant_(4);
 		~fmbass.quant_(4);
@@ -740,11 +747,12 @@ s.waitForBoot({
 	~setConcession = {
 		|s_name, counter|
 		var c, dura, pat, status, count;
-		postf("\nsetting %\t with count %\n", s_name, count);
 		dura = Env.new([1,0], [count], [-2]).asPseg;
+		status = "zero status";
 		count = floor(counter * ~factor).asInteger;
 		Pbind(\instrument, \concession, \buf, Pxrand(~buffers[\tonal], 10), \dur, 0.1, \fShift, 0.1,  \amp, 0.02).play(t);
 		c = case
+		{count == 0}{~con = Pbindef(\con, *~reset[\con].asPairs)}
 		{count ==1}{
 			~percArray.put(6, ~buffers[\himid][2]);
 			~percArray.put(10, ~buffers[\himid][3]);
@@ -807,8 +815,8 @@ s.waitForBoot({
 			~con = Pbindef(\con, \dur, 1/4, \buf, Pif(count <=25, pat, Pseq(~percArray2, inf), ~buffers[\dry][4]), \send, -30, \rate, 1.0, \rls, 4, \sus, Pkey(\rls), \bpf, 800, \rq, 2.0, \fShift, 0.01, \mix, -0.9, \thr, 0.25, \cgain, 3.4, \outfx, ~fx3Bus, \send, -35 + ((count -20) * 3));
 			status = "drum 'n bass figurs";
 		}
-		{true}{	~con = ~patternDict[\con]; "end of setconcession reached".postln};
-		~addVolume.value(\con, 0.05, 0.2);
+		{true}{	~con = ~patternDict[\con]; "end of setConcession reached".postln};
+		~addVolume.value(\con, ~volPlus, ~volMax);
 		postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 		~con.quant_(4);
 	};
@@ -818,9 +826,10 @@ s.waitForBoot({
 		var c, pat, dura, status, count;
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		count = floor(counter * ~factor).asInteger;
+		status = "zero status";
 		5.do({|i|
 			Pbind(\instrument, \praise,
-				\freq, Pxrand([Pwhite(120, 240, 1), Pwhite(240, 480, 1)], 1), \amp, 0.1, \pulRate, 20, \bpf, 500, \rls, Pn(0.3, 1), \sustain, 0.3).play});
+				\freq, Pxrand([Pwhite(120, 240, 1), Pwhite(240, 480, 1)], 1), \amp, 0.13, \pulRate, 20, \bpf, 500, \rls, Pn(0.3, 1), \sustain, 0.3).play});
 		c = case
 		{(count > 0) && (count <= 5)} {
 			~pr = Pbindef(\pr, *~reset[\pr].asPairs);
@@ -872,7 +881,7 @@ s.waitForBoot({
 			status = "heavy Arpeggio, Wechselt bei gerade/ungeraden Counts";
 		}
 		{true} {~pr = ~patternDict[\pr];"end of insinuation reached".postln;};
-		~addVolume.value(\pr, 0.05, 0.2);
+		~addVolume.value(\pr,(~volPlus *1.6), ~volMax);
 		~pr.quant_(4);
 		postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 
@@ -884,7 +893,7 @@ s.waitForBoot({
 		postf("\nsetting rauschen with count %\t", count);
 		dura = Env.new([1,0], [count], [-2]).asPseg;
 		c = case
-		{(count > 5) && (count <= 10)}{Pbindef(\rausch, \ffreq, Pxrand([300, 666, 760], inf) , \rq, Pxrand((0.05, 0.1 .. 2.0), inf), \rls, 0.3).trace;}
+		{(count > 5) && (count <= 10)}{Pbindef(\rausch, \ffreq, Pxrand([300, 666, 760], inf) , \rq, Pxrand((0.05, 0.1 .. 2.0), inf), \rls, 0.3, \amp, 0.1);}
 		{true} {"end of rauschen cases".postln};
 		Pbindef(\rausch).quant_(4);
 	};
@@ -895,9 +904,9 @@ s.waitForBoot({
 		~totalUtts = ~totalUtts + 1; // unbedingt wieder löschen, ist nur test
 		~setGlobal.value();
 		~updateUtts.(s_name);
-		postf("\nallocating to Synth %\t as %   with count %\n", s_name, s_name.class, count);
-		postf("\ntotalUtts %\t", ~totalUtts);
-		postf("\nuttDict States %\t", ~uttDict);
+		postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", s_name);
+		postf("\ntotalUtts %\n", ~totalUtts);
+		postf("\nuttDict: %\t", ~uttDict);
 		c = case
 		{s_name == \lecture} {~setLecture.value(s_name, count);}
 		{s_name == \praise} {~setPraise.value(s_name, count)}
@@ -971,11 +980,11 @@ Pbindef.all.do(_.clear);
 ~continuousFadeOut = {}
 )
 (
-~setDissent.value('dissent', 30);
+~setDissent.value('dissent', 4);
 ~setInsinuation.value('insinuation', 19);
 ~setLecture.value('lecture', 28);
 ~setConcession.value('concession', 19);
-~setPraise.value('praise', 30 );
+~setPraise.value('praise', 1 );
 )
 
 (
