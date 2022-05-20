@@ -50,7 +50,7 @@ void setup() {
   fontlist = PFont.list();
   messageFont = createFont(fontlist[39], width/30, true);
   infoFont = createFont(fontlist[39], width/50, true);
-  areaFont = createFont("Courier New Bold Italic.ttf", height/18, true);
+  areaFont = createFont("Courier New Bold Italic.ttf", height/20, true);
   buildSurfaces();
   visibilityMachine = new VisibilityMachine();
   oscP5 = new OscP5(this, 5040); //Audience Port
@@ -135,7 +135,7 @@ void visibility(char k) {
     rauschSurf.visible = !rauschSurf.visible;
     break;
   case '2':
-    mockIncome("dissence");
+    mockIncome("concession");
   case '3':
     infoSurf.visible = !infoSurf.visible;
     break;

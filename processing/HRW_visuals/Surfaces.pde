@@ -134,10 +134,10 @@ class Info extends SurfaceBase {
     String cat = translatedCats.getString(incomingCat); 
     this.surf.beginDraw(); 
     this.surf.background(200); 
-    this.surf.textFont(this.font, width/50); 
-    this.surf.textAlign(CENTER);
+    this.surf.textFont(this.font, width/55); 
+    this.surf.textAlign(LEFT, TOP);
     this.surf.fill(20, 200); 
-    this.surf.text("kommentieren Sie auf - \n- Meinungsorgel.de", 0, 0, this.surf.width, this.surf.height); 
+    this.surf.text("kommentieren Sie auf -- meinungsorgel.de", 10, 0, this.surf.width, this.surf.height); 
     this.surf.endDraw(); 
     println("info updated with  " + cat);
   }
@@ -234,7 +234,7 @@ void buildSurfaces() {
   surfs = new ArrayList<SurfaceBase>(); 
   areaSurf = new Info("areaNames", 0, 0, width, height, areaFont, true);
   rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true); 
-  infoSurf = new Info("infoSurf", width *3/5, height/30, width/3, height/10, areaFont, true); 
+  infoSurf = new Info("infoSurf", width/2, height/30, width *39/80, height/16, areaFont, true); 
   articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, width/33); 
   sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true); 
   surfs.add(rauschSurf); 
