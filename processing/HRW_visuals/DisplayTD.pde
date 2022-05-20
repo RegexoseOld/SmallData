@@ -24,7 +24,7 @@ class DisplayTD{
     this.area = areas.findArea(this.cat);
     this.rS = this.area.nameShape;
     this.pos = this.area.areaPos.get(3);
-    this.font_size = 25;
+    this.font_size = width/40;
     this.angle = int(random(TWO_PI));
     this.fontName = fontlist[int(random(fontlist.length))];
     this.font = createFont(this.fontName, font_size, true);

@@ -89,8 +89,6 @@ void draw() {
     utt.update();
   }
 
-
-
   visibilityMachine.update();
 
   sculptureSurf.updateSculpture();
@@ -159,7 +157,7 @@ void visibility(char k) {
   case 'q':
     vector = !vector;
     rauschSurf.surf.beginDraw();
-    rauschSurf.surf.background(222 );
+    rauschSurf.surf.background(222);
     rauschSurf.surf.endDraw();
     break;
 

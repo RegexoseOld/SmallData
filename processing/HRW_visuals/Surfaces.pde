@@ -76,14 +76,13 @@ class Rauschen extends SurfaceBase {
     RShape pos = area.nameShape;
     RPoint[] pts = area.namePoints;
     float[] nAng = area.nameAngles;
-    float[] radi = area.radi;
     float x1 = 0;
     float y1 = 0;
     int len = pos.getPoints().length;
     this.svgCount +=1;
     RPoint p = new RPoint();
     //println("svg count " + ths.svgCount);
-    if (this.svgCount < 7000) {
+    if (this.svgCount < 5000) {
       int ind = int(random(len));
       p = pts[ind];
       float angle = nAng[ind];
@@ -138,12 +137,7 @@ class Info extends SurfaceBase {
     this.surf.textFont(this.font, width/50); 
     this.surf.textAlign(CENTER);
     this.surf.fill(20, 200); 
-    //this.surf.rectMode(CORNER); 
-    //// progress bar for remaining Timer
-    //// this.surf.text(incomingText + "\t     " + cat, 0, this.surf.height/4, this.surf.width, this.surf.height);
-    //this.surf.fill(189, 10, 10, 150); 
-    //this.surf.rect(0, 0, uttCount * prgIncrement, this.surf.height/4); 
-    this.surf.text("kommentieren Sie auf - - Meinungsorgel.de", 0, 0, this.surf.width, this.surf.height); 
+    this.surf.text("kommentieren Sie auf - \n- Meinungsorgel.de", 0, 0, this.surf.width, this.surf.height); 
     this.surf.endDraw(); 
     println("info updated with  " + cat);
   }
@@ -236,12 +230,12 @@ class Sculpture extends SurfaceBase {
 }
 
 void buildSurfaces() {
-  PFont articleFont = createFont("Courier", 30, true); 
+  PFont articleFont = createFont("Courier", width/33, true); 
   surfs = new ArrayList<SurfaceBase>(); 
   areaSurf = new Info("areaNames", 0, 0, width, height, areaFont, true);
   rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true); 
-  infoSurf = new Info("infoSurf", width *3/5, height/30, width/3, height/12, areaFont, true); 
-  articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30); 
+  infoSurf = new Info("infoSurf", width *3/5, height/30, width/3, height/10, areaFont, true); 
+  articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, width/33); 
   sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true); 
   surfs.add(rauschSurf); 
   surfs.add(areaSurf);

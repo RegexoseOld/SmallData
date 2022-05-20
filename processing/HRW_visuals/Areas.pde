@@ -67,7 +67,7 @@ class Area {
     this.firstAngle = 0;
     this.progressAngle = 0.2;
     this.points = rS.getPoints();
-    this.transX = 100;
+    this.transX = 0;
     this.centerOfArea = this.rS.getCentroid();
     this.nameFont = new RFont("Courier New Bold Italic.ttf", height/18, RFont.CENTER);
     this.nameOffset = 0; // offset for the name of the area
@@ -101,7 +101,6 @@ class Area {
   }
 
   void makeNameShape() {
-
     this.nameShape = this.nameFont.toShape(translatedCats.getString(this.name));
     this.namePoints = this.nameShape.getPoints();
     shapePositions();
