@@ -101,24 +101,25 @@ class Area {
   }
 
   void makeNameShape() {
-    
+
     this.nameShape = this.nameFont.toShape(translatedCats.getString(this.name));
     this.namePoints = this.nameShape.getPoints();
     shapePositions();
-    if (this.name.equals("insinuation")) {this.nameOffset = width/10;}
+    if (this.name.equals("insinuation")) {
+      this.nameOffset = width/10;
+    }
     //println("name   " + this.name + "   points   " + namePoints.length);
   }
-  
-  void shapePositions(){
+
+  void shapePositions() {
     this.nameAngles = new float[this.namePoints.length]; // Liste mit dem spezifischen Winkel jedes Namepoints zum Mittelpunkt
     this.radi = new float[this.namePoints.length];
-    for (int i=0; i<this.namePoints.length; i++){
+    for (int i=0; i<this.namePoints.length; i++) {
       this.nameAngles[i] = this.namePoints[i].angle(this.centerOfArea); // RG Vector von jedem namePoint zum Mittelpunkt
       this.radi[i] = this.namePoints[i].dist(this.centerOfArea); // Die distanz zwischen jedem namePoint im dem Mittelpunkt
     }
-    
   }
-  
+
   void makeAngles() {
     // hier wird für die Fläche der Area der erste und der letzte Winkel definiert
     // dient der Kalkulation der Textwinkel, die bei this.firstAngle beginnen und maximal bis this.secondAngle gehen
@@ -214,13 +215,13 @@ class Area {
 class SculptElement {
   PImage element;
   Area area;
-  PGraphics surf;
+  PGraphics surf, elSurf;
   int alpha, w, h, textsize;
   PFont font;
   color col;
   String t, cat;
-  float current, first, last;
-  PVector pos;
+  float textangle, factor, first, last;
+  PVector pos, rP;
 
   SculptElement(String _t, PFont _font, Area _a, int _w, int _h) {
     this.t = _t;
@@ -229,30 +230,33 @@ class SculptElement {
     this.font = _font;
     this.area = _a;
     this.col = this.area.col;
-    this.surf = createGraphics(this.w, this.h); 
+    this.textsize = 15;
+    this.surf = createGraphics(_w, _h); 
+    this.pos = new PVector(_w/2, _h/2);
     this.surf.smooth();
     this.alpha = 255;
     this.first = this.area.firstAngle;
     this.last = this.area.secondAngle;
-    this.current = this.area.textAngle;
-    this.pos = new PVector();
-    this.textsize = 15;
+    this.factor = 1.0;
+    this.textangle = this.area.textAngle;
     makePImage();
   }
 
   void makePImage() {
-    this.surf.beginDraw();
-    this.surf.textFont(this.font);
-    this.surf.textSize(this.textsize);
-    this.surf.textAlign(TOP, TOP);
-    this.surf.fill(255);
-    this.surf.noStroke();
-    this.surf.rect(0, 0, textWidth(this.t), this.textsize);
-    this.surf.fill(this.col);
-    this.surf.text(this.t, 0, 0);
-    this.surf.endDraw();
-    element = this.surf.get();
+    this.elSurf = createGraphics(int(textWidth(this.t)), int(textAscent() * 1.5));
+    this.elSurf.smooth();
+    this.elSurf.beginDraw();
+    this.elSurf.background(255);
+    this.elSurf.textAlign(TOP, TOP);
+    this.elSurf.fill(this.col);
+    this.elSurf.text(this.t, 0, 0);
+    this.elSurf.endDraw();
+    this.element = this.elSurf.get();
+    this.element.resize(int(this.element.width * this.factor), int(this.element.height * this.factor));
+
+    println("text angle  " + this.area.textAngle + "  element dimensions  " + element.width + ",  " + element.height);
   }
+
 
   void changeAlpha() {
     if (this.alpha >= 1) { 

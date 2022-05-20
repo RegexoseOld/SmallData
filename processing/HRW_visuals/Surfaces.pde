@@ -91,7 +91,7 @@ class Rauschen extends SurfaceBase {
 
       x1 = (center.x + p.x ) + cos(angle) ;
       y1 = (center.y + p.y) + sin(angle) ;
-    }  else {
+    } else {
       area.nameOffset = 0;
       int ind = int(random(area.areaPos.size()));
       PVector pp = area.areaPos.get(ind);
@@ -147,15 +147,14 @@ class Info extends SurfaceBase {
     this.surf.endDraw(); 
     println("info updated with  " + cat);
   }
-  
-  void displayName(Area a){
-  
+
+  void displayName(Area a) {
+
     this.surf.beginDraw(); 
     this.surf.fill(100, 100);
     this.surf.textFont(areaFont);
-    this.surf.text(a.name, a.centerOfArea.x - a.nameOffset, a.centerOfArea.y);
+    this.surf.text(translatedCats.getString(a.name), a.centerOfArea.x - a.nameOffset, a.centerOfArea.y);
     this.surf.endDraw();
-
   }
 }
 
@@ -173,15 +172,29 @@ class Sculpture extends SurfaceBase {
   void addElements(String msg, String incomingCat) {
     Area a = areas.findArea(incomingCat);
     a.changeAngle(); // textAngle ändert sich, abhängig von der Area
-    // PVector angles = new PVector(a.firstAngle, a.secondAngle, a.textAngle); // für jedes neue Element werden die Angles festgeschrieben
-    // todo einfach area übergeben und daraus die Angles und die color ableiten
     SculptElement sE = new SculptElement(msg, this.font, a, this.surf.width, this.surf.height); 
-    
+    flipElement(sE);
     if (this.canUpdate) {
       elements.add(sE);
     } else {
       // use elements2 when loop in updateSculpture is busy to avoid concurrency
       elements2.add(sE);
+    }
+  }
+
+  void flipElement (SculptElement sE) {
+    println("flipping");
+    if (sE.textangle >= HALF_PI && sE.textangle <= 3* HALF_PI || sE.textangle <= -(HALF_PI)) {
+      sE.element.loadPixels();
+      color[] reorder = new color[sE.element.pixels.length];
+      int index = 0;
+      for (int i=sE.element.pixels.length-1; i>0; i--) {
+        //println("pixel nr " + i + "  reorder nr  " + index);
+        reorder[index] = sE.element.pixels[i];
+        index ++;
+      }
+      sE.element.pixels = reorder;
+      sE.element.updatePixels();
     }
   }
 
@@ -212,9 +225,9 @@ class Sculpture extends SurfaceBase {
       // println("area name  " + a.name + "   pos  " + pos);
       this.surf.pushMatrix(); 
       this.surf.translate(width/2, height/2); 
-      this.surf.rotate(e.current); 
+      this.surf.rotate(e.textangle); 
       this.surf.tint(255, e.alpha); 
-      this.surf.image(e.element, 0, 0); 
+      this.surf.image(e.element, 0, 0);
       this.surf.popMatrix();
     }
     this.surf.endDraw(); 
@@ -225,7 +238,7 @@ class Sculpture extends SurfaceBase {
 void buildSurfaces() {
   PFont articleFont = createFont("Courier", 30, true); 
   surfs = new ArrayList<SurfaceBase>(); 
-  areaSurf = new Info("areaNames", 0, 0, width,height, areaFont, true);
+  areaSurf = new Info("areaNames", 0, 0, width, height, areaFont, true);
   rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true); 
   infoSurf = new Info("infoSurf", width *3/5, height/30, width/3, height/12, areaFont, true); 
   articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, 30); 

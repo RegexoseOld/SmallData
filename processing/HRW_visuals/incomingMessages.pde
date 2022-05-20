@@ -50,3 +50,10 @@ void updateUtts() {
   utts.add(incomingUtt);
   // println(" still  updating2?   " + updateUtts + " " + frameCount);
 } 
+
+void mockIncome(String cat){
+  incomingText = "ich weiss genau, dass es ein Brunnengeschäft ist, aber Sie nicht";
+  incomingCat = cat;
+  sculptureSurf.addElements(incomingText, incomingCat);
+  
+}

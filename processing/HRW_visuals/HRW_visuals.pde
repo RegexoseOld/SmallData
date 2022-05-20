@@ -41,15 +41,15 @@ int uttCount = 0;
 Table article;
 
 void setup() {
-  size(1000, 700);
+  size(1000, 560);
   ip_config = loadJSONObject("../../config/ip_config.json");
   TD = loadJSONObject("TrainingDataPelle01.json");
   translatedCats = loadJSONObject("../../config/category_translator.json");
   String ip = ip_config.getString("audience");
   article = loadTable("Moderation.tsv", "header");
   fontlist = PFont.list();
-  messageFont = createFont(fontlist[39], 30, true);
-  infoFont = createFont(fontlist[39], 20, true);
+  messageFont = createFont(fontlist[39], width/30, true);
+  infoFont = createFont(fontlist[39], width/50, true);
   areaFont = createFont("Courier New Bold Italic.ttf", height/18, true);
   buildSurfaces();
   visibilityMachine = new VisibilityMachine();
@@ -66,7 +66,7 @@ void setup() {
   noiseStart = 0;// put in DisplayTD
   noiseLimit = noiseInc;// put in DisplayTD
   moderation = "moderation";
-  incomingCat = "dissence";
+  incomingCat = "praise";
   matchedUtts = new StringList();
 }
 
@@ -136,6 +136,8 @@ void visibility(char k) {
   case '1':
     rauschSurf.visible = !rauschSurf.visible;
     break;
+  case '2':
+    mockIncome("dissence");
   case '3':
     infoSurf.visible = !infoSurf.visible;
     break;
