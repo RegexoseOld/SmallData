@@ -147,7 +147,7 @@ class Info extends SurfaceBase {
     this.surf.beginDraw(); 
     this.surf.fill(100, 100);
     this.surf.textFont(areaFont);
-    this.surf.text(translatedCats.getString(a.name), a.centerOfArea.x - a.nameOffset, a.centerOfArea.y);
+    this.surf.text(translatedCats.getString(a.name), a.centerOfArea.x, a.centerOfArea.y);
     this.surf.endDraw();
   }
 }

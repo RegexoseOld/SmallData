@@ -41,7 +41,9 @@ int uttCount = 0;
 Table article;
 
 void setup() {
+  //fullScreen();
   size(1000, 560);
+  noCursor();
   ip_config = loadJSONObject("../../config/ip_config.json");
   TD = loadJSONObject("TrainingDataPelle01.json");
   translatedCats = loadJSONObject("../../config/category_translator.json");
