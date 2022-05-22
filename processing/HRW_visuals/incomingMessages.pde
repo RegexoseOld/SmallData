@@ -1,11 +1,11 @@
 void oscEvent(OscMessage m) {
   if (m.checkAddrPattern("/display_input") == true) {
-    println("\tINCOMING :" + m.arguments());
-    //oscTextIn = parseJSONObject((String) m.arguments()[0]);
-    incomingText = (String) m.arguments()[0];
-    incomingCat = (String) m.arguments()[1];
-    
+    //println("\t INCOMING :" + m.arguments());
+    JSONArray incoming = parseJSONArray((String) m.arguments()[0]); 
+    incomingText = incoming.getString(0);
+    incomingCat = incoming.getString(1);
     println("Incoming: " + incomingText + ", " + incomingCat);
+
     currentCol = findColor(incomingCat);
     println("new utt: " + incomingText);
     sculptureSurf.addElements(incomingText, incomingCat);
