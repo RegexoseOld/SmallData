@@ -114,3 +114,6 @@ webserver/model_data/german.model
 
 # preliminary xlsx-Files
 *.xlsx#
+
+# settings file
+settings.ini
