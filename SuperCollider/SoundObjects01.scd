@@ -137,17 +137,16 @@ s.waitForBoot({
 
 	SynthDef.new(\attack, {
 		|gate = 1|
-		var channels, sig, env, amp, sweep;
+		var channels, temp, env, amp, sig, sweep;
 		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), \dec.kr(0.2), \sus.kr(0.1), \rls.kr(0.4), curve:\crv.kr(-1.0)), gate, doneAction: 2);
 		amp = \amp.kr(0.1) * \fade.kr(1);
 		channels = {
 			sweep = XLine.ar({ExpRand(500, 1200)}, \ef.kr(80), \fdur.kr(0.08));
-			sig = Select.ar(\which.kr(0), [Impulse.ar(sweep), SinOsc.ar(sweep), LFSaw.ar(sweep)]) ;
+			temp = Select.ar(\which.kr(0), [Impulse.ar(sweep), SinOsc.ar(sweep), LFSaw.ar(sweep)]) * env ;
 		}!4 ;
-		sig = Splay.ar(channels* amp);
+		sig = Splay.ar(channels, level:amp );
 		Out.ar(~out, sig);
 	}).add;
-
 
 	SynthDef.new(\fmBass, {
 		var sig, car, mod, env;
@@ -327,17 +326,25 @@ s.waitForBoot({
 
 	//makePatterns
 	~makePatterns = {
+		~grpDict = Dictionary.new;
 		~objects.keys.do({
 			|ob|
+			var names = List.new, melo = ~objects[ob][\melo][\a];
 			//ob.postln;
 			~objects[ob].keys.do({
 				|k|
+				var current;
 				if (k != 'melo', {
-						~patternDict.add(k -> Pbindef(k, *~objects[ob][k].asPairs));
-						~synthDict.add(k -> (synth: List.new, vol: 0.5, patternVol: 0.1));
+					current = Pbindef(k, *~objects[ob][k].asPairs);
+					current = Pbindef(k, \degree, melo);
+					~patternDict.add(k -> current);
+					names.add(k);
+					~synthDict.add(k -> (synth: List.new, vol: 0.5, patternVol: 0.1));
 				});
+			});
+			~grpDict.add(ob -> names);
 		});
-		});
+		//~grpDict.postln;
 		Pbindef(\metronom, \instrument, \concession, \buf, ~buffers[\hi][2],
 			\dur, 1, \rate, Pseq([1.2, 0.8, 0.8, 0.8], inf), \amp, Pseq([0.4, 0.2, 0.2, 0.2], inf), \send, Prand([Pseq([-35], 64), Pseq([-20], 16)], inf));
 		Pbindef(\rausch, \instrument, \rauschen, \dur, 5, \ffreq, Pseq([666, 150], inf), \pan, Pwhite(-1,1, inf), \amp, 0.1	);
@@ -375,6 +382,7 @@ s.waitForBoot({
 			{true}{"end of fade Cases"};
 			//if (vol > min, {~synthDict[cat][\pattern] = vol - step; vol = vol-step}, {~synthDict[cat][\pattern] = min; vol = min});
 			Pbindef(cat, \amp, vol);
+
 		});
 		//"+++ ++++\t \t +++ ++++".postln;/*
 		//("tempo = " + t.tempo).postln;*/
@@ -383,32 +391,11 @@ s.waitForBoot({
 	~startObjects = {
 		~objects.keys.do({
 			|ob|
-			var melo, group, ppar;
 			ob.postln;
-			ppar = List.new; // make a list for the Ppar
-			// find melo
-			melo = ~objects[ob][\melo][\a];
-			//melo.postln;
-			// get rid of melo
-
-			group = ~objects[ob].keys - Set['melo'];
-			group.collect({
-				|k|
-				// find Pbindefs of the current object,
-				var current;
-				//k.postln;
-				current = Pbindef.all[k];
-				// add the melo
-				current = Pbindef(k, \degree, melo);
-				ppar.add(current);
-				postf("ppar now %\n", ppar.size);
-			});
-			~patternDict.add(ob -> Ppar(ppar.collect(Pbus(_))));
-			~patternDict[ob].play(t, quant:-4);
+			~grpDict[ob].do({|k| Pbindef.all[k].play(t, quant:-1)});
+			postf("started object %\n", ob);
 		})
-
 	};
-
 
 	~startAllPatterns = {
 		//start all Pbindefs with minimal volume and a 10 second delay
@@ -424,19 +411,11 @@ s.waitForBoot({
 		// continuousFadeOut(min, step)
 		t.schedAbs(t.nextTimeOnGrid, {~continuousFadeOut.value(0.001, 0.0003); 1});
 	};
+
 	// solo funktion, um einzelne Patterns zu präsentieren. mit Pbindef().pause und resume arbeiten. Idealerweise mit Tasten oder MIDI
 	~soloPattern = {
 		|name|
-		Pbindef.all.do(_.quant_(0));
-		~patternDict.keys.do({
-			|k|
-			if (name != k, {Pbindef(k).pause}, {Pbindef(k).resume})
-		})
-		};
-	// solo funktion, um einzelne Patterns zu präsentieren. mit Pbindef().pause und resume arbeiten. Idealerweise mit Tasten oder MIDI
-	~soloPattern = {
-		|name|
-		Pbindef.all.do(_.quant_(0));
+		Pbindef.all.do({|p| p.postln; p.quant = 0});
 		~patternDict.keys.do({
 			|k|
 			if (name != k, {Pbindef(k).pause}, {Pbindef(k).resume})
@@ -445,13 +424,13 @@ s.waitForBoot({
 
 
 	// set functions
+
 	//relative Path...? ~setDissent = PathName(thisProcess.nowExecutingPath).parentPath ++"data/setDissent.scd";
 
-	~setInsinuation = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/data/setInsinuation.scd".load;
-	~setDissent = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/data/setDissent.scd".load;
 	~setObj01 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
-	~setConcession = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/data/perc01.scd".load;
-	~setPraise = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/data/setPraise.scd".load;
+	/*~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_02.scd".load;
+	~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;*/
+
 
 	~setRauschen = {
 		|count|
@@ -534,53 +513,33 @@ s.waitForBoot({
 ~buffers[\zahlen][6].play;
 ~reset.clear
 t.beatsPerBar
-{Mix.new([Synth(\praise), Synth(\lecture), Synth(\concession)])}.play
 (
-var p, l, i, d, melo;
-melo = Pseq([0, -4, 3], inf) -12;
-p = Pbindef(\attack, \instrument, \attack, \fdur, 0.08, \rls, 0.01, \which, 0, \fade, 0.6);
-//p = Pbindef(\pr,  \ampHz, 1, \degree, melo +12,  \fRate, 1,  \dur, 1, \fade, 0.6);
-l = Pbindef(\lec, \dur, 1, \degree, melo, \fade, 0.01);
-i = Pbindef(\fm,  \degree, melo, \fade, 0.3);
-//Ppar([p, l, i, d]).play(t, quant:1);
-Ppar([p, l, i, d].collect(Pbus(_))).play(t, quant:1);// jedes pattern in eigenem Bus
-)
-~startObjects.()
-Pbindef(\pr, \ampHz, 12, \pulWidth, 0.2, \fRate, 1)
- Pbindef(\attack, \which, 0, \atk, 0.0, \ef, 60, \rls, 0.1, \fdur, 0.1, \fade, 0.83, \dur, 1);
- Pbindef(\fm, \fade, 0.04, \dur,1)
- Pbindef(\lec, \fade, 0.01, \dur, 1);
+r = Routine.new({
+~startObjects.();
+	1.wait;
+	~setObj01.value('lecture', 2);
+	2.wait;
+	~setObj01.value('lecture', 7);
+	2.wait;
+	~setObj01.value('lecture',10);
+	4.wait;
+	~setObj01.value('lecture', 11);
+}).play;
+);
 
+~patternDict[\fm].stop;
+Pbindef(\atak).stop;
+Pbindef(\atak).reset;
+Synth(\attack, [\which, 2])
 
-(
-Pbindef(\att,
-	\instrument,\attack,
-	\dur, Pwhite(0.03, 0.09, inf),
-	\which, Pxrand([0,1, 2], inf),
-	\freq, 300,
-	\ef, 80,
-	\fdur, 0.05,
-	\dec, 0.05,
-	\rls, 0.08,
-	\sus, Pkey(\rls)/2
-).play;
-)
-Pbindef(\att).stop
-Synth(\attack).free
-
-
-(
-~delay.set(\maxdel, 0.9, \deltime, 0.8, \sweep, 3.0, \decayT, 10.6, \mul, 0.6);
-~reverb.set(\room, 0.1, \damp, 1.1);
-)
 (
 ~factor = 1.3;
 postf("\nset factor % \n", ~factor);
 )
-
+//t.tempo = 0.2
 (
-//Pbindef.all.do(_.postln; "\n".postln);
-Pbindef.all.do(_.play(t, quant:-4));
+Pbindef.all.do(_.postln);
+Pbindef.all.do(_.play(t, quant:0));
 Pbindef.all.do(_.stop);
 Pbindef.all.do(_.resume);
 Pbindef.all.do(_.quant_(4));
@@ -588,15 +547,9 @@ Pbindef.all.do(_.clear);
 ~continuousFadeOut = {}
 )
 (
-~setDissent.value('dissent', 4);
-~setInsinuation.value('insinuation', 21);
-~setLecture.value('lecture', 8);
-~setObj01.value('lecture', 1);
-~setConcession.value('concession', 0);
-~setPraise.value('praise', 29 );
+~setObj01.value('lecture', 11);
 )
 
-(
 ~allocateSynth.value('praise', ~uttDict['praise']);
 ~allocateSynth.value('dissent', ~uttDict['dissent']);
 ~allocateSynth.value('concession',~uttDict['concession']);
