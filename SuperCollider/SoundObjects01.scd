@@ -4,7 +4,7 @@ SoundObjects kombiniert in Mix UGEns
 */
 
 SynthDescLib.global.browse;
-ServerOptions.devices;
+ServerOptions.device;
 ServerOptions.inDevices;
 ServerOptions.outDevices;
 ~fxGroup = nil
@@ -38,7 +38,6 @@ s.newBusAllocators; // Busse machen
 ~volMax = 0.2;
 ~volMin = 0.001;
 ~fadeThres = 0.07;
-
 // wird später in ServerTree angemeldetn
 ~makeNodes = {
 	s.bind(
@@ -49,7 +48,6 @@ s.newBusAllocators; // Busse machen
 		~grain = Synth('grain', [\in, ~fx3Bus], ~fxGroup );
 
 )};
-
 
 
 // wenn gebooted wird, passiert alles folgende, Synthdefs etc
@@ -67,24 +65,20 @@ s.waitForBoot({
 		vol: 0.1
 	);
 	~uttDict = Dictionary.new;
-	~catDict = Dictionary.new;
 	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({
 		|cat|
 		var c;
 		//cat.postln;
 		c = case
-		{cat=='dissent'}{~catDict.add(cat-> \dis)}
-		{cat=='praise'}{~catDict.add(cat-> \pr)}
-		{cat=='insinuation'}{~catDict.add(cat-> \ins)}
-		{cat=='concession'}{~catDict.add(cat-> \con)}
-		{cat=='lecture'}{~catDict.add(cat-> \lec)}
+		{cat=='dissent'}{~uttDict.add(cat-> \dis)}
+		{cat=='praise'}{~uttDict.add(cat-> \pr)}
+		{cat=='insinuation'}{~uttDict.add(cat-> \ins)}
+		{cat=='concession'}{~uttDict.add(cat-> \con)}
+		{cat=='lecture'}{~uttDict.add(cat-> \lec)}
 		{true}{"end of catDict".postln};
-		 });
+	});
 	~synthDict = Dictionary.new;
 	~patternDict = Dictionary.new;
-	~catDict.keys.do({arg cat;
-		~uttDict.add(cat -> 0);
-	});
 
 	s.sync;
 	SynthDef.new(\rauschen, {
@@ -117,21 +111,25 @@ s.waitForBoot({
 		var detune, sig, env, mod, ampMod;
 		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(0.8), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
 		mod = SinOsc.kr(\modRate.kr(1.2));
-		detune = {ExpRand(\det1.kr(0.99), \det2.kr(1.01))}!4;
-		sig = VarSaw.ar(\freq.kr(100)!4 * detune, 0, LFTri.kr(\filTime.kr(0.3)));
+		detune = {ExpRand(\det1.kr(0.99), \det2.kr(1.01))};
+		sig = VarSaw.ar(\freq.kr(100).varlag(\lag.kr(0)) * detune, 0, LFTri.kr(\filTime.kr(0.3)));
 		sig = (sig * \distort.kr(1.5)).tanh;
 		sig = sig * env * mod;
 		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(3));
-		sig = Splay.ar(sig * \amp.kr(0.04) * \fade.kr(1));
+		sig = Pan2.ar(sig * \amp.kr(0.1) * \fade.kr(1), \pan.kr(1));
 		Out.ar(~out, sig);
 		Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
 	}).add;
 
 	SynthDef.new(\bizz, {
 		|gate = 1|
-		var sig, trig, env;
-		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(0.8), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
-		sig = Impulse.ar(\pulse.kr(80));
+		var sig, trig, env, amp, fade;
+		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), \dec.kr(0.2), \sus.kr(0.8), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
+		trig = SinOsc.kr(\tRate.kr(3)).exprange(\pulseL.kr(80), \pulseH.kr(1000));
+		sig = Impulse.ar(trig, \phs.kr(0.0)) * env;
+		sig = sig * \distort.kr(1.0).tanh ;
+		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(5));
+		sig = sig * \amp.kr(0.1) * \fade.kr(1) ;
 		Out.ar(~out, sig)
 	}).add;
 
@@ -141,11 +139,20 @@ s.waitForBoot({
 		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), \dec.kr(0.2), \sus.kr(0.1), \rls.kr(0.4), curve:\crv.kr(-1.0)), gate, doneAction: 2);
 		amp = \amp.kr(0.1) * \fade.kr(1);
 		channels = {
-			sweep = XLine.ar({ExpRand(500, 1200)}, \ef.kr(80), \fdur.kr(0.08));
-			temp = Select.ar(\which.kr(0), [Impulse.ar(sweep), SinOsc.ar(sweep), LFSaw.ar(sweep)]) * env ;
-		}!4 ;
-		sig = Splay.ar(channels, level:amp );
+			sweep = XLine.ar({ExpRand(\freq.kr(1200), \freq2.kr(80))}, \ef.kr(40), \fdur.kr(0.08));
+			temp = Select.ar(\which.kr(0), [
+				WhiteNoise.ar(),
+				Blip.ar(sweep, \harm.kr(100)),
+				SinOsc.ar(sweep), // kickdrum
+				Impulse.ar(\dens.kr(1), 0.0, \knk.kr(1.0) ) // Ich suche einen klicksound
+			]) * env ;
+			temp = FreqShift.ar(temp, \shift.kr(0));
+			temp = BPF.ar(temp, \eqfr1.kr(2300) ,\boost.kr(1.6));
+			temp = Compander.ar(temp, temp, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(2.3));
+		}!2 ;
+		sig = Splay.ar(channels, center: \cent.kr(0.0), level:amp);
 		Out.ar(~out, sig);
+		Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-32).dbamp);
 	}).add;
 
 	SynthDef.new(\fmBass, {
@@ -156,7 +163,7 @@ s.waitForBoot({
 		sig = (car + mod) * env * \amp.kr(0.1);
 		sig = (sig * \distort.kr(1.5)).tanh;
 		sig = sig * \fade.kr(1);
-		sig = Splay.ar(sig);
+		sig = Splay.ar(sig, \spread.kr(1), center: \center.kr(0.0));
 		Out.ar(~out, sig);
 		Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
 	}).add;
@@ -284,8 +291,8 @@ s.waitForBoot({
 		if (cat == 'dissence', {~cat = 'dissent'},{~cat = cat});
 		// for circular performance, reset counter values
 		if(~uttDict[~cat] >= 30, {~uttDict[~cat] = 0}, {~uttDict[~cat] = ~uttDict[~cat] + 1} );
-			//add volume to incoming cat Pattern
-			//~addVolume.value(~catDict[~cat], 0.1, 0.99);
+		//add volume to incoming cat Pattern
+		//~addVolume.value(~uttDict[~cat], 0.1, 0.99);
 	};
 
 	OSCdef.newMatching(
@@ -317,56 +324,95 @@ s.waitForBoot({
 
 	});
 	"network".postln;
-//////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////
 	// laod reset patterns from external file 'pattern_objects.sc'
-	~patPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/patterns_objects.sc";
-	~objects = ();
-	~objects = ~objects ? ();
-	~objects = thisProcess.interpreter.compileFile(~patPath.absolutePath).value;
 
+	~patPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/patterns_objects.sc";
+	~reset = ~reset ? ();
+	~reset = thisProcess.interpreter.compileFile(~patPath.absolutePath).value;
+	"loaded resets".postln;
 	//makePatterns
+	"makepatterns".postln;
 	~makePatterns = {
-		~grpDict = Dictionary.new;
-		~objects.keys.do({
+		~objects = Dictionary.new;
+		~reset.keys.do({
 			|ob|
-			var names = List.new, melo = ~objects[ob][\melo][\a];
-			//ob.postln;
-			~objects[ob].keys.do({
+			var oP = Dictionary.new /*objectPatterns*/, melo = ~reset[ob][\melo][\a];
+			ob.postln;
+			~reset[ob].keys.do({
 				|k|
 				var current;
+				//k.postln;
 				if (k != 'melo', {
-					current = Pbindef(k, *~objects[ob][k].asPairs);
-					current = Pbindef(k, \degree, melo);
-					~patternDict.add(k -> current);
-					names.add(k);
-					~synthDict.add(k -> (synth: List.new, vol: 0.5, patternVol: 0.1));
+					current = Pbindef(k, *~reset[ob][k].asPairs);
+					current = Pbindef(k, \degree, Pseq(melo, inf), \amp, 0.1);
+					~patternDict.add(k -> current); // can be deleted if ~startAllPatterns isn't used anymore
+					oP.add(k -> current);
+					~synthDict.add(k -> (synth: List.new, vol: 0.5, patternVol: 0.1)); // wird das noch gebraucht?
 				});
 			});
-			~grpDict.add(ob -> names);
+			~objects.add(ob -> oP);
 		});
-		//~grpDict.postln;
+
+		//~objects[\obj1][\atak].postln;
 		Pbindef(\metronom, \instrument, \concession, \buf, ~buffers[\hi][2],
-			\dur, 1, \rate, Pseq([1.2, 0.8, 0.8, 0.8], inf), \amp, Pseq([0.4, 0.2, 0.2, 0.2], inf), \send, Prand([Pseq([-35], 64), Pseq([-20], 16)], inf));
-		Pbindef(\rausch, \instrument, \rauschen, \dur, 5, \ffreq, Pseq([666, 150], inf), \pan, Pwhite(-1,1, inf), \amp, 0.1	);
+			\dur, 1, \rate, Pseq([1.5, 0.7, 0.7, 0.7], inf), \amp, Pseq([0.4, 0.15, 0.15, 0.15], inf) * 0.3);
+		Pbindef(\rausch, \instrument, \rauschen, \dur, 5, \ffreq, Pseq([666, 150], inf), \pan, Pwhite(-1,1, inf), \amp, 0.1);
 
 	};
+	Pbindef.all.do(_.clear);
 	~makePatterns.();
+
+	~startObjects = {
+		~reset.keys.do({
+			|ob|
+			//ob.postln;
+
+			~objects[ob].keys.do({|k|
+				Pbindef.all[k].quant_(8);
+				Pbindef.all[k].play(t);
+				//postf("starting %\n   isPlaying?  %\n ", k, Pbindef.all[k].isPlaying);
+			});
+
+			postf("started object %\n", ob);
+		});
+		// Pbindef(\metronom).quant_(4);
+		//Pbindef(\metronom).play(t);
+	};
+
+	~startAllPatterns = {
+		//start all Pbindefs with minimal volume and a 10 second delay
+		Routine.new({
+			~reset[\patternDict].keys.asList.scramble.do({
+				|cat|
+				~patternDict[cat].quant_(8);
+				~patternDict[cat].play(t);
+				postf("pattern % is playing % \n", cat, ~patternDict[cat].isPlaying);
+				//(t.tempo*5).wait
+			})
+		}).play;
+		// continuousFadeOut(min, step)
+		t.schedAbs(t.nextTimeOnGrid, {~continuousFadeOut.value(0.001, 0.0003); 1});
+	};
+
+	"reset & patterns".postln;
 	~addVolume = {
-	|cat, add, max|
-	var c;
-	postf("\nupdating volume of %  from % \n", cat, (~synthDict[cat][\patternVol]) );
-	c = case
-	{~synthDict[cat][\patternVol] <= ~fadeThres}{~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + (add *3) }// triple enhance when pattern is very quiet
-	{(~synthDict[cat][\patternVol] <= max) && (~synthDict[cat][\patternVol] >= ~fadeThres)}{~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + add}
-	{~synthDict[cat][\patternVol] >= max}{~synthDict[cat][\patternVol] = max}
-	{true}{"end of addVolume".postln};
+		|cat, add, max|
+		var c;
+		postf("\nupdating volume of %  from % \n", cat, (~synthDict[cat][\patternVol]) );
+		c = case
+		{~synthDict[cat][\patternVol] <= ~fadeThres}{~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + (add *3) }// triple enhance when pattern is very quiet
+		{(~synthDict[cat][\patternVol] <= max) && (~synthDict[cat][\patternVol] >= ~fadeThres)}{~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + add}
+		{~synthDict[cat][\patternVol] >= max}{~synthDict[cat][\patternVol] = max}
+		{true}{"end of addVolume".postln};
 
-	postf("new vol of %  is % \n", cat, (~synthDict[cat][\patternVol]) );
+		postf("new vol of %  is % \n", cat, (~synthDict[cat][\patternVol]) );
 
-};
+	};
 
 	~continuousFadeOut = {
 		|min, step|
+		////////// TODO auf ~objects anwenden
 		//logarithmisch erst schnell, dann immer langsamer leiser
 		// remove constants that should not fade out
 		~toFade = ~patternDict.keys - Set['hh01', 'bd01', 'sn01', 'bass01', 'zahl'];
@@ -388,39 +434,14 @@ s.waitForBoot({
 		//("tempo = " + t.tempo).postln;*/
 	};
 
-	~startObjects = {
-		~objects.keys.do({
-			|ob|
-			ob.postln;
-			~grpDict[ob].do({|k| Pbindef.all[k].play(t, quant:-1)});
-			postf("started object %\n", ob);
-		})
-	};
-
-	~startAllPatterns = {
-		//start all Pbindefs with minimal volume and a 10 second delay
-		Routine.new({
-			~reset[\patternDict].keys.asList.scramble.do({
-				|cat|
-
-				~patternDict[cat].play(t, quant:-4);
-				postf("pattern % is playing % \n", cat, ~patternDict[cat].isPlaying);
-				//(t.tempo*5).wait
-			})
-		}).play;
-		// continuousFadeOut(min, step)
-		t.schedAbs(t.nextTimeOnGrid, {~continuousFadeOut.value(0.001, 0.0003); 1});
-	};
-
 	// solo funktion, um einzelne Patterns zu präsentieren. mit Pbindef().pause und resume arbeiten. Idealerweise mit Tasten oder MIDI
 	~soloPattern = {
 		|name|
-		Pbindef.all.do({|p| p.postln; p.quant = 0});
-		~patternDict.keys.do({
-			|k|
-			if (name != k, {Pbindef(k).pause}, {Pbindef(k).resume})
-		})
-		};
+		Pbindef.all.keysDo{|p|
+			p.postln;
+			if (name != p, {Pbindef.all[p].pause}, {Pbindef.all[p].resume})
+		}
+	};
 
 
 	// set functions
@@ -428,6 +449,8 @@ s.waitForBoot({
 	//relative Path...? ~setDissent = PathName(thisProcess.nowExecutingPath).parentPath ++"data/setDissent.scd";
 
 	~setObj01 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
+	~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_02.scd".load;
+	~setObj04 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_04.scd".load;
 	/*~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_02.scd".load;
 	~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;*/
 
@@ -446,18 +469,20 @@ s.waitForBoot({
 	~allocateSynth = {
 		|s_name, count|
 		var c;
+		// nur bei simulation ohne OSC benutzen
 		~totalUtts = ~totalUtts + 1;
 		~setGlobal.value();
 		~updateUtts.(s_name);
+
 		postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", s_name);
 		postf("\ntotalUtts %\n", ~totalUtts);
 		postf("\nuttDict: %\t", ~uttDict);
 		c = case
-		{s_name == \lecture} {~setObj01.value(s_name, count);}
-		{s_name == \praise} {~setPraise.value(s_name, count)}
-		{s_name == \dissent} {~setDissent.value(s_name, count)}
-		{s_name == \concession} {~setConcession.value(s_name, count)}
-		{s_name == \insinuation} {~setInsinuation.value(s_name, count)}
+		{s_name == \lecture} {~setObj01.value(count);}
+		{s_name == \praise} {~setPraise.value(count)} // reverb
+		{s_name == \dissent} {~setDissent.value(count)} // granular distortion
+		{s_name == \concession} {~setObj02.value(count)}
+		{s_name == \insinuation} {~setObj03.value(count)}
 		{true}{"end of allocation".postln};
 	};
 
@@ -467,16 +492,16 @@ s.waitForBoot({
 		{~totalUtts >= 40} {"changed Scale".postln; Scale.choose}
 		{~totalUtts >= 25} {"mic ohne hall".postln; ~mic.set(\send, -38);}
 		{~totalUtts == 20} {"mic mit hall".postln; ~mic.set(\send, -12);}
-		{~totalUtts ==10} {~uttDict.keys.do({|k| ~uttDict[k]= 0}); ~startObjects.()}
-		{~totalUtts >=6} {~setRauschen.(~totalUtts)}
-		{~totalUtts >=5} {Pbindef(\rausch).play(t, quant:1); ~mic.set(\send, -20); ~metro.play(t, quant:1);}
+		{~totalUtts ==10} {~uttDict.keys.do({|k| ~uttDict[k]= 1}); ~startObjects.(); ~setObj04.(~totalUtts)}
+		{~totalUtts >=2} {~setObj04.(~totalUtts)}
+		//{~totalUtts >=1} {['atack', 'blibz'].do{|k| Pbindef.all[k].play(t)}}
 		{~totalUtts > 0 } {~mic.set(\send, (-35 + (~totalUtts * 6)));  }
 		{true} {"end of global settings".postln};
 
 	};
 
 	s.sync;
-	Pbindef.all.do(_.stop);
+
 	//Server.default.options.outDevice.postln;
 	"done".postln;
 
@@ -509,26 +534,62 @@ s.waitForBoot({
 /// reset ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // tests
-~buffers[\sweep][0].play;
+~buffers[\klics][0].play;
 ~buffers[\zahlen][6].play;
-~reset.clear
+~reset.clear;
+{ Impulse.ar(2,0.5,0.8) }.play;
+//~sharedValues[\scale] = Scale.choose
+(
+var notes;
+notes = ~reset[\obj1][\melo][\a].asStream;
+notes.nextN(32).postln;
+)
+~objects[\obj2].keys
+~objects[\obj1][\atak].play
+Pmono(\attack, \dur, 0.5, \which, Prand([0, 1, 2, 3], inf), \lag, Pwhite(0.002, 0.3, inf)).play
+Pbindef(\atak).play
+Env.adsr(0.01, 0.5,0.5, 1.0, curve:0).plot
+Pbindef(\atak).isPlaying
+Pbindef(\biz, \distort, Pseq([1, \, \, 1, \, \, 4, \], inf) )
+(
+var test;
+test = Pbind(\instrument, \attack,
+	\dur, 0.3,
+	\sustain, 0,
+	\which, Pxrand([0,1,2],inf),
+	\lag, Pwhite(0.002, 0.3, inf),
+	\degree, Pseq([0, 12], inf)
+).play
+)
+
 t.beatsPerBar
 (
 r = Routine.new({
-~startObjects.();
-	1.wait;
-	~setObj01.value('lecture', 2);
-	2.wait;
-	~setObj01.value('lecture', 7);
-	2.wait;
-	~setObj01.value('lecture',10);
+	~startObjects.();
 	4.wait;
-	~setObj01.value('lecture', 11);
+	//~trans.loop;
+
+	//~setObj02.value(9);
+	~setObj01.value(10);
+	4.wait;
+
+	~setObj01.value(11);
+	/*4.wait
+	~setObj01.value('lecture', 1);
+	4.wait;
+	~setObj01.value('lecture', 30);
+	4.wait;
+	~setObj01.value('lecture', 31);*/
+
+
+	//~setObj01.value('lecture', 18);
 }).play;
 );
 
 ~patternDict[\fm].stop;
-Pbindef(\atak).stop;
+Pbindef(\lec1
+
+).isPlaying;
 Pbindef(\atak).reset;
 Synth(\attack, [\which, 2])
 
@@ -547,18 +608,20 @@ Pbindef.all.do(_.clear);
 ~continuousFadeOut = {}
 )
 (
-~setObj01.value('lecture', 11);
+~setObj01.value('lecture', 9);
 )
-
+(
 ~allocateSynth.value('praise', ~uttDict['praise']);
 ~allocateSynth.value('dissent', ~uttDict['dissent']);
 ~allocateSynth.value('concession',~uttDict['concession']);
 ~allocateSynth.value('insinuation', ~uttDict['insinuation']);
 ~allocateSynth.value('lecture',~uttDict['lecture']);
 )
+
+~allocateSynth.value('lecture',21);
 (
-~soloPattern.(\dis);
-~soloPattern.(\pr);
+~soloPattern.(\atag);
+~soloPattern.(\biz);
 ~soloPattern.(\con);
 ~soloPattern.(\lec);
 ~soloPattern.(\fm);
@@ -594,7 +657,7 @@ t.schedAbs(t.nextBar, {{Blip.ar(500) * EnvGen.kr(Env.perc(0.01, 0.1),doneAction:
 ~pr = ~patternDict[\pr];
 ~dis = ~patternDict[\dis];
 ~ins = ~patternDict[\ins];
-Pbindef.all.do(_.clear);
+Pbindef.all.do(_.resume);
 ~con.quant_(4).play(t);
 ~fmbass.quant_(4).play(t);
 ~lec.quant_(4).play(t);
