@@ -1,6 +1,7 @@
 ~setObj01 = {
 	|counter|
-	var c, s_name, dura, notes, status, count;
+	var c, s_name, dura, notes, status, count, in_count;
+	//in_count steuert den sound in den 5er segmente
 	//"\nset Obj01\n".postln;
 	s_name = "Object 1";
 	count = floor(counter * ~factor).asInteger;
@@ -11,25 +12,22 @@
 	5.do({|i| Pbind(\instrument, \lecture,
 		\freq, [exprand(80, 90 + i), exprand(160, (160 + i))], \amp, 0.01, \filTime, 0.02, \rls, Pn(0.5, 1)).play});
 	c = case
-	{(count > 0) && (count <=10)}	{// resync all patterns
+	{(count > 0) && (count <=5)}	{// resync all patterns
+        in_count = count - 0;
+		"resync".postln;
+		~objects[\obj1].keys.do({|k| Pbindef.all[k].stop; postf("stopped %   , pattern %  \n", k, Pbindef.all[k].isPlaying)});
+		notes = Pseq(~reset[\obj1][\melo][\a], inf);
+		Pbindef(\fm,  \rls, 1, \dur, 1/2, \degree, notes, \fade, in_count * 0.05);
+		Pbindef(\lec, \rls, 1, \dur, 1/2, \degree, notes -12 , \filTime, 0.5, \fade, in_count * 0.22);
 
-			"resync".postln;
-			~objects[\obj1].keys.do({|k| Pbindef.all[k].stop; postf("stopped %   , pattern %  \n", k, Pbindef.all[k].isPlaying)});
-			//Pbind(\instrument, \lecture, \freq, [200, 228], \amp, 0.01, \rls, Pn(t.beatDur*2, 1)).play;
-		    notes = Pseq(~reset[\obj1][\melo][\a], inf);
-			Pbindef(\fm,  \rls, 1, \dur, 1, \degree, notes , \fade, count * 0.003);
-			Pbindef(\lec, \rls, 1, \dur, 1, \degree, notes -12 , \filTime, 0.5, \fade, count * 0.04);
-			Pbindef(\atak, \dur, Pwrand([4, [1/2, 3/4, 1.5].choose], [(0.2 + (count* 0.15)), count.reciprocal].normalizeSum, inf),
-				\which, Pxrand([1,2],inf), \fade, 1 - (count*0.06), \send, -3 - (count * 4));
-			//multichannel expansion
+		//multichannel expansion
 		"add mulitple lec patterns".postln;
-			3.do{|i|
-				var sym, add;
-				sym = ('lec'.asString ++ i).asSymbol;
-				// add additional pattern
-		//add = Pbindef(sym, *~reset[\obj1][\lec].asPairs);
-			add = Pbindef(sym, \degree, notes - 12,
-					\rls, 0.8 + (count * 0.02), \sustain, Pkey(\rls), \filTime, Pwhite(0.03, 0.4, inf) * (count * 0.04)); //anpassen
+		3.do{|i|
+			var sym, add;
+			sym = ('lec'.asString ++ i).asSymbol;
+			// add additional pattern
+			add = Pbindef(sym, \dur, 1/2, \scale, Scale.chromatic, \degree, notes - 12, \distort, 2.0,
+				\rls, 0.8 + (in_count * 0.02), \sustain, Pkey(\rls), \filTime, Pwhite(0.03, 0.4, inf) * (in_count * 0.04), \fade, in_count * 0.2, \amp, 0.1, \thr, 0.65, \cgain, 5); //anpassen
 			~objects[\obj1].add(sym -> add);
 		};
 
@@ -37,170 +35,73 @@
 			Pbindef.all[k].quant_(8);
 			Pbindef.all[k].play(t);
 		});
-
-		status = "Bassmelo 1 faded, ataks ordnen sich";
-
+		status = "segment 1 fades in";
 	}
-
-		////////////////////////////////////////////////////////////////////////////////////////////////
-		////////////////////////////     10     bis     20    //////////////////////////////////////////////
-		////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-	{count == 11}{
+	{(count > 5) && (count <= 10)}{
+		in_count = count - 5;
 		notes = Pseq(~reset[\obj1][\melo][\b], inf);
-		['lec', 'lec0','lec1', 'lec2'].do({|k|
+		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
 			postf("editing %\n", k);
-			Pbindef(k, \degree, notes - rrand(11.999, 12.001), \dur, 1, \amp, 0.15, \modRate, Pwhite(0.8, 1.5, inf), \pan, Pwhite(-1.0, 1.0, inf));
-			Pbindef(k).quant_(4);
+			Pbindef(k, \dur, 1, \degree, notes -12, \fade, 1, \rls, 1 - (in_count * 0.18), \sus, Pkey(\rls));
 		});
 		Pbindef(\fm, \dur, 1, \degree, notes);
-		Pbindef(\atak, \dur, 1, \which, Pseq([\, 2, \, 2, \, \, \, 1, \, \, 2, \, \, 2, \, \], inf), \amp, Pwhite(0.05, 0.12, inf));
-		//"replay".postln;
-		// ~objects[\obj1].keys.do({|k| postf("play %\n", k); Pbindef.all[k].play(t, quant:1)});
-		status = "b pattern";
+		Pbindef(\atak, \dur, 1, \which, Pxrand([1,2],inf), \fade, 0.2+ (in_count*0.06), \send, -3 - (in_count * 4));
+		status = "segment 2 ändert sound";
 	}
-	{count == 12}{
-		notes = Pseq(~reset[\obj1][\melo][\c], inf);
-		 ['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			var p = Pbindef.all[k];
-			postf("editing %\n", k);
-			p = Pbindef(k, \degree, notes -12, \dur, 1);
-			p.quant_(8);
-		});
-		Pbindef(\fm, \dur, 1, \degree, notes);
-		Pbindef(\atak, \dur, 1, \which, Pseq([\, 2, \, 2, \, \, \, 1, \, \, 2, \, \, 2, \, \], inf), \amp, Pwhite(0.05, 0.12, inf));
-		//"replay".postln;
-		// ~objects[\obj1].keys.do({|k| postf("play %\n", k); Pbindef.all[k].play(t, quant:1)});
-		status = "c pattern";
-	}
-	{count == 13}{
-		notes = Pseq(~reset[\obj1][\melo][\d], inf);
-		 ['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			var p = Pbindef.all[k];
-			postf("editing %\n", k);
-			p = Pbindef(k, \degree, notes -12, \dur, 1, \lag, Pwhite(0, 0.04, inf), \center, Pwhite(-0.9, 0.9, inf), \fade, 1);
-			p.quant_(8);
-			//p.play(t)
-		});
-		Pbindef(\fm, \dur, 1, \degree, notes);
-		Pbindef(\atak, \dur, 1, \which, Pseq([\, 2, \, 2, \, \, \, 1, \, \, 2, \, \, 2, \, \], inf), \amp, Pwhite(0.05, 0.12, inf));
-		status = "d pattern";
-	}
-	{count == 14}{
-		notes = Pseq(~reset[\obj1][\melo][\e], inf);
-		  ['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			var p = Pbindef.all[k];
-			postf("editing %\n", k);
-			p = Pbindef(k, \degree, notes -12);
-			p.quant_(8);
-			//p.play(t)
-		});
-		Pbindef(\fm, \dur, 1, \degree, notes);
-		Pbindef(\atak, \dur, 1/2, \which, Pseq([\, 2, \, 2, \, \, \, 1, \, \, 2, \, \, 2, \, \], inf), \amp, Pwhite(0.05, 0.12, inf));
-		//"replay".postln;
-		// ~objects[\obj1].keys.do({|k| postf("play %\n", k); Pbindef.all[k].play(t, quant:1)});
-		status = "e pattern";
-	}
-	{count == 15}{
-		notes = Pseq(~reset[\obj1][\melo][\j], inf);
-		 ['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			var p = Pbindef.all[k];
-			postf("editing %\n", k);
-			p = Pbindef(k, \degree, notes-14, \dur, 1);
-			p.quant_(8);
-			//p.play(t)
-		});
-		Pbindef(\fm, \dur, 1, \degree, notes -2);
-		Pbindef(\atak, \dur, 1/2, \which, Pseq([\, 2, \, 2, \, \, \, 1, \, \, 2, \, \, 2, \, \], inf), \amp, Pwhite(0.05, 0.12, inf));
-		status = "j pattern";
-	}
-	{count == 16}{
-		var notes2 = Pseq(~reset[\obj1][\melo][\l], inf);
-		var notes1 =Pseq(~reset[\obj1][\melo][\m], inf);
-		var notes3  = Pseq(~reset[\obj1][\melo][\n], inf);
-		var notes4 = Pseq(~reset[\obj1][\melo][\o], inf);
+	{(count > 10) && (count <= 15)}	{
+		var notes1 = Pseq(~reset[\obj1][\melo][\hast1], 3);
+		var notes2 = Pseq(~reset[\obj1][\melo][\hast2], 1);
+		in_count = count - 10;
+		notes = Pseq([notes1, notes2], inf);
 
 		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			var p = Pbindef.all[k];
 			postf("editing %\n", k);
-			p = Pbindef(k, \dur, 1/2, \degree, Pseq([notes2, notes1, notes3, notes4], inf) -14 );
-			p.quant_(8);
-			});
-		Pbindef(\fm, \dur, 1/2, \degree, Pseq([notes2, notes1,notes3, notes4], inf) -2);
-		//Pbindef(\atak, \dur, 1/2, \which, Pseq([\, 2, \, 2, \, \, \, 1, \, \, 2, \, \, 2, \, \], inf), \amp, Pwhite(0.05, 0.12, inf));
-
-		status= "l pattern";
+			Pbindef(k, \dur, 4, \degree, notes -12, \fade, 1, \rls, 0.1 + (in_count * 0.25), \sus, Pkey(\rls));
+		});
+		Pbindef(\fm, \dur, 4, \degree, notes);
+		status= "segment 3 long release";
 	}
-	{count == 17}{
-		var notes1 = Pseq(~reset[\obj1][\melo][\c], inf);
-		var notes2  = Pseq(~reset[\obj1][\melo][\d], inf);
+	{(count > 15) && (count <= 20)}	{
+		var notes1 = Pseq(~reset[\obj1][\melo][\hast1], 3);
+		var notes2 = Pseq(~reset[\obj1][\melo][\hast2], 1);
+		in_count = count - 15;
+		notes = Pseq([notes1, notes2], inf);
 
 		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			var p = Pbindef.all[k];
 			postf("editing %\n", k);
-			p = Pbindef(k, \degree,  Pseq([notes1, notes2], inf) -14, \crv, [-3.0, -7.0, 1.0, 5.0].choose, \center, Pwhite(-0.9, 0.9, inf), \cgain, Pwhite(3, 5, inf), \distort, Pwhite(1.5, 2.3, inf));
-			p.quant_(8);
-			});
-		Pbindef(\fm, \dur, 1/2, \degree,  Pseq([notes1, notes2], inf)-2);
-		//Pbindef(\atak, \dur, 1/2, \which, Pseq([\, 2, \, 2, \, \, \, 1, \, \, 2, \, \, 2, \, \], inf), \amp, Pwhite(0.05, 0.12, inf));
-
-		status= "f + g pattern";
+			Pbindef(k, \dur, 2, \degree, notes -12, \fade, 1, \rls, 0.1, \sus, Pkey(\rls));
+		});
+		Pbindef(\fm, \dur, 2, \degree, notes);
+		status= "segment 3 long release";
 	}
-	{count == 18}{
-		var notes2 = Pseq(~reset[\obj1][\melo][\g], inf);
-		notes = Pseq(~reset[\obj1][\melo][\f], inf);
+	{(count > 20) && (count <= 25)}	{
+		var notes1 = Pseq(~reset[\obj1][\melo][\ha5], 3);
+		var notes2 = Pseq(~reset[\obj1][\melo][\ha6], 1);
+		in_count = count - 20;
+		notes = Pseq([notes1, notes2], inf);
 
 		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			var p = Pbindef.all[k];
 			postf("editing %\n", k);
-			p = Pbindef(k, \degree, notes2 -12, \crv, [-3.0, -7.0, 1.0, 5.0].choose, \filTime, Pwhite(0.3, 0.6, inf), \rls, Pwhite(0.6, 1.3, inf), \sus, 1.3);
-			p.quant_(8);
-			});
-		Pbindef(\fm, \dur, 1/4, \degree, Pwrand([notes, notes2], [0.8, 0.2], inf));
-
-		status= "lec chooses sounds, fm chooses patterns f or g";
-	}
-	{count == 19}{
-		var notes2 = Pseq(~reset[\obj1][\melo][\g], inf);
-		var notes3 = Pseq(~reset[\obj1][\melo][\e], inf);
-		notes = Pseq(~reset[\obj1][\melo][\f], inf);
-		Pbindef(\fm, \dur, 1/4, \degree, Pwrand([notes, notes2, notes3], [0.2, 0.6, 0.2], inf));
-
-		status= "lec chooses sounds, fm chooses patterns f or g or e";
-	}
-	{count == 20}{
-		notes = Pseq(~reset[\obj1][\melo][\h], inf);
-		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			var p = Pbindef.all[k];
-			postf("editing %\n", k);
-			p = Pbindef(k, \dur, 1, \degree, notes -12, \crv, [-3.0, -7.0, 1.0, 5.0].choose, \filTime, Pwhite(0.3, 0.6, inf), \rls, Pwhite(0.6, 1.3, inf), \sus, 1.3);
-			p.quant_(8);
-			});
+			Pbindef(k, \dur, 1, \degree, notes -12, \fade, 1, \rls, 0.6, \sus, Pkey(\rls), \modRate, 0.8 * in_count);
+		});
 		Pbindef(\fm, \dur, 1, \degree, notes);
-
-		status= "lec chooses sounds, fm chooses patterns f or g or e";
+		status= "segment 3 long release";
 	}
-	{(count > 20) && (count <= 30)}	{
-			var notes2 = Pseq(~reset[\obj1][\melo][\i], inf);
-			notes = Pseq(~reset[\obj1][\melo][\h], inf);
-			['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-				var p = Pbindef.all[k];
-				postf("editing %\n", k);
-				p = Pbindef(k, \dur, 1, \degree, Pif((count%3 == 0), notes2 -12, notes -12, notes -12));
-				p.quant_(8);
-			});
-			Pbindef(\fm, \dur, 1, \degree, notes2);
 
-			status= "transition to reset of object 1";
-		}
-		{(count > 30)}{
+	{(count > 20) && (count <= 25)}{
+		var notes1 = Pseq(~reset[\obj1][\melo][\ha1], 1);
+		var notes2 = Pseq(~reset[\obj1][\melo][\ha2], 1);
+		var notes3 = Pseq(~reset[\obj1][\melo][\ha3], 1);
+		var notes4 = Pseq(~reset[\obj1][\melo][\ha4], 1);
+		notes = Pseq([notes1, notes2, notes3, notes4], inf);
+		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
+			postf("editing %\n", k);
+			Pbindef(k, \degree, notes -12, \dur, 1);
+		});
+		Pbindef(\fm, \dur, 1, \degree, notes);
+		status = "c, d pattern";
+	}
 
-		~objects[\obj1].keys.do({|k| ['lec0', 'lec1', 'lec2'].do({|l| Pbindef.all[l].clear; ~objects[\obj1].removeAt(l) })});
-		"what is alive?".postln;
-		~objects[\obj1].keys.do({|k| k.postln; postf("object  % active % \n ", k, Pbindef.all[k].isPlaying)});
-			status = "reset object 1 circle";
-		}
 	{true} { "end of lecture reached".postln;};
 	postf("\n new status \t %\n", status);
 

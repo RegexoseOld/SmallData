@@ -111,13 +111,12 @@ s.waitForBoot({
 		var detune, sig, env, mod, ampMod;
 		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(0.8), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
 		mod = SinOsc.kr(\modRate.kr(1.2));
-		detune = {ExpRand(\det1.kr(0.99), \det2.kr(1.01))};
-		sig = VarSaw.ar(\freq.kr(100).varlag(\lag.kr(0)) * detune, 0, LFTri.kr(\filTime.kr(0.3)));
+		sig = VarSaw.ar(\freq.kr(100), 0, LFTri.kr(\filTime.kr(0.3)));
 		sig = (sig * \distort.kr(1.5)).tanh;
-		sig = sig * env * mod;
+		sig = sig * env * mod ;
 		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(3));
-		sig = Pan2.ar(sig * \amp.kr(0.1) * \fade.kr(1), \pan.kr(1));
-		Out.ar(~out, sig);
+		sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(0)), \pan.kr(1));
+		Out.ar(~out, sig );
 		Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
 	}).add;
 
@@ -135,9 +134,9 @@ s.waitForBoot({
 
 	SynthDef.new(\attack, {
 		|gate = 1|
-		var channels, temp, env, amp, sig, sweep;
+		var channels, temp, env, vol, sig, sweep;
 		env = EnvGen.kr(Env.adsr(\atk.kr(0.01), \dec.kr(0.2), \sus.kr(0.1), \rls.kr(0.4), curve:\crv.kr(-1.0)), gate, doneAction: 2);
-		amp = \amp.kr(0.1) * \fade.kr(1);
+		vol = \amp.kr(0.1) * \fade.kr(1);
 		channels = {
 			sweep = XLine.ar({ExpRand(\freq.kr(1200), \freq2.kr(80))}, \ef.kr(40), \fdur.kr(0.08));
 			temp = Select.ar(\which.kr(0), [
@@ -150,7 +149,7 @@ s.waitForBoot({
 			temp = BPF.ar(temp, \eqfr1.kr(2300) ,\boost.kr(1.6));
 			temp = Compander.ar(temp, temp, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(2.3));
 		}!2 ;
-		sig = Splay.ar(channels, center: \cent.kr(0.0), level:amp);
+		sig = Splay.ar(channels, center: \cent.kr(0.0), level:vol);
 		Out.ar(~out, sig);
 		Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-32).dbamp);
 	}).add;
@@ -187,13 +186,12 @@ s.waitForBoot({
 		sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0));
 		//die Env muss wohl .ar sein, um bufnums austauschen zu können
 		env = Env([0, 1, 1, 0], [\atk.kr(0), 0.2,  \sus.kr(0), \rls.kr(1)], [0, 0, 0]).kr(2);
-		shift = FreqShift.ar(sig, LFNoise0.kr(\fShift.kr(0.45), 1000), 0, 1 );
+		shift = FreqShift.ar(sig, \fShift.kr(20) );
 		sig = XFade2.ar(sig, shift, \mix.kr(0.0));
 		sig = BPF.ar(sig, \bpf.kr(440), \rq.kr(1.0));
 		sig = sig * env * \amp.kr(0.2);
 		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(5));
 		sig = sig * \fade.kr(1);
-		sig = Pan2.ar(sig, \pan.kr(0));
 		Out.ar(\out.kr(~out), sig) ;
 		Out.ar(\outfx.kr(~fx2Bus), sig * \send.ir(-30).dbamp);
 	}).add;
@@ -342,7 +340,7 @@ s.waitForBoot({
 			~reset[ob].keys.do({
 				|k|
 				var current;
-				//k.postln;
+				k.postln;
 				if (k != 'melo', {
 					current = Pbindef(k, *~reset[ob][k].asPairs);
 					current = Pbindef(k, \degree, Pseq(melo, inf), \amp, 0.1);
@@ -491,11 +489,11 @@ s.waitForBoot({
 		c = case
 		{~totalUtts >= 40} {"changed Scale".postln; Scale.choose}
 		{~totalUtts >= 25} {"mic ohne hall".postln; ~mic.set(\send, -38);}
-		{~totalUtts == 20} {"mic mit hall".postln; ~mic.set(\send, -12);}
-		{~totalUtts ==10} {~uttDict.keys.do({|k| ~uttDict[k]= 1}); ~startObjects.(); ~setObj04.(~totalUtts)}
+		{~totalUtts == 20} {~setObj04.value(10) }
+		{~totalUtts ==10} {~uttDict.keys.do({|k| ~uttDict[k]= 1}); ~startObjects.();}
 		{~totalUtts >=2} {~setObj04.(~totalUtts)}
 		//{~totalUtts >=1} {['atack', 'blibz'].do{|k| Pbindef.all[k].play(t)}}
-		{~totalUtts > 0 } {~mic.set(\send, (-35 + (~totalUtts * 6)));  }
+
 		{true} {"end of global settings".postln};
 
 	};
@@ -565,27 +563,21 @@ test = Pbind(\instrument, \attack,
 t.beatsPerBar
 (
 r = Routine.new({
+	loop{
 	~startObjects.();
 	4.wait;
-	//~trans.loop;
+	~setObj02.value(5);
+	16.wait;
+	~setObj01.value(5);
+	4.wait;
+	~setObj01.value(21);
+	16.wait;
 
-	//~setObj02.value(9);
 	~setObj01.value(10);
-	4.wait;
-
-	~setObj01.value(11);
-	/*4.wait
-	~setObj01.value('lecture', 1);
-	4.wait;
-	~setObj01.value('lecture', 30);
-	4.wait;
-	~setObj01.value('lecture', 31);*/
-
-
-	//~setObj01.value('lecture', 18);
+	}
 }).play;
 );
-
+~setObj02.value(1);
 ~patternDict[\fm].stop;
 Pbindef(\lec1
 
@@ -618,7 +610,7 @@ Pbindef.all.do(_.clear);
 ~allocateSynth.value('lecture',~uttDict['lecture']);
 )
 
-~allocateSynth.value('lecture',21);
+~allocateSynth.value('lecture',16);
 (
 ~soloPattern.(\atag);
 ~soloPattern.(\biz);

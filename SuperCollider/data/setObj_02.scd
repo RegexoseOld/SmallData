@@ -1,90 +1,53 @@
-~setObj02 = {// represents the rauschen
+~setObj02 = {// represents the beat
 	|counter|
-	var c, dura, notes, status, count, s_name;
+	var c, dura, notes, status, count, in_count, s_name, bd, sn, hh, arp;
 	//"\nset Obj01\n".postln;
-	postf("\nsetting %\t with count %\n", s_name, counter );
-	s_name = "concession";
+	s_name = "beat";
 	count = floor(counter * ~factor).asInteger;
+	postf("\nsetting %\t with count %\n", s_name, counter );
 	status = "zero status";
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	Pbind(\instrument, \concession, \buf, Pxrand(~buffers[\tonal], 10), \dur, 0.1, \fShift, 0.1, \amp, 0.02).play(t);
 
 	c = case
-	{(count > 0) && (count <=10)}{
-		status = "start up noise";
+	{(count > 0) && (count <=5)}{
+		var bd1, bd2, h1, arp1;
+		bd = ~buffers[\bd][10];
+		sn = ~buffers[\sn][11];
+		hh = [Prand(~buffers[\hh_spec], 14), ~buffers[\hh][0], ~buffers[\hh_spec][1] ];
+		bd1 = Pseq(~reset[\obj2][\melo][\bd01].collect({|it, i| if (it == 1, {it = bd}, {it = Rest()})}), inf);
+		bd2 = Pseq(~reset[\obj2][\melo][\bd02].collect({|it, i| if (it == 1, {it = bd}, {it = Rest()})}), inf);
+		h1 = Pseq(hh, inf);
+		arp1 = Pseq(~reset[\obj2][\melo][\arp1], 4);
+		in_count = count - 0;
+		Pbindef(\hh1, \fade, Pwhite(0.3, 1, inf), \fShift, Prand([0.5, 1.5, 4], inf), \bpf, Pseq((400, 450 .. 1800).mirror, inf), \rq, Pwhite(0.3, 3, inf), \rate, Pwrand([1, 1.2], [0.5, 0.5], inf), \dur, 1/2);
+		Pbindef(\bd1, \buf, bd1, \fShift, 0.0002, \dur, 1, \fade, 0.9);
+		Pbindef(\biz, \dur, 1/16, \rls, 0.1, \fade, 1 * dura);
+		Pbindef(\arp, \dur, 1/16, \buf, arp1, \fade, 0.5, \bpf, Pseq((1800, 1750 .. 800).mirror, inf));
+		//Pbind(\instrument, \concession, \buf,  arp1, \dur, 1/32, \fade, 0.4, \rate, 1.0 * in_count).play(t);
+
+		status = "beat1";
 	}
-	{(count > 10) && (count <=20)}	{// resync all patterns
+	{(count > 5) && (count <=10)}	{// resync all patterns
+		bd = ~buffers[\bd][0];
+		sn = ~buffers[\sn][6];
+		hh = ~buffers[\hh][3];
+		Pbindef(\bd1, \buf, Pseq(~reset[\obj2][\melo][\bd03], inf));
+		Pbindef(\sn1, \buf, Pseq(~reset[\obj2][\melo][\sn01], inf));
+		Pbindef(\hh1, \buf, Pseq(~reset[\obj2][\melo][\bd03], inf));
 		Pbindef(\biz, \dur, 0.5, \atk, 0.003, \rls, 0.004, \phs, Pwhite(0, 50, inf), \tRate, Pseq([1, \, \, 1, \, \, 5, \], inf) * count,
 			\pulseL, Pwhite(60, 120, inf), \pulseH, Prand([400, 1200], inf));
 		Pbindef(\atag, \dur, 0.5, \which, Pseq([0, \, \, 2, \, \, 0, \], inf), \fdur, Pwhite(0.02, 0.08, inf), \rls, 0.12, \sus, 0);
 
-		['hh01', 'bd01', 'sn01'].do{
+		['hh1', 'bd1', 'sn1'].do{
 			|k|
 			Pbindef(k, *~reset[\obj2][k].asPairs);
 		};
-		Pbindef(\sn01, \dur, 1, \rate, Pif((count%3 ==0), Pseq([\, \, 1, \, \, \, \, \, 1, 1, 1, \, \, \, \, \], inf),
-			Pseq([\, \, 1, \, \, \, \, \, \, \, 1, \, \, \, \, \], inf)
-		),
-		\pan, Pwhite(-1.0, 1.0, inf), \fade, 0.3 + (count * 0.05));
-
-		~objects[\obj2].keys.do({|k| postf("play %   , pattern %  \n", k, Pbindef.all[k]);
-			Pbindef.all[k].quant_(8)});
 
 		status = "Perc1";
 
 	}
 
-		////////////////////////////////////////////////////////////////////////////////////////////////
-		////////////////////////////     10     bis     20    //////////////////////////////////////////////
-		////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-	{count == 11}{
-
-		status = "b pattern";
-	}
-	{count == 12}{
-
-		status = "c pattern";
-	}
-	{count == 13}{
-
-		status = "d pattern";
-	}
-	{count == 14}{
-
-		status = "e pattern";
-	}
-	{count == 15}{
-		Pbindef(\bd01,  \rate, 1 );
-		Pbindef(\sn01,  \dur, 0.5, \rate, Pseq([\, 1], inf) );
-		Pbindef(\hh01,  \dur, 0.25, \buf, Prand(~buffers[\hh], inf) );
-
-		status = "techno beat";
-	}
-	{count == 16}{
-
-
-		status= "f + g pattern";
-	}
-	{count == 17}{
-
-
-		status= "f + g pattern";
-	}
-	{count == 18}{
-
-		status= "lec chooses sounds, fm chooses patterns f or g";
-	}
-	{count == 19}{
-
-		status= "lec chooses sounds, fm chooses patterns f or g or e";
-	}
-
-	{count == 20}{
-
-		status= "lec chooses sounds, fm chooses patterns f or g or e";
-	}
 	{(count > 20) && (count <= 30)}	{
 
 			status= "transition to reset of object 1";
