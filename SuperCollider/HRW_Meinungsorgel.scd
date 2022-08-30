@@ -24,10 +24,12 @@ ServerOptions.outDevices;
 Server.default.options.numInputBusChannels_(2);
 //Server.default.options.outDevice_("BeatsSolo Wireless");
 //s.options.sampleRate = 48000;
-Server.default.options.inDevice_("Fireface 400 (BEF)");
+//Server.default.options.inDevice_("Fireface 400 (BEF)");
+Server.default.options.inDevice_("Built-in Output");
 //Server.default.options.outDevice_("SoundFlower (2ch)");
-Server.default.options.outDevice_("Fireface 400 (BEF)");
-//Server.default.options.outDevice_("SuperCollider");
+//Server.default.options.outDevice_("Fireface 400 (BEF)");
+Server.default.options.outDevice_("Built-in Output");
+//Server.default.op tions.outDevice_("SuperCollider");
 
 Server.default.options.outDevice.postln;
 // Server.default.options.outDevice.postln;
@@ -231,7 +233,7 @@ s.waitForBoot({
 		sig = BPF.ar(sig, Line.kr(\start.kr(100), \end.kr(1300), \sweep.kr(1.5)));
 		Out.ar(\out.ir(~out), sig);
 	}).add;
-
+	"synths".postln;
 	~buffers= Dictionary.new;
 	//~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";
 	~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
