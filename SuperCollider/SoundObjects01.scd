@@ -255,8 +255,8 @@ s.waitForBoot({
 	//////////////////////////////////////////////////////////////////////////////
 
 	~buffers= Dictionary.new;
-	~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";
-	//~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
+	/*~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";*/
+	~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
 	PathName(~path).entries.do({
 		arg subfolder;
 		~buffers.add(
@@ -445,11 +445,21 @@ s.waitForBoot({
 
 	//relative Path...? ~setDissent = PathName(thisProcess.nowExecutingPath).parentPath ++"data/setDissent.scd";
 
-	~setObj01 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
+	/*~setObj01 = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/setObj_01.scd".load;
+	~setObj02 = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/setObj_02.scd".load;
+	~setObj04 = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/setObj_04.scd".load;
+	~setObj03 = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/setObj_03.scd".load;*/
+
+/*	~setObj01 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
 	~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_02.scd".load;
 	~setObj04 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_04.scd".load;
-	~setObj03 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;
-	/*~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;*/
+	~setObj03 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;*/
+
+
+	~setObj01 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
+	~setObj02 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_02.scd".load;
+	~setObj04 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_04.scd".load;
+	~setObj03 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_03.scd".load;
 
 
 	~setRauschen = {
