@@ -170,11 +170,11 @@ s.waitForBoot({
 	SynthDef('insinuation', {
 		| gate = 1|
 		var  sig, env, lagfrq;
-		env = EnvGen.kr(Env([0,1,1,0], [\atk.kr(0.05), \sus.kr(0.05), \rls.kr(0.4)], [\c1.kr(-2.0), \c2.kr(1), \c3.kr(-4)]), gate, doneAction: 2);
+		env = EnvGen.kr(Env([0,1,1,0], [\atk.kr(0.05), \sus.kr(0.05), \rls.kr(0.25)], [\c1.kr(-2.0), \c2.kr(1), \c3.kr(-4)]), gate, doneAction: 2);
 		lagfrq = Lag.kr(\freq.kr(220), \slideTime.kr(0.6));
 		sig = PMOsc.ar(lagfrq, LFNoise2.ar(\noisFreq.kr(0.1), \maxF.kr(600)), SinOsc.ar(\ffreq.kr(3.0)), pmindex:\modWidth.kr(0.15), mul:\preamp.kr(0.2)) * \amp.kr(0.2)
 		* env ;
-		sig = FreqShift.ar(sig, \fShift.kr(100))!2;
+		sig = FreqShift.ar(sig, \fShift.kr(100));
 		Out.ar(~out, sig * \fade.kr(1));
 		Out.ar(\outfx.ir(~fx1Bus), sig * \send.kr(-30).dbamp);
 	}).add;
@@ -203,15 +203,16 @@ s.waitForBoot({
 		channels = {
 			var amp1, freq1, sig1, env1;
 			amp1 = LFPulse.kr(\ampHz.kr(0.2), 0, \pulWidth.kr(0.9)) * \ampScale.kr(0.75);
-			env1 = EnvGen.kr(Env.adsr(\atk.kr(1.5), 0.2, 0.7, \rls.kr(2.9)), gate, doneAction:2);
+			env1 = EnvGen.kr(Env.adsr(\atk.kr(1.5), 0.2, 0.9, \rls.kr(2.9)), gate, doneAction:2);
 			freq1 = LFNoise0.kr(\fRate.kr(0.2)).exprange(\freq.kr(120), \freq.kr(120) * \fMul.kr(4)).round(\freq.kr(120) * \rnd.kr(1.0));
 			freq1 = freq1 * LFPulse.kr(\pulRate.kr(0.2));
 			sig1 = RHPF.ar(Pulse.ar(freq1, \width.kr(0.2)), \ffreq.kr(300),  \rq.kr(1.0)) * amp1 * env1 ;
 			sig1 = BPF.ar(sig1, \bpf.kr(120));
-		}!2 * \amp.kr(0.1) * \fade.kr(0.75);
+		}!4 * \amp.kr(0.4) * \fade.kr(0.75);
 		Out.ar(~out, channels);
 		Out.ar(\outfx.kr(~fx1Bus), channels * \send.kr(-30).dbamp);
 	}).add;
+
 
 	SynthDef(\mic, {
 		var sig, verb;
@@ -289,8 +290,6 @@ s.waitForBoot({
 		if (cat == 'dissence', {~cat = 'dissent'},{~cat = cat});
 		// for circular performance, reset counter values
 		if(~uttDict[~cat] >= 30, {~uttDict[~cat] = 0}, {~uttDict[~cat] = ~uttDict[~cat] + 1} );
-		//add volume to incoming cat Pattern
-		//~addVolume.value(~uttDict[~cat], 0.1, 0.99);
 	};
 
 	OSCdef.newMatching(
@@ -328,9 +327,8 @@ s.waitForBoot({
 	~patPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/patterns_objects.sc";
 	~reset = ~reset ? ();
 	~reset = thisProcess.interpreter.compileFile(~patPath.absolutePath).value;
-	"loaded resets".postln;
-	//makePatterns
-	"makepatterns".postln;
+	"compiled resets".postln;
+
 	~makePatterns = {
 		~objects = Dictionary.new;
 		~reset.keys.do({
@@ -343,7 +341,7 @@ s.waitForBoot({
 				k.postln;
 				if (k != 'melo', {
 					current = Pbindef(k, *~reset[ob][k].asPairs);
-					current = Pbindef(k, \degree, Pseq(melo, inf), \amp, 0.1);
+					current = Pbindef(k, \midinote, Pseq(melo, inf), \amp, 0.1);
 					~patternDict.add(k -> current); // can be deleted if ~startAllPatterns isn't used anymore
 					oP.add(k -> current);
 					~synthDict.add(k -> (synth: List.new, vol: 0.5, patternVol: 0.1)); // wird das noch gebraucht?
@@ -351,6 +349,7 @@ s.waitForBoot({
 			});
 			~objects.add(ob -> oP);
 		});
+		"made patterns".postln;
 
 		//~objects[\obj1][\atak].postln;
 		Pbindef(\metronom, \instrument, \concession, \buf, ~buffers[\hi][2],
@@ -449,8 +448,8 @@ s.waitForBoot({
 	~setObj01 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
 	~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_02.scd".load;
 	~setObj04 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_04.scd".load;
-	/*~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_02.scd".load;
-	~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;*/
+	~setObj03 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;
+	/*~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;*/
 
 
 	~setRauschen = {
@@ -548,7 +547,8 @@ Pmono(\attack, \dur, 0.5, \which, Prand([0, 1, 2, 3], inf), \lag, Pwhite(0.002, 
 Pbindef(\atak).play
 Env.adsr(0.01, 0.5,0.5, 1.0, curve:0).plot
 Pbindef(\atak).isPlaying
-Pbindef(\biz, \distort, Pseq([1, \, \, 1, \, \, 4, \], inf) )
+Pbindef(\biz, \distort, Pseq([1, \, \, 1, \, \, 4, \], inf) );
+Synth(\lecture)
 (
 var test;
 test = Pbind(\instrument, \attack,
@@ -563,26 +563,23 @@ test = Pbind(\instrument, \attack,
 t.beatsPerBar
 (
 r = Routine.new({
-	loop{
 	~startObjects.();
-	4.wait;
-	~setObj02.value(5);
-	16.wait;
-	~setObj01.value(5);
-	4.wait;
-	~setObj01.value(21);
-	16.wait;
+	loop{
+		4.wait;
+		~setObj03.value(30.rand);
+		4.wait;
+		~setObj01.value(30.rand);
+		4.wait;
+		~setObj02.value(19);
+		4.wait;
 
-	~setObj01.value(10);
 	}
 }).play;
 );
 ~setObj02.value(1);
 ~patternDict[\fm].stop;
-Pbindef(\lec1
-
-).isPlaying;
-Pbindef(\atak).reset;
+Pbindef.all[\biz].pause;
+Pbindef(\org2, \dur, 0.25, \pulRate, 0.125, \fMul, 2, \ampHz, 4);
 Synth(\attack, [\which, 2])
 
 (
