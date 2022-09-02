@@ -27,13 +27,11 @@ s.newBusAllocators; // Busse machen
 ~fx1Bus = Bus.audio(s,2);
 ~fx2Bus = Bus.audio(s,2);
 ~fx3Bus = Bus.audio(s,2);
-/*~so1Bus = Bus.audio(s,2);
-~so2Bus = Bus.audio(s,2);
-~so3Bus = Bus.audio(s,2);
-~bgBus = Bus.audio(s,2);*/
+
 ~cat = "";
 ~out = 0;
 ~factor = 1;
+~fbVol = 0.5;
 ~volPlus = 0.009;
 ~volMax = 0.2;
 ~volMin = 0.001;
@@ -226,9 +224,9 @@ s.waitForBoot({
 	SynthDef('reverb', {
 		var sig, wet;
 		sig = In.ar(\in.ir(~fx1Bus), 2);
-		sig = FreeVerb2.ar(sig[0], sig[1], mix:1, room:\room.kr(0.99), damp:\damp.kr(0.99));
+		sig = FreeVerb2.ar(sig[0], sig[1], mix:\mx.kr(0.5), room:\room.kr(0.99), damp:\damp.kr(0.99));
 		sig = BPF.ar(sig, SinOsc.kr(\bpf.kr(0.0001), 0, 600, 900));
-		sig = LPF.ar(sig, 500);
+		sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(2));
 		Out.ar(\out.ir(~out), sig);
 	}).add;
 
@@ -445,11 +443,6 @@ s.waitForBoot({
 
 	//relative Path...? ~setDissent = PathName(thisProcess.nowExecutingPath).parentPath ++"data/setDissent.scd";
 
-	/*~setObj01 = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/setObj_01.scd".load;
-	~setObj02 = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/setObj_02.scd".load;
-	~setObj04 = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/setObj_04.scd".load;
-	~setObj03 = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/setObj_03.scd".load;*/
-
 /*	~setObj01 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
 	~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_02.scd".load;
 	~setObj04 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_04.scd".load;
@@ -460,6 +453,8 @@ s.waitForBoot({
 	~setObj02 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_02.scd".load;
 	~setObj04 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_04.scd".load;
 	~setObj03 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_03.scd".load;
+	~setPraise = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setPraise.scd".load;
+	~setDissent = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setDissent.scd".load;
 
 
 	~setRauschen = {
@@ -500,7 +495,8 @@ s.waitForBoot({
 		{~totalUtts >= 25} {"mic ohne hall".postln; ~mic.set(\send, -38);}
 		{~totalUtts == 20} {~setObj04.value(10) }
 		{~totalUtts ==10} {~uttDict.keys.do({|k| ~uttDict[k]= 1}); ~startObjects.();}
-		{~totalUtts >=2} {~setObj04.(~totalUtts)}
+		{~totalUtts >=2} {~setObj04.(~totalUtts);
+		}
 		//{~totalUtts >=1} {['atack', 'blibz'].do{|k| Pbindef.all[k].play(t)}}
 
 		{true} {"end of global settings".postln};
@@ -531,11 +527,6 @@ s.waitForBoot({
 ~mic.set(\send, -40, \amp, 0.4, \outfx, ~fx1Bus, \cgain, 2.5, \thr, 0.8, \ffreq, 2000);
 ~mic.set(\send, -5, \amp, 0.22, \outfx, ~fx1Bus, \ffreq, 1500, \thr, 0.2);
 ~mic.free
-~rec = Synth(\recBuf, [\amp, 0.4]);
-~rec.free;
-~play = Synth(\playBuf);
-~play.isPlaying
-~play.free;
 
 
 /// reset ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -558,7 +549,8 @@ Pbindef(\atak).play
 Env.adsr(0.01, 0.5,0.5, 1.0, curve:0).plot
 Pbindef(\atak).isPlaying
 Pbindef(\biz, \distort, Pseq([1, \, \, 1, \, \, 4, \], inf) );
-Synth(\lecture)
+
+~reverb.set(\mx, 0.1, \room, 0.2, \bpf, 0.2, \damp, 0.9, \cgain, 5);
 (
 var test;
 test = Pbind(\instrument, \attack,

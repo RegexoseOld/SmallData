@@ -10,7 +10,7 @@
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 
 	5.do({|i| Pbind(\instrument, \lecture,
-		\freq, [exprand(80, 90 + i), exprand(160, (160 + i))], \amp, 0.1, \fade, 0.2, \filTime, 0.02, \rls, Pn(0.5, 1)).play});
+		\freq, [exprand(80, 90 + i), exprand(160, (160 + i))], \amp,~fbVol/2, \fade, 0.2, \filTime, 0.02, \rls, Pn(0.5, 1)).play});
 	c = case
 	{(count > 0) && (count <=5)}	{// resync all patterns
         in_count = count - 0;

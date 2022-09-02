@@ -7,7 +7,7 @@
 	postf("\nsetting %\t with count %\n", s_name, counter );
 	status = "zero status";
 	dura = Env.new([1,0], [count], [-2]).asPseg;
-	Pbind(\instrument, \concession, \buf, Pxrand(~buffers[\tonal], 10), \dur, 0.1, \fShift, 0.1, \amp, 0.02).play(t);
+	Pbind(\instrument, \concession, \buf, Pxrand(~buffers[\tonal], 10), \dur, 0.1, \fShift, 0.1, \amp, ~fbVol/3).play(t);
 
 	c = case
 	{(count > 0) && (count <=5)}{

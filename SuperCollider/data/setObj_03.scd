@@ -10,7 +10,7 @@
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	5.do({|i|
 		Pbind(\instrument, \insinuation,
-			\freq, [exprand(100, 250), exprand(1700, 2300)], \amp, 0.04, \rls, Pn(3, 1)).play});
+			\freq, [exprand(100, 250), exprand(1700, 2300)], \amp, ~fbVol/2, \rls, Pn(3, 1)).play});
 	c = case
 	{(count > 0) && (count <=5)}	{// resync all patterns
 		var chrd1, chrd2, chrd3;
