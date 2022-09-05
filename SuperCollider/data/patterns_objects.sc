@@ -1,4 +1,5 @@
 (
+
 obj1: (
 	melo: (
 		a: [0, \, \, \, \, \, \, \, \, \, \, \, \, \, \, \ ],
@@ -21,7 +22,6 @@ obj1: (
 
 	lec: (
 		instrument: 'lecture',
-		scale: Scale.chromatic,
 		dur: 1,
 		atk: 0.05,
 		sus: 0.5,
@@ -35,13 +35,13 @@ obj1: (
 		cgain: 5,
 		distort: 2.5,
 		fade: 0,
+		amp: 0.17,
 		send: -30,
 		sustain: 0.2
 	),
 
 	fm: (
 		instrument: 'fmBass',
-		scale: Scale.chromatic,
 		dur: 1,
 		atk: 0.04,
 		rls: 0.4,
@@ -49,7 +49,8 @@ obj1: (
 		distort: 1,
 		send: -40,
 		sustain: 0.3,
-		fade: 0
+		fade: 0,
+		amp: 0.15
 	),
 
 ),
@@ -65,6 +66,7 @@ obj2: (
 		sn02: [\, \, \, \, \, \, \, \, 1, 1, 1, \, \, \, \, \],
 		sn03: [1, 1, \, \, 1, \, \, \, \, \, \, 1, \, \, \, \],
 		sn04: [\, \, \, \, 1, \, \, \, \, \, \, 1, \, \, \, \],
+		sn05: [1, 1, 1, 1, 1, 1, 1, 1, \, \, \, 1, \, \, \, \],
 		hh01: [1, \, 1, \, 1, \, 1, \, 1, \, 1, \, 1, \,
 			1, \, 1, \, 1, \, 1, \, 1, \, 1, \, 1, 1],
 		arp1: [Prand(~buffers[\klics], 24), Pn(\,32), Pseq([~buffers[\klics][2], 76]),  Pn(\, 32) ]
@@ -123,11 +125,12 @@ obj2: (
 		fShift: 0.002,
 		mix: -1,
 		rate: 1,
-		bpf: 500,
+		bpf: 1000,
 		rq: 5,
 		thres: 0.7,
 		cgain: 3,
-		fade: 0.6
+		fade: 0.6,
+		amp: 0.3
 
 	),
 
@@ -165,8 +168,8 @@ obj2: (
 obj3: (
 	melo: (
 		a: [[60, 63, 67]],
-		partA: [[60, 64, 67, 72]],
-		partB: [[58, 64, 68, 72]],
+		partA: [[60, 67, 72]],
+		partB: [[58, 68, 72]],
 		partC: [[59, 65, 69]]
 	),
 
@@ -183,14 +186,41 @@ obj3: (
 
 	org2: (
 		instrument: 'praise',
-		dur: 0.5,
-		atk: 0.4,
-		rls: 1,
+		dur: 2,
+		atk: 1.5,
+		sustain: 0.3,
+		rls: 2,
 		pulRate:4,
 		pulWidth: 1,
-		ampScale: 0.9,
-		fade: 0.2
-	)
+		ampHz: 0.2,
+		ampScale: 0.75,
+		bpf: 500,
+		ffreq: 800,
+		fade: 0.6,
+		amp: 0.8
+	),
+
+	dis: (
+	instrument: 'dissent',
+	dur: 1,
+	atk:0.05,
+	sustain: 0.9,
+	rls: 0.2,
+	ampDist: 0.5,
+	durDist: 1.0,
+	minfreq: 200,
+	maxfreq: 750,
+	ffreq: 900,
+	gendAmp: 0.4,
+	resoFreq: 900,
+	modF: 1.2,
+	width: 0.8,
+	pulseMul: 0.61,
+	amp: 0.2,
+	pan: 0.0,
+	send: -35,
+	fade: 0
+),
 ),
 
 obj4: (
@@ -243,7 +273,6 @@ obj4: (
 		buf: Pseq(~buffers[\hh],inf),
 		dur: 0.5,
 		rate: Pwhite(0.9, 1.1, inf),
-		pan: Pwhite(-0.5, 0.5, inf),
 		bpf: 400,
 		fShift: 0.5,
 		outfx: ~fx2Bus,

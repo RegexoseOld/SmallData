@@ -22,27 +22,27 @@
 
 		//multichannel expansion
 		"add mulitple lec patterns".postln;
-		3.do{|i|
+		2.do{|i|
 			var sym, add;
 			sym = ('lec'.asString ++ i).asSymbol;
 			// add additional pattern
 			add = Pbindef(sym, \dur, 1/2, \midinote, notes - 12, \distort, 2.0,
-				\rls, 0.8 + (in_count * 0.02), \sustain, Pkey(\rls), \filTime, Pwhite(0.03, 0.4, inf) * (in_count * 0.04), \fade, in_count * 0.2, \amp, 0.1, \thr, 0.65, \cgain, 5); //anpassen
+				\rls, 0.8 + (in_count * 0.02), \sustain, Pkey(\rls), \filTime, Pwhite(0.03, 0.4, inf) * (in_count * 0.04), \fade, in_count * 0.2, \amp, 0.12, \thr, 0.65, \cgain, 4); //anpassen
 			~objects[\obj1].add(sym -> add);
 		};
 
-		~objects[\obj1].keys.do({|k| postf("play %   , pattern %  \n", k, Pbindef.all[k]);
+		~objects[\obj1].keys.do({|k| /*postf("play %   , pattern %  \n", k, Pbindef.all[k]);*/
 			Pbindef.all[k].quant_(8);
-			Pbindef.all[k].play(t);
+			Pbindef.all[k].play(~clk01);
 		});
 		status = "segment 1 fades in";
 	}
 	{(count > 5) && (count <= 10)}{
 		in_count = count - 5;
 		notes = Pseq(~reset[\obj1][\melo][\b], inf) + 60;
-		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			postf("editing %\n", k);
-			Pbindef(k, \dur, 1, \midinote, notes -24, \fade, 1, \rls, 1 - (in_count * 0.18), \sus, Pkey(\rls));
+		['lec', 'lec0', 'lec1'].do({|k|
+			//postf("editing %\n", k);
+			Pbindef(k, \dur, 1, \midinote, notes -24, \fade, 1, \rls, 1 - (in_count * 0.18));
 		});
 		Pbindef(\fm, \dur, 1, \midinote, notes);
 		status = "segment 2 ändert sound";
@@ -53,8 +53,8 @@
 		in_count = count - 10;
 		notes = Pseq([notes1, notes2], inf);
 
-		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			postf("editing %\n", k);
+		['lec', 'lec0', 'lec1'].do({|k|
+			//postf("editing %\n", k);
 			Pbindef(k, \dur, 4, \midinote, notes -12, \fade, 1, \rls, 0.1 + (in_count * 0.25), \sus, Pkey(\rls));
 		});
 		Pbindef(\fm, \dur, 4, \midinote, notes);
@@ -66,22 +66,22 @@
 		in_count = count - 15;
 		notes = Pseq([notes1, notes2], inf);
 
-		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			postf("editing %\n", k);
-			Pbindef(k, \dur, 2, \midinote, notes -12, \fade, 1, \rls, 0.1, \sus, Pkey(\rls));
+		['lec', 'lec0', 'lec1'].do({|k|
+			//postf("editing %\n", k);
+			Pbindef(k, \dur, 2, \midinote, notes -12, \fade, 1, \rls, 0.1);
 		});
 		Pbindef(\fm, \dur, 2, \midinote, notes);
 		status= "segment 3 long release";
 	}
 	{(count > 20) && (count <= 25)}	{
-		var notes1 = Pseq(~reset[\obj1][\melo][\ha5], 3)+ 60;
-		var notes2 = Pseq(~reset[\obj1][\melo][\ha6], 1)+ 60;
+		var notes1 = Pseq(~reset[\obj1][\melo][\ha5], 3) + 60;
+		var notes2 = Pseq(~reset[\obj1][\melo][\ha6], 1) + 60;
 		in_count = count - 20;
 		notes = Pseq([notes1, notes2], inf);
 
-		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			postf("editing %\n", k);
-			Pbindef(k, \dur, 1, \midinote, notes -12, \fade, 1, \rls, 0.6, \sus, Pkey(\rls), \modRate, 0.8 * in_count);
+		['lec', 'lec0', 'lec1'].do({|k|
+			//postf("editing %\n", k);
+			Pbindef(k, \dur, 1, \midinote, notes -12, \fade, 1, \rls, 0.6, \modRate, 0.8 * in_count);
 		});
 		Pbindef(\fm, \dur, 1, \midinote, notes);
 		status= "segment 5 und 6 hintereinander";
@@ -94,9 +94,9 @@
 		var notes4 = Pseq(~reset[\obj1][\melo][\ha4], 1) + 60;
 		in_count = count - 25;
 		notes = Pseq([notes1, notes2, notes3, notes4], inf);
-		['lec', 'lec0', 'lec1', 'lec2'].do({|k|
-			postf("editing %\n", k);
-			Pbindef(k, \midinote, notes -12, \dur, 1/2);
+		['lec', 'lec0', 'lec1'].do({|k|
+			//postf("editing %\n", k);
+			Pbindef(k, \midinote, notes -12, \dur, 1/2, \amp, 0.12);
 		});
 		Pbindef(\fm, \dur, 1/2, \midinote, notes);
 		status = "Einzelsegmente hintereinander schneller werdend";
@@ -104,7 +104,7 @@
 
 
 	{true} { "end of Object 1 reached".postln;};
-	postf("\n new status \t %\n", status);
+	postf("\n new status \t %\n  clk01 queue  %", status, ~clk01.queue.size);
 
 }
 

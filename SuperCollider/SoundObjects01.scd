@@ -1,6 +1,9 @@
 /*
 SoundObjects kombiniert in Mix UGEns
 
+Bug bei ~totalUtts = 30 gibt es "late" -messages. hier gucken
+https://scsynth.org/t/what-are-those-late-messages-in-the-post-window/5718
+
 */
 
 SynthDescLib.global.browse;
@@ -11,13 +14,15 @@ ServerOptions.outDevices;
 (
 Server.default.options.numInputBusChannels_(2);
 //Server.default.options.outDevice_("BeatsSolo Wireless");
-//s.options.sampleRate = 48000;
-Server.default.options.inDevice_("Fireface 400 (BEF)");
-//Server.default.options.outDevice_("SoundFlower (2ch)");
-Server.default.options.outDevice_("Fireface 400 (BEF)");
 //Server.default.options.outDevice_("SuperCollider");
+s.options.sampleRate = 48000;
+//Server.default.options.inDevice_("Fireface 400 (BEF)");
+//Server.default.options.outDevice_("SoundFlower (2ch)");
+//Server.default.options.outDevice_("Fireface 400 (BEF)");
+Server.default.options.outDevice_("Built-in Output");
 
 Server.default.options.outDevice.postln;
+Server.default.options.memSize_(8192 * 2);
 // Server.default.options.outDevice.postln;
 
 
@@ -31,7 +36,7 @@ s.newBusAllocators; // Busse machen
 ~cat = "";
 ~out = 0;
 ~factor = 1;
-~fbVol = 0.5;
+~fbVol = 0.4;
 ~volPlus = 0.009;
 ~volMax = 0.2;
 ~volMin = 0.001;
@@ -43,7 +48,7 @@ s.newBusAllocators; // Busse machen
 		//später: Fx Synth machen und hier instantiieren zB ....
 		~delay = Synth('delay', [\in, ~fx2Bus], ~fxGroup);
 		~reverb = Synth('reverb', [\in, ~fx1Bus], ~fxGroup);
-		~grain = Synth('grain', [\in, ~fx3Bus], ~fxGroup );
+		~grain = Synth('grain', [\in, ~fx3Bus], ~fxGroup);
 
 )};
 
@@ -53,15 +58,13 @@ s.waitForBoot({
 	s.freeAll;
 	Buffer.freeAll;
 	s.sync;
-	t = TempoClock.new(110/60).permanent_(true);
+	~clk01 = TempoClock.new(110/60).permanent_(true);
+	~clk02 = TempoClock.new(110/60).permanent_(true);
+	~clk03 = TempoClock.new(110/60).permanent_(true);
+	~clk04 = TempoClock.new(110/60).permanent_(true);
+	~clk05 = TempoClock.new(110/60).permanent_(true);
 	~totalUtts = 0;
-	~sharedValues = (
-		key: 60,
-		tempo: 1,
-		transpose: 0,
-		scale: Scale.chromatic,
-		vol: 0.1
-	);
+
 	~uttDict = Dictionary.new;
 	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({
 		|cat|
@@ -92,10 +95,10 @@ s.waitForBoot({
 	SynthDef.new('dissent', {
 		|gate=1|
 		var sig, gend, env, mod;
-		env = EnvGen.kr(Env.adsr(\atk.ir(0.1), releaseTime:\rls.kr(1), curve:\crv.kr(-10)), gate, doneAction:2);
+		env = EnvGen.kr(Env.adsr(\atk.ir(1.5), releaseTime:\rls.kr(0.2), curve:\crv.kr(-10)), gate, doneAction:2);
 		mod = SinOsc.kr(\modF.kr(1.0));
-		gend = BPF.ar(Gendy1.ar(\ampDist.kr(1), \durDist.kr(1), 1.0, 1.0, \minfreq.kr(100), \maxfreq.kr(1000), \gendScale.kr(0.5), 0.05, 5), \ffreq.kr(300), \rq.kr(0.9)) * \gendAmp.kr(0.3);
-		sig = LFPulse.ar(\freq.kr(100).varlag(\lag.kr(0.3), \lagcrv.kr(5.0)), 0.0, \width.kr(0.4),\pulseMul.kr(0.15), \add.kr(0)) ;
+		gend = BPF.ar(Gendy1.ar(\ampDist.kr(0.5), \durDist.kr(1), 1.0, 1.0, \minfreq.kr(100), \maxfreq.kr(1000), \gendScale.kr(0.5), 0.05, 5), \ffreq.kr(300), \rq.kr(0.9)) * \gendAmp.kr(0.4);
+		sig = LFPulse.ar(\freq.kr(100).varlag(\lag.kr(0.01), \lagcrv.kr(5.0)), 0.0, \width.kr(0.4),\pulseMul.kr(0.45), \add.kr(0)) ;
 		sig = RLPF.ar(sig, \resoFreq.kr(900) ) + gend;
 		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(3));
 		sig = Pan2.ar(sig * env * (\amp.kr(0.1) * mod), \pan.kr(0.0));
@@ -189,8 +192,8 @@ s.waitForBoot({
 		sig = BPF.ar(sig, \bpf.kr(440), \rq.kr(1.0));
 		sig = sig * env * \amp.kr(0.2);
 		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(5));
-		sig = sig * \fade.kr(1);
-		Out.ar(\out.kr(~out), sig) ;
+		sig = LinPan2.ar(sig, \pos.kr(0.0));
+		Out.ar(\out.kr(~out), sig* \fade.kr(1)) ;
 		Out.ar(\outfx.kr(~fx2Bus), sig * \send.ir(-30).dbamp);
 	}).add;
 
@@ -201,12 +204,13 @@ s.waitForBoot({
 		channels = {
 			var amp1, freq1, sig1, env1;
 			amp1 = LFPulse.kr(\ampHz.kr(0.2), 0, \pulWidth.kr(0.9)) * \ampScale.kr(0.75);
-			env1 = EnvGen.kr(Env.adsr(\atk.kr(1.5), 0.2, 0.9, \rls.kr(2.9)), gate, doneAction:2);
-			freq1 = LFNoise0.kr(\fRate.kr(0.2)).exprange(\freq.kr(120), \freq.kr(120) * \fMul.kr(4)).round(\freq.kr(120) * \rnd.kr(1.0));
+			env1 = EnvGen.kr(Env.adsr(\atk.kr(1.0), 0.2, 0.9, \rls.kr(2)), gate, doneAction:2);
+			freq1 = LFNoise0.kr(\fRate.kr(0.2)).exprange(\freq.kr(120), \freq.kr(120) * \fMul.kr(4)).round(\freq.kr(120) * \rnd.kr(1.0)) ;
 			freq1 = freq1 * LFPulse.kr(\pulRate.kr(0.2));
-			sig1 = RHPF.ar(Pulse.ar(freq1, \width.kr(0.2)), \ffreq.kr(300),  \rq.kr(1.0)) * amp1 * env1 ;
+			sig1 = RHPF.ar(Pulse.ar(freq1, \width.kr(0.2)), \ffreq.kr(300), \rq.kr(1.0)) * amp1 * env1 ;
 			sig1 = BPF.ar(sig1, \bpf.kr(120));
-		}!4 * \amp.kr(0.4) * \fade.kr(0.75);
+		} * \amp.kr(0.4) * \fade.kr(0.75);
+		channels = Splay.ar(channels, center: \center.kr(0.0));
 		Out.ar(~out, channels);
 		Out.ar(\outfx.kr(~fx1Bus), channels * \send.kr(-30).dbamp);
 	}).add;
@@ -248,7 +252,7 @@ s.waitForBoot({
 		Out.ar(\out.ir(~out), sig);
 	}).add;
 
-	"/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/data/Looper.scd".load.add;
+	"/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data/Looper.scd".load.add;
 	"synthdefs".postln;
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -269,7 +273,7 @@ s.waitForBoot({
 		)
 	});
 
-	~buffers.add(\rec1 -> Buffer.alloc(s, s.sampleRate * (8 * t.tempo), 2));
+	//~buffers.add(\rec1 -> Buffer.alloc(s, s.sampleRate * (8 * clk02.tempo), 2));
 	"buffers".postln;
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -285,6 +289,7 @@ s.waitForBoot({
 	//n = NetAddr("127.0.0.1", 57120); // local machine
 	~updateUtts = {
 		|cat|
+		postf("updating % ", cat);
 		if (cat == 'dissence', {~cat = 'dissent'},{~cat = cat});
 		// for circular performance, reset counter values
 		if(~uttDict[~cat] >= 30, {~uttDict[~cat] = 0}, {~uttDict[~cat] = ~uttDict[~cat] + 1} );
@@ -296,6 +301,7 @@ s.waitForBoot({
 			postf("\nnew utt: %", msg[1]);
 			postf("\nnew cat: %\n", msg[2]);
 			~updateUtts.(msg[2]);
+			0.1.wait;
 			~allocateSynth.value(~cat, ~uttDict[~cat]);
 		},
 		'/interpreter_input'
@@ -339,7 +345,7 @@ s.waitForBoot({
 				k.postln;
 				if (k != 'melo', {
 					current = Pbindef(k, *~reset[ob][k].asPairs);
-					current = Pbindef(k, \midinote, Pseq(melo, inf), \amp, 0.1);
+					current = Pbindef(k, \midinote, Pseq(melo, inf));
 					~patternDict.add(k -> current); // can be deleted if ~startAllPatterns isn't used anymore
 					oP.add(k -> current);
 					~synthDict.add(k -> (synth: List.new, vol: 0.5, patternVol: 0.1)); // wird das noch gebraucht?
@@ -350,9 +356,9 @@ s.waitForBoot({
 		"made patterns".postln;
 
 		//~objects[\obj1][\atak].postln;
-		Pbindef(\metronom, \instrument, \concession, \buf, ~buffers[\hi][2],
+	/*	Pbindef(\metronom, \instrument, \concession, \buf, ~buffers[\hi][2],
 			\dur, 1, \rate, Pseq([1.5, 0.7, 0.7, 0.7], inf), \amp, Pseq([0.4, 0.15, 0.15, 0.15], inf) * 0.3);
-		Pbindef(\rausch, \instrument, \rauschen, \dur, 5, \ffreq, Pseq([666, 150], inf), \pan, Pwhite(-1,1, inf), \amp, 0.1);
+		Pbindef(\rausch, \instrument, \rauschen, \dur, 5, \ffreq, Pseq([666, 150], inf), \pan, Pwhite(-1,1, inf), \amp, 0.1);*/
 
 	};
 	Pbindef.all.do(_.clear);
@@ -361,12 +367,19 @@ s.waitForBoot({
 	~startObjects = {
 		~reset.keys.do({
 			|ob|
-			//ob.postln;
+			var clock, c;
+			ob.postln;
+			c = case
+			{ob == 'obj1'}{clock = ~clk01}
+			{ob == 'obj2'}{clock = ~clk02}
+			{ob == 'obj3'}{clock = ~clk03}
+			{true}{"end of clocks".postln};
 
 			~objects[ob].keys.do({|k|
+
 				Pbindef.all[k].quant_(8);
-				Pbindef.all[k].play(t);
-				//postf("starting %\n   isPlaying?  %\n ", k, Pbindef.all[k].isPlaying);
+				Pbindef.all[k].play(clock);
+				postf("starting %\n   isPlaying?  %\n ", k, Pbindef.all[k].isPlaying);
 			});
 
 			postf("started object %\n", ob);
@@ -456,25 +469,14 @@ s.waitForBoot({
 	~setPraise = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setPraise.scd".load;
 	~setDissent = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setDissent.scd".load;
 
-
-	~setRauschen = {
-		|count|
-		var c, dura, now;
-		postf("\nsetting rauschen with count %\t", count);
-		dura = Env.new([1,0], [count], [-2]).asPseg;
-		c = case
-		{(count > 5) && (count <= 10)}{Pbindef(\rausch, \ffreq, Pxrand([300, 666, 760], inf) , \rq, Pxrand((0.05, 0.1 .. 2.0), inf), \rls, 0.3, \amp, 0.1);}
-		{true} {"end of rauschen cases".postln};
-		Pbindef(\rausch).quant_(4);
-	};
-
 	~allocateSynth = {
 		|s_name, count|
 		var c;
 		// nur bei simulation ohne OSC benutzen
+		~updateUtts.(s_name);
 		~totalUtts = ~totalUtts + 1;
 		~setGlobal.value();
-		~updateUtts.(s_name);
+
 
 		postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", s_name);
 		postf("\ntotalUtts %\n", ~totalUtts);
@@ -491,14 +493,10 @@ s.waitForBoot({
 	~setGlobal = {
 		var c;
 		c = case
-		{~totalUtts >= 40} {"changed Scale".postln; Scale.choose}
-		{~totalUtts >= 25} {"mic ohne hall".postln; ~mic.set(\send, -38);}
-		{~totalUtts == 20} {~setObj04.value(10) }
+		{(~totalUtts % 21 == 0)} {~setObj04.value(~totalUtts) ; "started knacks".postln;}
 		{~totalUtts ==10} {~uttDict.keys.do({|k| ~uttDict[k]= 1}); ~startObjects.();}
-		{~totalUtts >=2} {~setObj04.(~totalUtts);
+		{~totalUtts >=1} {~setObj04.(~totalUtts);
 		}
-		//{~totalUtts >=1} {['atack', 'blibz'].do{|k| Pbindef.all[k].play(t)}}
-
 		{true} {"end of global settings".postln};
 
 	};
@@ -548,56 +546,48 @@ Pmono(\attack, \dur, 0.5, \which, Prand([0, 1, 2, 3], inf), \lag, Pwhite(0.002, 
 Pbindef(\atak).play
 Env.adsr(0.01, 0.5,0.5, 1.0, curve:0).plot
 Pbindef(\atak).isPlaying
-Pbindef(\biz, \distort, Pseq([1, \, \, 1, \, \, 4, \], inf) );
+Pbindef(\org2, \atk, 1, \fRate, 0.2, \dur, 2).play;
+Pbindef(\org2).isPlaying;
+Synth(\praise)
 
-~reverb.set(\mx, 0.1, \room, 0.2, \bpf, 0.2, \damp, 0.9, \cgain, 5);
-(
-var test;
-test = Pbind(\instrument, \attack,
-	\dur, 0.3,
-	\sustain, 0,
-	\which, Pxrand([0,1,2],inf),
-	\lag, Pwhite(0.002, 0.3, inf),
-	\degree, Pseq([0, 12], inf)
-).play
-)
+
 
 t.beatsPerBar
 (
 r = Routine.new({
 	~startObjects.();
 	loop{
-		4.wait;
-		~setObj03.value(30.rand);
-		4.wait;
+		5.wait;
+	/*	~setObj03.value(30.rand);
+		2.wait;
 		~setObj01.value(30.rand);
-		4.wait;
-		~setObj02.value(19);
-		4.wait;
+		2.wait;
+		~setDissent.value(30.rand);
+		2.wait;
+		~setObj02.value(30.rand);
+		2.wait;
+		~setPraise.value(30.rand);*/
+		~allocateSynth.value('praise', ~uttDict['praise']);
+		3.wait;
+		~allocateSynth.value('dissent', ~uttDict['dissent']);
+		3.wait;
+		~allocateSynth.value('concession',~uttDict['concession']);
+		3.wait;
+		~allocateSynth.value('insinuation', ~uttDict['insinuation']);
+		3.wait;
+		~allocateSynth.value('lecture',~uttDict['lecture']);
 
 	}
 }).play;
 );
-~setObj02.value(1);
-~patternDict[\fm].stop;
-Pbindef.all[\biz].pause;
-Pbindef(\org2, \dur, 0.25, \pulRate, 0.125, \fMul, 2, \ampHz, 4);
-Synth(\attack, [\which, 2])
 
 (
-~factor = 1.3;
+~factor = 2
+;
 postf("\nset factor % \n", ~factor);
 )
 //t.tempo = 0.2
-(
-Pbindef.all.do(_.postln);
-Pbindef.all.do(_.play(t, quant:0));
-Pbindef.all.do(_.stop);
-Pbindef.all.do(_.resume);
-Pbindef.all.do(_.quant_(4));
-Pbindef.all.do(_.clear);
-~continuousFadeOut = {}
-)
+
 (
 ~setObj01.value('lecture', 9);
 )
@@ -609,7 +599,6 @@ Pbindef.all.do(_.clear);
 ~allocateSynth.value('lecture',~uttDict['lecture']);
 )
 
-~allocateSynth.value('lecture',16);
 (
 ~soloPattern.(\atag);
 ~soloPattern.(\biz);
@@ -617,45 +606,6 @@ Pbindef.all.do(_.clear);
 ~soloPattern.(\lec);
 ~soloPattern.(\fm);
 ~soloPattern.(\ins);
-)
-
-
-(
-~postinfo = {
-	("beats: "+ ((t.beats.floor) %t.beatsPerBar +1)).postln;
-	("bar: "+ (t.bar)).postln;
-	"".postln;
-	1;
-};
-t.schedAbs(t.nextBar, {{Blip.ar(500) * EnvGen.kr(Env.perc(0.01, 0.1),doneAction:2)}.play(); ~postinfo.(); });
-)
-
-(
-~setDissent.value('dissent', 30.rand);
-~setInsinuation.value('insinuation', 30.rand);
-~setLecture.value('lecture', 30.rand);
-~setConcession.value('concession', 30.rand);
-~setPraise.value('praise', 30.rand);
-)
-
-(
-// reset patterns and play the3
-~patternDict.keys.do({|k| ~patternDict[k].postln; ~patternDict[k].clear});
-~makePatterns.();
-~con = ~patternDict[\con];
-~fmbass = ~patternDict[\fm];
-~lec = ~lec ? ~patternDict[\lec];
-~pr = ~patternDict[\pr];
-~dis = ~patternDict[\dis];
-~ins = ~patternDict[\ins];
-Pbindef.all.do(_.resume);
-~con.quant_(4).play(t);
-~fmbass.quant_(4).play(t);
-~lec.quant_(4).play(t);
-~pr.quant_(4).play(t);
-~dis.quant_(4).play(t);
-~ins.quant_(4).play(t);
-t.schedAbs(t.nextBar, {~continuousFadeOut.value(0.01, 0.002); 4;});
 )
 
 
