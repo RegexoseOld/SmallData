@@ -1,8 +1,6 @@
 ~setObj01 = {
 	|counter|
 	var c, s_name, dura, notes, status, count, in_count;
-	//in_count steuert den sound in den 5er segmente
-	//"\nset Obj01\n".postln;
 	s_name = "Object 1";
 	count = floor(counter * ~factor).asInteger;
 	postf("\nsetting %\t with count %\n", s_name, count);
@@ -15,7 +13,9 @@
 	{(count > 0) && (count <=5)}	{// resync all patterns
         in_count = count - 0;
 		"resync".postln;
-		~objects[\obj1].keys.do({|k| Pbindef.all[k].stop; postf("stopped %   , pattern %  \n", k, Pbindef.all[k].isPlaying)});
+		~objects[\obj1].keys.do({|k| Pbindef.all[k].stop;
+			//postf("stopped %   , pattern %  \n", k, Pbindef.all[k].isPlaying)
+		});
 		notes = Pseq(~reset[\obj1][\melo][\a], inf) + 60;
 		Pbindef(\fm,  \rls, 1, \dur, 1/2, \midinote, notes, \fade, in_count * 0.05);
 		Pbindef(\lec, \rls, 1, \dur, 1/2, \midinote, notes -24 , \filTime, 0.5, \fade, in_count * 0.22);

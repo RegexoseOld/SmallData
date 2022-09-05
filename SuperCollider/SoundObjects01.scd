@@ -10,6 +10,7 @@ SynthDescLib.global.browse;
 ServerOptions.device;
 ServerOptions.inDevices;
 ServerOptions.outDevices;
+s.latency
 ~fxGroup = nil
 (
 Server.default.options.numInputBusChannels_(2);
@@ -18,12 +19,13 @@ Server.default.options.numInputBusChannels_(2);
 s.options.sampleRate = 48000;
 //Server.default.options.inDevice_("Fireface 400 (BEF)");
 //Server.default.options.outDevice_("SoundFlower (2ch)");
-//Server.default.options.outDevice_("Fireface 400 (BEF)");
-Server.default.options.outDevice_("Built-in Output");
+Server.default.options.outDevice_("Fireface 400 (BEF)");
+//Server.default.options.outDevice_("Built-in Output");
 
 Server.default.options.outDevice.postln;
-Server.default.options.memSize_(8192 * 2);
+//Server.default.options.memSize_(8192 * 2);
 // Server.default.options.outDevice.postln;
+//s.latency = 0.2;
 
 
 ServerTree.removeAll; // löscht alle funktionen
@@ -65,21 +67,12 @@ s.waitForBoot({
 	~clk05 = TempoClock.new(110/60).permanent_(true);
 	~totalUtts = 0;
 
+	~patternDict = Dictionary.new;
 	~uttDict = Dictionary.new;
 	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({
 		|cat|
-		var c;
-		//cat.postln;
-		c = case
-		{cat=='dissent'}{~uttDict.add(cat-> \dis)}
-		{cat=='praise'}{~uttDict.add(cat-> \pr)}
-		{cat=='insinuation'}{~uttDict.add(cat-> \ins)}
-		{cat=='concession'}{~uttDict.add(cat-> \con)}
-		{cat=='lecture'}{~uttDict.add(cat-> \lec)}
-		{true}{"end of catDict".postln};
+		~uttDict.add(cat-> 0)
 	});
-	~synthDict = Dictionary.new;
-	~patternDict = Dictionary.new;
 
 	s.sync;
 	SynthDef.new(\rauschen, {
@@ -257,8 +250,8 @@ s.waitForBoot({
 	//////////////////////////////////////////////////////////////////////////////
 
 	~buffers= Dictionary.new;
-	/*~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";*/
-	~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
+	~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";
+	//~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
 	PathName(~path).entries.do({
 		arg subfolder;
 		~buffers.add(
@@ -287,13 +280,7 @@ s.waitForBoot({
 
 	/// Osc Section
 	//n = NetAddr("127.0.0.1", 57120); // local machine
-	~updateUtts = {
-		|cat|
-		postf("updating % ", cat);
-		if (cat == 'dissence', {~cat = 'dissent'},{~cat = cat});
-		// for circular performance, reset counter values
-		if(~uttDict[~cat] >= 30, {~uttDict[~cat] = 0}, {~uttDict[~cat] = ~uttDict[~cat] + 1} );
-	};
+
 
 	OSCdef.newMatching(
 		\interpreter,
@@ -303,6 +290,7 @@ s.waitForBoot({
 			~updateUtts.(msg[2]);
 			0.1.wait;
 			~allocateSynth.value(~cat, ~uttDict[~cat]);
+			~setGlobal.value();
 		},
 		'/interpreter_input'
 	);
@@ -346,9 +334,7 @@ s.waitForBoot({
 				if (k != 'melo', {
 					current = Pbindef(k, *~reset[ob][k].asPairs);
 					current = Pbindef(k, \midinote, Pseq(melo, inf));
-					~patternDict.add(k -> current); // can be deleted if ~startAllPatterns isn't used anymore
 					oP.add(k -> current);
-					~synthDict.add(k -> (synth: List.new, vol: 0.5, patternVol: 0.1)); // wird das noch gebraucht?
 				});
 			});
 			~objects.add(ob -> oP);
@@ -356,8 +342,8 @@ s.waitForBoot({
 		"made patterns".postln;
 
 		//~objects[\obj1][\atak].postln;
-	/*	Pbindef(\metronom, \instrument, \concession, \buf, ~buffers[\hi][2],
-			\dur, 1, \rate, Pseq([1.5, 0.7, 0.7, 0.7], inf), \amp, Pseq([0.4, 0.15, 0.15, 0.15], inf) * 0.3);
+		/*	Pbindef(\metronom, \instrument, \concession, \buf, ~buffers[\hi][2],
+		\dur, 1, \rate, Pseq([1.5, 0.7, 0.7, 0.7], inf), \amp, Pseq([0.4, 0.15, 0.15, 0.15], inf) * 0.3);
 		Pbindef(\rausch, \instrument, \rauschen, \dur, 5, \ffreq, Pseq([666, 150], inf), \pan, Pwhite(-1,1, inf), \amp, 0.1);*/
 
 	};
@@ -379,55 +365,27 @@ s.waitForBoot({
 
 				Pbindef.all[k].quant_(8);
 				Pbindef.all[k].play(clock);
-				postf("starting %\n   isPlaying?  %\n ", k, Pbindef.all[k].isPlaying);
+				//postf("starting %\n   isPlaying?  %\n ", k, Pbindef.all[k].isPlaying);
 			});
 
-			postf("started object %\n", ob);
+			//postf("started object %\n", ob);
 		});
 		// Pbindef(\metronom).quant_(4);
 		//Pbindef(\metronom).play(t);
 	};
 
-	~startAllPatterns = {
-		//start all Pbindefs with minimal volume and a 10 second delay
-		Routine.new({
-			~reset[\patternDict].keys.asList.scramble.do({
-				|cat|
-				~patternDict[cat].quant_(8);
-				~patternDict[cat].play(t);
-				postf("pattern % is playing % \n", cat, ~patternDict[cat].isPlaying);
-				//(t.tempo*5).wait
-			})
-		}).play;
-		// continuousFadeOut(min, step)
-		t.schedAbs(t.nextTimeOnGrid, {~continuousFadeOut.value(0.001, 0.0003); 1});
-	};
 
-	"reset & patterns".postln;
-	~addVolume = {
-		|cat, add, max|
-		var c;
-		postf("\nupdating volume of %  from % \n", cat, (~synthDict[cat][\patternVol]) );
-		c = case
-		{~synthDict[cat][\patternVol] <= ~fadeThres}{~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + (add *3) }// triple enhance when pattern is very quiet
-		{(~synthDict[cat][\patternVol] <= max) && (~synthDict[cat][\patternVol] >= ~fadeThres)}{~synthDict[cat][\patternVol] = ~synthDict[cat][\patternVol] + add}
-		{~synthDict[cat][\patternVol] >= max}{~synthDict[cat][\patternVol] = max}
-		{true}{"end of addVolume".postln};
-
-		postf("new vol of %  is % \n", cat, (~synthDict[cat][\patternVol]) );
-
-	};
 
 	~continuousFadeOut = {
 		|min, step|
 		////////// TODO auf ~objects anwenden
 		//logarithmisch erst schnell, dann immer langsamer leiser
 		// remove constants that should not fade out
-		~toFade = ~patternDict.keys - Set['hh01', 'bd01', 'sn01', 'bass01', 'zahl'];
+		~toFade = Pbindef.all.keys - Set['hh01', 'bd01', 'sn01', 'zahl'];
 		~toFade.do({
 			|cat|
 			var vol, c;
-			vol = ~synthDict[cat][\patternVol];
+			vol = ~patternDict[cat][\patternVol];
 			//postf("\nthe vol %  of the pattern   %\n", vol, cat);
 			c = case
 			{(vol > min) && (vol >= ~fadeThres)} {~synthDict[cat][\patternVol] = vol - (step*4); vol = vol-(step*4)}
@@ -456,33 +414,39 @@ s.waitForBoot({
 
 	//relative Path...? ~setDissent = PathName(thisProcess.nowExecutingPath).parentPath ++"data/setDissent.scd";
 
-/*	~setObj01 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
+	~setObj01 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
 	~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_02.scd".load;
 	~setObj04 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_04.scd".load;
-	~setObj03 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;*/
+	~setObj03 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;
+	~setPraise = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setPraise.scd".load;
+	~setDissent = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setDissent.scd".load;
 
-
+	/* Laptop path
 	~setObj01 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
 	~setObj02 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_02.scd".load;
 	~setObj04 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_04.scd".load;
 	~setObj03 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_03.scd".load;
 	~setPraise = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setPraise.scd".load;
-	~setDissent = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setDissent.scd".load;
+	~setDissent = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setDissent.scd".load;*/
+
+	~updateUtts = {
+		|cat|
+		postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
+		postf("\nupdating % ", cat);
+		~totalUtts = ~totalUtts + 1;
+		if (cat == 'dissence', {~cat = 'dissent'},{~cat = cat});
+		// for circular performance, reset counter values
+		if(~uttDict[~cat] >= 30, {~uttDict[~cat] = 0}, {~uttDict[~cat] = ~uttDict[~cat] + 1} );
+	};
 
 	~allocateSynth = {
 		|s_name, count|
 		var c;
-		// nur bei simulation ohne OSC benutzen
-		~updateUtts.(s_name);
-		~totalUtts = ~totalUtts + 1;
-		~setGlobal.value();
 
-
-		postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", s_name);
 		postf("\ntotalUtts %\n", ~totalUtts);
 		postf("\nuttDict: %\t", ~uttDict);
 		c = case
-		{s_name == \lecture} {~setObj01.value(count);}
+		{s_name == \lecture} {~setObj01.value(count)}
 		{s_name == \praise} {~setPraise.value(count)} // reverb
 		{s_name == \dissent} {~setDissent.value(count)} // granular distortion
 		{s_name == \concession} {~setObj02.value(count)}
@@ -493,10 +457,10 @@ s.waitForBoot({
 	~setGlobal = {
 		var c;
 		c = case
-		{(~totalUtts % 21 == 0)} {~setObj04.value(~totalUtts) ; "started knacks".postln;}
+		{(~totalUtts >= 41) && (~totalUtts <= 49)} {"starting knacks".postln; ~setObj04.value(~totalUtts) ; }
+		{(~totalUtts >= 21) && (~totalUtts <= 29)} {"starting knacks".postln; ~setObj04.value(~totalUtts) ; }
 		{~totalUtts ==10} {~uttDict.keys.do({|k| ~uttDict[k]= 1}); ~startObjects.();}
-		{~totalUtts >=1} {~setObj04.(~totalUtts);
-		}
+		{(~totalUtts >= 2) && (~totalUtts <= 10)} {~setObj04.(~totalUtts);}
 		{true} {"end of global settings".postln};
 
 	};
@@ -555,10 +519,19 @@ Synth(\praise)
 t.beatsPerBar
 (
 r = Routine.new({
-	~startObjects.();
+	var newUtt;
+	newUtt = {
+		var cat;
+		cat = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'].choose;
+		~updateUtts.(cat);
+		~allocateSynth.value(cat, ~uttDict[cat]);
+		~setGlobal.value();
+	};
+	//~startObjects.();
 	loop{
-		5.wait;
-	/*	~setObj03.value(30.rand);
+
+		/*
+		~setObj03.value(30.rand);
 		2.wait;
 		~setObj01.value(30.rand);
 		2.wait;
@@ -567,15 +540,8 @@ r = Routine.new({
 		~setObj02.value(30.rand);
 		2.wait;
 		~setPraise.value(30.rand);*/
-		~allocateSynth.value('praise', ~uttDict['praise']);
-		3.wait;
-		~allocateSynth.value('dissent', ~uttDict['dissent']);
-		3.wait;
-		~allocateSynth.value('concession',~uttDict['concession']);
-		3.wait;
-		~allocateSynth.value('insinuation', ~uttDict['insinuation']);
-		3.wait;
-		~allocateSynth.value('lecture',~uttDict['lecture']);
+		2.wait;
+		newUtt.value();
 
 	}
 }).play;
