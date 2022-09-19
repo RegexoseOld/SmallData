@@ -1,5 +1,0 @@
-numpy
-joblib
-python-osc
-python-decouple
-klein==21.8.0
