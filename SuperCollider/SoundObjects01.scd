@@ -6,30 +6,22 @@ https://scsynth.org/t/what-are-those-late-messages-in-the-post-window/5718
 
 */
 
+
 SynthDescLib.global.browse;
 ServerOptions.device;
 ServerOptions.inDevices;
 ServerOptions.outDevices;
-s.latency
-~fxGroup = nil
+
 (
-Server.default.options.numInputBusChannels_(2);
-//Server.default.options.outDevice_("BeatsSolo Wireless");
-//Server.default.options.outDevice_("SuperCollider");
-s.options.sampleRate = 48000;
-//Server.default.options.inDevice_("Fireface 400 (BEF)");
-//Server.default.options.outDevice_("SoundFlower (2ch)");
-Server.default.options.outDevice_("Fireface 400 (BEF)");
-//Server.default.options.outDevice_("Built-in Output");
+~configPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "config.scd";
+~configPath.load;
+~dataPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/";
 
+Server.default.options.numInputBusChannels_(0);
+Server.default.options.outDevice_(~audioInterface);
 Server.default.options.outDevice.postln;
-//Server.default.options.memSize_(8192 * 2);
-// Server.default.options.outDevice.postln;
-//s.latency = 0.2;
-
 
 ServerTree.removeAll; // löscht alle funktionen
-OSCFunc.trace(false);
 s.newBusAllocators; // Busse machen
 ~fx1Bus = Bus.audio(s,2);
 ~fx2Bus = Bus.audio(s,2);
@@ -54,9 +46,9 @@ s.newBusAllocators; // Busse machen
 
 )};
 
-
 // wenn gebooted wird, passiert alles folgende, Synthdefs etc
 s.waitForBoot({
+	"start boot".postln;
 	s.freeAll;
 	Buffer.freeAll;
 	s.sync;
@@ -65,9 +57,9 @@ s.waitForBoot({
 	~clk03 = TempoClock.new(110/60).permanent_(true);
 	~clk04 = TempoClock.new(110/60).permanent_(true);
 	~clk05 = TempoClock.new(110/60).permanent_(true);
+
 	~totalUtts = 0;
 
-	~patternDict = Dictionary.new;
 	~uttDict = Dictionary.new;
 	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({
 		|cat|
@@ -82,7 +74,6 @@ s.waitForBoot({
 		sig = Pan2.ar(sig * env * \amp.kr(0.1), \pan.kr(0));
 		Out.ar(\out.kr(~out), sig);
 		Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
-
 	}).add;
 
 	SynthDef.new('dissent', {
@@ -208,16 +199,6 @@ s.waitForBoot({
 		Out.ar(\outfx.kr(~fx1Bus), channels * \send.kr(-30).dbamp);
 	}).add;
 
-
-	SynthDef(\mic, {
-		var sig, verb;
-		sig = SoundIn.ar(1) * \amp.kr(0.3);
-		sig = LPF.ar(sig, \ffreq.kr(1200));
-		sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(4));
-		Out.ar(~out, sig!2);
-		Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-40).dbamp);
-	}).add;
-
 	SynthDef('reverb', {
 		var sig, wet;
 		sig = In.ar(\in.ir(~fx1Bus), 2);
@@ -245,14 +226,12 @@ s.waitForBoot({
 		Out.ar(\out.ir(~out), sig);
 	}).add;
 
-	"/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data/Looper.scd".load.add;
 	"synthdefs".postln;
 	//////////////////////////////////////////////////////////////////////////////
 
-	~buffers= Dictionary.new;
-	~path = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01";
+	~buffers = Dictionary.new;
 	//~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
-	PathName(~path).entries.do({
+	PathName(~samplesPath).entries.do({
 		arg subfolder;
 		~buffers.add(
 			subfolder.folderName.asSymbol ->
@@ -266,7 +245,6 @@ s.waitForBoot({
 		)
 	});
 
-	//~buffers.add(\rec1 -> Buffer.alloc(s, s.sampleRate * (8 * clk02.tempo), 2));
 	"buffers".postln;
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -274,13 +252,8 @@ s.waitForBoot({
 	// Funktionen, die bei jedem cmd-. oder freeAll Aufruf automatisch neu gestartet werden
 	ServerTree.add(~makeNodes);
 	ServerTree.run;
-	//Server.default.options.device_("Fireface 400 (BEF)");
 	s.options.numOutputBusChannels = 6;
 	s.sync;
-
-	/// Osc Section
-	//n = NetAddr("127.0.0.1", 57120); // local machine
-
 
 	OSCdef.newMatching(
 		\interpreter,
@@ -294,29 +267,11 @@ s.waitForBoot({
 		},
 		'/interpreter_input'
 	);
-
-	MIDIClient.init;
-	MIDIIn.connectAll;
-	MIDIFunc.noteOn({ |veloc, num, chan, src|
-		var c, startTime, recTime, bpm;
-		// start synth
-		c = case
-		{num == 48} {"making Synth".postln;
-			~looper = Synth('kaoslooper', ['in', 0, 'buf', ~buffers[\rec1]]);
-			NodeWatcher.register(~looper);}
-		{num == 49}{"start/stop and play".postln; ~looper.set(\t_rec, 1) }/*stop recording, start looping*/
-		{num == 50}{"overdub".postln; ~looper.set( \t_trig, 1) }/*overdub*/
-		{num == 51}{"new sample".postln; ~looper.set( \t_reset, 1) }/*new sample*/
-		{num == 52}{"erase sample. for new loop press 48".postln; ~buffers[\rec1].zero }/*erase sample*/
-		{true}{"end of MIDIFunc".postln; ~looper.release};
-		num.postln;
-
-	});
 	"network".postln;
 	//////////////////////////////////////////////////////////////////////////////
 	// laod reset patterns from external file 'pattern_objects.sc'
 
-	~patPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/patterns_objects.sc";
+	~patPath = ~dataPath ++ "patterns_objects.sc";
 	~reset = ~reset ? ();
 	~reset = thisProcess.interpreter.compileFile(~patPath.absolutePath).value;
 	"compiled resets".postln;
@@ -341,11 +296,6 @@ s.waitForBoot({
 		});
 		"made patterns".postln;
 
-		//~objects[\obj1][\atak].postln;
-		/*	Pbindef(\metronom, \instrument, \concession, \buf, ~buffers[\hi][2],
-		\dur, 1, \rate, Pseq([1.5, 0.7, 0.7, 0.7], inf), \amp, Pseq([0.4, 0.15, 0.15, 0.15], inf) * 0.3);
-		Pbindef(\rausch, \instrument, \rauschen, \dur, 5, \ffreq, Pseq([666, 150], inf), \pan, Pwhite(-1,1, inf), \amp, 0.1);*/
-
 	};
 	Pbindef.all.do(_.clear);
 	~makePatterns.();
@@ -368,66 +318,16 @@ s.waitForBoot({
 				//postf("starting %\n   isPlaying?  %\n ", k, Pbindef.all[k].isPlaying);
 			});
 
-			//postf("started object %\n", ob);
 		});
-		// Pbindef(\metronom).quant_(4);
-		//Pbindef(\metronom).play(t);
 	};
-
-
-
-	~continuousFadeOut = {
-		|min, step|
-		////////// TODO auf ~objects anwenden
-		//logarithmisch erst schnell, dann immer langsamer leiser
-		// remove constants that should not fade out
-		~toFade = Pbindef.all.keys - Set['hh01', 'bd01', 'sn01', 'zahl'];
-		~toFade.do({
-			|cat|
-			var vol, c;
-			vol = ~patternDict[cat][\patternVol];
-			//postf("\nthe vol %  of the pattern   %\n", vol, cat);
-			c = case
-			{(vol > min) && (vol >= ~fadeThres)} {~synthDict[cat][\patternVol] = vol - (step*4); vol = vol-(step*4)}
-			{(vol <= ~fadeThres) && (vol >= min)} { ~synthDict[cat][\patternVol] = vol - step ; vol = vol- step} // slower fade when below thres
-			{vol <= min} {~synthDict[cat][\patternVol] = min; vol = min}
-			{true}{"end of fade Cases"};
-			//if (vol > min, {~synthDict[cat][\pattern] = vol - step; vol = vol-step}, {~synthDict[cat][\pattern] = min; vol = min});
-			Pbindef(cat, \amp, vol);
-
-		});
-		//"+++ ++++\t \t +++ ++++".postln;/*
-		//("tempo = " + t.tempo).postln;*/
-	};
-
-	// solo funktion, um einzelne Patterns zu präsentieren. mit Pbindef().pause und resume arbeiten. Idealerweise mit Tasten oder MIDI
-	~soloPattern = {
-		|name|
-		Pbindef.all.keysDo{|p|
-			p.postln;
-			if (name != p, {Pbindef.all[p].pause}, {Pbindef.all[p].resume})
-		}
-	};
-
 
 	// set functions
-
-	//relative Path...? ~setDissent = PathName(thisProcess.nowExecutingPath).parentPath ++"data/setDissent.scd";
-
-	~setObj01 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
-	~setObj02 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_02.scd".load;
-	~setObj04 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_04.scd".load;
-	~setObj03 = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_03.scd".load;
-	~setPraise = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setPraise.scd".load;
-	~setDissent = "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/data/setDissent.scd".load;
-
-	/* Laptop path
-	~setObj01 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data/setObj_01.scd".load;
-	~setObj02 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_02.scd".load;
-	~setObj04 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_04.scd".load;
-	~setObj03 = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setObj_03.scd".load;
-	~setPraise = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setPraise.scd".load;
-	~setDissent = "/Users/borisjoens/Documents/IchProjekte/Meinung/SmallData_GitHub/SuperCollider/data//setDissent.scd".load;*/
+	~setObj01 = (~dataPath ++ "setObj_01.scd").load;
+	~setObj02 = (~dataPath ++ "setObj_02.scd").load;
+	~setObj04 = (~dataPath ++ "setObj_04.scd").load;
+	~setObj03 = (~dataPath ++ "setObj_03.scd").load;
+	~setPraise = (~dataPath ++ "setPraise.scd").load;
+	~setDissent = (~dataPath ++ "setDissent.scd").load;
 
 	~updateUtts = {
 		|cat|
@@ -482,41 +382,8 @@ s.waitForBoot({
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/* Das Soundwesen*/
-
-//activate Mic
-~mic = Synth(\mic, [\amp, 0.45, \ffreq, 1500, \outfx, ~fx3Bus, \send, -25]);
-~mic.set(\send, -40, \amp, 0.4, \outfx, ~fx1Bus, \cgain, 2.5, \thr, 0.8, \ffreq, 2000);
-~mic.set(\send, -5, \amp, 0.22, \outfx, ~fx1Bus, \ffreq, 1500, \thr, 0.2);
-~mic.free
-
-
-/// reset ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 // tests
-~buffers[\klics][0].play;
-~buffers[\zahlen][6].play;
-~reset.clear;
-{ Impulse.ar(2,0.5,0.8) }.play;
-//~sharedValues[\scale] = Scale.choose
-(
-var notes;
-notes = ~reset[\obj1][\melo][\a].asStream;
-notes.nextN(32).postln;
-)
-~objects[\obj2].keys
-~objects[\obj1][\atak].play
-Pmono(\attack, \dur, 0.5, \which, Prand([0, 1, 2, 3], inf), \lag, Pwhite(0.002, 0.3, inf)).play
-Pbindef(\atak).play
-Env.adsr(0.01, 0.5,0.5, 1.0, curve:0).plot
-Pbindef(\atak).isPlaying
-Pbindef(\org2, \atk, 1, \fRate, 0.2, \dur, 2).play;
-Pbindef(\org2).isPlaying;
-Synth(\praise)
 
-
-
-t.beatsPerBar
 (
 r = Routine.new({
 	var newUtt;
@@ -529,20 +396,8 @@ r = Routine.new({
 	};
 	//~startObjects.();
 	loop{
-
-		/*
-		~setObj03.value(30.rand);
-		2.wait;
-		~setObj01.value(30.rand);
-		2.wait;
-		~setDissent.value(30.rand);
-		2.wait;
-		~setObj02.value(30.rand);
-		2.wait;
-		~setPraise.value(30.rand);*/
 		2.wait;
 		newUtt.value();
-
 	}
 }).play;
 );
@@ -552,11 +407,7 @@ r = Routine.new({
 ;
 postf("\nset factor % \n", ~factor);
 )
-//t.tempo = 0.2
 
-(
-~setObj01.value('lecture', 9);
-)
 (
 ~allocateSynth.value('praise', ~uttDict['praise']);
 ~allocateSynth.value('dissent', ~uttDict['dissent']);
@@ -565,13 +416,5 @@ postf("\nset factor % \n", ~factor);
 ~allocateSynth.value('lecture',~uttDict['lecture']);
 )
 
-(
-~soloPattern.(\atag);
-~soloPattern.(\biz);
-~soloPattern.(\con);
-~soloPattern.(\lec);
-~soloPattern.(\fm);
-~soloPattern.(\ins);
-)
 
 
