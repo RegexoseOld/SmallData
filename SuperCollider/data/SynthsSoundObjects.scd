@@ -1,5 +1,6 @@
 (
-SynthDef.new(\rauschen, {
+~synthLoad = {
+	SynthDef.new(\rauschen, {
 		var sig, env;
 		env = EnvGen.kr(Env([0, 1, 1, 0], [\atk.kr(1.5), 0.2, \sus.kr(0.2), \rls.kr(2.0)], [1, 0, -2, 3]), doneAction:2);
 		sig = BPF.ar(BrownNoise.ar(\mul.kr(0.4)), \ffreq.kr(666), \rq.kr(0.6));
@@ -157,5 +158,6 @@ SynthDef.new(\rauschen, {
 		sig = BPF.ar(sig, Line.kr(\start.kr(100), \end.kr(1300), \sweep.kr(1.5)));
 		Out.ar(\out.ir(~out), sig);
 	}).add;
+}
 
 )
