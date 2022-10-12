@@ -1,6 +1,18 @@
 (
-Server.default.options.outDevice_("Scarlett 4i4 USB");
-s.options.sampleRate = 48000;
+~configPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "config.scd";
+~configPath.load;
+~dataPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/";
+
+Server.default.options.numInputBusChannels_(0);
+Server.default.options.outDevice_(~audioInterface);
+Server.default.options.outDevice.postln;
+
+ServerTree.removeAll; // löscht alle funktionen
+s.newBusAllocators; // Busse machen
+~fx1Bus = Bus.audio(s,2);
+~fx2Bus = Bus.audio(s,2);
+~fx3Bus = Bus.audio(s,2);
+
 s.waitForBoot({
     s.freeAll;
     Buffer.freeAll;
@@ -8,21 +20,16 @@ s.waitForBoot({
     MIDIClient.init;
     ~midiOut = MIDIOut.new(0);
     s.sync;
+    /// load SynthDefs
+    ~synths = ~dataPath ++ "SynthsAttuning.scd";
+    ~synths.load;
+    ~synthLoad.value();
+    "loaded synthdefs".postln;
 
-
-    SynthDef.new(\bell1, {
-        // a long bell
-        |gate=1|
-        var sig, env, volMod, trem;
-        env = EnvGen.kr(Env.adsr(\atk.kr(3.1), 0.2, 1, \rls.kr(3.1), curve:\crv.kr(10)), gate, doneAction:2);
-        volMod = SinOsc.kr(\modF.kr(1), 0, 0.5)  ; // vol modulation
-        trem = Vibrato.kr(\vibF.kr(1), \vibRate.kr(2), \dep.kr(0.0), \del.kr(1), \onset.kr(2), \rateVar.kr(0.5), \varDur.kr(1) );
-        sig = SinOsc.ar(\freq.kr(100) * trem, 0, 0.5 + volMod );
-        sig = Pan2.ar(sig * env * \amp.kr(0.1), \pan.kr(0.0));
-        Out.ar(\out.ir(0), sig);
-    }).add;
-
-
+    //load melodies
+    ~melPath = ~dataPath ++ "attune_melos.sc";
+    ~melos = ~melos ? ();
+    ~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
 
     "done".postln;
 
