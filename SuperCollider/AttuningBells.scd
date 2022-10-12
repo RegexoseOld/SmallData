@@ -54,12 +54,26 @@ Pbindef(\b2,
     \pan, 1,
     \modF, 0
 ).play;
+
+Pbindef(\at,
+    \instrument, \bell1,
+    \atk, 0.1,
+    \rls, 1.0,
+    \sus, Pkey(\rls),
+     \freq, 320, // akkorde
+	\dur, 4,
+	\amp, 0.15,
+    \pan, 0,
+    \modF, 0
+).play;
 )
-Pbindef(\b2, \midinote, Pxrand([53, 72], inf) -10, \modF, 0.1 );
+Pbindef(\b2, \midinote, Pxrand([[53, 72]], inf) -10, \modF, 0.1);
 
 
+Pbindef(\b1, \pan, -1, \amp, 0.3, \freq, Pseq((72, 74 .. 92), inf).trace, \dur, 8 );
 Pbindef(\b1, \pan, -1, \amp, 0.2, \freq, Pseq((315, 316 .. 325), inf)-238, \dur, 8 );
-Pbindef(\b2, \pan, 1, \amp, 0.2, \freq, 82, \dur, 8)
+Pbindef(\at, \atk, 0.05, \freq, 320, \rls, 2.5, \modF, 5, \amp, Pgeom(0.01, 1.02, inf), \crv, 10);
+Pbindef(\b2, \pan, 1, \amp, 0.2, \freq, 82, \dur, 4, \atk, 1, \rls, 2.5, \sus, Pkey(\rls)*2/3);
 
 
 Pbindef(\b1).play
@@ -77,13 +91,12 @@ Pbindef(\b1, \midinote, [55, 59, 61], \vibF, 1, \vibRate, 1, \modF, 1, \dep, 0, 
       {
         [53, 55, 61, 66].do{
             |nn|
-            ~midiOut.noteOn(0, nn, 20);
-            //4.wait;
-            //~midiOut.noteOn(0, nn, 0); // zither noteOff = noteOn mit Velocity = 0
+            ~midiOut.noteOn(0, nn, 30);
 
         };
-        rand(10).wait;
+        1.wait;
         [53, 55, 61, 66].do{|nn| ~midiOut.noteOn(0, nn, 0)};
+        5.wait;
 
     }.loop;
 
