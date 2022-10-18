@@ -14,19 +14,23 @@ s.newBusAllocators; // Busse machen
 ~fx3Bus = Bus.audio(s,2);
 ~fbVol = 0.2;
 ~factor = 1;
+~fadingSynths = [\pr, \dis, \con, \lec, \ins];
 
 s.waitForBoot({
     s.freeAll;
     Buffer.freeAll;
+	Pbindef.all.do(_.clear);
     s.sync;
     MIDIClient.init;
     ~midiOut = MIDIOut.new(0);
+	~t = TempoClock(100/60);
     s.sync;
     /// load SynthDefs
-    ~synths = ~dataPath ++ "SynthsAttuning.scd";
-    ~synths.load;
+	~patterns = Dictionary.new;
+   (~dataPath ++ "SynthsAttuning.scd").load;
     ~synthLoad.value();
     "loaded synthdefs".postln;
+	~fadingSynths.do{|k| ~patterns.add(k -> (\vol: 0.2))};
 
     //load melodies
     ~melPath = ~dataPath ++ "attune_melos.sc";
@@ -35,28 +39,31 @@ s.waitForBoot({
 	// set functions
 	~setPraise = (~dataPath ++ "setPraise.scd").load;
 	~setDissent = (~dataPath ++ "setDissent.scd").load;
-	~dataPath ++ "attuneFunctions.scd".load;
+	(~dataPath ++ "attuneFunctions.scd").load;
 
 	~allocateSynth = {
 		|s_name, count|
 		var c;
 		c = case
-		{s_name == \praise} {~setPraise.value(count)} // reverb
-		{s_name == \dissent} {~setDissent.value(count)}
+		{s_name == \praise} {~addVolume.value(\pr, 0.1, 0.8, 0.2 ); ~setPraise.value(count)} // reverb
+		{s_name == \dissent} {~addVolume.value(\dis, 0.1, 0.8, 0.2 )}
+		{s_name == \insinuation} {~addVolume.value(\ins, 0.1, 0.8, 0.2 )}
+		{s_name == \lecture} {~addVolume.value(\lec, 0.1, 0.8, 0.2 )}
+		{s_name == \concession} {~addVolume.value(\con, 0.1, 0.8, 0.2)}
 		{true}{"end of allocation".postln};
 	};
-	Pbindef.all.do(_.clear);
 
     "done".postln;
 
 });
 )
+
 (
 Pbindef(\base,
 	\instrument, \bell1,
 	\scale, Scale.chromatic,
 	\midinote, ~melos[\melo][\base01], // akkorde
-	\dur, 1,
+	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
     \modF, 0,
@@ -69,7 +76,7 @@ Pbindef(\pr,
     \instrument, \bell1,
 	\scale, Scale.chromatic,
     \midinote, ~melos[\melo][\pr], // akkorde
-	\dur, 1,
+	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
 	\atk, 0.1,
@@ -82,7 +89,7 @@ Pbindef(\dis,
     \instrument, \bell1,
 	\scale, Scale.chromatic,
     \midinote, ~melos[\melo][\dis], // akkorde
-	\dur, 1,
+	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
 	\atk, 0.1,
@@ -95,7 +102,7 @@ Pbindef(\ins,
     \instrument, \bell1,
 	\scale, Scale.chromatic,
     \midinote, ~melos[\melo][\ins], // akkorde
-	\dur, 1,
+	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
 	\atk, 0.1,
@@ -108,7 +115,7 @@ Pbindef(\lec,
     \instrument, \bell1,
 	\scale, Scale.chromatic,
     \midinote, ~melos[\melo][\lec], // akkorde
-	\dur, 1,
+	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
 	\atk, 0.1,
@@ -121,7 +128,7 @@ Pbindef(\con,
     \instrument, \bell1,
 	\scale, Scale.chromatic,
     \midinote, ~melos[\melo][\con], // akkorde
-	\dur, 1,
+	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
 	\atk, 0.1,
@@ -132,8 +139,10 @@ Pbindef(\con,
 
 
 )
+	~t.schedAbs(~t.nextTimeOnGrid, {~continuousFadeOut.value(~fadingSynths, 0.001, 0.001, 0.1); 1});
 
-
+~patterns[\pr][\vol]
+Pbindef.all[\pr].next[\amp]
 Pbindef(\pr, \amp, 0.1)
 Pbindef(\base, \amp, 0.3)
 Pbindef(\dis, \amp, 0.0001)
@@ -141,7 +150,7 @@ Pbindef(\ins, \amp, 0.0001)
 Pbindef(\lec, \amp, 0.0001)
 Pbindef(\con, \amp, 0.2)
 
-~allocateSynth.value(\praise, 5)
+~allocateSynth.value(\insinuation, 3)
 
 (
 ~r1 = Routine({

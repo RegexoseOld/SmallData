@@ -1,25 +1,37 @@
 
-~continuousFadeOut = {
-	|min, step|
-		//logarithmisch erst schnell, dann immer langsamer leiser
+~addVolume = {
+	|cat, add, max, thres|
+	var c, editVol;
+	editVol = ~patterns[cat][\vol];
+	postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
+	c = case
+	{editVol <= thres}{editVol = editVol + (add *2); ~patterns[cat][\vol] = editVol }// double enhance when pattern is very quiet
+	{(editVol<= max) && (editVol>= thres)}{editVol = editVol + add; ~patterns[cat][\vol] = editVol}
+	{editVol >= max}{editVol = max; ~patterns[cat][\vol] = max}
+	{true}{"end of addVolume".postln};
+    Pbindef(cat, \amp, editVol);
+	postf("new vol of %  is % \n", cat, editVol);
 
-	~patternDict.keys.do({
-			|cat|
-		var vol, c;
-		vol = ~synthDict[cat][\patternVol];
-		//postf("\nthe vol %  of the pattern   %\n", vol, cat);
-		c = case
-		{(vol > min) && (vol >= ~fadeThres)} {~synthDict[cat][\patternVol] = vol - (step*4); vol = vol-(step*4)}
-		{(vol <= ~fadeThres) && (vol >= min)} { ~synthDict[cat][\patternVol] = vol - step ; vol = vol- step} // slower fade when below thres
-		{vol <= min} {~synthDict[cat][\patternVol] = min; vol = min}
-		{true}{"end of fade Cases"};
-		//if (vol > min, {~synthDict[cat][\pattern] = vol - step; vol = vol-step}, {~synthDict[cat][\pattern] = min; vol = min});
-		Pbindef(cat, \amp, vol);
-	});
-		//"+++ ++++\t \t +++ ++++".postln;/*
-		//("tempo = " + t.tempo).postln;*/
 };
 
-~printSomething = {|it|
-	postf("% is printed as %, indeed", it, it)
-}
+~continuousFadeOut = {
+	|listOfPatterns, min, step, thres|
+		//logarithmisch erst schnell, dann immer langsamer leiser
+
+	listOfPatterns.do({
+			|cat|
+		var vol, c;
+		vol = ~patterns[cat][\vol];
+		//postf("\nthe vol %  of the pattern   %\n", vol, cat);
+		c = case
+		{(vol > min) && (vol >= thres)} {~patterns[cat][\vol] = vol - (step*4); vol = vol-(step*4)} // loud volumes decrease fast
+		{(vol <= thres) && (vol >= min)} {~patterns[cat][\vol] = vol - step ; vol = vol- step} // middle volumes decrease slower
+		{vol <= min} {~patterns[cat][\vol] = min; vol = min}
+		{true}{"end of fade cases"};
+		Pbindef(cat, \amp, vol);
+	});
+
+};
+
+
+
