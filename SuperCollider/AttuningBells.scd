@@ -62,20 +62,20 @@ s.waitForBoot({
 Pbindef(\base,
 	\instrument, \bell1,
 	\scale, Scale.chromatic,
-	\midinote, ~melos[\melo][\base01], // akkorde
-	\dur, 2,
+	\midinote, Pseq(~melos[\melo][\ruzhim], inf).trace, // akkorde
+	\dur, Pseq(~melos[\duras][\ruzhim], inf).trace,
 	\amp, 0.15,
     \pan, 0,
     \modF, 0,
 	\atk, 0.1,
-	\rls, 0.8,
+	\rls, 0.3,
 	\sus, Pkey(\dur)
 ).play;
 
 Pbindef(\pr,
     \instrument, \bell1,
 	\scale, Scale.chromatic,
-    \midinote, ~melos[\melo][\pr], // akkorde
+    \midinote, ~melos[\melo][\pr] +1, // akkorde
 	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
@@ -88,7 +88,7 @@ Pbindef(\pr,
 Pbindef(\dis,
     \instrument, \bell1,
 	\scale, Scale.chromatic,
-    \midinote, ~melos[\melo][\dis], // akkorde
+    \midinote, ~melos[\melo][\dis] +1, // akkorde
 	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
@@ -101,7 +101,7 @@ Pbindef(\dis,
 Pbindef(\ins,
     \instrument, \bell1,
 	\scale, Scale.chromatic,
-    \midinote, ~melos[\melo][\ins], // akkorde
+    \midinote, ~melos[\melo][\ins] +1, // akkorde
 	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
@@ -114,7 +114,7 @@ Pbindef(\ins,
 Pbindef(\lec,
     \instrument, \bell1,
 	\scale, Scale.chromatic,
-    \midinote, ~melos[\melo][\lec], // akkorde
+    \midinote, ~melos[\melo][\lec] +1, // akkorde
 	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
@@ -127,7 +127,7 @@ Pbindef(\lec,
 Pbindef(\con,
     \instrument, \bell1,
 	\scale, Scale.chromatic,
-    \midinote, ~melos[\melo][\con], // akkorde
+    \midinote, ~melos[\melo][\con] +1, // akkorde
 	\dur, 2,
 	\amp, 0.15,
     \pan, 0,
@@ -139,7 +139,7 @@ Pbindef(\con,
 
 
 )
-	~t.schedAbs(~t.nextTimeOnGrid, {~continuousFadeOut.value(~fadingSynths, 0.001, 0.001, 0.1); 1});
+~t.schedAbs(~t.nextTimeOnGrid, {~continuousFadeOut.value(~fadingSynths, 0.001, 0.001, 0.1); 1});
 
 ~patterns[\pr][\vol]
 Pbindef.all[\pr].next[\amp]
