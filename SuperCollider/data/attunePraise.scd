@@ -9,17 +9,14 @@
 	status = "zero status";
 
 	c = case
-	{(count > 0) && (count <= 5)} {
+	{(count > 0) && (count <= 10)} {
 		in_count = count - 0;
-        //Pbindef(\pr, \fade, in_count * 0.1);
-        local_feedback = 0.4;
-		status = "fading in praise (65= F)";
+        Pbindef(\pr, \fade, in_count * ~fadeInc);
+        status = "fading in praise";
 	}
-	{(count > 5) && (count <= 10)} {
-		in_count = count -5;
+	{(count > 10) && (count <= 20)} {
+		in_count = count -10;
 		//Pbindef(\b1, \modF, 1.0 - (in_count* 0.2));
-
-
 		status = "modF back";
 	}
 	{(count > 10) && (count <= 20)} {

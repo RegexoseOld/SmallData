@@ -1,4 +1,4 @@
-~setDissent = {
+~attDissent = {
     |counter|
     var c, s_name, dura, status, count, in_count, local_feedback;
     count = floor(counter * ~factor).asInteger;
@@ -10,8 +10,8 @@
     c = case
     {(count > 0) && (count <= 10)} {
         in_count = count - 0;
-
-        status = "dissent status1";
+        Pbindef(\dis, \fade, in_count * ~fadeInc);
+        status = "fading in dissent";
 
     }
     {(count > 10) && (count <=20)} {
@@ -36,6 +36,7 @@
             \atk, 0.05, \rls, 0.14,
             \dur, 0.25
     ).play});
+    ~addVolume.value(\dis, ~volPlus, ~volMax, ~volThres);
 
     postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
 
