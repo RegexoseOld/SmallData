@@ -237,6 +237,7 @@ void buildSurfaces() {
   infoSurf = new Info("infoSurf", width/2, height/30, width *39/80, height/16, areaFont, true); 
   articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, width/33); 
   sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true); 
+  vignetteSurf = new SurfaceBase("vignette", 0, 0, width, height, messageFont, true);
   surfs.add(rauschSurf); 
   surfs.add(areaSurf);
   surfs.add(infoSurf); 

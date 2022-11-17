@@ -12,6 +12,7 @@ NetAddress loc;
 
 final Timer timer = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
+SurfaceBase vignetteSurf;
 Article articleSurf;
 Rauschen rauschSurf;
 Info infoSurf, areaSurf;
@@ -39,12 +40,13 @@ int cat_limit, cat_counts, noiseStart, noiseLimit, noiseInc;
 float prgIncrement;
 int uttCount = 0; 
 Table article;
+PImage vignette;
 
 void setup() {
   //fullScreen();
   size(1000, 560);
   noCursor();
-  ip_config = loadJSONObject("../../config/ip_config.json");
+  ip_config = loadJSONObject("../ip_config.json");
   TD = loadJSONObject("TrainingDataPelle01.json");
   translatedCats = loadJSONObject("../../config/category_translator.json");
   String ip = ip_config.getString("audience");
@@ -69,6 +71,7 @@ void setup() {
   noiseLimit = noiseInc;// put in DisplayTD
   moderation = "moderation";
   incomingCat = "praise";
+  vignette = loadImage("M1vignette.png");
   matchedUtts = new StringList();
 }
 
@@ -108,6 +111,7 @@ void draw() {
     noiseStart = 0;
     noiseLimit = noiseInc;
   }
+    image(vignette, 0, 0);
 }
 
 void buildUtts(int amount) {

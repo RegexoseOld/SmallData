@@ -27,7 +27,7 @@ Server.default.options.numInputBusChannels_(2);
 //Server.default.options.inDevice_("Fireface 400 (BEF)");
 //Server.default.options.inDevice_("Built-in Output");
 //Server.default.options.outDevice_("SoundFlower (2ch)");
-Server.default.options.outDevice_("Fireface 400 (BEF)");
+Server.default.options.outDevice_("Scarlett 4i4 USB");
 //Server.default.options.outDevice_("Built-in Output");
 //Server.default.op tions.outDevice_("SuperCollider");
 
@@ -298,7 +298,7 @@ s.waitForBoot({
 		},
 		'/interpreter_input'
 	);
-
+    "osc".postln;
 
 	~reset = (
 		dis: (
@@ -458,6 +458,7 @@ s.waitForBoot({
 
 	};
 	~makePatterns.();
+    "patterns".postln;
 
 	~addVolume = {
 	|cat, add, max|

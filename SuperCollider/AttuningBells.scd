@@ -1,5 +1,6 @@
 
 (
+Server.hardFreeAll;
 ~configPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "config.scd";
 ~configPath.load;
 ~dataPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "data/";
@@ -14,92 +15,114 @@ s.newBusAllocators; // Busse machen
 ~fx2Bus = Bus.audio(s,2);
 ~fx3Bus = Bus.audio(s,2);
 ~cat = "";
-~totalUtts = 0;
-~fbVol = 0.3;
 ~factor = 1;
-~fadingSynths = [\pr, \dis, \con, \lec, \ins];
+~totalUtts = 0;
+~t = TempoClock(60/60).permanent_(true);
+///////
+~fbVol = 0.3; //global Volume of feedback for incoming Utts
 // values for addVolume
-~volPlus = 0.04;
-~volMax = 0.25;
-~volMin = 0.00002;
-~volThres = 0.1;
+~volPlus = 0.07; // this much volume is added each time a category comes in
+~volMax = 0.55; // max Volume should be less than 1.0/5
+~volMin = 0.0002; // the min Volume for a faded Pattern
+~volThres = 0.3; // Threshold managed by ~addVolume and ~continuousFade
+~volStep = 0.002; //vol reduction in continuous FadeOut
+~fadeVols = 0; //the volumes of all fading Patterns
 //fade Increase for fadePatterns
-~fadeInc = 0.04;
+//~fadeInc = 0.04; //not needed
+
+~fadingSynths = [\pr, \dis, \con, \lec, \ins];
+~rauschSynths = [\imp, \perc1];
+// booleans
+~patternsPlaying = false;
+~setMus = false;
+//zither constanten
+~zC = (
+    gM: false,
+    gC: false,
+    gChord: [],
+    cDur: ~t.tempo * 5, // duration of the godChord
+    cPause: ~t.tempo * 12, //pause between two Chords
+    mPause: ~t.tempo * 4, //pause between two melos
+);
+
 
 s.waitForBoot({
     s.freeAll;
     Buffer.freeAll;
-	Pbindef.all.do(_.clear);
+    Pbindef.all.do(_.clear);
     s.sync;
-    //MIDIClient.init;
-    //~midiOut = MIDIOut.new(0);
-	~t = TempoClock(60/60).permanent_(true);
+    MIDIClient.init;
+    ~midiOut = MIDIOut.new(0);
     s.sync;
     /// load SynthDefs
-	~fadePatterns = Dictionary.new;
-   (~dataPath ++ "SynthsAttuning.scd").load;
-    ~synthLoad.value();
-
-    "loaded synthdefs".postln;
+    ~fadePatterns = Dictionary.new;
+    (~dataPath ++ "SynthsAttuning.scd").load;
+    (~dataPath ++ "attuneFunctions.scd").load;
+    s.sync;
+    ServerTree.add(~makeNodes);
+    ServerTree.run;
+    "serverTree made nodes".postln;
+    s.sync;
 
     OSCdef.newMatching(
-		\interpreter,
-		{ arg msg;
-			postf("\nnew utt: %", msg[1]);
-			postf("\nnew cat: %\n", msg[2]);
+        \interpreter,
+        { arg msg;
+            postf("\nnew utt: %", msg[1]);
+            postf("\nnew cat: %\n", msg[2]);
             ~cat = msg[2];
-			~updateUtts.(msg[2]);
-			0.1.wait;
-			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
-			~setGlobal.value();
-		},
-		'/interpreter_input'
-	);
+            ~updateUtts.(msg[2]);
+            //~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
+            ~setGlobal.value();
+        },
+        '/interpreter_input'
+    );
+
 
     //load melodies
     ~melPath = ~dataPath ++ "attune_melos.sc";
     ~melos = ~melos ? ();
     ~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
-    ~musarMel = ~melos[\melo][\ruzhim];
-    ~musarDur = ~melos[\duras][\ruzhim];
+    ~musarMel = ~melos[\melo][\ruzhim01];
+    ~musarDur = ~melos[\duras][\ruzhim01];
 
-    ~fadingSynths.do{|k| ~fadePatterns.add(k -> (\vol: 0.005))};
+    ~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005))};
     ~patPath = ~dataPath ++ "attune_patterns.sc";
     ~reset = ~reset ? ();
     ~reset = thisProcess.interpreter.compileFile(~patPath.absolutePath).value;
 
-    (~fadingSynths ++ [\musar]).do{
+    (~fadingSynths ++ ~rauschSynths ++[\musar2, \musar]).do{
         |name|
         name.postln;
         Pbindef(name, *~reset[name].asPairs);
     };
-	// set functions
-	~attPraise = (~dataPath ++ "attunePraise.scd").load;
-	~attDissent = (~dataPath ++ "attuneDissent.scd").load;
-	~attInsinuation = (~dataPath ++ "attuneInsinuation.scd").load;
-	~attLecture = (~dataPath ++ "attuneLecture.scd").load;
-	~attConcession = (~dataPath ++ "attuneConcession.scd").load;
-	~setRauschen = (~dataPath ++ "setRauschen.scd").load;
+
+    // set functions
+    ~attCat = (~dataPath ++ "attuneCategory.scd").load;
+    ~setRauschen = (~dataPath ++ "setRauschen.scd").load;
     ~setMusar = (~dataPath ++ "setMusar.scd").load;
-	(~dataPath ++ "attuneFunctions.scd").load;
+    (~dataPath ++ "attuneFunctions.scd").load;
+
+    //[\musar2, \musar].do{|k| Pbindef(k).play(~t, quant:4)};
     "done".postln;
+
 
 });
 )
+~allNotesOff.();
 (
 ~sim = Routine({
     loop(
         {
             ~mock.();
-            [2, 4, 7, 11].choose.wait;
+            [2, 4].choose.wait;
             "mocked".postln;
         }
     )
 }).play;
 )
 ~sim.stop
+~god.play;
 
-~t.tempo = 60/60;
 
 ~melos[\melo][\ruzhim][0..0];
 
@@ -109,48 +132,16 @@ s.waitForBoot({
  (~fadingSynths ++[\musar]).do{|name| Pbindef(name).play(~t, quant:4)};
 
 
-Pbindef(\musar).play(~t, quant:1);
-Pbindef(\musar, \amp, 0.12)
+Pbindef(\dis, \amp, 0.53, \fade, 0.6).trace.play
+Pbindef(\dis, \atk, 0.9, \rls, 1.4);
+Pbindef(\ins, \resoFreq, 400)
+Pbindef(\lec, \resoFreq, 500)
+Pbindef(\con, \resoFreq, 500)
 
-
-
-~t.schedAbs(~t.nextTimeOnGrid, {~continuousFadeOut.value(~fadingSynths, ~volMin, 0.0012, ~volThres); 1});
-
-Pbindef(\pr, \amp, 0.2, \lag, 0.0, \detune, -230, \vibF, 0.5, \vibVol, 0.6);
-Pbindef(\musar2, \amp, 0.3, \rls, 0.2, \sus, 1.2, \filTime, 0.1);
-Pbindef(\dis, \amp, 0.3, \vibF, 12, \vibVol, 0.5, \trmF, 1.001, \trmRate, 1, \trmDep, 0.01);
-Pbindef(\ins, \fade, 0.3, \detune, Pwhite(-150, 50, inf), \vibF, 0.9, \vibvol, 0.001, \dur, 0.3);
-Pbindef(\lec, \amp, 0.1, \vibF, 0.5, \vibvol, 0.1, \fade, 0.8, \dur, 1.5 );
-Pbindef(\con, \vibF, 1.1, \vibvol, 0.99 );
-
-~allocateSynth.value(\dissent, 1)
+~allocateSynth.value(\dissent, 3)
 ~allocateSynth.value(\praise, 1)
-~allocateSynth.value(\concession, 2)
+~allocateSynth.value(\concession, 1)
 ~allocateSynth.value(\lecture, 1)
 ~allocateSynth.value(\insinuation, 1)
 
-(
-~r1 = Routine({
-      {
-        [53, 55, 61, 66].do{
-            |nn|
-            ~midiOut.noteOn(0, nn, 30);
-
-        };
-        1.wait;
-        [53, 55, 61, 66].do{|nn| ~midiOut.noteOn(0, nn, 0)};
-        5.wait;
-
-    }.loop;
-
-
-});
-
-)
-~r1.play;
-~r1.stop;
-
-(0..127).do{|nn| ~midiOut.noteOn(0, nn, 0)};
-[53, 55, 61, 66].do{|nn| ~midiOut.noteOn(0, nn, 0)};
-~midiOut.noteOn(0, 66, 0);
 
