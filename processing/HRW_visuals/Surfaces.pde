@@ -131,7 +131,7 @@ class Info extends SurfaceBase {
   }
 
   void updateInfo() {
-    String cat = translatedCats.getString(incomingCat); 
+    String cat = incomingCat; 
     this.surf.beginDraw(); 
     this.surf.background(200); 
     this.surf.textFont(this.font, width/55); 
@@ -147,7 +147,7 @@ class Info extends SurfaceBase {
     this.surf.beginDraw(); 
     this.surf.fill(100, 100);
     this.surf.textFont(areaFont);
-    this.surf.text(translatedCats.getString(a.name), a.centerOfArea.x, a.centerOfArea.y);
+    this.surf.text(a.name, a.centerOfArea.x, a.centerOfArea.y);
     this.surf.endDraw();
   }
 }

@@ -101,7 +101,7 @@ class Area {
   }
 
   void makeNameShape() {
-    this.nameShape = this.nameFont.toShape(translatedCats.getString(this.name));
+    this.nameShape = this.nameFont.toShape(this.name);
     this.namePoints = this.nameShape.getPoints();
     shapePositions();
     if (this.name.equals("insinuation")) {

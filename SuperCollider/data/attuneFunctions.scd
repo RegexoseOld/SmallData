@@ -103,7 +103,7 @@
     {(~totalUtts == 10) && (~patternsPlaying == false)} {
         ~patternsPlaying == true;
         ~fadingSynths.do{|name| ~fadePatterns[name][\vol] = ~volMin};
-        ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:0)};
+        ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:[0,-1 ])};
 
     }
      {(~totalUtts == 5)}{

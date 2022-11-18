@@ -28,7 +28,7 @@ String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
 PFont messageFont, infoFont, areaFont;
 JSONObject TD; // TrainingData is stored here
-JSONObject oscTextIn, category_counter, ip_config, translatedCats; 
+JSONObject oscTextIn, category_counter, ip_config; 
 String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
 color currentCol;
 boolean messageIn = false; // background reset
@@ -48,7 +48,6 @@ void setup() {
   noCursor();
   ip_config = loadJSONObject("../ip_config.json");
   TD = loadJSONObject("TrainingDataPelle01.json");
-  translatedCats = loadJSONObject("../../config/category_translator.json");
   String ip = ip_config.getString("audience");
   article = loadTable("Moderation.tsv", "header");
   fontlist = PFont.list();
@@ -71,7 +70,7 @@ void setup() {
   noiseLimit = noiseInc;// put in DisplayTD
   moderation = "moderation";
   incomingCat = "praise";
-  vignette = loadImage("M1vignette.png");
+  vignette = loadImage("M1_vignette.png");
   matchedUtts = new StringList();
 }
 
@@ -111,7 +110,7 @@ void draw() {
     noiseStart = 0;
     noiseLimit = noiseInc;
   }
-    image(vignette, 0, 0);
+    image(vignette, 0, 0, width, height);
 }
 
 void buildUtts(int amount) {
