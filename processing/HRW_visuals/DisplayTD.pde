@@ -62,19 +62,19 @@ color findColor(String cat) {
   switch(cat) {
   case "praise" : 
     // col =  color(171, 138, 132, 150);
-    col =  color(196, 128, 79);
+    col =  color(79, 36, 6);
     break;
-  case "dissence" : 
-    col = color(150, 63, 146);
+  case "dissent" : 
+    col = color(74, 17, 71);
     break;
   case "insinuation" : 
-    col =  color(21, 143, 84);
+    col =  color(11, 64, 38);
     break;
   case "lecture" : 
-    col = color(23, 139, 189);
+    col = color(9, 51, 69);
     break;
   case "concession" : 
-    col = color(133, 138, 37);
+    col = color(58, 61, 1);
   }
   return col;
 }

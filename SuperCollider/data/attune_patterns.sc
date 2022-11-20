@@ -17,7 +17,7 @@ musar2: (
     instrument: 'musar2',
     scale: Scale.chromatic,
     midinote: Pseq(~melos[\melo][\ruzhim01], inf), // akkorde
-	dur: Pseq(~melos[\duras][\ruzhim01], inf),
+	dur: Pseq(~melos[\duras][\ruzhim01], inf) *2,
     amp: 0.15,
     atk: 0.07,
     sus: 0.99,

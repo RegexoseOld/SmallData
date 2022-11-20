@@ -24,7 +24,7 @@ DisplayTD currentUtt;
 Areas areas;
 TextCalculations tc;
 String[] fontlist;
-String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
+String[] cats = {"praise", "dissent", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
 PFont messageFont, infoFont, areaFont;
 JSONObject TD; // TrainingData is stored here
@@ -70,7 +70,7 @@ void setup() {
   noiseLimit = noiseInc;// put in DisplayTD
   moderation = "moderation";
   incomingCat = "praise";
-  vignette = loadImage("M1_vignette.png");
+  vignette = loadImage("M1_vignette2.png");
   matchedUtts = new StringList();
 }
 
@@ -115,7 +115,7 @@ void draw() {
 
 void buildUtts(int amount) {
   shapeMapping.set("praise", "knacks01.svg");
-  shapeMapping.set("dissence", "knacks02.svg");
+  shapeMapping.set("dissent", "knacks02.svg");
   shapeMapping.set("insinuation", "knacks03.svg");
   shapeMapping.set("concession", "knacks04.svg");
   shapeMapping.set("lecture", "knacks05.svg");
@@ -123,7 +123,7 @@ void buildUtts(int amount) {
     // int index = int(random(TD.size()));
     JSONObject row = TD.getJSONObject(str(i));
     String utterance = row.getString("utterance");
-    String category = row.getString("category").toLowerCase();
+    String category = cats[i%5];
     String user = row.getString("user");
     PShape shape = loadShape(shapeMapping.get(category));
     shape.setFill(findColor(category));

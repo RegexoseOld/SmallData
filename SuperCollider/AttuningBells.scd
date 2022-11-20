@@ -41,7 +41,7 @@ s.newBusAllocators; // Busse machen
     gC: false,
     gChord: [],
     cDur: ~t.tempo * 5, // duration of the godChord
-    cPause: ~t.tempo * 12, //pause between two Chords
+    cPause: ~t.tempo * 4, //pause between two Chords
     mPause: ~t.tempo * 4, //pause between two melos
 );
 
@@ -144,4 +144,10 @@ Pbindef(\con, \resoFreq, 500)
 ~allocateSynth.value(\lecture, 1)
 ~allocateSynth.value(\insinuation, 1)
 
+(
+~tNote = 31;
+~midiOut.noteOn(0, ~tNote, 50)
+
+)
+~midiOut.noteOn(0, ~tNote, 0);
 

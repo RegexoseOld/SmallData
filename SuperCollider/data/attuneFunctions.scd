@@ -97,7 +97,7 @@
     {~totalUtts == 15}{
         //pause godChord and play godMel
         ~godChord.pause; ~allNotesOff.(); ~zC[\gC]  = false;
-        ~godMelo.play(~t); ~zC[\gM] = true
+        ~zC[\gM] = true
 
     }
     {(~totalUtts == 10) && (~patternsPlaying == false)} {
@@ -129,43 +129,49 @@
      pause = ~zC[\mPause];
      {
         note = ~melos[\melo][\z_ruzhim01][idx];
+        //note = (13 .. 127)[idx];
+        note.postln;
         dur = ~melos[\duras][\z_ruzhim01][idx];
+        //dur = 1;
         if((68..73).includes(note), {vel = 35}, {vel= 24});
         ~midiOut.noteOn(0, note, vel);
     dur.wait;
     ~midiOut.noteOn(0, note, 0);
     idx = (idx + 1) % (~melos[\melo][\z_ruzhim01]).size;
+    //idx = (idx + 1) % (54 .. 90).size;
     }.loop
 }
 );
 
 ~godChord = Task({
-    var vel, dur, pause;
+    var vel, dur, pause, gC;
     "playing godChord".postln;
       {
         //note = ~melos[\melo][\z_ruzhim01][idx];
         pause = ~zC[\cPause];
         dur = ~zC[\cDur];
-      ~zC[\gChord].do{
+        gC = (((13..21) ++ (54..73)).scramble)[0..4];
+        gC.postln;
+     // ~zC[\gChord].do{
+      gC.do{
             |nn|
             var vel = rrand(10, 27);
             ~midiOut.noteOn(0, nn, vel)};
 
     dur.wait;
 
-            ~zC[\gChord].do{|nn|
+            //~zC[\gChord].do{|nn|
+            gC.do{|nn|
                 if((67 ..73).includes(nn), {vel = 35}, {vel= 25});
                 ~midiOut.noteOn(0, nn, 0)};
         //godChord.do{|nn| ~midiOut.noteOn(0, nn, 0)};
        pause.wait;
-
-
     }.loop
     }
 );
 
 ~allNotesOff = {
-    (54 .. 73).do{|nn| ~midiOut.noteOn(0, nn, 0)};
+    (1 .. 73).do{|nn| ~midiOut.noteOn(0, nn, 0)};
     "allNotesOff".postln;
 };
 
