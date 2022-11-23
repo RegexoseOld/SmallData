@@ -17,11 +17,12 @@ s.newBusAllocators; // Busse machen
 ~cat = "";
 ~factor = 1;
 ~totalUtts = 0;
-~t = TempoClock(60/60).permanent_(true);
+~t = TempoClock(40/60).permanent_(true);
 ///////
-~fbVol = 0.3; //global Volume of feedback for incoming Utts
+~fbVol = 0.35; //global Volume of feedback for incoming Utts
 // values for addVolume
-~volPlus = 0.07; // this much volume is added each time a category comes in
+~volPlus = 0.03; // this much volume is added each time a category comes in
+~volFac = 1.1; // factor of volPlus with vols below the threshold
 ~volMax = 0.55; // max Volume should be less than 1.0/5
 ~volMin = 0.0002; // the min Volume for a faded Pattern
 ~volThres = 0.3; // Threshold managed by ~addVolume and ~continuousFade
@@ -35,15 +36,7 @@ s.newBusAllocators; // Busse machen
 // booleans
 ~patternsPlaying = false;
 ~setMus = false;
-//zither constanten
-~zC = (
-    gM: false,
-    gC: false,
-    gChord: [],
-    cDur: ~t.tempo * 5, // duration of the godChord
-    cPause: ~t.tempo * 4, //pause between two Chords
-    mPause: ~t.tempo * 4, //pause between two melos
-);
+
 
 
 s.waitForBoot({
@@ -54,15 +47,17 @@ s.waitForBoot({
     MIDIClient.init;
     ~midiOut = MIDIOut.new(0);
     s.sync;
+
     /// load SynthDefs
     ~fadePatterns = Dictionary.new;
     (~dataPath ++ "SynthsAttuning.scd").load;
-    (~dataPath ++ "attuneFunctions.scd").load;
+     (~dataPath ++ "attuneFunctions.scd").load;
     s.sync;
     ServerTree.add(~makeNodes);
     ServerTree.run;
     "serverTree made nodes".postln;
     s.sync;
+
 
     OSCdef.newMatching(
         \interpreter,
@@ -71,12 +66,11 @@ s.waitForBoot({
             postf("\nnew cat: %\n", msg[2]);
             ~cat = msg[2];
             ~updateUtts.(msg[2]);
-            //~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
+            ~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
             ~setGlobal.value();
         },
         '/interpreter_input'
     );
-
 
     //load melodies
     ~melPath = ~dataPath ++ "attune_melos.sc";
@@ -89,8 +83,22 @@ s.waitForBoot({
     ~patPath = ~dataPath ++ "attune_patterns.sc";
     ~reset = ~reset ? ();
     ~reset = thisProcess.interpreter.compileFile(~patPath.absolutePath).value;
+    s.sync;
 
-    (~fadingSynths ++ ~rauschSynths ++[\musar2, \musar]).do{
+//zither constanten
+~zC = (
+    gM: false,
+    gC: false,
+    zChord: ~melos[\melo][\z_ruzhim01][0..3],
+    cDur: ~t.tempo * 5, // duration of the godChord
+    cPause: ~t.tempo * 8, //pause between two Chords
+    mPause: ~t.tempo * 4, //pause between two melos
+    zMelo: ~melos[\melo][\z_ruzhim01],
+    zDur: ~melos[\duras][\z_ruzhim01]
+);
+
+
+    (~fadingSynths ++ ~rauschSynths ++ [\musar2, \musar, \drum]).do{
         |name|
         name.postln;
         Pbindef(name, *~reset[name].asPairs);
@@ -108,17 +116,20 @@ s.waitForBoot({
 
 });
 )
-~allNotesOff.();
+((~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play)
+
+
 (
 ~sim = Routine({
     loop(
         {
             ~mock.();
-            [2, 4].choose.wait;
+            [8, 12].choose.wait;
             "mocked".postln;
         }
     )
 }).play;
+
 )
 ~sim.stop
 ~god.play;
@@ -126,10 +137,10 @@ s.waitForBoot({
 
 ~melos[\melo][\ruzhim][0..0];
 
-~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
+(~fadingSynths.do{|name| Pbindef(name, \dur, 2, \amp, 0.2, \index, Pwhite(1, 15, inf), \bpfMul, Pwhite(1, 3, inf)).play(~t, quant:0)};)
 
 //start fadingSynths with fade = 0, they are getting louder with the att* Functions
- (~fadingSynths ++[\musar]).do{|name| Pbindef(name).play(~t, quant:4)};
+ (~fadingSynths ).do{|name| Pbindef(name).play(~t, quant:4)};
 
 
 Pbindef(\dis, \amp, 0.53, \fade, 0.6).trace.play
@@ -139,15 +150,20 @@ Pbindef(\lec, \resoFreq, 500)
 Pbindef(\con, \resoFreq, 500)
 
 ~allocateSynth.value(\dissent, 3)
-~allocateSynth.value(\praise, 1)
-~allocateSynth.value(\concession, 1)
+~allocateSynth.value(\praise, 34)
+~allocateSynth.value(\concession, 44)
 ~allocateSynth.value(\lecture, 1)
 ~allocateSynth.value(\insinuation, 1)
 
 (
-~tNote = 31;
-~midiOut.noteOn(0, ~tNote, 50)
+var vel;
+~tNote = 64;
+vel = ~melos[\zit][\vel][~tNote.asSymbol];
+~midiOut.noteOn(0, ~tNote, vel)
 
 )
 ~midiOut.noteOn(0, ~tNote, 0);
+
+
+~reverb = Synth(\reverb, [\lofr, 100, \hifr, 200])
 

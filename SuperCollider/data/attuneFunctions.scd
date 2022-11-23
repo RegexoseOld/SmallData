@@ -2,7 +2,7 @@
 	s.bind(
 		~fxGroup = Group.new;
 		//später: Fx Synth machen und hier instantiieren zB ...
-		~reverb = Synth('reverb', [\in, ~fx1Bus], ~fxGroup);
+		~reverb = Synth('reverb', [\in, ~fx1Bus, \lofr, 100, \hifr, 220 ], ~fxGroup);
 		~synthLoad.value();
 
 )};
@@ -13,14 +13,32 @@
 		~uttDict.add(cat-> 0)
 	});
 
+~buffers = Dictionary.new;
+	//~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
+	PathName(~samplesPath).entries.do({
+		arg subfolder;
+		~buffers.add(
+			subfolder.folderName.asSymbol ->
+			Array.fill(
+				subfolder.entries.size,
+				{
+					arg i;
+					Buffer.read(s, subfolder.entries[i].fullPath);
+				}
+			)
+		)
+	});
+
 ~updateUtts = {
     |cat|
     //postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
     ~totalUtts = ~totalUtts + 1;
-    ~uttDict[cat].postln;
-    ~uttDict[cat] = ~uttDict[cat] + 1;
+    ~uttDict.postln;
+    if(~uttDict[~cat] >= 70, {~uttDict[~cat] = 1}, {~uttDict[~cat] = ~uttDict[~cat] + 1} );
     //postf("\nupdated % to % ", cat, ~uttDict[cat]);
 };
+
+
 
 ~addVolume = {
     |cat, add, max, thres|
@@ -28,7 +46,7 @@
     editVol = ~fadePatterns[cat][\vol];
     //postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
     c = case
-    {editVol <= thres}{ ~fadePatterns[cat][\vol] = editVol + (add *2) }// double enhance when pattern is very quiet
+    {editVol <= thres}{ ~fadePatterns[cat][\vol] = editVol + (add * ~volFac) }// double enhance when pattern is very quiet
     {(editVol<= max) && (editVol>= thres)}{ ~fadePatterns[cat][\vol] = editVol + add}
     {editVol >= max}{ ~fadePatterns[cat][\vol] = max}
     {true}{"end of addVolume".postln};
@@ -80,64 +98,74 @@
     var c;
     postf("\ntotalUtts % \n", ~totalUtts);
     c = case
-    {~totalUtts == 60}{~godChord.pause; ~zC[\gC] = false}
-    {~totalUtts == 50}{~zC[\godChord] = ~melos[\melo][\z_ruzhim01][4..7];
-        ~godChord.resume; ~zC[\gC] = true}
-    {~totalUtts == 40}{
-        ~godMelo.pause; ~zC[\gM] = false}
-    {(~totalUtts == 31) && (~gM == false)}{"play godmelo?".postln; ~godMelo.resume(~t); ~zC[\gM] = true}
- {~totalUtts == 30}{ //pause godChord and resume godMel
-        ~godChord.pause; ~allNotesOff.(); ~zC[\gC] = false;
+    {~totalUtts == 80}{~godChord.pause; ~zC[\gC] = false; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play;
+        ~godMelo.resume(~t); ~zC[\gM] = true
 
     }
-    {~totalUtts == 20}{
+    {~totalUtts == 70}{~godChord.resume; ~zC[\gC] = true}
+    {~totalUtts == 60}{~godChord.pause; ~zC[\gC] = false; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play;
+        Pbindef(\drum, \dur, Pseq([4, 4, 4, 24], inf), \bpf1, Prand([80, 100, 300], inf), \send, -9, \amp, 0.5).play(~t)
+    }
+    {~totalUtts == 55}{~zC[\zChord] = ~melos[\melo][\z_ruzhim01][4..7];
+        ~godChord.resume; ~zC[\gC] = true}
+    {~totalUtts == 45}{~godMelo.resume; ~zC[\gM] = true;
+        (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play
+
+    }
+    {~totalUtts == 44}{~godChord.pause;(~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play; ~zC[\gC]  = false;}
+
+    {~totalUtts == 35}{
+        ~zC[\zChord] = ~melos[\melo][\z_ruzhim01][4..7];
+        ~godChord.resume; (~dataPath ++ "allNotesOff.scd").load;  ~zC[\gC] = true;
+
+
+    }
+    {~totalUtts == 30}{
         //pause godMel and resume godChord
-        ~godMelo.pause; ~allNotesOff.(); ~zC[\gM] = false;
-        ~godChord.resume(~t); ~zC[\gC] = true}
+        ~godMelo.pause; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play; ~zC[\gM] = false;
+        Pbindef(\drum, \dur, Pseq([4, 4, 4, 16], inf), \bpf1, Prand([80, 100, 300], 12), \send, -9, \amp, 0.7).play(~t)
+    }
     {~totalUtts == 15}{
         //pause godChord and play godMel
-        ~godChord.pause; ~allNotesOff.(); ~zC[\gC]  = false;
-        ~zC[\gM] = true
+        ~godChord.pause;(~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play; ~zC[\gC]  = false;
+        ~godMelo.play(~t); ~zC[\gM] = true;
 
     }
     {(~totalUtts == 10) && (~patternsPlaying == false)} {
-        ~patternsPlaying == true;
-        ~fadingSynths.do{|name| ~fadePatterns[name][\vol] = ~volMin};
-        ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:[0,-1 ])};
+
 
     }
-     {(~totalUtts == 5)}{
+    {(~totalUtts == 5)}{
         //play godChord
-        ~zC[\gChord] = ~melos[\melo][\z_ruzhim01][0..3];
-        ~godChord.play(~t); ~zC[\gC] = true}
-    {(~totalUtts > 0) && (~totalUtts <= 10)} {
-
-       if(~setMus, {~setMusar.(~cat, ~totalUtts)})
-       // ~setRauschen.(~totalUtts);
+        ~godChord.play(~t); ~zC[\gC] = true
     }
+    {(~totalUtts == 1)}{
+        ~patternsPlaying = true;
+        ~fadingSynths.do{|name| ~fadePatterns[name][\vol] = ~volMin};
+        ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:1)};}
     {true} {"end of global settings".postln};
     ~allocateSynth.value(~cat, ~uttDict[~cat]);
     ~t.schedAbs(~t.nextTimeOnGrid, {
-        if(~fadeVols >= 0.2, {
+        if(~fadeVols >= 0.15, {
             ~continuousFadeOut.value(~fadingSynths, ~volMin, ~volStep, ~volThres); 1})
     });
 };
 
 ~godMelo = Task({
-    var godChord, pause, note, dur, vel, idx = 0;
+    var pause, note, dur, vel, idx = 0;
     "playing godMelo".postln;
      pause = ~zC[\mPause];
      {
-        note = ~melos[\melo][\z_ruzhim01][idx];
+        note = ~zC[\zMelo][idx];
         //note = (13 .. 127)[idx];
         note.postln;
-        dur = ~melos[\duras][\z_ruzhim01][idx];
+        dur = ~zC[\zDur][idx];
         //dur = 1;
-        if((68..73).includes(note), {vel = 35}, {vel= 24});
+        vel = ~melos[\zit][\vel][note.asSymbol];
         ~midiOut.noteOn(0, note, vel);
     dur.wait;
     ~midiOut.noteOn(0, note, 0);
-    idx = (idx + 1) % (~melos[\melo][\z_ruzhim01]).size;
+    idx = (idx + 1) % (~zC[\zMelo]).size;
     //idx = (idx + 1) % (54 .. 90).size;
     }.loop
 }
@@ -147,33 +175,41 @@
     var vel, dur, pause, gC;
     "playing godChord".postln;
       {
-        //note = ~melos[\melo][\z_ruzhim01][idx];
         pause = ~zC[\cPause];
         dur = ~zC[\cDur];
-        gC = (((13..21) ++ (54..73)).scramble)[0..4];
-        gC.postln;
-     // ~zC[\gChord].do{
-      gC.do{
+        /*gC = (((13..21) ++ (54..73)).scramble)[0..4];
+        gC.postln;*/
+     ~zC[\zChord].do{
             |nn|
-            var vel = rrand(10, 27);
+            vel = ~melos[\zit][\vel][nn.asSymbol] + 3;
             ~midiOut.noteOn(0, nn, vel)};
 
     dur.wait;
 
-            //~zC[\gChord].do{|nn|
-            gC.do{|nn|
-                if((67 ..73).includes(nn), {vel = 35}, {vel= 25});
+            ~zC[\zChord].do{|nn|
                 ~midiOut.noteOn(0, nn, 0)};
+
         //godChord.do{|nn| ~midiOut.noteOn(0, nn, 0)};
        pause.wait;
     }.loop
     }
 );
 
-~allNotesOff = {
-    (1 .. 73).do{|nn| ~midiOut.noteOn(0, nn, 0)};
+~allNotesOff =
+    Routine({
+        (1 .. 73).do{|nn| nn.postln; ~midiOut.noteOn(0, nn, 0);
+0.05.wait
+        };
     "allNotesOff".postln;
-};
+    });
+
+~allNotesOff2 ={
+    (1 .. 73).do{|nn| nn.postln; ~midiOut.noteOn(0, nn, 0)};
+    "allnotesOff2".postln
+    };
+
+
+
 
 ~mock = {
     var cat = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'].choose;

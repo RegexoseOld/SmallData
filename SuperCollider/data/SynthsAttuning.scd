@@ -10,12 +10,34 @@
         env = EnvGen.kr(Env.linen(\atk.kr(0.4), \sus.kr(1), \rls.kr(1), curve:\crv.kr(10)), gate, doneAction:2);
         volMod = SinOsc.kr(\vibF.kr(1), 0, \vibVol.kr(1))  ; // vol modulation
         trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.5), \varDur.kr(1));
-        sig2 =  LFSaw.ar(\freq.kr(100).varlag(\lag.kr(0)) * trem, 0,  volMod);
-        sig = SinOsc.ar(\freq.kr(100).varlag(\lag.kr(0)) * trem, 0,  volMod);
+        sig2 =  LFSaw.ar(\freq.kr(100).varlag(\lag.kr(0)) , 0,  volMod);
+        sig = SinOsc.ar(\freq.kr(100).varlag(\lag.kr(0)), 0,  volMod);
         sig = (sig * \fade.kr(0.5)) + (sig2 * \sig2Fade.kr(0.2));
         sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-        sig = BPF.ar(sig, XLine.kr(\bpf1.kr(100), \bpf2.kr(1000), \bpf3.kr(0.5)), \bpfQ.kr(0.3));
+        sig = BPF.ar(sig, XLine.kr(\bpf1.kr(100), \bpf1.kr(100) * 8, \bpf3.kr(0.5)), \bpfQ.kr(0.3));
+        //sig = BPF.ar(sig, \bpf1.kr(100), \bpfQ.kr(0.3));
         sig = Pan2.ar(sig * env * \amp.kr(0.1) , \pan.kr(0.0));
+        Out.ar(\out.kr(0), sig);
+    }).add;
+
+    SynthDef.new(\bellFm, {
+        // Fm so wie https://www.youtube.com/watch?v=dLMSR2Kjq6Y -> 11:30
+        //
+        //
+        |gate=1, freq=100, index=1, mRatio=1, cRatio=1, atk=0.4, rls=2, crv= 5, bpf=100|
+        var sig, sig2, env, volMod, trem;
+        env = EnvGen.kr(Env.perc(atk, rls, curve: crv), doneAction:2);
+        volMod = SinOsc.kr(\vibF.kr(0.2), 0, \vibVol.kr(30))  ; // vol modulation
+        trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.5), \varDur.kr(1));
+
+        sig2 =  SinOsc.ar(freq * mRatio, mul:freq * mRatio * index);
+        //sig2 = sig2 * \sig2Fade.kr(1.0);
+        sig = SinOsc.ar(freq * cRatio  + sig2 , mul: volMod);
+        sig = sig * \fade.kr(1) ;
+        sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
+        sig = BPF.ar(sig, XLine.kr(bpf, bpf * \bpf2.kr(5), \bpf3.kr(0.2)), \bpfQ.kr(0.9), \bpfMul.kr(2));
+        //sig = BPF.ar(sig, \bpf1.kr(1000), \bpfQ.kr(0.9));
+        sig = Pan2.ar(sig * env * \amp.kr(0.1) ,\pan.kr(0.0));
         Out.ar(\out.kr(0), sig);
     }).add;
 
@@ -29,15 +51,14 @@
     }).add;
 
     SynthDef.new(\quitt, {
-		|gate=1|
-		var sig, gend, env, mod;
-		env = EnvGen.kr(Env.adsr(\atk.ir(0.1), releaseTime:\rls.kr(1), curve:\crv.kr(-10)), gate, doneAction:2);
-		mod = SinOsc.kr(\modF.kr(1.0));
-		gend = BPF.ar(Gendy1.ar(\ampDist.kr(1), \durDist.kr(1), 1.0, 1.0, \minfreq.kr(100), \maxfreq.kr(1000), \gendScale.kr(0.5), 0.05, 5), \ffreq.kr(300), \rq.kr(0.9)) * \gendAmp.kr(0.3);
+		var sig, gend, env;
+		env = EnvGen.kr(Env.perc(\atk.ir(0.1), \rls.kr(1)), doneAction:2);
+		gend = Gendy1.ar(\ampDist.kr(1), \durDist.kr(1), 1.0, 1.0, \minfreq.kr(100), \maxfreq.kr(1000), 1.0, 0.05, 5);
+		gend = BPF.ar(gend, \ffreq.kr(300), \rq.kr(0.9), \gendAmp.kr(1))  ;
 		sig = LFPulse.ar(\freq.kr(100).varlag(\lag.kr(0.3), \lagcrv.kr(5.0)), 0.0, \width.kr(0.4),\pulseMul.kr(0.15), \add.kr(0)) ;
-		sig = RLPF.ar(sig, \resoFreq.kr(900) ) + gend;
+		sig = sig + gend;
 		sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(3));
-		sig = Pan2.ar(sig * env * (\amp.kr(0.1) * mod), \pan.kr(0.0));
+		sig = Pan2.ar(sig * env * (\amp.kr(0.1)), \pan.kr(0.0));
 		Out.ar(\out.ir(0), sig);
 	}).add;
 
@@ -102,8 +123,11 @@ SynthDef(\sampSt, {
         sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:0);
         //die Env muss wohl .ar sein, um bufnums austauschen zu können
         env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1), level: \amp.kr(0.2)), doneAction: 2);
-        sig = sig * \fade.kr(1);
+        sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
+        sig = BPF.ar(sig, \bpf1.kr(100), \bpfQ.kr(0.3));
+        sig = sig * \amp.kr(0.2) * \fade.kr(1);
         Out.ar(\out.kr(0), sig) ;
+        Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
     }).add;
 
     SynthDef(\sampMon, {
@@ -113,6 +137,7 @@ SynthDef(\sampSt, {
         sig = sig * env * \fade.kr(1);
         sig = Pan2.ar(sig, \pan.kr(0));
         Out.ar(\out.kr(0), sig) ;
+        Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
     }).add;
 
     SynthDef(\brPhsr, {
@@ -143,9 +168,9 @@ SynthDef(\sampSt, {
 		var sig, wet;
 		sig = In.ar(\in.ir(~fx1Bus), 2);
 		sig = FreeVerb2.ar(sig[0], sig[1], mix:\mx.kr(0.5), room:\room.kr(0.99), damp:\damp.kr(0.99));
-		sig = BPF.ar(sig, SinOsc.kr(\bpf.kr(0.0001), 0, 600, 900));
+		sig = BPF.ar(sig, SinOsc.kr(\bpf.kr(0.001), 0, \lofr.kr(100), \hifr.kr(250)));
 		sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(2));
-		Out.ar(\out.ir(~out), sig);
+		Out.ar(\out.ir(0), sig);
 	}).add;
 
 

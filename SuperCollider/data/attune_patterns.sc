@@ -33,116 +33,110 @@ musar2: (
 ),
 
 pr: (
-    instrument: 'bell1',
+    instrument: 'bellFm',
 	scale: Scale.chromatic,
     midinote: Pseq(~melos[\melo][\pr], inf) -12, // akkorde
-	dur: 4,
+	dur: 2,
 	amp: 0.05,
     fade: 0.01,
-      thr: 0.5,
+    thr: 0.5,
     cgain: 2,
-    sig2Fade: 0.1,
     pan: 0,
 	atk: 0.8,
-	rls: 2.3,
-	sus: 1.5,
-    vibF: 1,
-    vibVol: 1,
+	rls: 2,
+    vibF: 0.2,
+    vibVol: 30,
     bpf1: 300,
-    bpf2: 2000,
-    bpf3: 3.8,
-    bpfQ: 0.1
+    bpf2: 5,
+    bpf3: 0.3,
+     bpfQ: 0.9
 
 ),
 
 dis: (
-    instrument: 'bell1',
+    instrument: 'bellFm',
 	scale: Scale.chromatic,
     midinote: Pseq(~melos[\melo][\dis], inf) , // akkorde
-	dur: 4,
+	dur: 2,
 	amp: 0.05,
     fade: 0.01,
       thr: 0.5,
     cgain: 2,
-    sig2Fade: 0.1,
+
     pan: 0,
 	atk: 0.8,
-	rls: 2.3,
-	sus: 1.5,
-    vibF: 1,
-    vibVol: 1,
+	rls: 2,
+   vibF: 0.2,
+    vibVol: 30,
     bpf1: 300,
-    bpf2: 2000,
-    bpf3: 3.8,
-    bpfQ: 0.1
+    bpf2: 5,
+    bpf3: 0.3,
+     bpfQ: 0.9
 
 ),
 //Env.linen(1, 1, 1, 1.0, 10).test.plot
 
 ins: (
-      instrument: 'bell1',
+      instrument: 'bellFm',
 	scale: Scale.chromatic,
     midinote: Pseq(~melos[\melo][\ins], inf) , // akkorde
-	dur: 4,
+	dur: 2,
 	amp: 0.05,
     fade: 0.01,
-    sig2Fade: 0.1,
+
       thr: 0.5,
     cgain: 2,
     pan: 0,
 	atk: 0.8,
-	rls: 2.3,
-	sus: 1.5,
-    vibF: 1,
-    vibVol: 1,
-    bpf1: 300,
-    bpf2: 2000,
-    bpf3: 3.8,
-    bpfQ: 0.1
+	rls: 2,
+   vibF: 0.2,
+    vibVol: 30,
+      bpf1: 300,
+    bpf2: 5,
+    bpf3: 0.3,
+     bpfQ: 0.9
 ),
 
 lec: (
-    instrument: 'bell1',
+    instrument:'bellFm',
 	scale: Scale.chromatic,
     midinote: Pseq(~melos[\melo][\lec], inf) , // akkorde
-	dur: 4,
+	dur: 2,
 	amp: 0.05,
     fade: 0.01,
-    sig2Fade: 0.1,
+
     thr: 0.5,
     cgain: 2,
     pan: 0,
 	atk: 0.8,
-	rls: 2.3,
-	sus: 1.5,
-    vibF: 1,
-    vibVol: 1,
+	rls: 2,
+   vibF: 0.2,
+    vibVol: 30,
     bpf1: 300,
-    bpf2: 2000,
-    bpf3: 3.8,
-    bpfQ: 0.1
+    bpf2: 5,
+    bpf3: 0.3,
+     bpfQ: 0.9
 ),
 
 con: (
-    instrument: 'bell1',
+    instrument: 'bellFm',
 	scale: Scale.chromatic,
     midinote: Pseq(~melos[\melo][\con], inf) , // akkorde
-	dur: 4,
+	dur: 2,
 	amp: 0.05,
     fade: 0.01,
-    sig2Fade: 0.1,
-      thr: 0.5,
+
+    thr: 0.5,
     cgain: 2,
     pan: 0,
 	atk: 0.8,
-	rls: 2.3,
-	sus: 1.5,
-    vibF: 1,
-    vibVol: 1,
-    bpf1: 300,
-    bpf2: 2000,
-    bpf3: 3.8,
-    bpfQ: 0.1
+	rls: 2,
+    vibF: 0.2,
+    vibVol: 30,
+    bpf1: 1300,
+    bpf2: 5,
+    bpf3: 0.3,
+     bpfQ: 0.9
 ),
 
 perc1: (
@@ -168,6 +162,14 @@ imp: (
     cent:0.0, //Splay center
     amp: 0.1,
     fade: 1.0
+
+),
+drum: (
+    instrument: 'sampSt',
+    buf: ~buffers[\bd][7],
+    send: -25,
+    cgain:2.2,
+    fade: 1
 
 )
 
