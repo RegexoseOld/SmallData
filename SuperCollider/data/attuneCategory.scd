@@ -8,70 +8,70 @@
     dura = Env.new([1,0], [count], [-2]).asPseg;
 
     c = case
-    {(count >= 10) && (count <= 20)} {
+    {(count >= 10) && (count <= 15)} {
         in_count = count - 10;
         Pbindef(catName, \midinote, Pseq(~melos[\melo][catName], inf),
-            \dur, 1.5,
+            \dur, 2,
             \fade, 0.01 * in_count,
+            \vibF, 2,
             \index, Pwhite(1, 1.2, inf)
         );
         numNotes = 2;
-        status = "count 10, fading in, dur = 2";
+        status = "count 10, fading in, vib=2";
     }
-    {(count > 20) && (count <=30)} {
+    {(count > 15) && (count <=20)} {
         var add_send;
-        in_count = count - 20;
+        in_count = count - 15;
         Pbindef(catName,
-            \dur, 2,
+            \dur, 1.5,
             \fade, 0.1,
             \index, 2
         );
         numNotes = 3;
         status = "count 20, index = 2";
     }
-    {(count > 30) && (count <=40)} {
-        in_count = count - 30;
+    {(count > 20) && (count <=30)} {
+        in_count = count - 20;
            Pbindef(catName, \midinote, Pseq(~melos[\melo][catName], inf) -12,
             \dur, 2,
             \fade, 0.5,
-            \sig2Fade, 0.07,
             \bpf1, 80,
-            \bpf2, 8,
+            \bpf2, Prand([1,2,4,6], inf),
             \vibF, 2
         );
         numNotes = 4;
         status = "octave down and vibF 2";
     }
-    {(count > 40) && (count <=50)} {
-        in_count = count - 40;
+    {(count > 30) && (count <=40)} {
+        in_count = count - 30;
            Pbindef(catName, \midinote, Pseq(~melos[\melo][catName], inf),
             \dur, 2,
-            \fade, 0.6,
-            \bpf1, 300,
-            \bpf2, 5,
-            \bpf3, 0.8,
-            \vibF, 4,
+            \fade, 0.2,
+            \cRatio, in_count/2.ceil,
+            \vibF, 1,
         );
         numNotes = 5;
-        status = "count 40, duration 2 beats & and vibF 4";
+        status = "count 30, cRatio";
     }
 
-    {(count > 50) && (count <=60)} {
+    {(count > 40) && (count <=50)} {
         var fb_note = ~melos[\melo][catName][0];
         in_count = count - 50;
            Pbindef(catName, \midinote, Pseq([fb_note, fb_note +12], inf),
             \dur, 2,
-            \fade, 0.6
+            \fade, 0.2,
+            \vibF, Pseq([4, 2],inf)
         );
         numNotes = 6;
-        status = "count 50, feedback note oktaviert";
+        status = "count 40, feedback note oktaviert";
     }
-    {(count > 60) && (count <=70)} {
+    {(count > 50) && (count <=60)} {
         var fb_note = ~melos[\melo][catName][0];
-        in_count = count - 60;
+        in_count = count - 50;
            Pbindef(catName, \midinote, Pseq([fb_note-12, fb_note -12, fb_note +12, fb_note+12], inf),
             \dur, 1,
-            \fade, 0.6
+            \fade, 0.2,
+            \mRatio, Pseq([1, 2, 4, 3], inf)
         );
         numNotes = 7;
         status = "count 60, 4 notes with duration of 1 beat";

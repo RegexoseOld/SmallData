@@ -26,7 +26,7 @@ s.newBusAllocators; // Busse machen
 ~volMax = 0.55; // max Volume should be less than 1.0/5
 ~volMin = 0.0002; // the min Volume for a faded Pattern
 ~volThres = 0.3; // Threshold managed by ~addVolume and ~continuousFade
-~volStep = 0.002; //vol reduction in continuous FadeOut
+~volStep = 0.004; //vol reduction in continuous FadeOut
 ~fadeVols = 0; //the volumes of all fading Patterns
 //fade Increase for fadePatterns
 //~fadeInc = 0.04; //not needed
@@ -124,7 +124,7 @@ s.waitForBoot({
     loop(
         {
             ~mock.();
-            [8, 12].choose.wait;
+            [8, 10].choose.wait;
             "mocked".postln;
         }
     )
@@ -136,8 +136,9 @@ s.waitForBoot({
 
 
 ~melos[\melo][\ruzhim][0..0];
+Pbindef(\perc1, \dur, 1/16, \fade, Pseq((0.05,0.1 .. 0.75).mirror, inf), \send, Prand([-18, -12, -9],inf), \pan, Pwhite(-0.5, 0.5, inf), \minFreq, Pwhite(80, 300, inf), \accent, Prand([1, 2, 4], inf)).play
 
-(~fadingSynths.do{|name| Pbindef(name, \dur, 2, \amp, 0.2, \index, Pwhite(1, 15, inf), \bpfMul, Pwhite(1, 3, inf)).play(~t, quant:0)};)
+(~fadingSynths.do{|name| Pbindef(name).play(~t, quant:1)};)
 
 //start fadingSynths with fade = 0, they are getting louder with the att* Functions
  (~fadingSynths ).do{|name| Pbindef(name).play(~t, quant:4)};
@@ -149,11 +150,11 @@ Pbindef(\ins, \resoFreq, 400)
 Pbindef(\lec, \resoFreq, 500)
 Pbindef(\con, \resoFreq, 500)
 
-~allocateSynth.value(\dissent, 3)
-~allocateSynth.value(\praise, 34)
-~allocateSynth.value(\concession, 44)
-~allocateSynth.value(\lecture, 1)
-~allocateSynth.value(\insinuation, 1)
+~allocateSynth.value(\dissent, 51)
+~allocateSynth.value(\praise, 51)
+~allocateSynth.value(\concession, 43)
+~allocateSynth.value(\lecture, 54)
+~allocateSynth.value(\insinuation, 54)
 
 (
 var vel;

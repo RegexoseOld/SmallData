@@ -98,51 +98,63 @@
     var c;
     postf("\ntotalUtts % \n", ~totalUtts);
     c = case
-    {~totalUtts == 80}{~godChord.pause; ~zC[\gC] = false; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play;
-        ~godMelo.resume(~t); ~zC[\gM] = true
-
+    {~totalUtts == 140} { ~zC[\cPause] = ~t.tempo * 12; ~zC[\zChord] = ~melos[\melo][\z_ruzhim01][0..3];
+        ~godChord.resume; ~zC[\gC] = true}
+    {~totalUtts == 120}{~godMelo.pause; ~zC[\gM] = false; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play}
+    {~totalUtts == 112}{
+        Pbindef(\perc1, \dur, Pseq([Pseq([1/16, 1/4], 32), Pseq([1/2, 1/4], 32)]),
+            \decayScale, Pwhite(1, 4, inf));
+         Pbindef(\drum, \dur, Pseq([Pseq([4, 4, 4, 8], 8), Pseq([2, 2, 2, 4], 2) ], inf), \bpf1, Prand([80, 100, 300], inf), \send, Pwhite(-19, -9, inf), \amp, 0.7).play(~t)
     }
-    {~totalUtts == 70}{~godChord.resume; ~zC[\gC] = true}
-    {~totalUtts == 60}{~godChord.pause; ~zC[\gC] = false; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play;
-        Pbindef(\drum, \dur, Pseq([4, 4, 4, 24], inf), \bpf1, Prand([80, 100, 300], inf), \send, -9, \amp, 0.5).play(~t)
+    {~totalUtts == 105}{
+            Pbindef(\perc1, \dur, Pwhite(1/16, 1/4, inf), \fade, Pseq((0.05,0.1 .. 0.75).mirror, inf), \send, Prand([-18, -12, -9], inf), \pan, Pwhite(-0.5, 0.5, inf), \minFreq, Pwhite(80, 300, inf), \accent, Prand([1, 2, 4], inf)).play
+
+        }
+    {~totalUtts == 95}{~godMelo.resume; ~zC[\gM] = true;
+        Pbindef(\perc1).stop
+    }
+    {~totalUtts == 91}{~godChord.pause; ~zC[\gC] = false; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play}
+    {~totalUtts == 90}{Pbindef(\perc1, \dur, 1/16, \fade, Pseq((0.05,0.1 .. 0.75).mirror, inf), \send, Prand([-18, -12, -9],inf), \pan, Pwhite(-0.5, 0.5, inf), \minFreq, Pwhite(80, 300, inf), \accent, Prand([1, 2, 4], inf)).play}
+    {~totalUtts == 85}{Pbindef(\drums).stop}
+    {~totalUtts == 81} {~zC[\zChord] = ~melos[\melo][\z_ruzhim01][12..15];
+        ~godChord.resume; ~zC[\gC] = true}
+    {~totalUtts == 80}{~godMelo.pause; ~zC[\gM] = false; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play;
+    }
+    {~totalUtts == 70}{~godMelo.resume; ~zC[\gM] = true}
+    {~totalUtts == 65}{~godChord.pause; ~zC[\gC] = false; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play;
+       Pbindef(\drum, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], inf), \send, Pwhite(-19, -9, inf), \amp, 0.7).play(~t)
     }
     {~totalUtts == 55}{~zC[\zChord] = ~melos[\melo][\z_ruzhim01][4..7];
         ~godChord.resume; ~zC[\gC] = true}
-    {~totalUtts == 45}{~godMelo.resume; ~zC[\gM] = true;
-        (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play
-
-    }
-    {~totalUtts == 44}{~godChord.pause;(~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play; ~zC[\gC]  = false;}
+    {~totalUtts == 54}{~godMelo.pause; ~zC[\gM] = false; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play}
+    {~totalUtts == 40}{~godMelo.resume; ~zC[\gM] = true;}
+    {~totalUtts == 38}{~godChord.pause;(~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play; ~zC[\gC]= false}
 
     {~totalUtts == 35}{
         ~zC[\zChord] = ~melos[\melo][\z_ruzhim01][4..7];
-        ~godChord.resume; (~dataPath ++ "allNotesOff.scd").load;  ~zC[\gC] = true;
-
-
+        ~zC [\cPause] = ~t.tempo * 4;
+        ~godChord.resume; (~dataPath ++ "allNotesOff.scd").load;  ~zC[\gC] = true
     }
     {~totalUtts == 30}{
         //pause godMel and resume godChord
         ~godMelo.pause; (~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play; ~zC[\gM] = false;
-        Pbindef(\drum, \dur, Pseq([4, 4, 4, 16], inf), \bpf1, Prand([80, 100, 300], 12), \send, -9, \amp, 0.7).play(~t)
+        Pbindef(\drum, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24), \send, Pwhite(-19, -9, inf), \amp, 0.7).play(~t)
     }
     {~totalUtts == 15}{
         //pause godChord and play godMel
         ~godChord.pause;(~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play; ~zC[\gC]  = false;
-        ~godMelo.play(~t); ~zC[\gM] = true;
-
-    }
-    {(~totalUtts == 10) && (~patternsPlaying == false)} {
-
-
+        ~godMelo.play(~t); ~zC[\gM] = true
     }
     {(~totalUtts == 5)}{
-        //play godChord
+        //"play godChord".postln;
         ~godChord.play(~t); ~zC[\gC] = true
     }
     {(~totalUtts == 1)}{
+        "first utt".postln;
         ~patternsPlaying = true;
         ~fadingSynths.do{|name| ~fadePatterns[name][\vol] = ~volMin};
-        ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:1)};}
+        ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:1)}
+    }
     {true} {"end of global settings".postln};
     ~allocateSynth.value(~cat, ~uttDict[~cat]);
     ~t.schedAbs(~t.nextTimeOnGrid, {
@@ -158,10 +170,10 @@
      {
         note = ~zC[\zMelo][idx];
         //note = (13 .. 127)[idx];
-        note.postln;
+        //note.postln;
         dur = ~zC[\zDur][idx];
         //dur = 1;
-        vel = ~melos[\zit][\vel][note.asSymbol];
+        vel = ~melos[\zit][\vel][note.asSymbol] +5;
         ~midiOut.noteOn(0, note, vel);
     dur.wait;
     ~midiOut.noteOn(0, note, 0);
@@ -181,7 +193,7 @@
         gC.postln;*/
      ~zC[\zChord].do{
             |nn|
-            vel = ~melos[\zit][\vel][nn.asSymbol] + 3;
+            vel = ~melos[\zit][\vel][nn.asSymbol];
             ~midiOut.noteOn(0, nn, vel)};
 
     dur.wait;
@@ -195,26 +207,10 @@
     }
 );
 
-~allNotesOff =
-    Routine({
-        (1 .. 73).do{|nn| nn.postln; ~midiOut.noteOn(0, nn, 0);
-0.05.wait
-        };
-    "allNotesOff".postln;
-    });
-
-~allNotesOff2 ={
-    (1 .. 73).do{|nn| nn.postln; ~midiOut.noteOn(0, nn, 0)};
-    "allnotesOff2".postln
-    };
-
-
-
 
 ~mock = {
     var cat = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'].choose;
     ~cat = cat;
     ~updateUtts.(cat);
-	//~allocateSynth.value(cat, ~uttDict[cat]);
 	~setGlobal.value();
 };
