@@ -1,49 +1,46 @@
 
-~setPraise = {
+~attPraise = {
 	|counter|
-	var c, s_name, dura, status, count, in_count, send_add;
-	dura = Env.new([1,0], [count], [-2]).asPseg;
+	var c, s_name, dura, status, count, in_count, local_feedback;
 	count = floor(counter * ~factor).asInteger;
+    dura = Env.new([1,0], [count], [-2]).asPseg;
+    local_feedback = 0.3;
 	s_name = "praise";
 	status = "zero status";
-	5.do({|i|
-		Pbind(\instrument, \praise,
-			\freq, Pxrand([Pwhite(120, 240, 1), Pwhite(240, 480, 1)], 1), \amp, ~fbVol *1.1, \pulRate, 20, \bpf, 500, \rls, Pn(0.3, 1), \sustain, 0.3, \send, -35).play});
+
 	c = case
 	{(count > 0) && (count <= 5)} {
 		in_count = count - 0;
-		send_add = in_count * 5.5;
-		Pbindef(\sn1, \outfx, ~fx1Bus, \send, -35 + send_add);
-		~reverb.set(\mx, 0.8, \room, 0.91, \bpf, (in_count % 5) * 0.3, \damp, 0.1, \cgain, 4);
-
-		status = "wachsender Hall auf Pbindef(\sn1)";
+        //Pbindef(\pr, \fade, in_count * 0.1);
+        local_feedback = 0.4;
+		status = "fading in praise (65= F)";
 	}
 	{(count > 5) && (count <= 10)} {
-		in_count = count - 5;
-		send_add = in_count * 5;
-		Pbindef(\sn1, \send, 5 - send_add);
-		Pbindef(\bd1, \outfx, ~fx1Bus, \send, -35 + send_add);
-		~reverb.set(\mx, 0.9, \room, 0.91, \bpf, 0.3, \damp, 0.1, \cgain, 4);
+		in_count = count -5;
+		//Pbindef(\b1, \modF, 1.0 - (in_count* 0.2));
 
-		status = "sn weniger bd mehr hall";
+
+		status = "modF back";
 	}
 	{(count > 10) && (count <= 20)} {
-		in_count = count - 10;
-		send_add = in_count * 3;
-		Pbindef(\sn1, \send, -35);
-		Pbindef(\bd1, \outfx, ~fx1Bus, \send, -35);
-		Pbindef(\org2, \outfx, ~fx1Bus, \send, -35 + send_add);
-		~reverb.set(\mx, 0.9, \room, 0.91, \bpf, 0.002, \damp, 0.1, \cgain, 3);
+
 		status = "organ hall";
 	}
 	{(count > 20) && (count <= 30)} {
-		in_count = count - 20;
-		send_add = in_count * 3;
-		Pbindef(\hh1, \outfx, ~fx1Bus, \send, -35 + send_add );
-		~reverb.set(\mx, 0.9, \room, 0.9, \bpf, 0.03, \damp, 0.1, \cgain, 3);
+
 		status = "hh1 freqency range";
 	}
-	{true} {"end of insinuation reached".postln;};
-	postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status);
+	{true} {"end of insinuation reached".postln};
+
+      //das sollte die gleiche Note sein, aber stakkato und gut hörbar
+    5.do({|i|
+		Pbind(\instrument, \bell2,
+			\midinote, [~melos[\melo][\pr][0], ~melos[\melo][\pr][0] + 12],
+            \amp, ~fbVol * local_feedback, \pan, Pwhite(-1.0, 1.0, 5),
+            \atk, 0.05, \rls, 0.14,
+            \dur, 0.25
+    ).play});
+    ~addVolume.value(\pr, ~volPlus, ~volMax, ~volThres);
+    postf("\nsetting %\t with count %\n at status \t %\n", s_name, count, status)
 
 }

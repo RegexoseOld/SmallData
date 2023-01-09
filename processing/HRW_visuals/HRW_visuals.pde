@@ -12,6 +12,7 @@ NetAddress loc;
 
 final Timer timer = new Timer();
 ArrayList<DisplayTD> utts = new ArrayList<DisplayTD>(); // list with all the Text Objects
+SurfaceBase vignetteSurf;
 Article articleSurf;
 Rauschen rauschSurf;
 Info infoSurf, areaSurf;
@@ -23,11 +24,11 @@ DisplayTD currentUtt;
 Areas areas;
 TextCalculations tc;
 String[] fontlist;
-String[] cats = {"praise", "dissence", "insinuation", "concession", "lecture"};
+String[] cats = {"praise", "dissent", "insinuation", "concession", "lecture"};
 StringList matchedUtts;
 PFont messageFont, infoFont, areaFont;
 JSONObject TD; // TrainingData is stored here
-JSONObject oscTextIn, category_counter, ip_config, translatedCats; 
+JSONObject oscTextIn, category_counter, ip_config; 
 String incomingText, incomingCat, moderation, currentPart; // a mock for incoming OSC text
 color currentCol;
 boolean messageIn = false; // background reset
@@ -39,14 +40,14 @@ int cat_limit, cat_counts, noiseStart, noiseLimit, noiseInc;
 float prgIncrement;
 int uttCount = 0; 
 Table article;
+PImage vignette;
 
 void setup() {
   //fullScreen();
   size(1000, 560);
   noCursor();
-  ip_config = loadJSONObject("../../config/ip_config.json");
+  ip_config = loadJSONObject("../ip_config.json");
   TD = loadJSONObject("TrainingDataPelle01.json");
-  translatedCats = loadJSONObject("../../config/category_translator.json");
   String ip = ip_config.getString("audience");
   article = loadTable("Moderation.tsv", "header");
   fontlist = PFont.list();
@@ -69,6 +70,7 @@ void setup() {
   noiseLimit = noiseInc;// put in DisplayTD
   moderation = "moderation";
   incomingCat = "praise";
+  vignette = loadImage("M1_vignette2.png");
   matchedUtts = new StringList();
 }
 
@@ -108,11 +110,12 @@ void draw() {
     noiseStart = 0;
     noiseLimit = noiseInc;
   }
+    image(vignette, 0, 0, width, height);
 }
 
 void buildUtts(int amount) {
   shapeMapping.set("praise", "knacks01.svg");
-  shapeMapping.set("dissence", "knacks02.svg");
+  shapeMapping.set("dissent", "knacks02.svg");
   shapeMapping.set("insinuation", "knacks03.svg");
   shapeMapping.set("concession", "knacks04.svg");
   shapeMapping.set("lecture", "knacks05.svg");
@@ -120,7 +123,7 @@ void buildUtts(int amount) {
     // int index = int(random(TD.size()));
     JSONObject row = TD.getJSONObject(str(i));
     String utterance = row.getString("utterance");
-    String category = row.getString("category").toLowerCase();
+    String category = cats[i%5];
     String user = row.getString("user");
     PShape shape = loadShape(shapeMapping.get(category));
     shape.setFill(findColor(category));

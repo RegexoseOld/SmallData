@@ -131,7 +131,7 @@ class Info extends SurfaceBase {
   }
 
   void updateInfo() {
-    String cat = translatedCats.getString(incomingCat); 
+    String cat = incomingCat; 
     this.surf.beginDraw(); 
     this.surf.background(200); 
     this.surf.textFont(this.font, width/55); 
@@ -147,7 +147,7 @@ class Info extends SurfaceBase {
     this.surf.beginDraw(); 
     this.surf.fill(100, 100);
     this.surf.textFont(areaFont);
-    this.surf.text(translatedCats.getString(a.name), a.centerOfArea.x, a.centerOfArea.y);
+    this.surf.text(a.name, a.centerOfArea.x, a.centerOfArea.y);
     this.surf.endDraw();
   }
 }
@@ -234,12 +234,13 @@ void buildSurfaces() {
   surfs = new ArrayList<SurfaceBase>(); 
   areaSurf = new Info("areaNames", 0, 0, width, height, areaFont, true);
   rauschSurf = new Rauschen("rausch", 0, 0, width, height, messageFont, true); 
-  infoSurf = new Info("infoSurf", width/2, height/30, width *39/80, height/16, areaFont, true); 
+  //infoSurf = new Info("infoSurf", width/2, height/30, width *39/80, height/16, areaFont, false); 
   articleSurf = new Article("article", width /5, height/7, width *7/10, height *7/10, articleFont, true, width/33); 
   sculptureSurf = new Sculpture("sculpture", 0, 0, width, height, infoFont, true); 
+  vignetteSurf = new SurfaceBase("vignette", 0, 0, width, height, messageFont, true);
   surfs.add(rauschSurf); 
   surfs.add(areaSurf);
-  surfs.add(infoSurf); 
+  //surfs.add(infoSurf); 
   surfs.add(articleSurf); 
   surfs.add(sculptureSurf);
 }
