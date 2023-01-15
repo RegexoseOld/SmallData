@@ -5,7 +5,7 @@ patterns: (
         scale: Scale.chromatic,
         midinote: Pseq(~melos[\melo][\ruzhim01], inf) , // akkorde
         dur: 4,
-        amp: 0.1,
+        amp: 0.05,
         fade: 0.5,
         pan: 0,
         accent: 0,
@@ -18,7 +18,7 @@ patterns: (
         scale: Scale.chromatic,
         midinote: Pseq(~melos[\melo][\ruzhim01], inf) , // akkorde
         dur: 2,
-        amp: 0.1,
+        amp: 0.05,
         fade: 0.5,
         pan: 0,
         accent: 0,
@@ -31,7 +31,7 @@ patterns: (
         scale: Scale.chromatic,
         midinote: Pseq(~melos[\melo][\ruzhim01], inf) , // akkorde
         dur: 2,
-        amp: 0.1,
+        amp: 0.05,
         fade: 0.5,
         pan: 0,
         accent: 0,

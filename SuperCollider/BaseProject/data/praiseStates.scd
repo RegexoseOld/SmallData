@@ -6,7 +6,7 @@ patterns: (
         midinote: Pseq(~melos[\melo][\pr], inf) -12, // akkorde
         dur: 4,
         amp: 0.05,
-        fade: 0.01,
+        fade: 0.5,
         thr: 0.5,
         cgain: 2,
         pan: 0,
@@ -25,8 +25,8 @@ patterns: (
         scale: Scale.chromatic,
         midinote: Pseq(~melos[\melo][\pr], inf) -12, // akkorde
         dur: 2,
-        amp: 0.05,
-        fade: 0.01,
+       amp: 0.05,
+        fade: 0.5,
         thr: 0.5,
         cgain: 2,
         pan: 0,

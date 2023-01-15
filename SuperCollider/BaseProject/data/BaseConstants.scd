@@ -21,3 +21,4 @@
 
 ~fadePatterns = Dictionary.new;
 ~nameDict = Dictionary.new;
+~buffers = Dictionary.new;

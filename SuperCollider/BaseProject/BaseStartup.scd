@@ -58,20 +58,19 @@ s.waitForBoot({
 
     // load state patterns into a Dictionary with different states for the 5 categories
    ~states = ~states ? ();
-   ~statesFiles.do{
+	(~statesFiles ++ ["additionalStates.scd"]).do{
         |file|
-        var patPath, categoryStates;
+        var patPath, patternStates;
         patPath = ~dataPath ++ file;
-        categoryStates = thisProcess.interpreter.compileFile(patPath.absolutePath).value;
-        /*~nameDict[file].asSymbol.postln;
-        categoryStates[\patterns].postln;*/
-        ~states.put(~nameDict[file].asSymbol, categoryStates[\patterns]);
+        patternStates = thisProcess.interpreter.compileFile(patPath.absolutePath).value;
+        ~states.put(~nameDict[file].asSymbol, patternStates[\patterns]);
     };
+
     s.sync;
 
 
     ~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005))};
-    ~fadingSynths.do{
+	(~fadingSynths ++ [\drm]).do{
         |name|
         var default;
         default = (name ++ "0").asSymbol;
@@ -79,6 +78,7 @@ s.waitForBoot({
         Pbindef(name, *~states[name][default].asPairs);
     };
 
+//~states[\pr]
 
     "done".postln;
 });
@@ -92,6 +92,7 @@ Pbindef(\pr).play
 Pbindef(\ins).play
 Pbindef(\con).play
 Pbindef(\dis).play
+Pbindef(\drm).play
 ~states[\ins][\ins0]
 
 (

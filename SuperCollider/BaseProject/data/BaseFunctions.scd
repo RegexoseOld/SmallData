@@ -2,7 +2,7 @@
 	s.bind(
 		~fxGroup = Group.new;
 		//später: Fx Synth machen und hier instantiieren zB ...
-		~reverb = Synth('reverb', [\in, ~fx1Bus, \lofr, 100, \hifr, 220 ], ~fxGroup);
+		//~reverb = Synth('reverb', [\in, ~fx1Bus, \lofr, 100, \hifr, 220 ], ~fxGroup);
 		~synthLoad.value();
 
 )};
@@ -12,7 +12,9 @@
         |file, i|
         //postf("file %   index %", file, i);
         ~nameDict.put(file, ~fadingSynths[i]);
-    })
+    });
+	//add patternfile for additionalStates
+	~nameDict.put("additionalStates.scd", \drm);
 };
 
 
@@ -22,8 +24,6 @@
 		~uttDict.add(cat-> 0)
 	});
 
-~buffers = Dictionary.new;
-	//~path = "/Users/borisjoens/Desktop/Soundwesen/percSamples01/";
 	PathName(~samplesPath).entries.do({
 		arg subfolder;
 		~buffers.add(
@@ -103,7 +103,7 @@
 	};
 
 ~setGlobal = {
-    //Todo: Verschiedene zither Aktionen
+
     var c;
     postf("\ntotalUtts % \n", ~totalUtts);
     c = case
@@ -124,12 +124,12 @@
     {~totalUtts == 85}{Pbindef(\drums).stop}
 
     {~totalUtts == 65}{
-       Pbindef(\drum, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], inf), \send, Pwhite(-19, -9, inf), \amp, 0.7).play(~t)
+       Pbindef(\drum, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], inf), \amp, 0.7).play(~t)
     }
 
-    {~totalUtts == 30}{
-        //pause godMel and resume godChord
-        Pbindef(\drum, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24), \send, Pwhite(-19, -9, inf), \amp, 0.7).play(~t)
+    {~totalUtts == 20}{
+        //start a drum pattern
+        Pbindef(\drum, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t)
     }
 
     {(~totalUtts == 1)}{
@@ -145,51 +145,6 @@
             ~continuousFadeOut.value(~fadingSynths, ~volMin, ~volStep, ~volThres); 1})
     });
 };
-/*
-~godMelo = Task({
-    var pause, note, dur, vel, idx = 0;
-    "playing godMelo".postln;
-     pause = ~zC[\mPause];
-     {
-        note = ~zC[\zMelo][idx];
-        //note = (13 .. 127)[idx];
-        //note.postln;
-        dur = ~zC[\zDur][idx];
-        //dur = 1;
-        vel = ~melos[\zit][\vel][note.asSymbol] +5;
-        ~midiOut.noteOn(0, note, vel);
-    dur.wait;
-    ~midiOut.noteOn(0, note, 0);
-    idx = (idx + 1) % (~zC[\zMelo]).size;
-    //idx = (idx + 1) % (54 .. 90).size;
-    }.loop
-}
-);
-
-~godChord = Task({
-    var vel, dur, pause, gC;
-    "playing godChord".postln;
-      {
-        pause = ~zC[\cPause];
-        dur = ~zC[\cDur];
-        /*gC = (((13..21) ++ (54..73)).scramble)[0..4];
-        gC.postln;*/
-     ~zC[\zChord].do{
-            |nn|
-            vel = ~melos[\zit][\vel][nn.asSymbol];
-            ~midiOut.noteOn(0, nn, vel)};
-
-    dur.wait;
-
-            ~zC[\zChord].do{|nn|
-                ~midiOut.noteOn(0, nn, 0)};
-
-        //godChord.do{|nn| ~midiOut.noteOn(0, nn, 0)};
-       pause.wait;
-    }.loop
-    }
-);
-*/
 
 ~mock = {
     var cat = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'].choose;

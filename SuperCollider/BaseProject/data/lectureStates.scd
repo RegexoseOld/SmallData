@@ -15,7 +15,7 @@ patterns: (
 		cgain: 5,
 		distort: 2.5,
 		fade: 0.5,
-		amp: 0.17
+		amp: 0.05
     ),
     lec1: (
         instrument:'bass',
@@ -32,7 +32,7 @@ patterns: (
 		cgain: 5,
 		distort: 2.5,
 		fade: 0.5,
-		amp: 0.17
+		amp: 0.05
     ),
     lec2: (
         instrument:'bass',
@@ -49,7 +49,7 @@ patterns: (
 		cgain: 5,
 		distort: 2.5,
 		fade: 0.5,
-		amp: 0.17
+		amp: 0.05
     ),
 )
 )

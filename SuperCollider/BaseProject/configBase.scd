@@ -1,9 +1,10 @@
 ServerOptions.outDevices;
 
-~samplesPath = "/Users/borisjoens/Documents/Projekte/Kommentariat/percSamples01/";
-//~audioInterface = "Fireface 400 (BEF)";
+//~samplesPath = "/Users/borisjoens/Documents/Projekte/Kommentariat/percSamples01/";
+~samplesPath = "/Volumes/Macintosh HD 2/projekte/Meinung/Instruments/SuperCollider/percSamples01/";
+~audioInterface = "Fireface 400 (BEF)";
 //~audioInterface = "Scarlett 4i4 USB";
-~audioInterface = "MacBook Pro-Lautsprecher";
+//~audioInterface = "MacBook Pro-Lautsprecher";
 //~audioInterface = "Externe Kopfhöre"
 ~constantsfile= "BaseConstants.scd";
 ~synthsfile = "BaseSynths.scd";

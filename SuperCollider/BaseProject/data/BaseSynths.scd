@@ -107,7 +107,7 @@ SynthDef(\sampSt, {
     var sig, env;
     sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:0);
     //die Env muss wohl .ar sein, um bufnums austauschen zu können
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1), level: \amp.kr(0.2)), doneAction: 2);
+    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1)), doneAction: 2);
     sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = BPF.ar(sig, \bpf1.kr(100), \bpfQ.kr(0.3));
     sig = sig * \amp.kr(0.2) * \fade.kr(1);
