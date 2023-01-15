@@ -25,6 +25,7 @@ s.waitForBoot({
     (~dataPath ++ ~constantsfile).load;
     (~dataPath ++ ~synthsfile).load;
     (~dataPath ++ ~functionsfile).load;
+    ~allocate = (~dataPath ++ ~allocateFile).load;
 
     // make a name Dictionary
     ~makeDict.();
@@ -55,10 +56,7 @@ s.waitForBoot({
     ~melos = ~melos ? ();
     ~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
 
-
-    // load state patterns into 5 global files
-
-    //~patPath = ~dataPath ++ "praiseStates.scd";
+    // load state patterns into a Dictionary with different states for the 5 categories
    ~states = ~states ? ();
    ~statesFiles.do{
         |file|
@@ -81,6 +79,7 @@ s.waitForBoot({
         Pbindef(name, *~states[name][default].asPairs);
     };
 
+
     "done".postln;
 });
 )
@@ -89,5 +88,18 @@ s.waitForBoot({
 
 // Testing
 Pbindef(\lec).play
-Pbindef(\lec, *~states[\lec][\lec1].asPairs)
+Pbindef(\pr).play
+Pbindef(\ins).play
+Pbindef(\con).play
+Pbindef(\dis).play
+~states[\ins][\ins0]
 
+(
+~sim = Routine(
+    { loop ( {
+        ~mock.();
+        [2, 5].choose.wait;
+        "mocked".postln;
+        }
+) }).play;
+)

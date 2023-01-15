@@ -1,42 +1,43 @@
 (
 patterns: (
     con0: (
-        instrument: 'bellFm',
+        instrument: 'percImp',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\con], inf) , // akkorde
+        midinote: Pseq(~melos[\melo][\ruzhim01], inf) , // akkorde
         dur: 4,
-        amp: 0.05,
-        fade: 0.01,
-        thr: 0.5,
-        cgain: 2,
+        amp: 0.1,
+        fade: 0.5,
         pan: 0,
-        atk: 0.8,
-        rls: 2,
-        vibF: 0.2,
-        vibVol: 30,
-        bpf1: 1300,
-        bpf2: 5,
-        bpf3: 0.3,
-        bpfQ: 0.9
+        accent: 0,
+        decayScale: 1,
+        minfrq: 80,
+        frqOff: 0,
     ),
     con1: (
-        instrument: 'bellFm',
+        instrument: 'percImp',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\con], inf) , // akkorde
+        midinote: Pseq(~melos[\melo][\ruzhim01], inf) , // akkorde
         dur: 2,
-        amp: 0.05,
-        fade: 0.01,
-        thr: 0.5,
-        cgain: 2,
+        amp: 0.1,
+        fade: 0.5,
         pan: 0,
-        atk: 0.8,
-        rls: 2,
-        vibF: 0.2,
-        vibVol: 30,
-        bpf1: 1300,
-        bpf2: 5,
-        bpf3: 0.3,
-        bpfQ: 0.9
+        accent: 0,
+        decayScale: 1,
+        minfrq: 80,
+        frqOff: 0,
+    ),
+    con2: (
+        instrument: 'percImp',
+        scale: Scale.chromatic,
+        midinote: Pseq(~melos[\melo][\ruzhim01], inf) , // akkorde
+        dur: 2,
+        amp: 0.1,
+        fade: 0.5,
+        pan: 0,
+        accent: 0,
+        decayScale: 1,
+        minfrq: 80,
+        frqOff: 0,
     ),
 )
 )

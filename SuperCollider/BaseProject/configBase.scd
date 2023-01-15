@@ -7,6 +7,7 @@ ServerOptions.outDevices;
 //~audioInterface = "Externe Kopfhöre"
 ~constantsfile= "BaseConstants.scd";
 ~synthsfile = "BaseSynths.scd";
+~allocateFile = "BaseAllocate.scd";
 ~functionsfile = "BaseFunctions.scd";
 ~melodyfile = "BaseMelodies.sc";
 ~statesFiles = ["praiseStates.scd", "dissentStates.scd", "concessionStates.scd",  "lectureStates.scd", "insinuationStates.scd"];
