@@ -116,4 +116,7 @@ webserver/model_data/german.model
 *.xlsx#
 
 # settings file
-config.scd	
+config.scd
+
+# ignore samples directory
+SuperCollider/BaseData/samples/	
