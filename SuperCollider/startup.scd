@@ -1,8 +1,6 @@
-// from AttuningBells ...
-//
 (
 Server.hardFreeAll;
-~configFile = PathName(thisProcess.nowExecutingPath).parentPath ++ "configBase.scd";
+~configFile = PathName(thisProcess.nowExecutingPath).parentPath ++ "config.scd";
 ~configFile.load;
 ~dataPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "BaseData/";
 
@@ -22,10 +20,10 @@ s.waitForBoot({
 
     /// load SynthDefs
 
-	(~dataPath ++ "BaseConstants.scd").load;
-	(~dataPath ++ "BaseSynths.scd").load;
-	(~dataPath ++ "BaseFunctions.scd").load;
-	~allocate = (~dataPath ++ "BaseAllocate.scd").load;
+	(~dataPath ++ "constants.scd").load;
+	(~dataPath ++ "synths.scd").load;
+	(~dataPath ++ "functions.scd").load;
+	~allocate = (~dataPath ++ "allocate.scd").load;
 
     // make a name Dictionary
     ~makeDict.();
@@ -52,7 +50,7 @@ s.waitForBoot({
     );
 
     //load melodies
-	~melPath = ~dataPath ++ "BaseMelodies.sc";
+	~melPath = ~dataPath ++ "melodies.sc";
     ~melos = ~melos ? ();
     ~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
 
