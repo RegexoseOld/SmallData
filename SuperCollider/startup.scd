@@ -2,7 +2,7 @@
 Server.hardFreeAll;
 ~configFile = PathName(thisProcess.nowExecutingPath).parentPath ++ "config.scd";
 ~configFile.load;
-~dataPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "BaseData/";
+~resourcePath = PathName(thisProcess.nowExecutingPath).parentPath ++ "resources/";
 
 Server.default.options.numInputBusChannels_(0);
 Server.default.options.outDevice_(~audioInterface);
@@ -20,14 +20,12 @@ s.waitForBoot({
 
     /// load SynthDefs
 
-	(~dataPath ++ "constants.scd").load;
-	(~dataPath ++ "synths.scd").load;
-	(~dataPath ++ "functions.scd").load;
-	~allocate = (~dataPath ++ "allocate.scd").load;
+	(~resourcePath ++ "constants.scd").load;
+	(~resourcePath ++ "synths.scd").load;
+	(~resourcePath ++ "functions.scd").load;
+	~allocate = (~resourcePath ++ "allocate.scd").load;
 
     // make a name Dictionary
-    ~makeDict.();
-
 
     s.sync;
     ServerTree.add(~makeNodes);
@@ -50,22 +48,30 @@ s.waitForBoot({
     );
 
     //load melodies
-	~melPath = ~dataPath ++ "melodies.sc";
+	~melPath = ~resourcePath ++ "melodies.sc";
     ~melos = ~melos ? ();
     ~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
 
     // load state patterns into a Dictionary with different states for the 5 categories
-   ~states = ~states ? ();
-	(~statesFiles ++ ["additionalStates.scd"]).do{
-        |file|
-        var patPath, patternStates;
-        patPath = ~dataPath ++ file;
-        patternStates = thisProcess.interpreter.compileFile(patPath.absolutePath).value;
-        ~states.put(~nameDict[file].asSymbol, patternStates[\patterns]);
-    };
+    ~states = ~states ? ();
+	PathName( ~showFolder).entries.do({
+		|pathName, i|
+		var categorySymbol;
+		var category = pathName.fileNameWithoutExtension;
+		var patternStates = thisProcess.interpreter.compileFile(pathName.absolutePath).value;
+		if (~categorySymbols.includesKey(category.asSymbol),
+			{
+				categorySymbol = ~categorySymbols[category.asSymbol];
+			},
+			{
+				categorySymbol = \drm;
+
+			}
+		);
+		~states.put(categorySymbol, patternStates[\patterns]);
+	});
 
     s.sync;
-
 
     ~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005))};
 	(~fadingSynths ++ [\drm]).do{

@@ -7,17 +7,6 @@
 
 )};
 
-~makeDict = {
-    ~statesFiles.do({
-        |file, i|
-        //postf("file %   index %", file, i);
-        ~nameDict.put(file, ~fadingSynths[i]);
-    });
-	//add patternfile for additionalStates
-	~nameDict.put("additionalStates.scd", \drm);
-};
-
-
 ~uttDict = Dictionary.new;
 	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({
 		|cat|

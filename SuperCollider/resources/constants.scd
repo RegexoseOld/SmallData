@@ -23,3 +23,10 @@
 ~nameDict = Dictionary.new;
 ~buffers = Dictionary.new;
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
+~categorySymbols = (
+	dissent: \dis,
+	praise: \pr,
+	insinuation: \ins,
+	lecture: \lec,
+	concession: \con
+);
