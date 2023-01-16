@@ -119,4 +119,4 @@ webserver/model_data/german.model
 config.scd
 
 # ignore samples directory
-SuperCollider/BaseData/samples/	
+SuperCollider/BaseData/samples/*	

@@ -22,3 +22,4 @@
 ~fadePatterns = Dictionary.new;
 ~nameDict = Dictionary.new;
 ~buffers = Dictionary.new;
+~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
