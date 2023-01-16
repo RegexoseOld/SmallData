@@ -124,14 +124,14 @@
     {(~totalUtts == 1)}{
         "first utt".postln;
         ~patternsPlaying = true;
-        ~fadingSynths.do{|name| ~fadePatterns[name][\vol] = ~volMin};
-        ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:1)}
+        ~categorySymbols.values.do{|name| ~fadePatterns[name][\vol] = ~volMin};
+        ~categorySymbols.values.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:1)}
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.value(~cat, ~uttDict[~cat]);
     ~t.schedAbs(~t.nextTimeOnGrid, {
         if(~fadeVols >= 0.15, {
-            ~continuousFadeOut.value(~fadingSynths, ~volMin, ~volStep, ~volThres); 1})
+            ~continuousFadeOut.value(~categorySymbols.values, ~volMin, ~volStep, ~volThres); 1})
     });
 };
 

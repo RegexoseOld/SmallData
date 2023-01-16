@@ -15,7 +15,6 @@
 ~volThres = 0.3; // Threshold managed by ~addVolume and ~continuousFade
 ~volStep = 0.004; //vol reduction in continuous FadeOut
 ~fadeVols = 0; //the volumes of all fading Patterns
-~fadingSynths = [\pr, \dis, \con, \lec, \ins];
 // booleans
 ~patternsPlaying = false;
 

@@ -55,26 +55,21 @@ s.waitForBoot({
     // load state patterns into a Dictionary with different states for the 5 categories
     ~states = ~states ? ();
 	PathName( ~showFolder).entries.do({
-		|pathName, i|
+		|pathName|
 		var categorySymbol;
 		var category = pathName.fileNameWithoutExtension;
 		var patternStates = thisProcess.interpreter.compileFile(pathName.absolutePath).value;
 		if (~categorySymbols.includesKey(category.asSymbol),
-			{
-				categorySymbol = ~categorySymbols[category.asSymbol];
-			},
-			{
-				categorySymbol = \drm;
-
-			}
+			{categorySymbol = ~categorySymbols[category.asSymbol];},
+			{categorySymbol = \drm;}
 		);
 		~states.put(categorySymbol, patternStates[\patterns]);
 	});
 
     s.sync;
 
-    ~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005))};
-	(~fadingSynths ++ [\drm]).do{
+    ~categorySymbols.values.do{| k| ~fadePatterns.add(k -> (\vol: 0.005))};
+	(~categorySymbols.values ++ [\drm]).do{
         |name|
         var default;
         default = (name ++ "0").asSymbol;
