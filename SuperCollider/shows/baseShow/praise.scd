@@ -5,7 +5,7 @@ patterns: (
         scale: Scale.chromatic,
         midinote: Pseq(~melos[\melo][\pr], inf) -12, // akkorde
         dur: 4,
-        amp: 0.05,
+        amp: 0.15,
         fade: 0.5,
         thr: 0.5,
         cgain: 2,
@@ -17,7 +17,8 @@ patterns: (
         bpf1: 300,
         bpf2: 5,
         bpf3: 0.3,
-        bpfQ: 0.9
+        bpfQ: 0.9,
+		out: ~ch5.inbus
 
     ),
     pr1: (
@@ -25,7 +26,7 @@ patterns: (
         scale: Scale.chromatic,
         midinote: Pseq(~melos[\melo][\pr], inf) -12, // akkorde
         dur: 2,
-       amp: 0.05,
+       amp: 0.15,
         fade: 0.5,
         thr: 0.5,
         cgain: 2,
@@ -37,7 +38,8 @@ patterns: (
         bpf1: 300,
         bpf2: 5,
         bpf3: 0.3,
-        bpfQ: 0.9
+        bpfQ: 0.9,
+		out: ~ch5.inbus
 
 ))
 

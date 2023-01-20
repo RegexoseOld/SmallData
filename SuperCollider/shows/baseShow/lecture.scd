@@ -15,7 +15,8 @@ patterns: (
 		cgain: 5,
 		distort: 2.5,
 		fade: 0.5,
-		amp: 0.05
+		amp: 0.15,
+		out: ~ch4.inbus
     ),
     lec1: (
         instrument:'bass',
@@ -32,7 +33,8 @@ patterns: (
 		cgain: 5,
 		distort: 2.5,
 		fade: 0.5,
-		amp: 0.05
+		amp: 0.15,
+		out: ~ch4.inbus
     ),
     lec2: (
         instrument:'bass',
@@ -49,7 +51,8 @@ patterns: (
 		cgain: 5,
 		distort: 2.5,
 		fade: 0.5,
-		amp: 0.05
+		amp: 0.15,
+		out: ~ch4.inbus
     ),
 )
 )

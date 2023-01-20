@@ -1,11 +1,29 @@
 ~makeNodes = {
 	s.bind(
-		~fxGroup = Group.new;
-		//später: Fx Synth machen und hier instantiieren zB ...
-		//~reverb = Synth('reverb', [\in, ~fx1Bus, \lofr, 100, \hifr, 220 ], ~fxGroup);
-		~synthLoad.value();
+		// Mixer Channels, you have to install dewdrop_lib and ddwMixerChannel with Quarks.gui
+		~master = MixerChannel(\master, s, 2, 2);
+		~ch1 = MixerChannel(\ch1, s, 2, 2, outbus: ~master);
+		~ch2 = MixerChannel(\ch2, s, 2, 2, outbus: ~master);
+		~ch3 = MixerChannel(\ch3, s, 2, 2, outbus: ~master);
+		~ch4 = MixerChannel(\ch4, s, 2, 2, outbus: ~master);
+		~ch5 = MixerChannel(\ch5, s, 2, 2, outbus: ~master);
+		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
+		~reverb = MixerChannel(\verb, s, 2, 2, outbus: ~master);
+
 
 )};
+
+~runFx = {
+	~ring = ~ringmod.playfx(Instr.at([\busfx, \ring1], ~patches[\ring]));
+	~rev = ~reverb.playfx(Instr.at([\busfx, \rvb_allpass], ~patches[\reverb]));
+
+	// Dynamics als Insert FX
+	~mst_lim = ~master.playfx(Instr.at([\busfx, \limiter], ~patches[\limiter]));
+	~ch1_dyn = ~ch1.playfx(Instr.at([\busfx, \companderd], ~patches[\compander_beat]));
+	~ch2_dyn = ~ch2.playfx(Instr.at([\busfx, \companderd], ~patches[\compander01]));
+	~ch3_dyn = ~ch3.playfx(Instr.at([\busfx, \companderd], ~patches[\compander01]));
+};
+
 
 ~uttDict = Dictionary.new;
 	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({

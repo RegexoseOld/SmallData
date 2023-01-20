@@ -7,7 +7,9 @@ patterns: (
 		cgain: 1,
 		fade: 0.5,
 		amp: 0.13
-	)
-)
+	),
+),
+
+
 )
 

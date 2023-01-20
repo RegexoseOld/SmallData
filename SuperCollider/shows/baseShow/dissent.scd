@@ -5,7 +5,7 @@ patterns:(
         scale: Scale.chromatic,
         midinote: Pseq(~melos[\melo][\ruzhim], inf) , // akkorde
         dur: 4,
-        amp: 0.05,
+        amp: 0.15,
         fade: 0.5,
         thr: 0.5,
         cgain: 2,
@@ -16,7 +16,8 @@ patterns:(
         maxfreq: 1000,
         ffreq: 300,
         width: 0.4,
-        pulseMul: 0.15
+        pulseMul: 0.15,
+		out: ~ch2.inbus
 
     ),
     dis1: (
@@ -24,7 +25,7 @@ patterns:(
         scale: Scale.chromatic,
         midinote: Pseq(~melos[\melo][\ruzhim], inf) , // akkorde
         dur: 2,
-        amp: 0.05,
+        amp: 0.15,
         fade: 0.5,
         thr: 0.5,
         cgain: 2,
@@ -35,7 +36,8 @@ patterns:(
         maxfreq: 1000,
         ffreq: 300,
         width: 0.4,
-        pulseMul: 0.15
+        pulseMul: 0.15,
+		out: ~ch2.inbus
 
     ),
     dis2: (
@@ -43,7 +45,7 @@ patterns:(
         scale: Scale.chromatic,
         midinote: Pseq(~melos[\melo][\ruzhim], inf) , // akkorde
         dur: 1,
-        amp: 0.05,
+        amp: 0.15,
         fade: 0.5,
         thr: 0.5,
         cgain: 2,
@@ -54,7 +56,8 @@ patterns:(
         maxfreq: 1000,
         ffreq: 300,
         width: 0.4,
-        pulseMul: 0.15
+        pulseMul: 0.15,
+		out: ~ch2.inbus
 
     ),
 )

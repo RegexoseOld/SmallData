@@ -99,7 +99,7 @@ SynthDef(\kik, { |basefreq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5,
 SynthDef.new(\impulse, {
     var channels, temp, env, vol, sig, sweep;
     env = EnvGen.kr(Env.perc(\atk.kr(0.01), \rls.kr(0.4), 1.0, \crv.kr(-1.0)));
-    vol = \amp.kr(0.1) * \fade.kr(1);
+    vol = \amp.kr(0.1) * \fade.kr(0.5);
     channels = {
         temp = Impulse.ar(\dens.kr(1), 0.0, \knk.kr(1.0) );
         temp = FreqShift.ar(temp, \shift.kr(0));
@@ -153,5 +153,52 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
     Out.ar(\out.kr(0), sig);
 }).add;
 
+// wavetable https://www.youtube.com/watch?v=5krJVMxCr8s&t=810s ab 31:00 (für Feedback) und 46:30 für pad sound
 
+
+
+// building Effect Instruments
+// http://www.dewdrop-world.net/sc3/tutorials/index.php?id=5
+
+Instr(#[\busfx, \ring1], { arg bus, numChan, freq, mod_amp, xfade;
+   var sig, new;
+   sig = In.ar(bus, numChan);
+   new = sig * SinOsc.ar(freq, 0, mod_amp);
+   XFade2.ar(sig, new, xfade * 2 - 1)
+}, [\audiobus, ObjectSpec(1), \freq, \amp, \amp]
+);
+
+
+Instr(#[\busfx, \companderd], { arg bus, numChannels, thresh, slopeBelow, slopeAbove,
+      clampTime, relaxTime, postGain;
+   var sig;
+   sig = In.ar(bus, numChannels);
+   CompanderD.ar(sig, thresh, slopeBelow, slopeAbove, clampTime, relaxTime, postGain);
+}, [\audiobus, ObjectSpec(1), #[0, 1, \linear, 0, 0.5], #[0.1, 10, \exponential, 0, 1],
+   #[0.1, 10, \exponential, 0, 1], #[0.001, 5, \exponential], #[0.001, 5, \exponential],
+   #[0.1, 10, \exponential, 0, 1]]);
+
+Instr(#[\busfx, \singleDelay], { arg bus, numChan, delayClass, maxTime, time, mul, add;
+   delayClass.ar(In.ar(bus, numChan), maxTime, time, mul, add)
+}, [\audiobus, ObjectSpec(1), ObjectSpec(DelayL), #[0.25, 20], #[0.0001, 20]]
+);
+
+Instr(#[\busfx, \rvb_allpass], { arg bus, numChan, maxDelay, preDelay, decay,
+      numRefl, random;
+   var sig, new;
+   sig = In.ar(bus, numChan);
+   new = sig;
+   numRefl.do({
+      new = AllpassN.ar(new, maxDelay, Array.fill(numChan, { random.rand }) + preDelay, decay);
+   });
+   new
+}, [\audiobus, ObjectSpec(1), #[0.25, 2], #[0.4, 1.5, \exponential, 0, 0.05],
+   #[0.01, 10, \exponential, 0, 0.25], ObjectSpec(4), #[0.001, 1, \exponential, 0, 0.03]]
+);
+
+Instr(#[\busfx, \limiter], { arg bus, numChannels, level, lookAhead, gain;
+   Limiter.ar(In.ar(bus, numChannels), level, lookAhead) * gain;
+}, [\mybuf, ObjectSpec(1), #[0, 1, \linear, 0, 1], #[0.001, 0.1],
+   #[0.1, 10, \exponential, 0, 1]]
+);
 
