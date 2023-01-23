@@ -89,6 +89,13 @@ SynthDef.new(\bass, {
     //Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
 }).add;
 
+// simple electro kick drum
+SynthDef(\kik, { |basefreq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, outbus = 0|
+   var   fenv = EnvGen.kr(Env([envratio, 1], [freqdecay], \exp)) * basefreq,
+      aenv = EnvGen.kr(Env.perc(0.005, ampdecay), doneAction:2);
+   Out.ar(outbus, SinOsc.ar(fenv, 0.5pi, aenv));
+}).add;
+
 SynthDef.new(\impulse, {
     var channels, temp, env, vol, sig, sweep;
     env = EnvGen.kr(Env.perc(\atk.kr(0.01), \rls.kr(0.4), 1.0, \crv.kr(-1.0)));
