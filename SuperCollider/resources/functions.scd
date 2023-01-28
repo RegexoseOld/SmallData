@@ -1,5 +1,7 @@
 ~makeNodes = {
+	//~channels.do{|c| if (c.active, {postf("free channel %\n", c.asString); c.free;})};
 	s.bind(
+		//
 		// Mixer Channels, you have to install dewdrop_lib and ddwMixerChannel with Quarks.gui
 		~master = MixerChannel(\master, s, 2, 2);
 		~ch1 = MixerChannel(\ch1, s, 2, 2, outbus: ~master);
@@ -8,22 +10,30 @@
 		~ch4 = MixerChannel(\ch4, s, 2, 2, outbus: ~master);
 		~ch5 = MixerChannel(\ch5, s, 2, 2, outbus: ~master);
 		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
-		~reverb = MixerChannel(\verb, s, 2, 2, outbus: ~master);
-
-
+		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
+		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
 )};
 
 ~runFx = {
-	~ring = ~ringmod.playfx(Instr.at([\busfx, \ring1], ~patches[\ring]));
-	~rev = ~reverb.playfx(Instr.at([\busfx, \rvb_allpass], ~patches[\reverb]));
-
-	// Dynamics als Insert FX
-	~mst_lim = ~master.playfx(Instr.at([\busfx, \limiter], ~patches[\limiter]));
-	~ch1_dyn = ~ch1.playfx(Instr.at([\busfx, \companderd], ~patches[\compander_beat]));
-	~ch2_dyn = ~ch2.playfx(Instr.at([\busfx, \companderd], ~patches[\compander01]));
-	~ch3_dyn = ~ch3.playfx(Instr.at([\busfx, \companderd], ~patches[\compander01]));
+	//idee
+~fx = (
+	\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
+	\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
+	\chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
+	\mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
+    \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+	\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+	\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
+	\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+	\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01]))
+)
 };
 
+~bypass = {
+	|key, on|
+	if (on, {~fx[key].synth.run(false)}, {~fx[key].synth.run(true);
+})
+};
 
 ~uttDict = Dictionary.new;
 	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({
@@ -131,16 +141,23 @@
     {~totalUtts == 85}{Pbindef(\drums).stop}
 
     {~totalUtts == 65}{
-       Pbindef(\drum, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], inf), \amp, 0.7).play(~t)
+       Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], inf), \amp, 0.7).play(~t)
     }
 
     {~totalUtts == 20}{
         //start a drum pattern
-        Pbindef(\drum, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t)
+        Pbindef(\drm0, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
+		~sends[\ch4_send_vrb1].level = 0.0;
+		~sends[\ch5_send_chrs].level = 0.99;
+    }
+	{~totalUtts == 10}{
+        //send
+		~sends[\ch4_send_vrb1].level = 0.9;
     }
 
     {(~totalUtts == 1)}{
-        "first utt".postln;
+        //"first utt".postln;
+		~runFx.();
         ~patternsPlaying = true;
         ~fadingSynths.do{|name| ~fadePatterns[name][\vol] = ~volMin};
         ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:1)}

@@ -17,7 +17,6 @@ patterns:(
         ffreq: 300,
         width: 0.4,
         pulseMul: 0.15,
-		out: ~ch2.inbus
 
     ),
     dis1: (
@@ -37,7 +36,6 @@ patterns:(
         ffreq: 300,
         width: 0.4,
         pulseMul: 0.15,
-		out: ~ch2.inbus
 
     ),
     dis2: (
@@ -57,7 +55,6 @@ patterns:(
         ffreq: 300,
         width: 0.4,
         pulseMul: 0.15,
-		out: ~ch2.inbus
 
     ),
 )

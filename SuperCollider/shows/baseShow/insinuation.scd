@@ -17,7 +17,7 @@ patterns: (
         shift: 0,
         eqfr1: 2300,
        boost: 1.6,
-		out: ~ch3.inbus
+
     ),
     ins1: (
         instrument: 'bellFm',
@@ -36,7 +36,6 @@ patterns: (
         shift: 0,
         eqfr1: 2300,
        boost: 1.6,
-		out: ~ch3.inbus
     ),
     ins2: (
         instrument: 'bellFm',
@@ -55,26 +54,7 @@ patterns: (
         shift: 0,
         eqfr1: 2300,
        boost: 1.6,
-		out: ~ch3.inbus
     ),
-    ins1: (
-        instrument: 'bellFm',
-        scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\ruzhim], inf),
-      dur: 2,
-     amp: 0.15,
-        fade: 0.5,
-        thr: 0.5,
-        cgain: 2,
-        cent: 0,
-        atk: 0.8,
-        rls: 2,
-        dens: 1,
-        knk: 1.0,
-        shift: 0,
-        eqfr1: 2300,
-       boost: 1.6,
-		out: ~ch3.inbus
-    ),
+
 )
 )

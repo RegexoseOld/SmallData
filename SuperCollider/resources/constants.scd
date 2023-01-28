@@ -30,3 +30,4 @@
 	lecture: \lec,
 	concession: \con
 );
+~channels = [~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~master, ~ringmod, ~reverb];

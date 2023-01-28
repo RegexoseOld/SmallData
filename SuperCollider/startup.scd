@@ -1,5 +1,5 @@
 (
-Server.hardFreeAll;
+
 ~configFile = PathName(thisProcess.nowExecutingPath).parentPath ++ "config.scd";
 ~configFile.load;
 ~resourcePath = PathName(thisProcess.nowExecutingPath).parentPath ++ "resources/";
@@ -24,6 +24,9 @@ s.waitForBoot({
 
 	~allocate = (~resourcePath ++ "allocate.scd").load;
 
+	//~channels.do{|c| if (c.active, {postf("free channel %\n", c.asString); c.free;})};
+    MixerChannel.freeAll;
+	s.sync;
 	ServerTree.add(~makeNodes);
 	ServerTree.run;
 	"serverTree made nodes".postln;
@@ -31,7 +34,6 @@ s.waitForBoot({
 
 //make Dictionary with effekt Patches
 	~patches = (~resourcePath ++ "fx_patches.scd").load;
-
 
 	//load melodies
 	~melPath = ~resourcePath ++ "melodies.sc";
@@ -59,10 +61,20 @@ s.waitForBoot({
 	~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005))};
 	(~fadingSynths ++ [\drm]).do{
 		|name|
-		var default;
+		var default, c;
 		default = (name ++ "0").asSymbol;
-		//default.postln;
+		default.postln;
 		Pbindef(name, *~states[name][default].asPairs);
+		//assign to channel input
+		c = case
+		{name == \pr} {Pbindef(name, \out, ~ch1.inbus)}
+		{name == \dis} {Pbindef(name, \out, ~ch2.inbus)}
+		{name == \con} {Pbindef(name, \out, ~ch3.inbus)}
+		{name == \lec} {Pbindef(name, \out, ~ch4.inbus)}
+		{name == \ins} {Pbindef(name, \out, ~ch5.inbus)}
+
+		{true}{"end out channel assignment ".postln};
+
 	};
 
 	// Send Objekte machen
@@ -72,13 +84,13 @@ s.waitForBoot({
 		|ch, i|
 		var sendName;
 		//postf("channel %\t i %\n", ch, i);
-		[~reverb, ~ringmod].do {
+		[~reverb, ~ringmod, ~chorus].do {
 			|fx|
+			postf("fx name %\n", fx.asString);
 			sendName = "ch" ++ (i+1).asString ++ "_send_" ++ fx.asString[13..16];
 			~sends.put(sendName.asSymbol, ch.newPostSend(fx, 0.01) ); // nicht an patch sondern an channel senden
 		}
 	};
-
 
 	OSCdef.newMatching(
 		\interpreter,
@@ -99,24 +111,25 @@ s.waitForBoot({
 
 )
 
-//  load patches
+//  load patches, managed by setGlobal later
 ~runFx.();
 
 Window.closeAll;
-~sends[\ch1_send_ring].level = 0.9;
-~sends[\ch1_send_verb].level = 0.2;
-~sends[\ch5_send_ring].levelTo(0.99, 5);
-~sends[\ch5_send_verb].level = 0.1;
-
-
 
 // Testing
-Pbindef(\lec, \dur, 1).play
-Pbindef(\pr, \dur, 0.5, \amp, 0.05, \atk, 0.02, \rls, 0.1).play
-Pbindef(\ins,  \dur, 0.33, \amp, 0.1).play
-Pbindef(\con, \dur, 0.33, \amp, 0.3).play
-Pbindef(\dis, \dur, 0.5, \atk, 0.03, \rls, 0.1, \amp, 0.3, \ffreq, Pwhite(100, 1000, inf)).play
-Pbindef(\drm).stop
+
+
+(
+Pbindef(\lec, \dur, 1.5, \atk, 0.09, \rls, 0.27, \sustain, 0.2, \amp, 0.23).play;
+Pbindef(\pr, \dur, 1.25, \midinote, Pwhite(30, 70, inf), \amp, 0.1, \atk, 0.02, \rls, 1.5).play;
+Pbindef(\ins,  \dur, 0.33, \amp, 0.1).play;
+Pbindef(\con, \dur, 0.63, \amp, 0.25).play;
+Pbindef(\dis, \dur, 1.5, \atk, 0.1, \rls, 0.6, \amp, 0.5, \ffreq, Pwhite(100, 1000, inf)).play;
+
+)
+Pbindef.all.do(_.stop)
+Pbindef(\drm)
+~states[\drm]
 
 ~board = MixingBoard("demo",nil, ~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~ringmod, ~reverb, ~master);
 (
@@ -128,3 +141,10 @@ Pbindef(\drm).stop
         }
 ) }).play;
 )
+
+topEnvironment.do(_.pop)
+currentEnvironment
+s.queryAllNodes
+CmdPeriod.run
+ServerTree.removeAll
+

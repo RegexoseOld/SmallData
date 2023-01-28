@@ -159,14 +159,30 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
 
 // building Effect Instruments
 // http://www.dewdrop-world.net/sc3/tutorials/index.php?id=5
+//Spec.specs.asSortedArray.do(_.postcs)
 
 Instr(#[\busfx, \ring1], { arg bus, numChan, freq, mod_amp, xfade;
    var sig, new;
    sig = In.ar(bus, numChan);
    new = sig * SinOsc.ar(freq, 0, mod_amp);
    XFade2.ar(sig, new, xfade * 2 - 1)
-}, [\audiobus, ObjectSpec(1), \freq, \amp, \amp]
+}, [\audiobus, ObjectSpec(2), \freq, \amp, \amp]
 );
+
+Instr(#[\busfx, \chorus], { arg bus, numChan, predelay, speed, depth, ph_diff, xfade;
+   var in, sig;
+   in = In.ar(bus, numChan);
+   in.isKindOf(Collection).if({
+      sig = in.collect({ arg ch, i;   // ch is one channel
+         DelayL.ar(ch, 0.5, SinOsc.kr(speed, ph_diff * i, depth, predelay));
+      });
+   }, {
+      sig = DelayL.ar(in, 0.5, SinOsc.kr(speed, ph_diff, depth, predelay));
+   });
+   XFade2.ar(in, sig, xfade * 2 - 1);
+//   xf.value(in, sig, xfade)      // when felix has XOut working, this can be better
+}, [\audiobus, ObjectSpec(1), #[0.0001, 0.4, \linear, 0, 0.1],
+   #[0.001, 20, \exponential], #[0.0001, 0.25, \exponential], #[0, 2pi], #[0, 1]]);
 
 
 Instr(#[\busfx, \companderd], { arg bus, numChannels, thresh, slopeBelow, slopeAbove,
@@ -174,7 +190,7 @@ Instr(#[\busfx, \companderd], { arg bus, numChannels, thresh, slopeBelow, slopeA
    var sig;
    sig = In.ar(bus, numChannels);
    CompanderD.ar(sig, thresh, slopeBelow, slopeAbove, clampTime, relaxTime, postGain);
-}, [\audiobus, ObjectSpec(1), #[0, 1, \linear, 0, 0.5], #[0.1, 10, \exponential, 0, 1],
+}, [\audiobus, ObjectSpec(2), #[0, 1, \linear, 0, 0.5], #[0.1, 10, \exponential, 0, 1],
    #[0.1, 10, \exponential, 0, 1], #[0.001, 5, \exponential], #[0.001, 5, \exponential],
    #[0.1, 10, \exponential, 0, 1]]);
 
@@ -183,6 +199,7 @@ Instr(#[\busfx, \singleDelay], { arg bus, numChan, delayClass, maxTime, time, mu
 }, [\audiobus, ObjectSpec(1), ObjectSpec(DelayL), #[0.25, 20], #[0.0001, 20]]
 );
 
+//more a delay than reverb
 Instr(#[\busfx, \rvb_allpass], { arg bus, numChan, maxDelay, preDelay, decay,
       numRefl, random;
    var sig, new;
@@ -192,13 +209,20 @@ Instr(#[\busfx, \rvb_allpass], { arg bus, numChan, maxDelay, preDelay, decay,
       new = AllpassN.ar(new, maxDelay, Array.fill(numChan, { random.rand }) + preDelay, decay);
    });
    new
-}, [\audiobus, ObjectSpec(1), #[0.25, 2], #[0.4, 1.5, \exponential, 0, 0.05],
+}, [\audiobus, ObjectSpec(2), #[0.25, 2], #[0.4, 1.5, \exponential, 0, 0.05],
    #[0.01, 10, \exponential, 0, 0.25], ObjectSpec(4), #[0.001, 1, \exponential, 0, 0.03]]
+);
+ // specifications are ControlSpecs, which can be defined in a shortcut syntax using an array: [low value, high value, warp style, step size, default]
+Instr(#[\busfx, \vrb1], { arg bus, numChan, room, damp, mult;
+   var sig, new;
+   sig = In.ar(bus, numChan);
+   sig = FreeVerb.ar(sig, 1, room, damp, mult);
+}, [\audiobus, ObjectSpec(2), #[0.1, 1.0, \linear, 0, 0.85], #[0.1, 1.0, \exponential, 0, 0.5],  #[1, 10, \exponential, 0, 7.5]]
 );
 
 Instr(#[\busfx, \limiter], { arg bus, numChannels, level, lookAhead, gain;
    Limiter.ar(In.ar(bus, numChannels), level, lookAhead) * gain;
-}, [\mybuf, ObjectSpec(1), #[0, 1, \linear, 0, 1], #[0.001, 0.1],
-   #[0.1, 10, \exponential, 0, 1]]
+}, [\mybuf, ObjectSpec(2), #[0, 1, \linear, 0, 1], #[0.001, 0.2],
+   #[0.1, 4, \exponential, 0, 1]]
 );
 

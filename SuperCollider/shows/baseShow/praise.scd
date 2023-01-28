@@ -18,7 +18,6 @@ patterns: (
         bpf2: 5,
         bpf3: 0.3,
         bpfQ: 0.9,
-		out: ~ch5.inbus
 
     ),
     pr1: (
@@ -39,7 +38,6 @@ patterns: (
         bpf2: 5,
         bpf3: 0.3,
         bpfQ: 0.9,
-		out: ~ch5.inbus
 
 ))
 
