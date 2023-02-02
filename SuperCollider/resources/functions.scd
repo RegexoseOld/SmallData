@@ -41,7 +41,8 @@
 		~uttDict.add(cat-> 0)
 	});
 
-	PathName(~samplesPath).entries.do({
+// make buffers
+PathName(~samplesPath).entries.do({
 		arg subfolder;
 		~buffers.add(
 			subfolder.folderName.asSymbol ->

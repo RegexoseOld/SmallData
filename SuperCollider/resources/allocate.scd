@@ -1,9 +1,9 @@
 ~allocate = {
     |catName, counter|
-    var c, dura, patName, status, count, in_count, local_feedback, numNotes;
+    var c, dura, patName, status, count, in_count, local_feedbackVol, numNotes;
     count = floor(counter * ~factor).asInteger;
     status = "state 00";
-    local_feedback = 1;
+    local_feedbackVol = 1;
     numNotes = 1;
     dura = Env.new([1,0], [count], [-2]).asPseg;
 
@@ -25,6 +25,8 @@
     }
     {true} { "end of attCat reached".postln};
 
+// feedback sound
+
     3.do{
         |n|
         Pbind(
@@ -32,7 +34,7 @@
             \dur, Prand([0.25, 0.31], inf),
             \midinote, ~melos[\melo][catName][0],
             \detune, Pwhite(-6, 6, numNotes),
-            \amp, ~fbVol * local_feedback, \pan, Pwhite(-1.0, 1.0, numNotes),
+            \amp, ~fbVol * local_feedbackVol, \pan, Pwhite(-1.0, 1.0, numNotes),
             \ampDist, 2, \durDist, 0.2,
             \gendAmp, Pwrand([0.05, 0.14, 0.33], [0.6, 0.3, 0.1], inf),
             \ffreq, Pwhite( 300, 800, inf),

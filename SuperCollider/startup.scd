@@ -52,14 +52,22 @@ s.waitForBoot({
 				categorySymbol = ~categorySymbols[category.asSymbol];
 			},
 			{
-				categorySymbol = \drm;
+				[\vox, \drm].do{
+					|name|
+					~states.put(name, patternStates[name]);
+					Pbindef(name, *~states[name].asPairs);
+				}∞
 			}
 		);
 		~states.put(categorySymbol, patternStates[\patterns]);
 	});
 
+
+	// set fade volume low at the beginning
 	~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005))};
-	(~fadingSynths ++ [\drm]).do{
+
+	// make Patterns for all fading Synths
+	~fadingSynths.do{
 		|name|
 		var default, c;
 		default = (name ++ "0").asSymbol;
@@ -74,7 +82,6 @@ s.waitForBoot({
 		{name == \ins} {Pbindef(name, \out, ~ch5.inbus)}
 
 		{true}{"end out channel assignment ".postln};
-
 	};
 
 	// Send Objekte machen
@@ -86,7 +93,7 @@ s.waitForBoot({
 		//postf("channel %\t i %\n", ch, i);
 		[~reverb, ~ringmod, ~chorus].do {
 			|fx|
-			postf("fx name %\n", fx.asString);
+			//postf("fx name %\n", fx.asString);
 			sendName = "ch" ++ (i+1).asString ++ "_send_" ++ fx.asString[13..16];
 			~sends.put(sendName.asSymbol, ch.newPostSend(fx, 0.01) ); // nicht an patch sondern an channel senden
 		}
@@ -115,8 +122,28 @@ s.waitForBoot({
 ~runFx.();
 
 Window.closeAll;
+~buffers[\lecture][0].numFrames/s.sampleRate
 
 // Testing
+//~buffers[\lecture][0].play
+(
+var buf = ~buffers[\lecture][0],
+len = buf.numFrames/s.sampleRate;
+
+Pbindef(\vox, \instrument, \sampMon, \buf, buf, \dur, Pwhite(0.2, 1.2, inf), \spos, Pwhite(0, buf.numFrames, inf), \rls, len/30, \sustain, Pkey(\rls), \fade, 0.9, \amp, 0.43, \loop, 0);
+Pbindef(\vox).play;
+
+)
+Pbindef(\vox).stop;
+
+(
+var buf, len;
+buf = ~buffers[\lecture][0];
+len = buf.numFrames;
+Pbindef(\vox2, \instrument, \brPhsr, \buf, buf, \dur, 2, \rate, 1.1, \start, Pwhite(0, buf.numFrames/2, inf ), \end, Pwhite((buf.numFrames/2) +1, buf.numFrames-1, inf), \amp, 0.3);
+Pbindef(\vox2).play;
+)
+Pbindef(\vox2).stop;
 
 
 (
@@ -128,6 +155,7 @@ Pbindef(\dis, \dur, 1.5, \atk, 0.1, \rls, 0.6, \amp, 0.5, \ffreq, Pwhite(100, 10
 
 )
 Pbindef.all.do(_.stop)
+//Pbindef.all.do({|p| p.postln + "\n"})
 Pbindef(\drm)
 ~states[\drm]
 
