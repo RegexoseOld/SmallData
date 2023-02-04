@@ -73,8 +73,8 @@ SynthDef.new(\bwawack, {
     sig = BPF.ar(sig, \freq.kr(100) + (\bpfFactor.kr(100) * mod) );
     sig = Pan2.ar(sig * env * \amp.kr(0.2), \pan.kr(0));
     Out.ar(\out.kr(0), sig!2);
-
 }).add;
+
 SynthDef.new(\bass, {
     |gate = 1|
     var detune, sig, env, mod, ampMod;
@@ -113,11 +113,11 @@ SynthDef.new(\impulse, {
 SynthDef(\sampSt, {
     var sig, env;
     sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:0);
-    //die Env muss wohl .ar sein, um bufnums austauschen zu können
     env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1)), doneAction: 2);
-    sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
+    sig = Compander.ar(sig, sig, \thr.kr(0.55), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = BPF.ar(sig, \bpf1.kr(100), \bpfQ.kr(0.3));
     sig = sig * \amp.kr(0.2) * \fade.kr(1);
+
     Out.ar(\out.kr(0), sig) ;
 }).add;
 
@@ -134,7 +134,7 @@ SynthDef(\brPhsr, {
     arg buf, rate=1, start, end, freq=1;
     var sig, ptr, env;
     ptr = Phasor.ar(0, BufRateScale.kr(buf)* rate, start, end);
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1), level: \amp.kr(0.6)), doneAction: 2);
+    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1), level: \amp.kr(0.3)), doneAction: 2);
     sig = BufRd.ar(1, buf, ptr);
     sig = sig * env;
     Out.ar(\out.kr(0), sig!2);

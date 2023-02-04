@@ -27,6 +27,7 @@ melo: (
         72, 67, 72, 70,
         72, 67,  69, 67,
         72,  63, 22, 72],
+	zahlen: [~buffers[\zahlen][0], ~buffers[\zahlen][1],~buffers[\zahlen][2],~buffers[\zahlen][3],~buffers[\zahlen][4],~buffers[\zahlen][5],~buffers[\zahlen][6], ~buffers[\zahlen][7] ]
 ),
 
 duras:(
