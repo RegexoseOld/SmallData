@@ -125,36 +125,6 @@ Window.closeAll;
 ~buffers[\lecture][0].numFrames/s.sampleRate
 
 // Testing
-~t.tempo
-
-(
-var buf = ~buffers[\lecture][0],
-len = buf.numFrames,
-pos = 0,
-positions = Array.fill(8, {|i| pos + (~t.tempo * s.sampleRate * i).asInteger});
-positions.do{|p, i| var buf = ;  ~buffers.add(Buffer.alloc(s, (p-(i*))))}
-positions.postln;
-
-Pbindef(\vox, \dur, 1, \spos, Pseq(positions, inf), \rls, 0.5, \sustain, 0.2, \fade, 0.9, \amp, 0.43, \loop, 0);
-
-
-)
-~buffers[\zahlen][2].numChannels
-Pbindef(\vox).play(~t);
-Pbindef(\vox).stop;
-
-Pbindef(\zahl).play(~t);
-Pbindef(\zahl).stop;
-
-(
-var buf, len;
-buf = ~buffers[\lecture][0];
-len = buf.numFrames;
-Pbindef(\vox2, \dur, len/s.sampleRate/5, \rate, 1.1, \start, Pwhite(len/10, len/2, inf ), \end, Pwhite(len * 2/3 +1, len -1, inf) );
-
-)
-Pbindef(\vox2).play;
-Pbindef(\vox2).stop;
 
 
 (
