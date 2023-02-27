@@ -3,7 +3,7 @@ patterns: (
     ins0: (
         instrument: 'bellFm',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\ins], inf) , // akkorde
+        midinote: Pseq(~melos[\melo][\ins], inf),
         dur: 4,
         amp: 0.15,
         fade: 0.5,
@@ -22,7 +22,7 @@ patterns: (
     ins1: (
         instrument: 'bellFm',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\ruzhim], inf),
+        midinote: Pseq(~melos[\melo][\ins], inf),
       dur: 2,
         amp: 0.15,
         fade: 0.5,
@@ -40,7 +40,7 @@ patterns: (
     ins2: (
         instrument: 'bellFm',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\ruzhim], inf),
+        midinote: Pseq(~melos[\melo][\ins], inf),
       dur: 1,
         amp: 0.15,
         fade: 0.5,

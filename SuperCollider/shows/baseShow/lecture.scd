@@ -3,7 +3,7 @@ patterns: (
     lec0: (
         instrument:'bass',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\z_ruzhim01], inf) , // akkorde
+        midinote: Pseq(~melos[\melo][\lec], inf),
        dur: 4,
 		atk: 0.05,
 		sus: 0.5,
@@ -20,7 +20,7 @@ patterns: (
     lec1: (
         instrument:'bass',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\z_ruzhim01], inf) , // akkorde
+        midinote: Pseq(~melos[\melo][\lec], inf),
         dur: 2,
 		atk: 0.05,
 		sus: 0.5,
@@ -37,7 +37,7 @@ patterns: (
     lec2: (
         instrument:'bass',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\z_ruzhim01], inf) , // akkorde
+        midinote: Pseq(~melos[\melo][\lec], inf),
         dur: 1,
 		atk: 0.05,
 		sus: 0.5,

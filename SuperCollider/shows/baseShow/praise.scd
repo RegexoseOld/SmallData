@@ -3,7 +3,7 @@ patterns: (
     pr0: (
         instrument: 'bellFm',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\pr], inf) -12, // akkorde
+        midinote: Pseq(~melos[\melo][\pr], inf),
         dur: 4,
         amp: 0.15,
         fade: 0.5,
@@ -23,7 +23,7 @@ patterns: (
     pr1: (
         instrument: 'bellFm',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\pr], inf) -12, // akkorde
+        midinote: Pseq(~melos[\melo][\pr], inf),
         dur: 2,
        amp: 0.15,
         fade: 0.5,

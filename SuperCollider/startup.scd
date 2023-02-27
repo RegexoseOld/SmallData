@@ -14,13 +14,16 @@ s.waitForBoot({
 	Buffer.freeAll;
 	Pbindef.all.do(_.clear);
 	s.sync;
-	/*MIDIClient.init;
-	~midiOut = MIDIOut.new(0);*/
+	MIDIClient.init;
+	MIDIIn.connectAll;
+	~midiOut = MIDIOut.new(0);
+	~midiIn = MIDIIn.new(0);
 
 	/// load SynthDefs, Constants, Functions
 	(~resourcePath ++ "synths.scd").load;
 	(~resourcePath ++ "constants.scd").load;
 	(~resourcePath ++ "functions.scd").load;
+	(~resourcePath ++ "organist.scd").load;
 
 	~allocate = (~resourcePath ++ "allocate.scd").load;
 
@@ -34,6 +37,15 @@ s.waitForBoot({
 
 //make Dictionary with effekt Patches
 	~patches = (~resourcePath ++ "fx_patches.scd").load;
+
+// Dictionary for channel allocation
+~cat2Channel = (
+	\pr: ~ch1,
+	\dis: ~ch2,
+	\con: ~ch3,
+	\lec: ~ch4,
+	\ins: ~ch5,
+);
 
 	//load melodies
 	~melPath = ~resourcePath ++ "melodies.sc";
@@ -73,15 +85,7 @@ s.waitForBoot({
 		default = (name ++ "0").asSymbol;
 		default.postln;
 		Pbindef(name, *~states[name][default].asPairs);
-		//assign to channel input
-		c = case
-		{name == \pr} {Pbindef(name, \out, ~ch1.inbus)}
-		{name == \dis} {Pbindef(name, \out, ~ch2.inbus)}
-		{name == \con} {Pbindef(name, \out, ~ch3.inbus)}
-		{name == \lec} {Pbindef(name, \out, ~ch4.inbus)}
-		{name == \ins} {Pbindef(name, \out, ~ch5.inbus)}
-
-		{true}{"end out channel assignment ".postln};
+	    Pbindef(name, \out, ~cat2Channel[name].inbus); //assign to channel input
 	};
 
 	// Send Objekte machen
@@ -118,27 +122,32 @@ s.waitForBoot({
 
 )
 
-//  load patches, managed by setGlobal later
-~runFx.();
 
 Window.closeAll;
-~buffers[\lecture][0].numFrames/s.sampleRate
+~buffers[\lecture][0].play
 
 // Testing
 
+MIDIFunc.trace(false)
+MIDIFunc.trace(true)
+
+~makeSlot.(\lec, 20)
+
+~fadingSynths.do{|chan, i| ~activateFader.(chan, i)}
+~channels.do(_.postln)
+
 
 (
-Pbindef(\lec, \dur, 1.5, \atk, 0.09, \rls, 0.27, \sustain, 0.2, \amp, 0.23).play;
-Pbindef(\pr, \dur, 1.25, \midinote, Pwhite(30, 70, inf), \amp, 0.1, \atk, 0.02, \rls, 1.5).play;
-Pbindef(\ins,  \dur, 0.33, \amp, 0.1).play;
-Pbindef(\con, \dur, 0.63, \amp, 0.25).play;
-Pbindef(\dis, \dur, 1.5, \atk, 0.1, \rls, 0.6, \amp, 0.5, \ffreq, Pwhite(100, 1000, inf)).play;
-
+Pbindef(\lec, \dur, 1, \atk, 0.09, \rls, 0.27, \sustain, 0.2, \amp, 0.23).play;
+Pbindef(\pr, \dur, 1, \amp, 0.1, \atk, 0.02, \rls, 1.5).play;
+Pbindef(\ins,  \dur, 1, \amp, 0.1).play;
+Pbindef(\con, \dur, 1, \amp, 0.25).play;
+Pbindef(\dis, \dur, 1, \atk, 0.1, \rls, 0.6, \amp, 0.5, \ffreq, Pwhite(100, 1000, inf)).play;
+Pbindef(\zahl, \amp, 0.9, \cgain, 3).play
 )
 Pbindef.all.do(_.stop)
 //Pbindef.all.do({|p| p.postln + "\n"})
-Pbindef(\drm)
-~states[\drm]
+
 
 ~board = MixingBoard("demo",nil, ~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~ringmod, ~reverb, ~master);
 (

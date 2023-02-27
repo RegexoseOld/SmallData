@@ -1,3 +1,12 @@
+~categorySymbols = (
+	dissent: \dis,
+	praise: \pr,
+	insinuation: \ins,
+	lecture: \lec,
+	concession: \con
+);
+
+
 ~makeNodes = {
 	//~channels.do{|c| if (c.active, {postf("free channel %\n", c.asString); c.free;})};
 	s.bind(

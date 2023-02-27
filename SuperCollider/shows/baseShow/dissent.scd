@@ -3,7 +3,7 @@ patterns:(
     dis0: (
         instrument: 'quitt',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\ruzhim], inf) , // akkorde
+        midinote: Pseq(~melos[\melo][\dis], inf),
         dur: 4,
         amp: 0.15,
         fade: 0.5,
@@ -22,7 +22,7 @@ patterns:(
     dis1: (
         instrument: 'quitt',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\ruzhim], inf) , // akkorde
+        midinote: Pseq(~melos[\melo][\dis], inf),
         dur: 2,
         amp: 0.15,
         fade: 0.5,
@@ -41,7 +41,7 @@ patterns:(
     dis2: (
         instrument: 'quitt',
         scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\ruzhim], inf) , // akkorde
+        midinote: Pseq(~melos[\melo][\dis], inf),
         dur: 1,
         amp: 0.15,
         fade: 0.5,

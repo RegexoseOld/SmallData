@@ -23,11 +23,8 @@
 ~nameDict = Dictionary.new;
 ~buffers = Dictionary.new;
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
-~categorySymbols = (
-	dissent: \dis,
-	praise: \pr,
-	insinuation: \ins,
-	lecture: \lec,
-	concession: \con
-);
+
 ~channels = [~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~master, ~ringmod, ~reverb];
+
+
+
