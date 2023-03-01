@@ -1,35 +1,28 @@
 (
 melo: (
-    a: [0, \, \, \, \, \, \, \, \, \, \, \, \, \, \, \ ],
-    b: [30, 33, 35, 33, 30, 33, 30, 31],
-   c: [54, 57, 57, 59, 57, 59, 57,
-        54, 57, 54,  54, 52, 54, 52,
-        54, 57, 57,  59, 57, 59, 57,
-        54,  61, 59, 61, 59, 54],
-  d: [49, 52, 52, 54, 52, 54, 52,
-        49, 52, 49,  49, 47, 49, 47,
-        49, 52, 52,  54, 52, 54, 52,
-        49,  56, 54, 56, 54, 49],
-   e: [49, 52, 52, 54, 52, 54, 52,
-        49, 52, 49,  49, 47, 49, 47,
-        49, 52, 52,  54, 52, 54, 52,
-        49,  56, 54, 56, 54, 49],
-   f: (0..31),
-    base01: 49,
-    pr: Array.fill(32, {68}),
-    ins: Array.fill(32, {73}),
-    con: Array.fill(32, {74}),
-    lec: Array.fill(32, {75}),
-    dis: Array.fill(32, {65}),
-	// sample Slots
-	zahlen: [~buffers[\zahlen][0], ~buffers[\zahlen][1],~buffers[\zahlen][2],~buffers[\zahlen][3],~buffers[\zahlen][4],~buffers[\zahlen][5],~buffers[\zahlen][6], ~buffers[\zahlen][7] ],
-	slots: Array.fill(32, {0})
+    pr: Array.fill(~numSlots, {68}),
+    ins: Array.fill(~numSlots, {73}),
+    con: Array.fill(~numSlots, {74}),
+    lec: Array.fill(~numSlots, {75}),
+    dis: Array.fill(~numSlots, {65}),
+
 ),
 
 duras:(
-    a: [1],
-    b: [1, 1, 1, 1, 1, 1, 1, 2 ],
-    arp01: [1, 1, 1, 1, 0.5, 0.5, 0.5, 1],
+    pr: Array.fill(~numSlots, {1}),
+    ins: Array.fill(~numSlots, {1}),
+    con: Array.fill(~numSlots, {1}),
+    lec: Array.fill(~numSlots, {1}),
+    dis: Array.fill(~numSlots, {1}),
+
+),
+
+amps:(
+    pr: Array.fill(~numSlots, {0.15}),
+    ins: Array.fill(~numSlots, {0.15}),
+    con: Array.fill(~numSlots, {0.15}),
+    lec: Array.fill(~numSlots, {0.15}),
+    dis: Array.fill(~numSlots, {0.15}),
 
 ),
 
@@ -40,6 +33,24 @@ pauses: (
     praise: 5,
     concession: 6
 ),
+
+slots:(
+	// sample Slots
+	zahlen: ~numSlots.collect({|n| var i = n%7; ~buffers[\zahlen][i]}),
+	//pattern slots
+	a: Pbind(\instrument, \sampSt, \buf, Pxrand(~buffers[\bd], inf), \amp, 0.4, \dur, 0.5),
+	b: Pbind(\instrument, \sampSt, \buf, Pxrand(~buffers[\Bells], inf), \amp, 0.9, \dur, 0.5, \cgain, 3),
+	uttpra: Pbindef(\uttpra, \instrument, \sampMon, \buf, ~uttSample),
+	uttdis: Pbindef(\uttdis, \instrument, \sampMon, \buf, ~uttSample),
+	uttins: Pbindef(\uttins, \instrument, \sampMon, \buf, ~uttSample),
+	uttcon: Pbindef(\uttcon, \instrument, \sampMon, \buf, ~uttSample),
+	uttlec: Pbindef(\uttlec, \instrument, \sampMon, \buf, ~uttSample),
+	pr: Pbindef(\pr),
+	dis: Pbindef(\dis),
+	ins: Pbindef(\ins),
+	con: Pbindef(\con),
+	lec: Pbindef(\lec),
+)
 
 
 

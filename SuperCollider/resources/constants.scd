@@ -1,7 +1,9 @@
 ~fx1Bus = Bus.audio(s,2);
 ~fx2Bus = Bus.audio(s,2);
 ~fx3Bus = Bus.audio(s,2);
-~cat = "";
+~numSlots = 16;
+~cat = "lecture";
+~uttSample = Buffer.read(s, "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/resources/samples/zahlen/01eins.wav");
 ~factor = 1;
 ~totalUtts = 0;
 ~t = TempoClock(40/60).permanent_(true);
@@ -23,8 +25,6 @@
 ~nameDict = Dictionary.new;
 ~buffers = Dictionary.new;
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
-
-~channels = [~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~master, ~ringmod, ~reverb];
 
 
 

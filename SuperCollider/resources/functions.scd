@@ -1,11 +1,22 @@
-~categorySymbols = (
-	dissent: \dis,
-	praise: \pr,
-	insinuation: \ins,
-	lecture: \lec,
-	concession: \con
-);
+~makeDictionaries = {
+	~categorySymbols = (
+		dissent: \dis,
+		praise: \pr,
+		insinuation: \ins,
+		lecture: \lec,
+		concession: \con
+	);
+	// Dictionary for channel allocation
+	~cat2Channel = (
+		\pr: ~ch1,
+		\dis: ~ch2,
+		\con: ~ch3,
+		\lec: ~ch4,
+		\ins: ~ch5,
+	);
 
+
+};
 
 ~makeNodes = {
 	//~channels.do{|c| if (c.active, {postf("free channel %\n", c.asString); c.free;})};
@@ -24,7 +35,6 @@
 )};
 
 ~runFx = {
-	//idee
 ~fx = (
 	\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
 	\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
@@ -74,7 +84,10 @@ PathName(~samplesPath).entries.do({
     //postf("\nupdated % to % ", cat, ~uttDict[cat]);
 };
 
-
+~updateSample = {
+	// ~uttSample wird mit einem neuen File geladen und aktualisiert. Relevant für makeSlot in organist.scd
+	"updated Sample".postln;
+};
 
 ~addVolume = {
     |cat, add, max, thres|

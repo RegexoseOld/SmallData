@@ -1,15 +1,12 @@
-/*
-Aktivieren von Fadern für die Lautstärke Regelung der Patterns
-*/
 
+//Aktivieren von Fadern für die Lautstärke Regelung der Patterns
 ~activateFader = {
 	|ch, i|
 	var value;
 	"chan % and i %".format(ch, i).postln;
 	value = MIDIFunc.cc(
 		{arg ...args;
-			args[0].postln;
-			~cat2Channel[ch].postln;
+			//args[0].postln;
 			~cat2Channel[ch].level = args[0].linlin(0, 127, 0.0, 1.0);
 		},
 		i,
@@ -19,33 +16,35 @@ Aktivieren von Fadern für die Lautstärke Regelung der Patterns
 };
 
 
-
-
-
-/*Assuming a melo is a sequence with 32 slots, Organist presses a key N and assigns a sample or a note event to slot number N
-too advanced. wirklich interessant wird das erst, wenn man Pbindef mit verschiedenen \instrument machen kann. D.h. zwischen einen Synth und einem Sampler wechselt.
-Das geht, aber wo sind diese \instrument Patterns abgelegt? in ~melos?
+/*Assuming a melo is a sequence with 32 slots, Organist presses a key N (i.e. 20) and assigns a sample or a note event to slot number N (20)
+1. Bei neu eintreffenden Utts wird die globale Varialbe ~uttSample aktualisiert
+2. Bei Tastendruck N wird mit dem aktuellen ~uttSample ein neuer Eintrag in ~melos[\slots] hinzugefügt.
+   d.h. Es wird HIER abhängig von ~cat der eine neue Pseq für ~melos[\amps] gemacht
 */
 
 ~makeSlot = {
 	|cat, newEvent|
-	var notes, slots, on, off, mel;
+	var notes, slots, on, off, slotName, amps;
 	notes = Array.newClear(128);    // array has one slot per possible MIDI note
-	slots = (48..80);    // here, array has 32 slots
+	slots = (48..64);    // here, array has 16 slots
 
 	on = MIDIFunc.noteOn({ |veloc, num, chan, src|
 		notes[num] = Synth(\default, [\freq, num.midicps, \amp, veloc * 0.001]); // also allows chords
-		"note %".format(num).postln;
+		"note % slotpos %".format(num, (num- slots[0])).postln;
 		if (slots.includes(num),
 			{
-			mel = ~melos[\melo][cat].collect({
-					|nt, i|
-					if(i== (num - slots[0]),
-						{newEvent},
-						{nt})
-				}); // die melo Sequenz ändern, Meinungsorganis ordnet per Taste den Slot zu
-			mel.postln;
-			Pbindef(cat, \midinote, Pseq(mel, inf));
+		    // neue amp Pseq
+		    ~melos[\amps][cat].postln;
+			amps = ~melos[\amps][cat].collect({
+					|a, i|
+					if(i == (num - slots[0]), {a}, {0})
+				});
+			// slot Pattern machen
+				slotName = ("utt" ++ ~cat.asString[..2]);
+				slotName.postln;
+				//~melos[\slots][slotName.asSymbol] = Pbindef(slotName.asSymbol,\instrument, \sampMon, \buf, ~uttSample, \amp, Pseq(amps, inf));
+				 Pbindef(slotName.asSymbol, \amp, Pseq(amps, inf));
+				amps.postln;
 	})
 	});
 
@@ -56,7 +55,6 @@ Das geht, aber wo sind diese \instrument Patterns abgelegt? in ~melos?
 	q = { on.free; off.free; };
 
 };
-
 
 
 /*

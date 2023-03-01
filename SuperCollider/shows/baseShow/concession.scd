@@ -3,8 +3,8 @@ patterns: (
     con0: (
         instrument: 'percImp',
         scale: Scale.chromatic,
-        dur: 4,
-        amp: 0.15,
+        dur: Pseq(~melos[\duras][\con], inf),
+        amp: Pseq(~melos[\amps][\con], inf),
         fade: 0.5,
         pan: 0,
         accent: 0,
@@ -15,8 +15,8 @@ patterns: (
     con1: (
         instrument: 'percImp',
         scale: Scale.chromatic,
-        dur: 2,
-        amp: 0.15,
+        dur: Pseq(~melos[\duras][\con], inf),
+        amp: Pseq(~melos[\amps][\con], inf),
         fade: 0.5,
         pan: 0,
         accent: 0,
@@ -27,8 +27,8 @@ patterns: (
     con2: (
         instrument: 'percImp',
         scale: Scale.chromatic,
-        dur: 2,
-        amp: 0.15,
+        dur: Pseq(~melos[\duras][\con], inf),
+        amp: Pseq(~melos[\amps][\con], inf),
         fade: 0.5,
         pan: 0,
         accent: 0,

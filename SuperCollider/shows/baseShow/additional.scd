@@ -21,7 +21,7 @@ vox: (
 
 zahl: (
 	instrument:'sampMon',
-	buf: Pseq(~melos[\melo][\zahlen], inf),
+	buf: Pseq(~melos[\slots][\zahlen], inf),
 	dur: 1,
 	spos: 0,
 	rate: 1,
