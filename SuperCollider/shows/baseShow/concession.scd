@@ -7,6 +7,7 @@ patterns: (
         amp: Pseq(~melos[\amps][\con], inf),
         fade: 0.5,
         pan: 0,
+		carAmp:0.74,
         accent: 0,
         decayScale: 1,
         minfrq: 80,
