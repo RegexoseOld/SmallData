@@ -32,10 +32,10 @@
 };
 
 
-/*Assuming a melo is a sequence with 32 slots, Organist presses a key N (i.e. 20) and assigns a sample or a note event to slot number N (20)
+/*Assuming a melo is a sequence with16 slots, Organist presses a key N (i.e. 12) and assigns a sample or a note event to slot number <N> (12)
 1. Bei neu eintreffenden Utts wird die globale Varialbe ~uttSample aktualisiert
-2. Bei Tastendruck N wird mit dem aktuellen ~uttSample ein neuer Eintrag in ~melos[\slots] hinzugefügt.
-   d.h. Es wird HIER abhängig von cat  eine neue Pseq für ~melos[\amps] gemacht (ampSlot) und die bisherige amp Sequenz wird für Position N stummgeschaltet
+2. Bei Tastendruck <N> wird mit dem aktuellen ~uttSample ein neuer Eintrag in ~melos[\slots] hinzugefügt.
+// d.h.in ~makeSlot wird abhängig von cat neue Pseqs für ~melos[\amps] gemacht (ampSlot) und die bisherige amp Sequenz ~melos[\amps][cat] wird für Position N stummgeschaltet
 
 */
 
@@ -46,7 +46,7 @@
 	slots = (48..64);    // here, array has 16 slots
 
 	on = MIDIFunc.noteOn({ |veloc, num, chan, src|
-		notes[num] = Synth(\default, [\freq, num.midicps, \amp, veloc * 0.001]); // also allows chords
+		//notes[num] = Synth(\default, [\freq, num.midicps, \amp, veloc * 0.001]); // also allows chords
 		"notes % slotpos %".format(num, (num- slots[0])).postln;
 		if (slots.includes(num),
 			{
@@ -72,7 +72,8 @@
 	});
 
 	off = MIDIFunc.noteOff({ |veloc, num, chan, src|
-		notes[num].release;
+		//notes[num].release;
+		//
 	});
 
 	q = { on.free; off.free; };

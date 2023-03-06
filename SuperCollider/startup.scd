@@ -142,7 +142,8 @@ Ppatlace([Pbindef(\pr), Pbindef(\dis), Pbindef(\lec), Pbindef(\ins), Pbindef(\co
 MIDIFunc.trace(false);
 MIDIFunc.trace(true);
 
-~makeSlot.(\pr, 20)
+~makeSlot.(\pr, 16)
+~runFx.()
 
 
 ~activateFaders.()
@@ -162,8 +163,8 @@ Pbindef(\ins, \dur, 1, \amp, 0.25).play(~t);
 Pbindef(\con, \dur, 1, \carAmp, 0.8, \amp, 0.35).play(~t);
 Pbindef(\dis, \dur, 1, \atk, 0.1, \rls, 0.6, \amp, 0.25, \ffreq, Pwhite(100, 1000, inf)).play(~t);
 Pbindef(\zahl, \amp, 0.9, \cgain, 3).play;
-Pbindef(\uttlec).play;
-Pbindef(\uttpr).play;
+Pbindef(\uttlec).play(~t);
+Pbindef(\uttpr).play(~t);
 Pbindef(\uttcon).play;
 Pbindef(\uttins).play(~t);
 Pbindef(\uttdis).play;
