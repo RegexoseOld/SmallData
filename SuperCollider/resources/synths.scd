@@ -105,8 +105,9 @@ SynthDef(\sampSt, {
 SynthDef(\sampMon, {
     var sig, env;
     sig = PlayBuf.ar(1, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), \loop.kr(0.0));
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1), level: \amp.kr(0.2)), doneAction: 2);
-    sig = sig * env * \fade.kr(1);
+    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1)), doneAction: 2);
+	sig = Compander.ar(sig, sig, \thr.kr(0.55), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
+    sig = sig * env *  \amp.kr(0.2) * \fade.kr(1);
     sig = Pan2.ar(sig, \pan.kr(0));
     Out.ar(\out.kr(0), sig) ;
 }).add;

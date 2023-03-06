@@ -35,7 +35,7 @@
 /*Assuming a melo is a sequence with16 slots, Organist presses a key N (i.e. 12) and assigns a sample or a note event to slot number <N> (12)
 1. Bei neu eintreffenden Utts wird die globale Varialbe ~uttSample aktualisiert
 2. Bei Tastendruck <N> wird mit dem aktuellen ~uttSample ein neuer Eintrag in ~melos[\slots] hinzugefügt.
-// d.h.in ~makeSlot wird abhängig von cat neue Pseqs für ~melos[\amps] gemacht (ampSlot) und die bisherige amp Sequenz ~melos[\amps][cat] wird für Position N stummgeschaltet
+// d.h.in ~makeSlot wird abhängig von cat neue Pseqs für ~melos[\amps] gemacht (ampSlot)
 
 */
 
@@ -44,31 +44,26 @@
 	var notes, slots, on, off, slotName, ampSlot, amps ;
 	notes = Array.newClear(128);    // array has one slot per possible MIDI note
 	slots = (48..64);    // here, array has 16 slots
+	ampSlot = Array.fill(numSlots, {0});
 
 	on = MIDIFunc.noteOn({ |veloc, num, chan, src|
 		//notes[num] = Synth(\default, [\freq, num.midicps, \amp, veloc * 0.001]); // also allows chords
 		"notes % slotpos %".format(num, (num- slots[0])).postln;
-		if (slots.includes(num),
-			{
-		    // neue amp Pseq
-			ampSlot = ~melos[\amps][cat].collect({
-					|a, i|
-					if(i == (num - slots[0]), {a}, {0})
-				});
-				// aktualisiere bisherige amp Sequenz
-				amps = ~melos[\amps][cat].collect({
-					|a, i|
-					if(i == (num - slots[0]), {0}, {a})
-				});
+		if (slots.includes(num),{
+			// neue amp Pseq
+			//~melos[\amps][cat].postln;
+			ampSlot.put(num- slots[0],~melos[\amps][cat].sum/numSlots );
+
+
 			// slot Pattern machen
-				slotName = ("utt" ++ cat.asString);
-				slotName.postln;
-				//~melos[\slots][slotName.asSymbol] = Pbindef(slotName.asSymbol,\instrument, \sampMon, \buf, ~uttSample, \amp, Pseq(amps, inf));
-				 Pbindef(slotName.asSymbol, \amp, Pseq(ampSlot, inf));
-				 Pbindef(cat, \amp, Pseq(amps, inf));
-				ampSlot.postln;
-				amps.postln;
-	})
+			slotName = ("utt" ++ cat.asString);
+			slotName.postln;
+			//~melos[\slots][slotName.asSymbol] = Pbindef(slotName.asSymbol,\instrument, \sampMon, \buf, ~uttSample, \amp, Pseq(amps, inf));
+			Pbindef(slotName.asSymbol, \amp, Pseq(ampSlot, inf));
+			//Pbindef(cat, \amp, Pseq(amps, inf));
+			ampSlot.postln;
+			//amps.postln;
+		}, {ampSlot = Array.fill(numSlots, {0});})
 	});
 
 	off = MIDIFunc.noteOff({ |veloc, num, chan, src|
@@ -80,46 +75,7 @@
 
 };
 /*
-// was ist mit multiplen slots?
-~makeSlots = {
-	|cat, numSlots|
-	var notes, slots, on, off, slotName, ampSlot, amps ;
-	notes = Array.newClear(128);    // array has one slot per possible MIDI note
-	slots = (48..64);    // here, array has 16 slots
 
-	on = MIDIFunc.noteOn({ |veloc, num, chan, src|
-		notes[num] = Synth(\default, [\freq, num.midicps, \amp, veloc * 0.001]); // also allows chords
-		"notes % slotpos %".format(num, (num- slots[0])).postln;
-		if (slots.includes(num),
-			{
-		    // neue amp Pseq
-			ampSlot = ~melos[\amps][cat].collect({
-					|a, i|
-					if(i == (num - slots[0]), {a}, {0})
-				});
-				// aktualisiere bisherige amp Sequenz
-				amps = ~melos[\amps][cat].collect({
-					|a, i|
-					if(i == (num - slots[0]), {0}, {a})
-				});
-			// slot Pattern machen
-				slotName = ("utt" ++ cat.asString);
-				slotName.postln;
-				//~melos[\slots][slotName.asSymbol] = Pbindef(slotName.asSymbol,\instrument, \sampMon, \buf, ~uttSample, \amp, Pseq(amps, inf));
-				 Pbindef(slotName.asSymbol, \amp, Pseq(ampSlot, inf));
-				 Pbindef(cat, \amp, Pseq(amps, inf));
-				ampSlot.postln;
-				amps.postln;
-	})
-	});
-
-	off = MIDIFunc.noteOff({ |veloc, num, chan, src|
-		notes[num].release;
-	});
-
-	q = { on.free; off.free; };
-
-};
 
 */
 /*

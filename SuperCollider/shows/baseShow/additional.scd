@@ -27,7 +27,8 @@ zahl: (
 	rate: 1,
 	rls: 1,
 	fade: 1,
-	amp: 0.43,
+	amp: 0.9,
+	cgain: 2,
 	bpf1: 1000
 	),
 

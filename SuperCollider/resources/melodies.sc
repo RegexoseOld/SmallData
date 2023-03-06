@@ -18,11 +18,11 @@ duras:(
 ),
 
 amps:(
-    pr: Array.fill(~numSlots, {0.15}),
-    ins: Array.fill(~numSlots, {0.15}),
-    con: Array.fill(~numSlots, {0.15}),
-    lec: Array.fill(~numSlots, {0.15}),
-    dis: Array.fill(~numSlots, {0.15}),
+    pr: Array.fill(~numSlots, {0.5}),
+    ins: Array.fill(~numSlots, {0.5}),
+    con: Array.fill(~numSlots, {0.5}),
+    lec: Array.fill(~numSlots, {0.5}),
+    dis: Array.fill(~numSlots, {0.5}),
 
 ),
 
@@ -37,10 +37,11 @@ pauses: (
 slots:(
 	// sample Slots
 	zahlen: ~numSlots.collect({|n| var i = n%7; ~buffers[\zahlen][i]}),
+	utt: ~numSlots.collect({|n| ~buffers[\zahlen].choose}),
 	//pattern slots
 	a: Pbind(\instrument, \sampSt, \buf, Pxrand(~buffers[\bd], inf), \amp, 0.4, \dur, 0.5),
 	b: Pbind(\instrument, \sampSt, \buf, Pxrand(~buffers[\Bells], inf), \amp, 0.9, \dur, 0.5, \cgain, 3),
-	uttpr: Pbindef(\uttpr, \instrument, \sampMon, \buf, ~uttSample,  \amp, 0.5),
+	uttpr: Pbindef(\uttpr, \instrument, \sampMon, \buf, ~uttSample),
 	uttdis: Pbindef(\uttdis, \instrument, \sampMon, \buf, ~uttSample),
 	uttins: Pbindef(\uttins, \instrument, \sampMon, \buf, ~uttSample),
 	uttcon: Pbindef(\uttcon, \instrument, \sampMon, \buf, ~uttSample),

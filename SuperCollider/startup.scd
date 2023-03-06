@@ -42,7 +42,8 @@ s.waitForBoot({
 
 	//load melodies
 	~melPath = ~resourcePath ++ "melodies.sc";
-	~melos = ~melos ? ();
+	//~melos = ~melos ? ();
+	~melos =  ();
 	~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
 
 
@@ -164,7 +165,7 @@ Pbindef(\con, \dur, 1, \carAmp, 0.8, \amp, 0.35).play(~t);
 Pbindef(\dis, \dur, 1, \atk, 0.1, \rls, 0.6, \amp, 0.25, \ffreq, Pwhite(100, 1000, inf)).play(~t);
 Pbindef(\zahl, \amp, 0.9, \cgain, 3).play;
 Pbindef(\uttlec).play(~t);
-Pbindef(\uttpr).play(~t);
+Pbindef(\uttpr, \dur, 1, \rls, 0.2, \atk, 0.03, \buf, Pseq(~melos[\slots][\utt], inf), \amp, 0.8).play(~t);
 Pbindef(\uttcon).play;
 Pbindef(\uttins).play(~t);
 Pbindef(\uttdis).play;
