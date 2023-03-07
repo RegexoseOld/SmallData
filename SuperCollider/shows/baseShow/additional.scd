@@ -21,13 +21,14 @@ vox: (
 
 zahl: (
 	instrument:'sampMon',
-	buf: Pseq(~melos[\melo][\zahlen], inf),
+	buf: Pseq(~melos[\slots][\zahlen], inf),
 	dur: 1,
 	spos: 0,
 	rate: 1,
 	rls: 1,
 	fade: 1,
-	amp: 0.43,
+	amp: 0.9,
+	cgain: 2,
 	bpf1: 1000
 	),
 

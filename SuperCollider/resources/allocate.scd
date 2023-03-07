@@ -3,7 +3,7 @@
     var c, dura, patName, status, count, in_count, local_feedbackVol, numNotes;
     count = floor(counter * ~factor).asInteger;
     status = "state 00";
-    local_feedbackVol = 1;
+    local_feedbackVol = 0.4;
     numNotes = 1;
     dura = Env.new([1,0], [count], [-2]).asPseg;
 
@@ -27,7 +27,7 @@
 
 // feedback sound
 
-    3.do{
+    1.do{
         |n|
         Pbind(
             \instrument, \quitt,

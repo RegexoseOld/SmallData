@@ -1,49 +1,29 @@
 (
 melo: (
-    a: [0, \, \, \, \, \, \, \, \, \, \, \, \, \, \, \ ],
-    b: [30, 33, 35, 33, 30, 33, 30, 31],
-    ruzhim: [54, 57, 57, 59, 57, 59, 57,
-        54, 57, 54,  54, 52, 54, 52,
-        54, 57, 57,  59, 57, 59, 57,
-        54,  61, 59, 61, 59, 54],
-    ruzhim01: [49, 52, 52, 54, 52, 54, 52,
-        49, 52, 49,  49, 47, 49, 47,
-        49, 52, 52,  54, 52, 54, 52,
-        49,  56, 54, 56, 54, 49],
-    ruzhim02: [49, 52, 52, 54, 52, 54, 52,
-        49, 52, 49,  49, 47, 49, 47,
-        49, 52, 52,  54, 52, 54, 52,
-        49,  56, 54, 56, 54, 49],
-    ruzhim02: (49..71),
-    arp01: [49, 61, 56, 49, 49, 52, 56, 61],
-    base01: 49,
-    pr: [68],
-    ins: [73],
-    con: [74],
-    lec: [75],
-    dis: [65],
-    // zither
-    z_ruzhim01:[72, 67, 69, 67,
-        72, 67, 72, 70,
-        72, 67,  69, 67,
-        72,  63, 22, 72],
-	zahlen: [~buffers[\zahlen][0], ~buffers[\zahlen][1],~buffers[\zahlen][2],~buffers[\zahlen][3],~buffers[\zahlen][4],~buffers[\zahlen][5],~buffers[\zahlen][6], ~buffers[\zahlen][7] ]
+    pr: Array.fill(~numSlots, {60}),
+    ins: Array.fill(~numSlots, {64}),
+    con: Array.fill(~numSlots, {48}),
+    lec: Array.fill(~numSlots, {35}),
+    dis: Array.fill(~numSlots, {85}),
+
 ),
 
 duras:(
-    a: [1],
-    b: [1, 1, 1, 1, 1, 1, 1, 2 ],
-    ruzhim01: [1, 1.5, 0.5, 0.25, 0.25, 0.5, 2,
-        1, 1.5, 0.5, 0.25, 0.25, 0.5, 2,
-        1, 1.5, 0.5, 0.25, 0.25, 0.5, 2,
-        1, 1.5, 0.25, 0.25, 0.5, 2],
-    ruzhim02: [0.75],
-    s_ruzhim:[1.247],
-    arp01: [1, 1, 1, 1, 0.5, 0.5, 0.5, 1],
-    z_ruzhim01:[1, 2, 1, 2,
-        1, 2, 1,  2,
-        1, 2, 1,  2,
-        1, 2, 1,  2],
+    pr: Array.fill(~numSlots, {1}),
+    ins: Array.fill(~numSlots, {1}),
+    con: Array.fill(~numSlots, {1}),
+    lec: Array.fill(~numSlots, {1}),
+    dis: Array.fill(~numSlots, {1}),
+
+),
+
+amps:(
+    pr: Array.fill(~numSlots, {0.5}),
+    ins: Array.fill(~numSlots, {0.5}),
+    con: Array.fill(~numSlots, {0.5}),
+    lec: Array.fill(~numSlots, {0.5}),
+    dis: Array.fill(~numSlots, {0.5}),
+
 ),
 
 pauses: (
@@ -53,41 +33,28 @@ pauses: (
     praise: 5,
     concession: 6
 ),
-zit: (
-    //
-    scale: [70, 71, 72, 73, 66, 67, 68, 69, 62, 63, 64, 65,
-        58, 59, 60, 61, 54, 55, 56, 57],
-    vel: (
-        '14': 48,
-        '15': 53,
-        '16': 60,
-        '17': 55,
-        '18': 65,
-        '19': 78,
-        '20': 50,
-        '21': 50,
-        '22': 55,
-        '23': 50,
-        '24': 70,
-        '25': 65,
-        '26': 65,
-        '27': 65,
-        '28': 70,
-        '29': 60,
-        '30': 50,
-        '70': 48,
-        '72': 50,
-        '67': 52,
-        '69': 65,
-        '63': 51,
-        '64': 70
 
+slots:(
+	// sample Slots
+	zahlen: ~numSlots.collect({|n| var i = n%7; ~buffers[\zahlen][i]}),
+	utt: ~numSlots.collect({|n| ~buffers[\zahlen].choose}),
+	//pattern slots
+	a: Pbind(\instrument, \sampSt, \buf, Pxrand(~buffers[\bd], inf), \amp, 0.4, \dur, 0.5),
+	b: Pbind(\instrument, \sampSt, \buf, Pxrand(~buffers[\Bells], inf), \amp, 0.9, \dur, 0.5, \cgain, 3),
+	uttpr: Pbindef(\uttpr, \instrument, \sampMon, \buf, ~uttSample),
+	uttdis: Pbindef(\uttdis, \instrument, \sampMon, \buf, ~uttSample),
+	uttins: Pbindef(\uttins, \instrument, \sampMon, \buf, ~uttSample),
+	uttcon: Pbindef(\uttcon, \instrument, \sampMon, \buf, ~uttSample),
+	uttlec: Pbindef(\uttlec, \instrument, \sampMon, \buf, ~uttSample),
+	pr: Pbindef(\pr),
+	dis: Pbindef(\dis),
+	ins: Pbindef(\ins),
+	con: Pbindef(\con),
+	lec: Pbindef(\lec),
+)
 
-
-    )
 
 
 
 )
 
-)

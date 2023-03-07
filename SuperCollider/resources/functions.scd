@@ -1,3 +1,39 @@
+~makeDictionaries = {
+	~categorySymbols = (
+		dissent: \dis,
+		praise: \pr,
+		insinuation: \ins,
+		lecture: \lec,
+		concession: \con
+	);
+	// Dictionary for channel allocation
+	~cat2Channel = (
+		\pr: ~ch1,
+		\dis: ~ch2,
+		\con: ~ch3,
+		\lec: ~ch4,
+		\ins: ~ch5,
+	);
+};
+
+~makeWaveTable = {
+	|size|
+	var sig, wt, buf;
+	sig = Signal.sineFill(size.asInteger, Array.fill(6, {rrand(0.01, 1)}), [0,pi,0,pi,0,0].scramble);
+	wt = sig.asWavetable;
+	wt.size.postln;
+	r{
+		buf = Buffer.alloc(s, size*2);
+		s.sync;
+		buf.sendCollection(wt);
+		//buf.plot;
+		s.sync;
+		~buffers.add(\wt ->buf);
+	}.play(AppClock);
+
+};
+
+
 ~makeNodes = {
 	//~channels.do{|c| if (c.active, {postf("free channel %\n", c.asString); c.free;})};
 	s.bind(
@@ -12,10 +48,10 @@
 		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
 		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
 		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
+
 )};
 
 ~runFx = {
-	//idee
 ~fx = (
 	\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
 	\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
@@ -33,6 +69,22 @@
 	|key, on|
 	if (on, {~fx[key].synth.run(false)}, {~fx[key].synth.run(true);
 })
+};
+
+~activateFaders = {
+	var i = 0;
+	~sends.keys.asList.sort.do({
+		|snd|
+		if ("vrb".matchRegexp(snd.asString), {
+			("found  " ++ snd).postln;
+		    ~activateReverb.(snd, i, 89 );
+			i = i+1;
+		})
+	});
+
+	~fadingSynths.do{|chan, it| ~activateVolume.(chan, it)}
+
+
 };
 
 ~uttDict = Dictionary.new;
@@ -65,7 +117,10 @@ PathName(~samplesPath).entries.do({
     //postf("\nupdated % to % ", cat, ~uttDict[cat]);
 };
 
-
+~updateSample = {
+	// ~uttSample wird mit einem neuen File geladen und aktualisiert. Relevant für makeSlot in organist.scd
+	"updated Sample".postln;
+};
 
 ~addVolume = {
     |cat, add, max, thres|
@@ -147,13 +202,13 @@ PathName(~samplesPath).entries.do({
 
     {~totalUtts == 20}{
         //start a drum pattern
-        Pbindef(\drm0, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
-		~sends[\ch4_send_vrb1].level = 0.0;
-		~sends[\ch5_send_chrs].level = 0.99;
+        Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
+		~sends[\ch3_snd_vrb1].level = 0.0;
+		~sends[\ch5_snd_chrs].level = 0.99;
     }
 	{~totalUtts == 10}{
         //send
-		~sends[\ch4_send_vrb1].level = 0.9;
+		~sends[\ch3_snd_vrb1].level = 0.9;
     }
 
     {(~totalUtts == 1)}{

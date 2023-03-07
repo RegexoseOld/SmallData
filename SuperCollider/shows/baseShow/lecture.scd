@@ -1,10 +1,11 @@
 (
 patterns: (
-    lec0: (
-        instrument:'bass',
-        scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\z_ruzhim01], inf) , // akkorde
-       dur: 4,
+	lec0: (
+		instrument:'bass',
+		scale: Scale.chromatic,
+		midinote: Pseq(~melos[\melo][\lec], inf),
+		dur: Pseq(~melos[\duras][\lec], inf),
+		amp: Pseq(~melos[\amps][\lec], inf),
 		atk: 0.05,
 		sus: 0.5,
 		rls: 0.2,
@@ -15,13 +16,13 @@ patterns: (
 		cgain: 5,
 		distort: 2.5,
 		fade: 0.5,
-		amp: 0.15,
-    ),
-    lec1: (
-        instrument:'bass',
-        scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\z_ruzhim01], inf) , // akkorde
-        dur: 2,
+	),
+	lec1: (
+		instrument:'bass',
+		scale: Scale.chromatic,
+		midinote: Pseq(~melos[\melo][\lec], inf),
+		dur: Pseq(~melos[\duras][\lec], inf),
+		amp: Pseq(~melos[\amps][\lec], inf),
 		atk: 0.05,
 		sus: 0.5,
 		rls: 0.2,
@@ -32,13 +33,13 @@ patterns: (
 		cgain: 5,
 		distort: 2.5,
 		fade: 0.5,
-		amp: 0.15,
-    ),
-    lec2: (
-        instrument:'bass',
-        scale: Scale.chromatic,
-        midinote: Pseq(~melos[\melo][\z_ruzhim01], inf) , // akkorde
-        dur: 1,
+	),
+	lec2: (
+		instrument:'bass',
+		scale: Scale.chromatic,
+		midinote: Pseq(~melos[\melo][\lec], inf),
+		dur: Pseq(~melos[\duras][\lec], inf),
+		amp: Pseq(~melos[\amps][\lec], inf),
 		atk: 0.05,
 		sus: 0.5,
 		rls: 0.2,
@@ -49,7 +50,7 @@ patterns: (
 		cgain: 5,
 		distort: 2.5,
 		fade: 0.5,
-		amp: 0.15,
-    ),
+
+	),
 )
 )

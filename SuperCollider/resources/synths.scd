@@ -1,22 +1,3 @@
-SynthDef.new(\bell1, {
-    // a long bell
-    // ist es möglich eine rückwärts sound über Patterns zu erreichen?
-    //
-    |gate=1|
-    var sig, sig2, env, volMod, trem;
-    env = EnvGen.kr(Env.linen(\atk.kr(0.4), \sus.kr(1), \rls.kr(1), curve:\crv.kr(10)), gate, doneAction:2);
-    volMod = SinOsc.kr(\vibF.kr(1), 0, \vibVol.kr(1))  ; // vol modulation
-    trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.5), \varDur.kr(1));
-    sig2 =  LFSaw.ar(\freq.kr(100).varlag(\lag.kr(0)) , 0,  volMod);
-    sig = SinOsc.ar(\freq.kr(100).varlag(\lag.kr(0)), 0,  volMod);
-    sig = (sig * \fade.kr(0.5)) + (sig2 * \sig2Fade.kr(0.2));
-    sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-    sig = BPF.ar(sig, XLine.kr(\bpf1.kr(100), \bpf1.kr(100) * 8, \bpf3.kr(0.5)), \bpfQ.kr(0.3));
-    //sig = BPF.ar(sig, \bpf1.kr(100), \bpfQ.kr(0.3));
-    sig = Pan2.ar(sig * env * \amp.kr(0.1) , \pan.kr(0.0));
-    Out.ar(\out.kr(0), sig);
-}).add;
-
 SynthDef.new(\bellFm, {
     // Fm so wie https://www.youtube.com/watch?v=dLMSR2Kjq6Y -> 11:30
     //
@@ -25,9 +6,13 @@ SynthDef.new(\bellFm, {
     env = EnvGen.kr(Env.perc(atk, rls, curve: crv), doneAction:2);
     volMod = SinOsc.kr(\vibF.kr(0.2), 0, \vibVol.kr(30))  ; // vol modulation
     trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.5), \varDur.kr(1));
-
     sig2 =  SinOsc.ar(freq * mRatio, mul:freq * mRatio * index);
-    sig = SinOsc.ar(freq * cRatio  + sig2 , mul: volMod);
+    sig = 5.collect({
+		var spread;
+		spread = LFNoise1.kr(\spread.kr(0.05)).bipolar(\dev.ir(0.7)).midiratio;
+		SinOsc.ar(freq * cRatio * spread + sig2 , mul: volMod);
+
+	}).sum;
     sig = sig * \fade.kr(1) ;
     sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = BPF.ar(sig, XLine.kr(bpf, bpf * \bpf2.kr(5), \bpf3.kr(0.2)), \bpfQ.kr(0.9), \bpfMul.kr(2));
@@ -39,48 +24,27 @@ SynthDef.new(\bellFm, {
 SynthDef.new(\quitt, {
     var sig, gend, env;
     env = EnvGen.kr(Env.perc(\atk.ir(0.1), \rls.kr(1)), doneAction:2);
-    gend = Gendy1.ar(2, \durDist.kr(1), 1.0, 1.0, \minfreq.kr(100), \maxfreq.kr(1000), 1.0, 0.05, 5);
-    gend = BPF.ar(gend, \ffreq.kr(300), \rq.kr(0.9), \gendAmp.kr(1))  ;
-    sig = LFPulse.ar(\freq.kr(100).varlag(\lag.kr(0.3), \lagcrv.kr(5.0)), 0.0, \width.kr(0.4),\pulseMul.kr(0.15), \add.kr(0)) ;
-    sig = sig + gend;
+	sig = 3.collect({
+		gend = Gendy1.ar(2, \durDist.kr(1), 1.0, 1.0, {ExpRand(100, \minfreq.kr(300))},{ExpRand(1000, \maxfreq.kr(2000))}, 1.0, 0.05, 5);
+		gend = BPF.ar(gend, \ffreq.kr(300), \rq.kr(0.9), \gendAmp.kr(1));
+		sig = LFPulse.ar(\freq.kr(100).varlag(\lag.kr(0.3), \lagcrv.kr(5.0)), 0.0, \width.kr(0.4),\pulseMul.kr(0.15), \add.kr(0)) +gend;
+	}).sum;
     sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(3));
     sig = Pan2.ar(sig * env * (\amp.kr(0.1)), \pan.kr(0.0));
     Out.ar(\out.kr(0), sig);
 }).add;
 
-SynthDef.new(\bwack, {
-    var sig, mod, env, dura, part;
-    dura = \dura.kr(1);
-    part = \part.kr(0.05);
-    mod = EnvGen.kr(Env.perc(dura-part, part, 1.0, 4), doneAction:0);
-    sig = LFSaw.ar(\freq.kr(100)) + BrownNoise.ar(\noiseLev.kr(0.8));
-    env = EnvGen.kr(Env.perc(part, dura - part, 1, \crv.kr(2)), doneAction:2);
-    //sig = Compander.ar(sig, sig, \thr.kr(0.65), mul:\cgain.kr(1));
-    sig = BPF.ar(sig, \bpfFactor.kr(3000) * mod);
-    sig = Pan2.ar(sig * env * \amp.kr(0.2), \pan.kr(0));
-    Out.ar(\out.kr(0), sig);
-
-}).add;
-
-SynthDef.new(\bwawack, {
-    var sig, mod, env, dura, part;
-    dura = \dura.kr(1);
-    part = \part.kr(0.05);
-    mod = SinOsc.kr(\freqMod.kr(2), 0.0, 0.9, 1);
-    sig = LFSaw.ar(\freq.kr(100)) + WhiteNoise.ar(\noiseLev.kr(0.8));
-    env = EnvGen.kr(Env.perc(part, dura - part, 1, \crv.kr(8)), doneAction:2);
-    sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-    sig = BPF.ar(sig, \freq.kr(100) + (\bpfFactor.kr(100) * mod) );
-    sig = Pan2.ar(sig * env * \amp.kr(0.2), \pan.kr(0));
-    Out.ar(\out.kr(0), sig!2);
-}).add;
 
 SynthDef.new(\bass, {
     |gate = 1|
     var detune, sig, env, mod, ampMod;
     env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(0.99), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
     mod = SinOsc.kr(\modRate.kr(1.2));
-    sig = VarSaw.ar(\freq.kr(100), 0, LFCub.kr(\filTime.kr(0.3)));
+    sig = 2.collect({
+		var fm;
+		fm = SinOsc.ar(Line.kr(50, \modFreq.kr(100)), mul:\modvol.kr(20));
+		VarSaw.ar(\freq.kr(100) + fm, 0, LFCub.kr(\filTime.kr(0.3)));
+	}).sum;
     sig = (sig * \distort.kr(1.5)).tanh;
     sig = sig * env * mod ;
     sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(0));
@@ -110,6 +74,23 @@ SynthDef.new(\impulse, {
     Out.ar(\out.kr(0), sig);
 }).add;
 
+SynthDef(\percImp, { |accent=0, decayScale=1|
+    var exc = PinkNoise.ar(\carAmp.kr(0.1))
+    * Decay2.kr(Impulse.kr(0), 0.01, 0.05),
+    sig = 10.collect({
+		Klank.ar(`[
+        { ExpRand(\minfrq.kr(80), 1600) }!2,
+        1 !2,
+        { ExpRand(0.1, 0.4) }!2
+    ], exc, accent + 1, \frqOff.kr(0.0), decayScale);// accent ist die höhe, decayScale die Länge des Sounds
+	}).sum;
+    DetectSilence.ar(sig, doneAction: Done.freeSelf);
+    sig = Pan2.ar(sig * \amp.kr(0.1) * \fade.kr(1.0), \pan.kr(0.0));
+    Out.ar(\out.kr(0), sig);
+}).add;
+
+// Sample Based
+
 SynthDef(\sampSt, {
     var sig, env;
     sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:0);
@@ -124,8 +105,9 @@ SynthDef(\sampSt, {
 SynthDef(\sampMon, {
     var sig, env;
     sig = PlayBuf.ar(1, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), \loop.kr(0.0));
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1), level: \amp.kr(0.2)), doneAction: 2);
-    sig = sig * env * \fade.kr(1);
+    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1)), doneAction: 2);
+	sig = Compander.ar(sig, sig, \thr.kr(0.55), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
+    sig = sig * env *  \amp.kr(0.2) * \fade.kr(1);
     sig = Pan2.ar(sig, \pan.kr(0));
     Out.ar(\out.kr(0), sig) ;
 }).add;
@@ -140,22 +122,31 @@ SynthDef(\brPhsr, {
     Out.ar(\out.kr(0), sig!2);
 }).add;
 
-SynthDef(\percImp, { |accent=0, decayScale=1|
-    var exc = PinkNoise.ar(\carAmp.kr(0.1))
-    * Decay2.kr(Impulse.kr(0), 0.01, 0.05),
-    sig = Klank.ar(`[
-        { ExpRand(\minfrq.kr(80), 1600) } ! 2,
-        1 ! 2,
-        { ExpRand(0.1, 0.4) } ! 2
-    ], exc, accent + 1, \frqOff.kr(0.0), decayScale); // accent ist die höhe, decayScale die Länge des Sounds
-    DetectSilence.ar(sig, doneAction: Done.freeSelf);
-    sig = Pan2.ar(sig * \amp.kr(0.1) * \fade.kr(1.0), \pan.kr(0.0));
-    Out.ar(\out.kr(0), sig);
-}).add;
 
 // wavetable https://www.youtube.com/watch?v=5krJVMxCr8s&t=810s ab 31:00 (für Feedback) und 46:30 für pad sound
 
+SynthDef.new(\oscfm, {
+	var sig, mod, env;
+	//modulator
+	mod = Osc.ar(\buf.ir(0), \modfreq.kr(1000), mul:\modamp.kr(1000));
+	//a chorus of 5 slightly detuned voices
+	sig = 5.collect({
+		var spread;
+		spread = LFNoise1.kr(\spread.kr(0.05)).bipolar(\dev.ir(0.7)).midiratio;
 
+		//carrier
+		Osc.ar(\buf.ir(0), \freq.kr(200) * spread + mod);
+	}).sum;
+
+	env = Env(
+		[0,1,0],
+		[\atk.ir(0.02), \rel.ir(0.5)],
+		[\atkcrv.ir(1), \relcrv.ir(-3)]
+	).ar(2);
+	sig = Pan2.ar(sig, \pan.ir(0), \amp.kr(0.2) * \fade.kr(0.5));
+	sig = sig * env;
+	Out.ar(\out.ir(0), sig);
+}).add;
 
 // building Effect Instruments
 // http://www.dewdrop-world.net/sc3/tutorials/index.php?id=5
