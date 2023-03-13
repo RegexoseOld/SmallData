@@ -43,35 +43,41 @@ s.waitForBoot({
 	//load melodies
 	~melPath = ~resourcePath ++ "melodies.sc";
 	//~melos = ~melos ? ();
-	~melos =  ();
+	~melos = ();
 	~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
 
 
 // load state patterns into a Dictionary with different states for the 5 categories
-	~states = ~states ? ();
-	PathName( ~showFolder).entries.do({
+	//~states = ~states ? ();
+	~states = ();
+	PathName(~showFolder).entries.do({
 		|pathName, i|
-		var categorySymbol;
-		var category = pathName.fileNameWithoutExtension;
-		var patternStates = thisProcess.interpreter.compileFile(pathName.absolutePath).value;
+		var categorySymbol, category, patternStates;
+		category = pathName.fileNameWithoutExtension;
+		patternStates = thisProcess.interpreter.compileFile(pathName.absolutePath).value;
 		if (~categorySymbols.includesKey(category.asSymbol),
 			{
 				categorySymbol = ~categorySymbols[category.asSymbol];
+				~states.put(categorySymbol, patternStates[\patterns]);
 			},
 			{
-				[\vox, \drm, \vox2, \zahl].do{
-					|name|
-					~states.put(name, patternStates[name]);
-					Pbindef(name, *~states[name].asPairs);
-				}∞
-			}
+				categorySymbol = \additional;
+				patternStates[\patterns].keys.do{
+					|k|
+					~states.put(k, patternStates[\patterns][k]);
+					Pbindef(k, *~states[k].asPairs);
+					~additionalSynths.add(k);
+					~cat2Channel.put(k, ~utt);
+					Pbindef(k, \out, ~cat2Channel[k].inbus);
+				};
+			};
 		);
-		~states.put(categorySymbol, patternStates[\patterns]);
 	});
 
-
 	// set fade volume low at the beginning
-	~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005))};
+	~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005)); ~faderControl.add(k)};
+	~faderControl.add(~additionalSynths.asArray);
+
 	// make Patterns for all fading Synths
 	~fadingSynths.do{
 		|name|
@@ -112,58 +118,78 @@ s.waitForBoot({
 	);
 
 	"done".postln;
-});
+})
+);
+(
+~sim = Routine(
+    { loop ( {
+        ~mock.();
+        [2, 5].choose.wait;
+        "mocked".postln;
+        }
+) }).play;
+)
+(
+~currentUttPattern = \vox;
+~makeUttSlot.(~currentUttPattern);
+~activateFaders.();
+~runFx.();
+Pbindef(\vox).play(~t);
+Pbindef(\vox, \dur, 0.5, \atk, 0.02, \rls, 0.4, \lg1, 0.2, \lg2, 0.8, \end, 70000, \amp, 0.6);
+/*Pbindef(\mono).play(~t)
+Pbindef(\mono, \amp, 0.9, \dur, 1, \cgain, 2, \rls, 2);
+Pbindef(\grainvox).play(~t);*/
+
+
+)
+(
+Pbindef(\grainvox, \dur, 0.5, \atk, 0.06, \rls, 0.2, \sus, 0.2, \grainDur, 0.4, \grainAmp, 0.7, \dens, 20,
+ \harm, -2, \pos, 0.1);
+)
+(
+Pbindef(\grainvox).stop
+Pbindef(\vox).stop
+Pbindef(\mono).stop
 
 )
 
+Pbindef.all.do(_.stop);
+~buffers[\lec01][1..16].do{|x|x.numFrames.postln}
+(
+~makeSlot.(\pr, 16)
+~runFx.()
 
+
+)
+
+~states[\vox2]
 Window.closeAll;
 
-
-
 // Testing
-~channels = [~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~master, ~ringmod, ~reverb];
-(
-var list = List.new;
-~sends.keys.do({
-	|snd, i|
-	list.add(snd.asString)
-});
-list.sort.do
+s.makeWindow
 
-)
 (
 //https://scsynth.org/t/switching-between-sample-and-non-sample-based-instruments-in-a-pattern/658
 
 Ppatlace([~melos[\slots][\a], ~melos[\slots][\b], ~melos[\slots][\c]], inf).play
-Ppatlace([Pbindef(\pr), Pbindef(\dis), Pbindef(\lec), Pbindef(\ins), Pbindef(\con)], inf).play;
+Ppatlace([Pbindef(\pr), Pbindef(\dis), Pbindef(\lec), Pbindef(\ins), Pbindef(\vox)], inf).play;
 Ppatlace([Pbindef(\pr), Pbindef(\dis), Pbindef(\lec), Pbindef(\ins), Pbindef(\con)], inf).stop;
 )
 
 MIDIFunc.trace(false);
 MIDIFunc.trace(true);
 
-~makeSlot.(\pr, 16)
-~runFx.()
-
-
-~activateFaders.()
-)
-~channels.do(_.postln);
-~sends.keys.asList.sort.do(_.postln)
-~sends.keys.do({|k|~sends[k].postln})
-~sends[\ch4_snd_vrb1]
-~melos[\slots][\uttlec].trace.play
-
 
 (
-Pbindef(\lec, \dur, 1, \atk, 0.09, \rls, 0.27, \sustain, 0.2, \amp, 0.23).play(~t);
-Pbindef(\lec, \modRate, 5, \filTime, 0.6, \distort, 0.6, \modFreq, 200, \modVol, 0, \rls, 0.7, \sustain, 0.2);
+Pbindef(\lec).play(~t);
+Pbindef(\lec, \modRate, 0.9, \filTime, 0.9, \atk, 0.001, \rls, 0.27, \fmFreq, 800, \fmVol, 100);
 Pbindef(\pr, \dur, 1, \atk, 0.04, \rls, 0.3, \dev, Pwhite(0.3, 3, inf)).play(~t);
-Pbindef(\ins, \dur, 1, \amp, 0.25).play(~t);
-Pbindef(\con, \dur, 1, \carAmp, 0.8, \amp, 0.35).play(~t);
+Pbindef(\ins).play(~t);
+Pbindef(\ins, \dur, 1, \atk, 0.1, \atkcrv, Prand([-3, -1, 3, 7], inf), \relcrv, Pkey(\atkcrv), \midinote, 40, \modfreq, Pwhite(500, 4000, inf), \modamp, 1000).play(~t);
+Pbindef(\con, \dur, 1, \carAmp, 0.8, \amp, 0.35, \decayScale, Pwhite(0.01, 6, inf), \accent, Pwhite(0, 5, inf)).play(~t);
 Pbindef(\dis, \dur, 1, \atk, 0.1, \rls, 0.6, \amp, 0.25, \ffreq, Pwhite(100, 1000, inf)).play(~t);
-Pbindef(\zahl, \amp, 0.9, \cgain, 3).play;
+Pbindef(\zahl, \dur, 0.5, \amp, 0.3, \rate, (0.9, 0.95 .. 1.1), \cgain, 1, \zit1, 10, \zit2, 2, \w, 2).play(~t);
+
 Pbindef(\uttlec).play(~t);
 Pbindef(\uttpr, \dur, 1, \rls, 0.2, \atk, 0.03, \buf, Pseq(~melos[\slots][\utt], inf), \amp, 0.8).play(~t);
 Pbindef(\uttcon).play;
@@ -176,14 +202,7 @@ Pbindef.all.do(_.stop);
 
 ~board = MixingBoard("demo",nil, ~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~ringmod, ~reverb, ~master);
 (
-~sim = Routine(
-    { loop ( {
-        ~mock.();
-        [2, 5].choose.wait;
-        "mocked".postln;
-        }
-) }).play;
-)
+
 
 topEnvironment.do(_.pop)
 currentEnvironment

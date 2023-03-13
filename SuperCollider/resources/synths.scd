@@ -16,7 +16,6 @@ SynthDef.new(\bellFm, {
     sig = sig * \fade.kr(1) ;
     sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = BPF.ar(sig, XLine.kr(bpf, bpf * \bpf2.kr(5), \bpf3.kr(0.2)), \bpfQ.kr(0.9), \bpfMul.kr(2));
-    //sig = BPF.ar(sig, \bpf1.kr(1000), \bpfQ.kr(0.9));
     sig = Pan2.ar(sig * env * \amp.kr(0.1) ,\pan.kr(0.0));
     Out.ar(\out.kr(0), sig);
 }).add;
@@ -34,19 +33,19 @@ SynthDef.new(\quitt, {
     Out.ar(\out.kr(0), sig);
 }).add;
 
-
 SynthDef.new(\bass, {
     |gate = 1|
-    var detune, sig, env, mod, ampMod;
+    var  sig, env, mod, ampMod;
     env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(0.99), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
     mod = SinOsc.kr(\modRate.kr(1.2));
-    sig = 2.collect({
-		var fm;
-		fm = SinOsc.ar(Line.kr(50, \modFreq.kr(100)), mul:\modvol.kr(20));
-		VarSaw.ar(\freq.kr(100) + fm, 0, LFCub.kr(\filTime.kr(0.3)));
+    sig = 4.collect({
+		var fm, dev;
+		dev = {ExpRand(0.9, 1.1)};
+		fm = SinOsc.ar(\fmFreq.kr(100), mul:\fmVol.kr(20));
+		VarSaw.ar(\freq.kr(100) + fm, 0, \filTime.kr(0.3) * mod * dev);
 	}).sum;
     sig = (sig * \distort.kr(1.5)).tanh;
-    sig = sig * env * mod ;
+    sig = sig * env;
     sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(0));
     sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
     Out.ar(\out.kr(0), sig );
@@ -103,23 +102,53 @@ SynthDef(\sampSt, {
 }).add;
 
 SynthDef(\sampMon, {
-    var sig, env;
-    sig = PlayBuf.ar(1, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), \loop.kr(0.0));
+    var sig, env, pos;
     env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1)), doneAction: 2);
-	sig = Compander.ar(sig, sig, \thr.kr(0.55), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-    sig = sig * env *  \amp.kr(0.2) * \fade.kr(1);
-    sig = Pan2.ar(sig, \pan.kr(0));
+	sig = 4.collect({
+		var lag = {ExpRand(0.0001, \lag.kr(0.0002) )};
+		PlayBuf.ar(1, \buf.kr(0), \rate.kr(1) * BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0) + lag, \loop.kr(0.0));
+	}).sum;
+	sig = Compander.ar(sig, sig, \thr.kr(0.75), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
+	pos = LFNoise1.kr(\zit1.kr(100)).bipolar(\zit2.kr(0.5));
+	sig = PanAz.ar(2, sig, pos, width:\w.kr(2.0));
+	//sig = Pan2.ar(sig, \pan.kr(0));
+	sig = sig * env *  \amp.kr(0.2) * \fade.kr(1);
     Out.ar(\out.kr(0), sig) ;
 }).add;
 
 SynthDef(\brPhsr, {
-    arg buf, rate=1, start, end, freq=1;
+    arg buf, rate=1, start, end;
     var sig, ptr, env;
     ptr = Phasor.ar(0, BufRateScale.kr(buf)* rate, start, end);
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1), level: \amp.kr(0.3)), doneAction: 2);
-    sig = BufRd.ar(1, buf, ptr);
-    sig = sig * env;
+    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1) ), doneAction: 2);
+    sig = 4.collect({
+		var lag = LFNoise1.kr(\lg1.kr(0)).bipolar(\lg2.kr(0.0));
+		lag = lag * s.sampleRate;
+		BufRd.ar(1, buf, ptr + lag);
+	}).sum ;
+    sig = sig * env * \amp.kr(0.3);
     Out.ar(\out.kr(0), sig!2);
+}).add;
+
+// Granular Synth
+
+SynthDef(\tgrains, {
+	var sig, env;
+	env = Env([0,1,1,0], [\atk.ir(1),\sus.ir(4),\rls.ir(1)], [1,0,-1]).kr(2);
+
+	sig = TGrains.ar(
+		numChannels: 2,
+		trigger: Dust.kr(\dens.kr(40)),
+		bufnum: \buf.kr(0),
+		rate: \rate.kr(1) * \harm.kr([-9, -7, -4, 0]).midiratio,
+		centerPos: \pos.kr(0.5),
+		dur: \grainDur.kr(1.5),
+		pan: 0,
+		amp: \grainAmp.kr(1),
+	);
+
+	sig = sig * env * \amp.kr(1);
+	Out.ar(\out.kr(0), sig);
 }).add;
 
 

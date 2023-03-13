@@ -6,12 +6,16 @@
     local_feedbackVol = 0.4;
     numNotes = 1;
     dura = Env.new([1,0], [count], [-2]).asPseg;
-
+    patName = catName.asString ++ "0";
     c = case
-    {(count >= 1) && (count <= 10)} {
+	{count < 5}{
+		~states[catName][patName.asSymbol].postln;
+	}
+    {(count >= 5) && (count <= 10)} {
         in_count = count;
-        patName = catName ++ "1";
-        Pbindef(catName, ~states[catName][patName]);
+        patName = catName.asString ++ "1";
+        Pbindef(catName.asSymbol, *~states[catName][patName.asSymbol].asPairs);
+		~states[catName.asSymbol][patName.asSymbol].postln;
         numNotes = 2;
         status = "state 01";
     }
@@ -19,7 +23,7 @@
         var add_send;
         in_count = count - 10;
         patName = catName ++ "2";
-        Pbindef(catName, ~states[catName][patName]);
+        Pbindef(catName, ~states[catName][patName.asSymbol].asPairs);
         numNotes = 3;
         status = "state 02";
     }
@@ -42,7 +46,7 @@
             \atk, 0.05, \rls, Pkey(\dur), \crv, -4
         ).play;
     };
-    ~addVolume.value(catName, ~volPlus, ~volMax, ~volThres);
+   // ~addVolume.value(catName, ~volPlus, ~volMax, ~volThres);
     postf("\nsetting %\t with count %\n at status \t %\n", catName, count, status);
 
 };

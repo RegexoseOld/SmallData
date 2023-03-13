@@ -2,18 +2,25 @@
 //Aktivieren von Fadern für die Lautstärke Regelung der Patterns
 ~activateVolume = {
 	|ch, i|
-	var value, sendverb, sendchorus;
-	"chan % and i %".format(ch, i).postln;
-	value = MIDIFunc.cc(
-		{arg ...args;
-			args[..2].postln;
+	var value;
+	//"chan   %    and i   %  current  % ".format(ch, i, ~currentUttPattern.asString).postln;
+	value = MIDIFunc.cc({
+		arg ...args;
+		args[..2].postln;
+		if (i < 5, {
+			"activated  % ".format(ch).postln;
 			~cat2Channel[ch].level = args[0].linlin(0, 127, 0.0, 1.0);
-		},
-		i,
-		1
+		}, {
+			"activated  % ".format(~currentUttPattern.asString).postln;
+			~cat2Channel[~currentUttPattern].level = args[0].linlin(0, 127, 0.0, 1.0);
+			//Pbindef(~currentUttPattern, \grainAmp, Pfunc{args[0].linlin(0, 127, 0.0, 1.0)} ):
+		})
+	},
+	i,
+	1
 	);
-
 };
+
 //Aktivieren von Sends
 ~activateReverb = {
 	|ch, i, offset|
@@ -74,6 +81,60 @@
 	q = { on.free; off.free; };
 
 };
+
+
+~makeUttSlot = {
+	/*
+	Organist assigns new samples and CC Values to the slot "allocated"
+	*/
+	|patName|
+	var on, keySlots, slotVolume, slotSpeed, allocated, bufSequence, ampSequence, speedSequence, off, vol=0.5, speed=1;
+	~uttSample = ~buffers[\dry].choose;
+	~uttSample.numChannels = 1;
+    bufSequence = ~melos[\slots][\utt];
+	ampSequence = ~melos[\amps][\utt];
+	speedSequence = Array.fill(~numSlots, {1});
+	keySlots = (48..64);
+	allocated = 0; // An dieser Position ein neuer Sample positioniert und die cc Werte geändert
+	on = MIDIFunc.noteOn({|veloc, num, chan, src|
+		if (keySlots.includes(num),{
+			//set allocated for position of ~uttSample
+			var newUtt;
+			allocated = num - keySlots[0];
+		});
+	});
+	slotVolume = MIDIFunc.cc({
+		arg ...args;
+
+		vol = args[0].linlin(0, 127, 0.0, 1.0);
+				"slotVol  % ".format(vol).postln;
+	},
+	5, //(Reloop) fader für channel ~utt (6)
+	1
+	);
+	slotSpeed = MIDIFunc.cc({
+		arg ...args;
+
+		speed = args[0].linlin(0, 127, 0.01, 2.5);
+		  "slotSpeed  % ".format(speed).postln;
+	},
+	102, //(Reloop) RotorFader 2 bei ~utt (6)
+	1
+	);
+	off = MIDIFunc.noteOff({ |veloc, num, chan, src|
+		bufSequence.put(allocated, ~uttSample);
+		//bufSequence.postln;
+		Pbindef(patName, \buf, Pseq(bufSequence, inf));
+		speedSequence.put(allocated, speed);
+		"rates %".format(speedSequence).postln;
+		Pbindef(patName, \rate, Pseq(speedSequence, inf));
+		ampSequence.put(allocated, vol);
+		"amplitudes %".format(ampSequence).postln;
+		Pbindef(patName, \amp, Pseq(ampSequence, inf))
+	});
+};
+
+
 /*
 
 
