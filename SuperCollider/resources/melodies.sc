@@ -1,10 +1,11 @@
 (
 melo: (
     pr: Array.fill(~numSlots, {60}),
-    ins: Array.fill(~numSlots, {64}),
+    ins: Array.fill(~numSlots, {42}),
     con: Array.fill(~numSlots, {48}),
     lec: Array.fill(~numSlots, {35}),
     dis: Array.fill(~numSlots, {85}),
+	utt: ~numSlots.collect({|n| Buffer.new(s, 10000, 1)}), //  ändern in Buffer mit einen (leisen), Signal
 
 ),
 
@@ -23,6 +24,7 @@ amps:(
     con: Array.fill(~numSlots, {0.5}),
     lec: Array.fill(~numSlots, {0.5}),
     dis: Array.fill(~numSlots, {0.5}),
+    utt: Array.fill(~numSlots, {0.5}),
 
 ),
 
@@ -36,8 +38,8 @@ pauses: (
 
 slots:(
 	// sample Slots
-	zahlen: ~numSlots.collect({|n| var i = n%7; ~buffers[\zahlen][i]}),
-	utt: ~numSlots.collect({|n| ~buffers[\zahlen].choose}),
+	zahlen: ~numSlots.collect({|n| var i = n%8; ~buffers[\zahlen][i]}),
+	utt: ~numSlots.collect({|n| var i = n+1; ~buffers[\lec01][i]}),
 	//pattern slots
 	a: Pbind(\instrument, \sampSt, \buf, Pxrand(~buffers[\bd], inf), \amp, 0.4, \dur, 0.5),
 	b: Pbind(\instrument, \sampSt, \buf, Pxrand(~buffers[\Bells], inf), \amp, 0.9, \dur, 0.5, \cgain, 3),

@@ -45,6 +45,7 @@
 		~ch3 = MixerChannel(\ch3, s, 2, 2, outbus: ~master);
 		~ch4 = MixerChannel(\ch4, s, 2, 2, outbus: ~master);
 		~ch5 = MixerChannel(\ch5, s, 2, 2, outbus: ~master);
+		~utt = MixerChannel(\ch6, s, 2, 2, outbus: ~master);
 		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
 		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
 		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
@@ -61,7 +62,8 @@
 	\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
 	\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
 	\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01]))
+	\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+	//\ch6_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01]))
 )
 };
 
@@ -82,9 +84,7 @@
 		})
 	});
 
-	~fadingSynths.do{|chan, it| ~activateVolume.(chan, it)}
-
-
+	~faderControl.do{|chan, it| ~activateVolume.(chan, it)}
 };
 
 ~uttDict = Dictionary.new;
@@ -133,7 +133,7 @@ PathName(~samplesPath).entries.do({
     {editVol >= max}{ ~fadePatterns[cat][\vol] = max}
     {true}{"end of addVolume".postln};
     Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
-    //postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
+    postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
     ~fadePatterns.values.collect{
         |v|
         //v['vol'].postln;
@@ -141,7 +141,7 @@ PathName(~samplesPath).entries.do({
     };
 
     ~fadeVols = allVolumes.sum;
-    postf("\nthe vol of all patterns is   %\n", ~fadeVols);
+    //postf("\nthe vol of all patterns is   %\n", ~fadeVols);
 };
 
 ~continuousFadeOut = {
@@ -181,19 +181,12 @@ PathName(~samplesPath).entries.do({
     postf("\ntotalUtts % \n", ~totalUtts);
     c = case
 
-    {~totalUtts == 112}{
-        Pbindef(\perc1, \dur, Pseq([Pseq([1/16, 1/4], 32), Pseq([1/2, 1/4], 32)]),
-            \decayScale, Pwhite(1, 4, inf));
-         Pbindef(\drum, \dur, Pseq([Pseq([4, 4, 4, 8], 8), Pseq([2, 2, 2, 4], 2) ], inf), \bpf1, Prand([80, 100, 300], inf), \send, Pwhite(-19, -9, inf), \amp, 0.7).play(~t)
-    }
-    {~totalUtts == 105}{
-            Pbindef(\perc1, \dur, Pwhite(1/16, 1/4, inf), \fade, Pseq((0.05,0.1 .. 0.75).mirror, inf), \send, Prand([-18, -12, -9], inf), \pan, Pwhite(-0.5, 0.5, inf), \minFreq, Pwhite(80, 300, inf), \accent, Prand([1, 2, 4], inf)).play
-
-        }
     {~totalUtts == 95}{
-        Pbindef(\perc1).stop
+		"95 utts".postln;
     }
-    {~totalUtts == 90}{Pbindef(\perc1, \dur, 1/16, \fade, Pseq((0.05,0.1 .. 0.75).mirror, inf), \send, Prand([-18, -12, -9],inf), \pan, Pwhite(-0.5, 0.5, inf), \minFreq, Pwhite(80, 300, inf), \accent, Prand([1, 2, 4], inf)).play}
+    {~totalUtts == 90}{
+		"90 utts".postln;
+	}
     {~totalUtts == 85}{Pbindef(\drums).stop}
 
     {~totalUtts == 65}{
@@ -203,32 +196,33 @@ PathName(~samplesPath).entries.do({
     {~totalUtts == 20}{
         //start a drum pattern
         Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
-		~sends[\ch3_snd_vrb1].level = 0.0;
-		~sends[\ch5_snd_chrs].level = 0.99;
+
     }
 	{~totalUtts == 10}{
         //send
-		~sends[\ch3_snd_vrb1].level = 0.9;
+			"10 utts".postln;
     }
 
     {(~totalUtts == 1)}{
         //"first utt".postln;
 		~runFx.();
+		~activateFaders.();
         ~patternsPlaying = true;
         ~fadingSynths.do{|name| ~fadePatterns[name][\vol] = ~volMin};
         ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:1)}
     }
     {true} {"end of global settings".postln};
-    ~allocateSynth.value(~cat, ~uttDict[~cat]);
-    ~t.schedAbs(~t.nextTimeOnGrid, {
+    ~allocateSynth.(~cat, ~uttDict[~cat]);
+   /* ~t.schedAbs(~t.nextTimeOnGrid, {
         if(~fadeVols >= 0.15, {
             ~continuousFadeOut.value(~fadingSynths, ~volMin, ~volStep, ~volThres); 1})
-    });
+    });*/
 };
 
 ~mock = {
     var cat = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'].choose;
-    ~cat = cat;
+	~cat = 'insinuation';
+    //~cat = cat;
     ~updateUtts.(cat);
 	~setGlobal.value();
 };
