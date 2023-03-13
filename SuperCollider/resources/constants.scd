@@ -3,7 +3,7 @@
 ~fx3Bus = Bus.audio(s,2);
 ~numSlots = 16;
 ~cat = "lecture";
-~uttSample = Buffer.read(s, "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/resources/samples/zahlen/01eins.wav");
+
 ~currentUttPattern = \mono;
 ~factor = 1;
 ~totalUtts = 0;
@@ -29,7 +29,7 @@
 ~nameDict = Dictionary.new;
 ~buffers = Dictionary.new;
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
-
+~uttSample = Buffer.read(s, ~samplesPath +/+ "zahlen/01eins.wav");
 
 
 

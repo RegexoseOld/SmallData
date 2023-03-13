@@ -1,8 +1,10 @@
 (
+var path;
+path = thisProcess.nowExecutingPath;
 
-~configFile = PathName(thisProcess.nowExecutingPath).parentPath ++ "config.scd";
+~configFile = PathName(path).parentPath ++ "config.scd";
 ~configFile.load;
-~resourcePath = PathName(thisProcess.nowExecutingPath).parentPath ++ "resources/";
+~resourcePath = PathName(path).parentPath ++ "resources/";
 
 Server.default.options.numInputBusChannels_(0);
 Server.default.options.outDevice_(~audioInterface);
@@ -26,6 +28,17 @@ s.waitForBoot({
 	(~resourcePath ++ "organist.scd").load;
 
 	~allocate = (~resourcePath ++ "allocate.scd").load;
+
+	// LOAD GUI FILES
+	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/GUI_Styles.scd");
+	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/GUI_Constructor.scd");
+	// Wait until boot is done and then begin launching the rest of the prograam
+	s.sync;
+	// Set global memory storage
+	if (~gm == nil, {
+		~gm = Dictionary.new();
+	});
+	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/sequencer_gui.scd");
 
     MixerChannel.freeAll;
 	s.sync;
