@@ -118,11 +118,10 @@ PathName(~samplesPath).entries.do({
 };
 
 ~updateSample = {
-	|path|
-	var uttKey = (~totalUtts.asString ++ "_" ++ PathName(path).folderName).asSymbol;
-	uttKey.postln;
+	|pathSymbol|
+	var path = pathSymbol.asString;
 	~utts.add(
-		uttKey->
+		PathName(path).fileName.asSymbol->
 		Array.fill(
 			PathName(path).entries.size,
 			{
@@ -132,9 +131,6 @@ PathName(~samplesPath).entries.do({
 			}
 		)
 	);
-	// ~uttSample wird mit einem neuen File geladen und aktualisiert. Relevant für makeSlot in organist.scd
-	~uttSample = ~utts[uttKey][0];
-	//~uttSample = Buffer.read(s, path);
 	"updated Sample".postln;
 };
 
@@ -242,3 +238,6 @@ PathName(~samplesPath).entries.do({
     ~updateUtts.(cat);
 	~setGlobal.value();
 };
+
+
+PathName("/Users/staude/Projekte/").folderName.postln;
