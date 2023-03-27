@@ -119,21 +119,20 @@ PathName(~samplesPath).entries.do({
 
 ~updateSample = {
 	|path|
-	var uttKey = ("utt_" ++ ~totalUtts.asString).asSymbol;
-	// ~uttSample wird mit einem neuen File geladen und aktualisiert. Relevant für makeSlot in organist.scd
-	PathName(path).entries.do({
-		arg samplePath;
-		~utts.add(
-			uttKey->
-			Array.fill(
-				entries.size,
-				{
-					arg i;
-					Buffer.read(s, entries[i].fullPath);
-				}
-			)
+	var uttKey = (~totalUtts.asString ++ "_" ++ PathName(path).folderName).asSymbol;
+	uttKey.postln;
+	~utts.add(
+		uttKey->
+		Array.fill(
+			PathName(path).entries.size,
+			{
+				|i|
+				 PathName(path).entries[i].postln;
+				Buffer.read(s, PathName(path).entries[i].fullPath);
+			}
 		)
-	});
+	);
+	// ~uttSample wird mit einem neuen File geladen und aktualisiert. Relevant für makeSlot in organist.scd
 	~uttSample = ~utts[uttKey][0];
 	//~uttSample = Buffer.read(s, path);
 	"updated Sample".postln;

@@ -146,6 +146,10 @@ s.waitForBoot({
 )
 ~seq = Pdefn(\melody).play(~t)
 ~seq.resume
+~updateSample.("/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/resources/samples/dry/")
+~utts['0_dry'][3].play
+~uttSample.play
+
 (
 ~currentUttPattern = \vox;
 ~makeUttSlot.(~currentUttPattern);
