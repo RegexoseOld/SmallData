@@ -74,7 +74,7 @@ Pdefn(\melody, Ppar(
 			\out, Pdefn(\p_out, memory.at(\seq_mem).at(\pattern_out)),
 			\track_index, Pdefn(\p_track_index, Pseq((0..15), inf)),
 			\track_func, Pdefn(\p_track_func, Pfunc({|ev| ~update_track_seq.value(ev.track_index, track)}));
-)}), inf)).play;
+)}), inf));
 
 
 CmdPeriod.add({window.close;});
