@@ -3,7 +3,6 @@
 ~fx3Bus = Bus.audio(s,2);
 ~numSlots = 16;
 ~cat = "lecture";
-
 ~currentUttPattern = \mono;
 ~factor = 1;
 ~totalUtts = 0;
@@ -28,6 +27,7 @@
 ~fadePatterns = Dictionary.new;
 ~nameDict = Dictionary.new;
 ~buffers = Dictionary.new;
+~utts = Dictionary.new;
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
 ~uttSample = Buffer.read(s, ~samplesPath +/+ "zahlen/01eins.wav");
 

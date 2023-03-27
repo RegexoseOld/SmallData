@@ -119,13 +119,13 @@ s.waitForBoot({
 	OSCdef.newMatching(
 		\interpreter,
 		{ arg msg;
-			var path = msg[4];
 			postf("\nmessage?: %\n", msg);
 			postf("\nnew utt: %", msg[1]);
 			postf("\nnew cat: %\n", msg[2]);
+			postf("\npath  % path is nil? % \n", msg[4], msg[4].isNil);
 			~cat = msg[2];
 			~updateUtts.(msg[2]);
-			~updateSample.(path);
+			~updateSample.(msg[4]);
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
@@ -178,6 +178,7 @@ Pbindef.all.do(_.stop);
 
 
 )
+NetAddr.localAddr
 
 ~states[\vox2]
 Window.closeAll;

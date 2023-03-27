@@ -119,8 +119,23 @@ PathName(~samplesPath).entries.do({
 
 ~updateSample = {
 	|path|
+	var uttKey = ("utt_" ++ ~totalUtts.asString).asSymbol;
 	// ~uttSample wird mit einem neuen File geladen und aktualisiert. Relevant für makeSlot in organist.scd
-	~uttSample = Buffer.read(s, path);
+	PathName(path).entries.do({
+		arg samplePath;
+		~utts.add(
+			uttKey->
+			Array.fill(
+				entries.size,
+				{
+					arg i;
+					Buffer.read(s, entries[i].fullPath);
+				}
+			)
+		)
+	});
+	~uttSample = ~utts[uttKey][0];
+	//~uttSample = Buffer.read(s, path);
 	"updated Sample".postln;
 };
 
