@@ -119,11 +119,13 @@ s.waitForBoot({
 	OSCdef.newMatching(
 		\interpreter,
 		{ arg msg;
+			var path = msg[4];
+			postf("\nmessage?: %\n", msg);
 			postf("\nnew utt: %", msg[1]);
 			postf("\nnew cat: %\n", msg[2]);
 			~cat = msg[2];
 			~updateUtts.(msg[2]);
-			~updateSample.();
+			~updateSample.(path);
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
@@ -142,6 +144,8 @@ s.waitForBoot({
         }
 ) }).play;
 )
+~seq = Pdefn(\melody).play(~t)
+~seq.resume
 (
 ~currentUttPattern = \vox;
 ~makeUttSlot.(~currentUttPattern);
