@@ -24,7 +24,7 @@ s.newBusAllocators; // Busse machen
 ~volPlus = 0.03; // this much volume is added each time a category comes in
 ~volFac = 1.1; // factor of volPlus with vols below the threshold
 ~volMax = 0.55; // max Volume should be less than 1.0/5
-~volMin = 0.0002; // the min Volume for a faded Pattern
+~volMin = 0.0012; // the min Volume for a faded Pattern
 ~volThres = 0.3; // Threshold managed by ~addVolume and ~continuousFade
 ~volStep = 0.004; //vol reduction in continuous FadeOut
 ~fadeVols = 0; //the volumes of all fading Patterns
@@ -44,8 +44,8 @@ s.waitForBoot({
     Buffer.freeAll;
     Pbindef.all.do(_.clear);
     s.sync;
-    MIDIClient.init;
-    ~midiOut = MIDIOut.new(0);
+    //MIDIClient.init;
+    //~midiOut = MIDIOut.new(0);
     s.sync;
 
     /// load SynthDefs
@@ -116,15 +116,13 @@ s.waitForBoot({
 
 });
 )
-((~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play)
-
 
 (
 ~sim = Routine({
     loop(
         {
             ~mock.();
-            [8, 10].choose.wait;
+            [5, 6].choose.wait;
             "mocked".postln;
         }
     )
@@ -132,8 +130,22 @@ s.waitForBoot({
 
 )
 ~sim.stop
-~god.play;
 
+~reset.dis
+
+~allocateSynth.value(\dissent, 1)
+~allocateSynth.value(\praise, 1)
+~allocateSynth.value(\concession, 1)
+~allocateSynth.value(\lecture, 1)
+~allocateSynth.value(\insinuation, 1)
+
+/*
+
+((~dataPath ++ "allNotesOff.scd").load; ~allNotesOff.play)
+
+Pbindef(\musar2, \dur, Pseq(~melos.duras.ruzhim01, inf)).play
+Pbindef(\musar, \dur, Pseq(~melos.duras.ruzhim01, inf) ).play
+Pbindef(\musar, \midinote, Pseq(~melos.melo.ruzhim01, inf) +12, \dur, Pseq(~melos.duras.ruzhim01, inf) * 0.7, \rls, 1 )
 
 ~melos[\melo][\ruzhim][0..0];
 Pbindef(\perc1, \dur, 1/16, \fade, Pseq((0.05,0.1 .. 0.75).mirror, inf), \send, Prand([-18, -12, -9],inf), \pan, Pwhite(-0.5, 0.5, inf), \minFreq, Pwhite(80, 300, inf), \accent, Prand([1, 2, 4], inf)).play
@@ -150,11 +162,6 @@ Pbindef(\ins, \resoFreq, 400)
 Pbindef(\lec, \resoFreq, 500)
 Pbindef(\con, \resoFreq, 500)
 
-~allocateSynth.value(\dissent, 51)
-~allocateSynth.value(\praise, 51)
-~allocateSynth.value(\concession, 43)
-~allocateSynth.value(\lecture, 54)
-~allocateSynth.value(\insinuation, 54)
 
 (
 var vel;
@@ -168,3 +175,4 @@ vel = ~melos[\zit][\vel][~tNote.asSymbol];
 
 ~reverb = Synth(\reverb, [\lofr, 100, \hifr, 200])
 
+*/
