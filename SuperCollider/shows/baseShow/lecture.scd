@@ -1,6 +1,28 @@
 (
 patterns: (
-	lec0: (
+    lec0: (
+        instrument: 'bellFm',
+        scale: Scale.chromatic,
+        midinote: Pseq(~melos[\melo][\lec], inf),
+        dur: Pseq(~melos[\duras][\lec], inf),
+        amp: Pseq(~melos[\amps][\lec], inf),
+        fade: 0.5,
+        thr: 0.5,
+        cgain: 1,
+        pan: 0,
+        atk: 0.09,
+        rls: 0.76,
+        vibF: 0.2,
+        vibVol: 30,
+        dev: 0.04,
+        spread: 0.02,
+        bpf1: 300,
+        bpf2: 5,
+        bpf3: 0.3,
+        bpfQ: 0.9,
+
+    ),
+	lec10: (
 		instrument:'bass',
 		scale: Scale.chromatic,
 		midinote: Pseq(~melos[\melo][\lec], inf),
@@ -20,7 +42,7 @@ patterns: (
 		fade: 0.5,
 		sustain: 0.2
 	),
-	lec1: (
+	lec11: (
 		instrument:'bass',
 		scale: Scale.chromatic,
 		midinote: Pseq(~melos[\melo][\lec], inf),
@@ -37,7 +59,7 @@ patterns: (
 		distort: 2.5,
 		fade: 0.5,
 	),
-	lec2: (
+	lec12: (
 		instrument:'bass',
 		scale: Scale.chromatic,
 		midinote: Pseq(~melos[\melo][\lec], inf),

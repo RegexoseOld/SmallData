@@ -1,6 +1,29 @@
 (
 patterns:(
-	dis0: (
+
+    dis0: (
+        instrument: 'bellFm',
+        scale: Scale.chromatic,
+        midinote: Pseq(~melos[\melo][\dis], inf),
+        dur: Pseq(~melos[\duras][\dis], inf),
+        amp: Pseq(~melos[\amps][\dis], inf),
+        fade: 0.5,
+        thr: 0.5,
+        cgain: 1,
+        pan: 0,
+        atk: 0.09,
+        rls: 0.76,
+        vibF: 0.2,
+        vibVol: 30,
+        dev: 0.04,
+        spread: 0.02,
+        bpf1: 300,
+        bpf2: 5,
+        bpf3: 0.3,
+        bpfQ: 0.9,
+
+    ),
+	dis10: (
 		instrument: 'quitt',
 		scale: Scale.chromatic,
 		midinote: Pseq(~melos[\melo][\dis], inf),
@@ -19,7 +42,7 @@ patterns:(
 		pulseMul: 0.15,
 
 	),
-	dis1: (
+	dis11: (
 		instrument: 'quitt',
 		scale: Scale.chromatic,
 		midinote: Pseq(~melos[\melo][\dis], inf),
@@ -38,7 +61,7 @@ patterns:(
 		pulseMul: 0.15,
 
 	),
-	dis2: (
+	dis12: (
 		instrument: 'quitt',
 		scale: Scale.chromatic,
 		midinote: Pseq(~melos[\melo][\dis], inf),

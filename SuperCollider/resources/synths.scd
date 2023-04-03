@@ -10,8 +10,7 @@ SynthDef.new(\bellFm, {
     sig = 5.collect({
 		var spread;
 		spread = LFNoise1.kr(\spread.kr(0.05)).bipolar(\dev.ir(0.7)).midiratio;
-		SinOsc.ar(freq * cRatio * spread + sig2 , mul: volMod);
-
+		SinOsc.ar(freq * trem * spread + sig2 , mul: volMod);
 	}).sum;
     sig = sig * \fade.kr(1) ;
     sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));

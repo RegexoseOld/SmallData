@@ -16,10 +16,10 @@ s.waitForBoot({
 	Buffer.freeAll;
 	Pbindef.all.do(_.clear);
 	s.sync;
-	MIDIClient.init;
+	/*MIDIClient.init;
 	MIDIIn.connectAll;
 	~midiOut = MIDIOut.new(0);
-	~midiIn = MIDIIn.new(0);
+	~midiIn = MIDIIn.new(0);*/
 
 	/// load SynthDefs, Constants, Functions
 	(~resourcePath ++ "synths.scd").load;
@@ -38,7 +38,7 @@ s.waitForBoot({
 	if (~gm == nil, {
 		~gm = Dictionary.new();
 	});
-	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/sequencer_gui.scd");
+	//thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/sequencer_gui.scd");
 
     MixerChannel.freeAll;
 	s.sync;
@@ -142,42 +142,11 @@ s.waitForBoot({
         }
 ) }).play;
 )
-(
-~currentUttPattern = \vox;
-~makeUttSlot.(~currentUttPattern);
-~activateFaders.();
-~runFx.();
-Pbindef(\vox).play(~t);
-Pbindef(\vox, \dur, 0.5, \atk, 0.02, \rls, 0.4, \lg1, 0.2, \lg2, 0.8, \end, 70000, \amp, 0.6);
-/*Pbindef(\mono).play(~t)
-Pbindef(\mono, \amp, 0.9, \dur, 1, \cgain, 2, \rls, 2);
-Pbindef(\grainvox).play(~t);*/
 
-
-)
-(
-Pbindef(\grainvox, \dur, 0.5, \atk, 0.06, \rls, 0.2, \sus, 0.2, \grainDur, 0.4, \grainAmp, 0.7, \dens, 20,
- \harm, -2, \pos, 0.1);
-)
-(
-Pbindef(\grainvox).stop
-Pbindef(\vox).stop
-Pbindef(\mono).stop
-
-)
 
 Pbindef.all.do(_.stop);
-~buffers[\lec01][1..16].do{|x|x.numFrames.postln}
-(
-~makeSlot.(\pr, 16)
-~runFx.()
 
-
-)
-
-~states[\vox2]
 Window.closeAll;
-
 // Testing
 s.makeWindow
 
@@ -187,6 +156,9 @@ s.makeWindow
 Ppatlace([~melos[\slots][\a], ~melos[\slots][\b], ~melos[\slots][\c]], inf).play
 Ppatlace([Pbindef(\pr), Pbindef(\dis), Pbindef(\lec), Pbindef(\ins), Pbindef(\vox)], inf).play;
 Ppatlace([Pbindef(\pr), Pbindef(\dis), Pbindef(\lec), Pbindef(\ins), Pbindef(\con)], inf).stop;
+~fadingSynths.do{|sy| Pbindef(sy, \dur, 3).play(~t)}
+~fadingSynths.do{|sy| Pbindef(sy).pause}
+~runFx.();
 )
 
 MIDIFunc.trace(false);
@@ -194,13 +166,19 @@ MIDIFunc.trace(true);
 
 
 (
-Pbindef(\lec).play(~t);
-Pbindef(\lec, \modRate, 0.9, \filTime, 0.9, \atk, 0.001, \rls, 0.27, \fmFreq, 800, \fmVol, 100);
-Pbindef(\pr, \dur, 1, \atk, 0.04, \rls, 0.3, \dev, Pwhite(0.3, 3, inf)).play(~t);
-Pbindef(\ins).play(~t);
-Pbindef(\ins, \dur, 1, \atk, 0.1, \atkcrv, Prand([-3, -1, 3, 7], inf), \relcrv, Pkey(\atkcrv), \midinote, 40, \modfreq, Pwhite(500, 4000, inf), \modamp, 1000).play(~t);
-Pbindef(\con, \dur, 1, \carAmp, 0.8, \amp, 0.35, \decayScale, Pwhite(0.01, 6, inf), \accent, Pwhite(0, 5, inf)).play(~t);
-Pbindef(\dis, \dur, 1, \atk, 0.1, \rls, 0.6, \amp, 0.25, \ffreq, Pwhite(100, 1000, inf)).play(~t);
+Pbindef(\lec2, *~states[\lec][\lec0].asPairs).play(~t);
+Pbindef(\p2, *~states[\pr][\pr0].asPairs).play(~t);
+Pbindef(\p2, \midinote, ~melos.melo.cad02, \dur, 1, \atk, 0.2, \rel, 0.9, \sustain, 0.4, \amp, 0.2, \fade, Pgeom(0.4, 0.9, 50), \vibF, 5, \trmF, 7, \trmDep, 0.3);
+Pbindef(\lec2, \spread, 3, \dev, 0.5)
+Pbindef(\lec2).fadeTime = 4
+Pbindef(\lec2).isPlaying
+
+
+Pbindef(\lec, \rel, 1, \spread, 2, \dev, 0.4);
+Pbindef(\pr, \rel, 1, \sustain, 3, \spread, 1, \dev, 2);
+Pbindef(\ins, \rel, 2, \sustain, 0.3);
+Pbindef(\con, \atk, 0.1, \rel, 1, \spread, 0.03, \dev, 0.1;
+Pbindef(\dis, \midinote, 66, \rel, 1, \sustain, 1, \spread, 3, \dev, 0.2);
 Pbindef(\zahl, \dur, 0.5, \amp, 0.3, \rate, (0.9, 0.95 .. 1.1), \cgain, 1, \zit1, 10, \zit2, 2, \w, 2).play(~t);
 
 Pbindef(\uttlec).play(~t);

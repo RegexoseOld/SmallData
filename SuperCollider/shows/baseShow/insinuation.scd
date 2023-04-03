@@ -1,6 +1,28 @@
 (
 patterns: (
-	ins0: (
+     ins0: (
+        instrument: 'bellFm',
+        scale: Scale.chromatic,
+        midinote: Pseq(~melos[\melo][\ins], inf),
+        dur: Pseq(~melos[\duras][\ins], inf),
+        amp: Pseq(~melos[\amps][\ins], inf),
+        fade: 0.5,
+        thr: 0.5,
+        cgain: 1,
+        pan: 0,
+        atk: 0.09,
+        rls: 0.76,
+        vibF: 0.2,
+        vibVol: 30,
+        dev: 0.04,
+        spread: 0.02,
+        bpf1: 300,
+        bpf2: 5,
+        bpf3: 0.3,
+        bpfQ: 0.9,
+
+    ),
+	ins10: (
 		instrument: 'oscfm',
 		buf: Pfunc{~buffers[\wt]},
 		midinote: Pseq(~melos[\melo][\ins], inf),
@@ -9,7 +31,7 @@ patterns: (
 		fade: 0.5,
 		atk: 0.1,
 		atkcrv: 1,
-		rls: 0.8,
+		rls: 2,
 		rlscrv: 1,
 		modfreq: 800,
 		modamp: 1000,
@@ -17,7 +39,7 @@ patterns: (
 		dev: 0.7,
 
 	),
-	ins1: (
+	ins11: (
 		instrument: 'oscfm',
 		buf: Pfunc{~buffers[\wt]},
 		midinote: Pseq(~melos[\melo][\ins]-12, inf),
@@ -34,7 +56,7 @@ patterns: (
 		spread: 0.15,
 		dev: 0.9,
 	),
-	ins2: (
+	ins12: (
 		instrument: 'oscfm',
 		buf: Pfunc{~buffers[\wt]},
 		midinote: Pseq(~melos[\melo][\ins], inf),
