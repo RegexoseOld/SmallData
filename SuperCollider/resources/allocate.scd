@@ -10,10 +10,9 @@
 
     c = case
 	{count < 5}{
-		//~states[catName][patName.asSymbol].postln;
 		in_count = count;
 		patName = (catName.asString ++ "1").asSymbol;
-		Pbindef(\metronom, \amp, (0.1 * count));
+		Pbindef(\metronom, \amp, (0.1 * count)).play(~t);
 		Pbindef(\answer, \amp, (0.02 * count));
 	    Pbindef(\sn01).stop;
 		status = "state 00";
@@ -21,8 +20,6 @@
     {(count >= 5) && (count <= 10)} {
         in_count = count-4;
         patName = catName.asString ++ "10";
-        //Pbind(*~states[catName][patName.asSymbol].asPairs).play(~t, quant:1);
-		//~states[catName.asSymbol][patName.asSymbol].postln;
 		Pbindef(\metronom).stop;
 		Pbindef(\answer, \amp, (0.05 * count));
 		Pbindef(\kik01).stop;

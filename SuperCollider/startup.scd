@@ -112,7 +112,7 @@ s.waitForBoot({
 		[~reverb, ~ringmod, ~chorus].do {
 			|fx|
 			//postf("fx name %\n", fx.asString);
-			sendName = "ch" ++ (i+1).asString ++ "_snd_" ++ fx.asString[13..16];s
+			sendName = "ch" ++ (i+1).asString ++ "_snd_" ++ fx.asString[13..16];
 			~sends.put(sendName.asSymbol, ch.newPostSend(fx, 0.01) ); // nicht an patch sondern an channel senden
 		}
 	};
@@ -143,31 +143,19 @@ s.waitForBoot({
         }
 ) }).play;
 )
-~checkFadeVols.();
 ~sim.stop
 )
 
 Pbindef.all.do(_.stop);
 ~fadingSynths.do{|n| "%  amp %".format(n, ~melos.amps[n]).postln;};
-Pbindef(\ins)
-~melos.amps.dis
 
 Window.closeAll;
 // Testing
 s.makeWindow
 
 (
-Pbindef(\metronom, \dur, 0.25).play(~t, quant:1);
-// Pbindef(\metronom, \dur, 0.25).stop;
-Pbindef(\answer).play(~t, quant:1);
-//Pbindef(\answer, \modRate, 0.6, \fmVol, 120, \filTime, 0.7, \distort, 1).play(~t);
 ~fadingSynths.do {|sy| Pbindef(sy).play};
-Pbindef(\kik01).play(~t, quant:1);
-Pbindef(\sn01, \distort, 5).play(~t, quant:1);
-Pbindef(\hh01).play(~t, quant:1);
-
 ~runFx.();
-//~fadingSynths.do{|sy| Pbindef(sy).pause}
 )
 (
 ~allocateSynth.(\ins, 9)
@@ -184,11 +172,3 @@ Pbindef(\dis).play;
 Pbindef(\zahl, \dur, 0.5, \amp, 0.3, \rate, (0.9, 0.95 .. 1.1), \cgain, 1, \zit1, 10, \zit2, 2, \w, 2).play(~t);
 
 )
-~melos.amps.con
-~melos.amps.dis = Array.fill(12, {0.2})
-
-
-
-
-~board = MixingBoard("demo",nil, ~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~ringmod, ~reverb, ~master);
-

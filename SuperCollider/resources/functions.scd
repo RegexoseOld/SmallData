@@ -126,7 +126,6 @@ PathName(~samplesPath).entries.do({
 	var allVolumes=List.new;
 	   ~fadingSynths.do{
         |n|
-        //v.vol.postln;
         allVolumes.add(~melos.amps[n]);
     };
 	//"FadeVolumes Sum    %".format(allVolumes.sum).postln;
@@ -137,7 +136,6 @@ PathName(~samplesPath).entries.do({
 ~addVolume = {
     |cat, add, max, thres|
     var c, editVol, allVolumes=List.new;
-    //editVol = ~fadePatterns[cat][\vol];
     editVol = ~melos[\amps][cat];
     //postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
     c = case
@@ -145,10 +143,8 @@ PathName(~samplesPath).entries.do({
     {(editVol<= max) && (editVol>= thres)}{ ~melos[\amps][cat]  = editVol + add}
     {editVol >= max}{~melos[\amps][cat]  = max}
     {true}{"end of addVolume".postln};
-    //Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
 	~fadingSynths.do{|n| "%  newVolume %".format(n, ~melos.amps[n]).postln;};
     //postf("new vol of %  is % \n", cat, ~melos[\amps][cat] );
-	~fadeVols = ~checkFadeVols.();
     postf("\nthe vol of all patterns is   %\n", ~checkFadeVols.());
 };
 
@@ -159,7 +155,6 @@ PathName(~samplesPath).entries.do({
         listOfPatterns.do({
             |cat|
             var vol, c;
-            //vol = ~fadePatterns[cat][\vol];
             vol = ~melos[\amps][cat] ;
             //postf("\nthe vol %  of the pattern   %\n", vol, cat);
             c = case
