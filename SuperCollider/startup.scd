@@ -16,13 +16,14 @@ s.waitForBoot({
 	Buffer.freeAll;
 	Pbindef.all.do(_.clear);
 	s.sync;
-	/*MIDIClient.init;
+	MIDIClient.init;
 	MIDIIn.connectAll;
 	~midiOut = MIDIOut.new(0);
-	~midiIn = MIDIIn.new(0);*/
+	~midiIn = MIDIIn.new(0);
 
 	/// load SynthDefs, Constants, Functions
 	(~resourcePath ++ "synths.scd").load;
+
 	(~resourcePath ++ "constants.scd").load;
 	(~resourcePath ++ "functions.scd").load;
 	(~resourcePath ++ "organist.scd").load;
@@ -111,7 +112,7 @@ s.waitForBoot({
 		[~reverb, ~ringmod, ~chorus].do {
 			|fx|
 			//postf("fx name %\n", fx.asString);
-			sendName = "ch" ++ (i+1).asString ++ "_snd_" ++ fx.asString[13..16];
+			sendName = "ch" ++ (i+1).asString ++ "_snd_" ++ fx.asString[13..16];s
 			~sends.put(sendName.asSymbol, ch.newPostSend(fx, 0.01) ); // nicht an patch sondern an channel senden
 		}
 	};
@@ -137,67 +138,57 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [2, 5].choose.wait;
-        "mocked".postln;
+        [4, 6].choose.wait;
+        //"mocked".po stln;
         }
 ) }).play;
 )
-
+~checkFadeVols.();
+~sim.stop
+)
 
 Pbindef.all.do(_.stop);
+~fadingSynths.do{|n| "%  amp %".format(n, ~melos.amps[n]).postln;};
+Pbindef(\ins)
+~melos.amps.dis
 
 Window.closeAll;
 // Testing
 s.makeWindow
 
 (
-//https://scsynth.org/t/switching-between-sample-and-non-sample-based-instruments-in-a-pattern/658
+Pbindef(\metronom, \dur, 0.25).play(~t, quant:1);
+// Pbindef(\metronom, \dur, 0.25).stop;
+Pbindef(\answer).play(~t, quant:1);
+//Pbindef(\answer, \modRate, 0.6, \fmVol, 120, \filTime, 0.7, \distort, 1).play(~t);
+~fadingSynths.do {|sy| Pbindef(sy).play};
+Pbindef(\kik01).play(~t, quant:1);
+Pbindef(\sn01, \distort, 5).play(~t, quant:1);
+Pbindef(\hh01).play(~t, quant:1);
 
-Ppatlace([~melos[\slots][\a], ~melos[\slots][\b], ~melos[\slots][\c]], inf).play
-Ppatlace([Pbindef(\pr), Pbindef(\dis), Pbindef(\lec), Pbindef(\ins), Pbindef(\vox)], inf).play;
-Ppatlace([Pbindef(\pr), Pbindef(\dis), Pbindef(\lec), Pbindef(\ins), Pbindef(\con)], inf).stop;
-~fadingSynths.do{|sy| Pbindef(sy, \dur, 3).play(~t)}
-~fadingSynths.do{|sy| Pbindef(sy).pause}
 ~runFx.();
+//~fadingSynths.do{|sy| Pbindef(sy).pause}
 )
-
+(
+~allocateSynth.(\ins, 9)
+)
 MIDIFunc.trace(false);
 MIDIFunc.trace(true);
+~fadeVols = 0.3
 
 
 (
-Pbindef(\lec2, *~states[\lec][\lec0].asPairs).play(~t);
-Pbindef(\p2, *~states[\pr][\pr0].asPairs).play(~t);
-Pbindef(\p2, \midinote, ~melos.melo.cad02, \dur, 1, \atk, 0.2, \rel, 0.9, \sustain, 0.4, \amp, 0.2, \fade, Pgeom(0.4, 0.9, 50), \vibF, 5, \trmF, 7, \trmDep, 0.3);
-Pbindef(\lec2, \spread, 3, \dev, 0.5)
-Pbindef(\lec2).fadeTime = 4
-Pbindef(\lec2).isPlaying
-
-
-Pbindef(\lec, \rel, 1, \spread, 2, \dev, 0.4);
-Pbindef(\pr, \rel, 1, \sustain, 3, \spread, 1, \dev, 2);
-Pbindef(\ins, \rel, 2, \sustain, 0.3);
-Pbindef(\con, \atk, 0.1, \rel, 1, \spread, 0.03, \dev, 0.1;
-Pbindef(\dis, \midinote, 66, \rel, 1, \sustain, 1, \spread, 3, \dev, 0.2);
+Pbindef(\con).play(~t);
+Pbindef(\dis, \amp);
+Pbindef(\dis).play;
 Pbindef(\zahl, \dur, 0.5, \amp, 0.3, \rate, (0.9, 0.95 .. 1.1), \cgain, 1, \zit1, 10, \zit2, 2, \w, 2).play(~t);
 
-Pbindef(\uttlec).play(~t);
-Pbindef(\uttpr, \dur, 1, \rls, 0.2, \atk, 0.03, \buf, Pseq(~melos[\slots][\utt], inf), \amp, 0.8).play(~t);
-Pbindef(\uttcon).play;
-Pbindef(\uttins).play(~t);
-Pbindef(\uttdis).play;
 )
-Pbindef.all.do(_.stop);
-//Pbindef.all.do({|p| p.postln + "\n"})
+~melos.amps.con
+~melos.amps.dis = Array.fill(12, {0.2})
+
+
 
 
 ~board = MixingBoard("demo",nil, ~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~ringmod, ~reverb, ~master);
-(
-
-
-topEnvironment.do(_.pop)
-currentEnvironment
-s.queryAllNodes
-CmdPeriod.run
-ServerTree.removeAll
 

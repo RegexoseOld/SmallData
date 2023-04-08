@@ -7,7 +7,7 @@ SynthDef.new(\bellFm, {
     volMod = SinOsc.kr(\vibF.kr(0.2), 0, \vibVol.kr(30))  ; // vol modulation
     trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.5), \varDur.kr(1));
     sig2 =  SinOsc.ar(freq * mRatio, mul:freq * mRatio * index);
-    sig = 5.collect({
+    sig = 3.collect({
 		var spread;
 		spread = LFNoise1.kr(\spread.kr(0.05)).bipolar(\dev.ir(0.7)).midiratio;
 		SinOsc.ar(freq * trem * spread + sig2 , mul: volMod);
@@ -34,28 +34,47 @@ SynthDef.new(\quitt, {
 
 SynthDef.new(\bass, {
     |gate = 1|
-    var  sig, env, mod, ampMod;
-    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(0.99), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
+    var  sig, env, mod;
+    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, 1, \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
     mod = SinOsc.kr(\modRate.kr(1.2));
     sig = 4.collect({
 		var fm, dev;
-		dev = {ExpRand(0.9, 1.1)};
-		fm = SinOsc.ar(\fmFreq.kr(100), mul:\fmVol.kr(20));
-		VarSaw.ar(\freq.kr(100) + fm, 0, \filTime.kr(0.3) * mod * dev);
+		dev = {ExpRand(\devMin.kr(0.9), \devMax.kr(1.1))};
+		fm = SinOsc.ar(\fmFreq.kr(2000) * mod, mul:\fmVol.kr(20));
+		VarSaw.ar((\freq.kr(100) * dev) + fm, 0, \filTime.kr(0.1), 1);
 	}).sum;
     sig = (sig * \distort.kr(1.5)).tanh;
     sig = sig * env;
-    sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(0));
+    sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
     Out.ar(\out.kr(0), sig );
     //Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
 }).add;
 
 // simple electro kick drum
-SynthDef(\kik, { |basefreq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, outbus = 0|
-   var   fenv = EnvGen.kr(Env([envratio, 1], [freqdecay], \exp)) * basefreq,
+SynthDef(\kik, { |freq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, out = 0|
+   var fenv = EnvGen.kr(Env([envratio, 1], [freqdecay], \exp)) * freq,
       aenv = EnvGen.kr(Env.perc(0.005, ampdecay), doneAction:2);
-   Out.ar(outbus, SinOsc.ar(fenv, 0.5pi, aenv));
+   Out.ar(out, SinOsc.ar(fenv, 0.5pi, aenv)!2);
+}).add;
+
+SynthDef(\sn, {
+	|freq = 800, freqdecay = 0.02, ampdecay = 0.1, accent=0, decayScale=2, out = 0|
+    var  sig, exc, punch, snEnv, pEnv;
+    snEnv = EnvGen.kr(Env.perc(0.005, ampdecay), doneAction:0);
+    pEnv = EnvGen.kr(Env.perc(0.005, \pDecay.kr(3.1)), doneAction:2);
+	exc = PinkNoise.ar(\carAmp.kr(0.9)) * Decay2.kr(Impulse.kr(0), 0.01, 0.05);
+	punch = 5.collect({
+		Klank.ar(`[
+		{ ExpRand(freq, freq +500) }!2,
+        1 !2,
+        { ExpRand(0.11, 0.2) }!2
+    ], exc, accent + 1, \frqOff.kr(0.0), decayScale);// accent ist die höhe, decayScale die Länge des Sounds
+	}).sum;
+	punch = (punch * \distort.kr(5).tanh) * pEnv;
+	sig = WhiteNoise.ar(1) * snEnv;
+	sig = (sig + punch) * \amp.kr(0.3);
+   Out.ar(out, sig!2);
 }).add;
 
 SynthDef.new(\impulse, {
@@ -73,11 +92,11 @@ SynthDef.new(\impulse, {
 }).add;
 
 SynthDef(\percImp, { |accent=0, decayScale=1|
-    var exc = PinkNoise.ar(\carAmp.kr(0.1))
+    var exc = PinkNoise.ar(\carAmp.kr(0.5))
     * Decay2.kr(Impulse.kr(0), 0.01, 0.05),
-    sig = 10.collect({
+    sig = 5.collect({
 		Klank.ar(`[
-        { ExpRand(\minfrq.kr(80), 1600) }!2,
+		{ ExpRand(\minfrq.kr(80), \maxfrq.kr(1600)) }!2,
         1 !2,
         { ExpRand(0.1, 0.4) }!2
     ], exc, accent + 1, \frqOff.kr(0.0), decayScale);// accent ist die höhe, decayScale die Länge des Sounds
@@ -156,16 +175,14 @@ SynthDef(\tgrains, {
 SynthDef.new(\oscfm, {
 	var sig, mod, env;
 	//modulator
-	mod = Osc.ar(\buf.ir(0), \modfreq.kr(1000), mul:\modamp.kr(1000));
+	mod = Osc.ar(\buf.ir(0), \modfreq.kr(1000), mul:\modamp.kr(100));
 	//a chorus of 5 slightly detuned voices
 	sig = 5.collect({
 		var spread;
 		spread = LFNoise1.kr(\spread.kr(0.05)).bipolar(\dev.ir(0.7)).midiratio;
-
 		//carrier
 		Osc.ar(\buf.ir(0), \freq.kr(200) * spread + mod);
 	}).sum;
-
 	env = Env(
 		[0,1,0],
 		[\atk.ir(0.02), \rel.ir(0.5)],

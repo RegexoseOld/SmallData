@@ -1,6 +1,6 @@
 (
 melo: (
-    pr: Array.fill(~numSlots, {60}),
+    pr: Array.fill(~numSlots, {30}),
     ins: Array.fill(~numSlots, {42}),
     con: Array.fill(~numSlots, {48}),
     lec: Array.fill(~numSlots, {35}),
@@ -12,21 +12,21 @@ melo: (
 ),
 
 duras:(
-    pr: Array.fill(~numSlots, {1}),
-    ins: Array.fill(~numSlots, {1}),
-    con: Array.fill(~numSlots, {1}),
-    lec: Array.fill(~numSlots, {1}),
-    dis: Array.fill(~numSlots, {1}),
+    pr: Array.fill(~numSlots, {4}),
+    ins: Array.fill(~numSlots, {4}),
+    con: Array.fill(~numSlots, {4}),
+    lec: Array.fill(~numSlots, {4}),
+    dis: Array.fill(~numSlots, {4}),
 
 ),
 
 amps:(
-    pr: Array.fill(~numSlots, {0.5}),
-    ins: Array.fill(~numSlots, {0.5}),
-    con: Array.fill(~numSlots, {0.5}),
-    lec: Array.fill(~numSlots, {0.5}),
-    dis: Array.fill(~numSlots, {0.5}),
-    utt: Array.fill(~numSlots, {0.5}),
+    pr: 0.3,
+    ins: 0.3,
+    con: 0.3,
+    lec: 0.3,
+    dis: 0.3,
+    utt: 0.3,
 
 ),
 
