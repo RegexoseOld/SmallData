@@ -138,8 +138,8 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [4, 6].choose.wait;
-        //"mocked".po stln;
+        [3, 14, 9].choose.wait;
+        //"mocked" .po stln;
         }
 ) }).play;
 )
@@ -150,6 +150,7 @@ Pbindef.all.do(_.stop);
 ~fadingSynths.do{|n| "%  amp %".format(n, ~melos.amps[n]).postln;};
 
 Window.closeAll;
+~headerFont
 // Testing
 s.makeWindow
 
@@ -158,7 +159,7 @@ s.makeWindow
 ~runFx.();
 )
 (
-~allocateSynth.(\ins, 9)
+Synth(\sn, [\ghosts, 20, \numharm, 100])
 )
 MIDIFunc.trace(false);
 MIDIFunc.trace(true);
@@ -166,7 +167,10 @@ MIDIFunc.trace(true);
 
 
 (
-Pbindef(\con).play(~t);
+Pbindef(\sn01).play(~t);
+Pbindef(\kik01).play(~t);
+Pbindef(\con).condition_({ |val, i| i.postln % 6 == 0 });
+Pbindef(\con).trace.play(~t);
 Pbindef(\dis, \amp);
 Pbindef(\dis).play;
 Pbindef(\zahl, \dur, 0.5, \amp, 0.3, \rate, (0.9, 0.95 .. 1.1), \cgain, 1, \zit1, 10, \zit2, 2, \w, 2).play(~t);

@@ -8,8 +8,8 @@ patterns: (
 		fade: 1,
 		accent: Pseq([Pseq([0, -0.01, 0, 0.5, 0, 0.05, 0, -0.02], 4)], inf),
 		decayScale: 8,
-		minfrq:  Pseq([Pseq([300, 300, 300, 500, 300, 300, 300, 300], 4)], inf),
-		maxfrq: Pkey(\minfrq) +300,
+		freq:  Pseq([Pseq([300, 300, 300, 500, 300, 300, 300, 300], 4)], inf),
+		maxfrq: 600,
 		frqOff: Pseq( [Pseq([0, -300, 0, 800, -100, 0, 0, -500],4)], inf)
 	),
 	con1: (

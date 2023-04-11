@@ -54,26 +54,31 @@ SynthDef.new(\bass, {
 // simple electro kick drum
 SynthDef(\kik, { |freq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, out = 0|
    var fenv = EnvGen.kr(Env([envratio, 1], [freqdecay], \exp)) * freq,
-      aenv = EnvGen.kr(Env.perc(0.005, ampdecay), doneAction:2);
-   Out.ar(out, SinOsc.ar(fenv, 0.5pi, aenv)!2);
+      aenv = EnvGen.kr(Env.perc(0.005, ampdecay), doneAction:2),
+	subenv = EnvGen.kr(Env.perc(0.005, ampdecay/2), doneAction:0),
+	sig, sub;
+	sub = SinOsc.ar(freq*2/3, mul:subenv);
+	sig = SinOsc.ar(fenv, 0.5pi, aenv)!2;
+   Out.ar(out, (sig + sub) * \amp.kr(0.4));
 }).add;
 
 SynthDef(\sn, {
-	|freq = 800, freqdecay = 0.02, ampdecay = 0.1, accent=0, decayScale=2, out = 0|
-    var  sig, exc, punch, snEnv, pEnv;
-    snEnv = EnvGen.kr(Env.perc(0.005, ampdecay), doneAction:0);
+	|freq = 800, ampdecay = 0.2, out = 0|
+    var  sig, ghost, gEnv, snEnv, pEnv;
+    snEnv = EnvGen.kr(Env.perc(0.001, ampdecay), doneAction:0);
     pEnv = EnvGen.kr(Env.perc(0.005, \pDecay.kr(3.1)), doneAction:2);
-	exc = PinkNoise.ar(\carAmp.kr(0.9)) * Decay2.kr(Impulse.kr(0), 0.01, 0.05);
-	punch = 5.collect({
-		Klank.ar(`[
-		{ ExpRand(freq, freq +500) }!2,
-        1 !2,
-        { ExpRand(0.11, 0.2) }!2
-    ], exc, accent + 1, \frqOff.kr(0.0), decayScale);// accent ist die höhe, decayScale die Länge des Sounds
+    gEnv =  EnvGen.kr(Env.perc(\atk1.kr(0.01), \rls1.kr(0.4), 1.0, \crv1.kr(-4.0)));
+	ghost = 3.collect({
+		|n|
+		var temp, dev;
+		dev = {ExpRand(0.6, 1.5)};
+		temp = Blip.ar(\ghosts.kr(20) * dev, \numharm.kr(100)) * dev * gEnv;
+
 	}).sum;
-	punch = (punch * \distort.kr(5).tanh) * pEnv;
+   ghost = ghost * \distort.kr(2).tanh;
 	sig = WhiteNoise.ar(1) * snEnv;
-	sig = (sig + punch) * \amp.kr(0.3);
+	sig = RHPF.ar(sig, \ffreq.kr(1000));
+	sig = [sig + ghost] * \amp.kr(0.3);
    Out.ar(out, sig!2);
 }).add;
 
@@ -93,14 +98,15 @@ SynthDef.new(\impulse, {
 
 SynthDef(\percImp, { |accent=0, decayScale=1|
     var exc = PinkNoise.ar(\carAmp.kr(0.5))
-    * Decay2.kr(Impulse.kr(0), 0.01, 0.05),
+    * Decay2.kr(Impulse.kr(0.1), 0.01, 0.05),
     sig = 5.collect({
 		Klank.ar(`[
-		{ ExpRand(\minfrq.kr(80), \maxfrq.kr(1600)) }!2,
+		{ ExpRand(\freq.kr(80), \maxfrq.kr(1000)) }!2,
         1 !2,
         { ExpRand(0.1, 0.4) }!2
     ], exc, accent + 1, \frqOff.kr(0.0), decayScale);// accent ist die höhe, decayScale die Länge des Sounds
 	}).sum;
+	sig = LeakDC.ar(sig, 0.998);
     DetectSilence.ar(sig, doneAction: Done.freeSelf);
     sig = Pan2.ar(sig * \amp.kr(0.1) * \fade.kr(1.0), \pan.kr(0.0));
     Out.ar(\out.kr(0), sig);

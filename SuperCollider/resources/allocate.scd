@@ -12,8 +12,9 @@
 	{count < 5}{
 		in_count = count;
 		patName = (catName.asString ++ "1").asSymbol;
-		Pbindef(\metronom, \amp, (0.1 * count)).play(~t);
+		Pbindef(\metronom, \amp, (0.05 * count)).play(~t);
 		Pbindef(\answer, \amp, (0.02 * count));
+		Pbindef(\kik01).play(~t, quant:1);
 	    Pbindef(\sn01).stop;
 		status = "state 00";
 	}
@@ -22,7 +23,7 @@
         patName = catName.asString ++ "10";
 		Pbindef(\metronom).stop;
 		Pbindef(\answer, \amp, (0.05 * count));
-		Pbindef(\kik01).stop;
+		//Pbindef(\kik01).stop;
 		Pbindef(\sn01).play(~t, quant:1);
 		Pbindef(catName, ~states[catName][patName.asSymbol].asPairs);
 		Pbindef(catName, \harmonic, [in_count, count]);
