@@ -18,6 +18,13 @@
 ~volMin = 0.001; // the min Volume for a faded Pattern
 ~volThres = 0.35; // Threshold managed by ~addVolume and ~continuousFade
 ~volStep = 0.004; //vol reduction in continuous FadeOut
+~volPlus = 0.18; // this much volume is added each time a category comes in
+~volFac = 1; // factor of volPlus with vols below the threshold
+~volMax = 0.55; // max Volume should be less than 1.0/5
+//~volMin = 0.0002; // the min Volume for a faded Pattern
+~volMin = 0.09; // the min Volume for a faded Pattern
+~volThres = 0.22; // Threshold managed by ~addVolume and ~continuousFade
+~volStep = 0.003; //vol reduction in continuous FadeOut
 ~fadeVols = 0; //the volumes of all fading Patterns
 ~fadingSynths = [\pr, \dis, \con, \lec, \ins];
 ~additionalSynths = List.new;

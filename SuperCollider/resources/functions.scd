@@ -235,7 +235,6 @@ PathName(~samplesPath).entries.do({
         if(~checkFadeVols.() >= 0.15, {
             ~continuousFadeOut.value(~fadingSynths); 1},
 		{"not fading: fadeVols = %".format(~fadeVols).postln})
-
     });
 };
 

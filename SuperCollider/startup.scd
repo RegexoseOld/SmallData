@@ -38,6 +38,7 @@ s.waitForBoot({
 	if (~gm == nil, {
 		~gm = Dictionary.new();
 	});
+
 	Window.closeAll;
 	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/sequencer_gui.scd");
 
