@@ -21,13 +21,12 @@ s.waitForBoot({
 	~midiOut = MIDIOut.new(0);
 	~midiIn = MIDIIn.new(0);
 
+
 	/// load SynthDefs, Constants, Functions
 	(~resourcePath ++ "synths.scd").load;
 	(~resourcePath ++ "constants.scd").load;
 	(~resourcePath ++ "functions.scd").load;
 	(~resourcePath ++ "organist.scd").load;
-
-	~allocate = (~resourcePath ++ "allocate.scd").load;
 
 	// LOAD GUI FILES
 	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/GUI_Styles.scd");
@@ -38,7 +37,10 @@ s.waitForBoot({
 	if (~gm == nil, {
 		~gm = Dictionary.new();
 	});
+	Window.closeAll;
 	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/sequencer_gui.scd");
+
+	~allocate = (~resourcePath ++ "allocate.scd").load;
 
     MixerChannel.freeAll;
 	s.sync;

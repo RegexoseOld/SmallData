@@ -21,6 +21,13 @@
 	"top_level_frame_color", Color.fromHexString("#CDEDFD"),
 	"header_frame_color", Color.fromHexString("#A9F8FB"),
 	"bank_frame_color", Color.fromHexString("#B6DCFE"),
-	"text_color", Color.fromHexString("#6F6866")
+	"text_color", Color.fromHexString("#6F6866"),
+	"pr", Color.fromHexString("#42f54b"),
+	"dis", Color.fromHexString("#b342f5"),
+	"con", Color.fromHexString("#e69400"),
+	"lec", Color.fromHexString("#4260f5"),
+	"ins", Color.fromHexString("#b5a08a"),
 ]);
-)
+);
+
+

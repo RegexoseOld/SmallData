@@ -1,10 +1,10 @@
 ~makeDictionaries = {
 	~categorySymbols = (
-		dissent: \dis,
-		praise: \pr,
-		insinuation: \ins,
-		lecture: \lec,
-		concession: \con
+		\dissent: \dis,
+		\praise: \pr,
+		\insinuation: \ins,
+		\lecture: \lec,
+		\concession: \con
 	);
 	// Dictionary for channel allocation
 	~cat2Channel = (
@@ -123,42 +123,58 @@ PathName(~samplesPath).entries.do({
 };
 
 ~addVolume = {
-    |cat, add, max, thres|
-    var c, editVol, allVolumes=List.new;
-    editVol = ~fadePatterns[cat][\vol];
-    //postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
-    c = case
-    {editVol <= thres}{ ~fadePatterns[cat][\vol] = editVol + (add * ~volFac) }// double enhance when pattern is very quiet
-    {(editVol<= max) && (editVol>= thres)}{ ~fadePatterns[cat][\vol] = editVol + add}
-    {editVol >= max}{ ~fadePatterns[cat][\vol] = max}
-    {true}{"end of addVolume".postln};
-    Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
-    postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
-    ~fadePatterns.values.collect{
-        |v|
-        //v['vol'].postln;
-        allVolumes.add(v['vol']);
-    };
+	|cat|
+	var c, editVol, allVolumes=List.new;
+	editVol = ~fadePatterns[cat][\vol];
+	//postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
+	c = case
+	{editVol <= ~volThres}{ ~fadePatterns[cat][\vol] = editVol + (~volPlus * ~volFac) }// double enhance when pattern is very quiet
+	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~fadePatterns[cat][\vol] = editVol + ~volPlus}
+	{editVol >= ~volMax}{ ~fadePatterns[cat][\vol] = ~volMax}
+	{true}{"end of addVolume".postln};
+	Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
+	postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
+	~fadePatterns.values.collect{
+		|v|
+		//v['vol'].postln;
+		allVolumes.add(v['vol']);
+	};
 
-    ~fadeVols = allVolumes.sum;
-    //postf("\nthe vol of all patterns is   %\n", ~fadeVols);
+	~fadeVols = allVolumes.sum;
+	defer{var index, height, text;
+	"updating mc: index % height  % text  %".format(index, height, text);
+	index = ~fadingSynths.detectIndex({|it, i| it == cat});
+	height = ~fadePatterns[cat][\vol].linlin(0.001, 1.0, 10, 360);
+	text =  ~fadePatterns[cat][\vol].asString;
+	~mc_track[1][index].resizeTo(100, height);
+	~mc_track[1][index].string = text;
+	}
+	//postf("\nthe vol of all patterns is   %\n", ~fadeVols);
 };
 
 ~continuousFadeOut = {
-	|listOfPatterns, min, step, thres|
-    //TODO wann schaltet sich das ein und evtl auch wieder ab?
-        listOfPatterns.do({
-            |cat|
-            var vol, c;
-            vol = ~fadePatterns[cat][\vol];
-            //postf("\nthe vol %  of the pattern   %\n", vol, cat);
-            c = case
-            {(vol > min) && (vol >= thres)} {~fadePatterns[cat][\vol] = vol - (step*4)} // loud volumes decrease fast
-            {(vol <= thres) && (vol >= min)} {~fadePatterns[cat][\vol] = vol - step ;} // middle volumes decrease slower
-            {vol <= min} {~fadePatterns[cat][\vol] = min}
-            {true}{"end of fade cases"};
-            Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
-        })
+	|listOfPatterns|
+	//TODO wann schaltet sich das ein und evtl auch wieder ab?
+	listOfPatterns.do({
+		|cat|
+		var vol, c;
+		vol = ~fadePatterns[cat][\vol];
+		//postf("\nthe vol %  of the pattern   %\n", vol, cat);
+		c = case
+		{(vol > ~volMin) && (vol >= ~volThres)} {~fadePatterns[cat][\vol] = vol - (~volStep*2)} // loud volumes decrease fast
+		{(vol <= ~volThres) && (vol >= ~volMin)} {~fadePatterns[cat][\vol] = vol - ~volStep ;} // middle volumes decrease slower
+		{vol <= ~volMin} {~fadePatterns[cat][\vol] = ~volMin}
+		{true}{"end of fade cases"};
+		Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
+		defer{var index, height, text;
+			"updating mc: index % height  % text  %".format(index, height, text);
+			index = ~fadingSynths.detectIndex({|it, i| it == cat});
+			height = ~fadePatterns[cat][\vol].linlin(0.001, 1.0, 10, 360);
+			text = ~fadePatterns[cat][\vol].asString;
+			~mc_track[1][index].resizeTo(100, height);
+			~mc_track[1][index].string = text;
+		}
+	})
 };
 
 ~allocateSynth = {
@@ -213,16 +229,17 @@ PathName(~samplesPath).entries.do({
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);
-   /* ~t.schedAbs(~t.nextTimeOnGrid, {
+    ~t.schedAbs(~t.nextTimeOnGrid, {
         if(~fadeVols >= 0.15, {
-            ~continuousFadeOut.value(~fadingSynths, ~volMin, ~volStep, ~volThres); 1})
-    });*/
+            ~continuousFadeOut.(~fadingSynths); 1});
+    });
 };
+
 
 ~mock = {
     var cat = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'].choose;
-	~cat = 'insinuation';
-    //~cat = cat;
+	//~cat = 'insinuation';
+    ~cat = cat;
     ~updateUtts.(cat);
 	~setGlobal.value();
 };
