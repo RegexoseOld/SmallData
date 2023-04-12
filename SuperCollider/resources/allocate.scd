@@ -59,7 +59,9 @@
             \atk, 0.05, \rls, Pkey(\dur), \crv, -4
         ).play;
     };
-   ~addVolume.value(catName, ~volPlus, ~volMax, ~volThres);
-    postf("\nsetting \t\t %\t with count %   at status \t %\n", catName.asString.toUpper, count, status);
+
+   ~addVolume.value(catName);
+    postf("\nsetting %\t with count %\n at status \t %\n", catName, count, status);
+
 
 };
