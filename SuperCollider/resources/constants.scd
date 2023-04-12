@@ -9,8 +9,9 @@
 ~totalUtts = 0;
 ~t = TempoClock(40/60).permanent_(true);
 ///////
-~fbVol = 0.35; //global Volume of feedback for incoming Utts
+~fbVol = 0.25; //global Volume of feedback for incoming Utts
 // values for addVolume
+
 ~volPlus = 0.18; // this much volume is added each time a category comes in
 ~volFac = 1; // factor of volPlus with vols below the threshold
 ~volMax = 0.55; // max Volume should be less than 1.0/5

@@ -112,8 +112,8 @@ PathName(~samplesPath).entries.do({
     |cat|
     //postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
     ~totalUtts = ~totalUtts + 1;
-    ~uttDict.postln;
     if(~uttDict[~cat] >= 70, {~uttDict[~cat] = 1}, {~uttDict[~cat] = ~uttDict[~cat] + 1} );
+	~uttDict.postln;
     //postf("\nupdated % to % ", cat, ~uttDict[cat]);
 };
 
@@ -122,7 +122,19 @@ PathName(~samplesPath).entries.do({
 	"updated Sample".postln;
 };
 
+~checkFadeVols = {
+	var allVolumes=List.new;
+	   ~fadingSynths.do{
+        |n|
+        allVolumes.add(~melos.amps[n]);
+    };
+	//"FadeVolumes Sum    %".format(allVolumes.sum).postln;
+	~fadeVols = allVolumes.sum;
+	allVolumes.sum;
+};
+
 ~addVolume = {
+
 	|cat|
 	var c, editVol, allVolumes=List.new;
 	editVol = ~fadePatterns[cat][\vol];
@@ -197,18 +209,6 @@ PathName(~samplesPath).entries.do({
     postf("\ntotalUtts % \n", ~totalUtts);
     c = case
 
-    {~totalUtts == 95}{
-		"95 utts".postln;
-    }
-    {~totalUtts == 90}{
-		"90 utts".postln;
-	}
-    {~totalUtts == 85}{Pbindef(\drums).stop}
-
-    {~totalUtts == 65}{
-       Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], inf), \amp, 0.7).play(~t)
-    }
-
     {~totalUtts == 20}{
         //start a drum pattern
         Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
@@ -218,20 +218,25 @@ PathName(~samplesPath).entries.do({
         //send
 			"10 utts".postln;
     }
-
+    {(~totalUtts > 1) && (~totalUtts < 10) }{
+		Pbindef(\metronom).play(~t, quant:1);
+	}
     {(~totalUtts == 1)}{
         //"first utt".postln;
 		~runFx.();
 		~activateFaders.();
-        ~patternsPlaying = true;
-        ~fadingSynths.do{|name| ~fadePatterns[name][\vol] = ~volMin};
-        ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:1)}
+        ~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
+		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:1)};
+		~patternsPlaying = true;
+		[\answer].do{|n| Pbindef(n).play(~t, quant:1)}
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);
     ~t.schedAbs(~t.nextTimeOnGrid, {
-        if(~fadeVols >= 0.15, {
-            ~continuousFadeOut.(~fadingSynths); 1});
+
+        if(~checkFadeVols.() >= 0.15, {
+            ~continuousFadeOut.value(~fadingSynths); 1},
+		{"not fading: fadeVols = %".format(~fadeVols).postln})
     });
 };
 
