@@ -24,7 +24,6 @@ s.waitForBoot({
 
 	/// load SynthDefs, Constants, Functions
 	(~resourcePath ++ "synths.scd").load;
-
 	(~resourcePath ++ "constants.scd").load;
 	(~resourcePath ++ "functions.scd").load;
 	(~resourcePath ++ "organist.scd").load;
@@ -141,19 +140,20 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [3, 14, 9].choose.wait;
-        //"mocked" .po stln;
+        [3, 4].choose.wait;
+		//"mocked" .po stln;
         }
 ) }).play;
 )
 ~sim.stop
 )
 
+
 Pbindef.all.do(_.stop);
 ~fadingSynths.do{|n| "%  amp %".format(n, ~melos.amps[n]).postln;};
 
 Window.closeAll;
-~headerFont
+~uttDict.keys
 // Testing
 s.makeWindow
 

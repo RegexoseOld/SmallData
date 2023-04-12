@@ -88,7 +88,7 @@
 };
 
 ~uttDict = Dictionary.new;
-	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({
+	['praise', 'dissent', 'concession', 'lecture', 'insinuation'].do({
 		|cat|
 		~uttDict.add(cat-> 0)
 	});
@@ -112,9 +112,15 @@ PathName(~samplesPath).entries.do({
     |cat|
     //postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
     ~totalUtts = ~totalUtts + 1;
-    if(~uttDict[~cat] >= 70, {~uttDict[~cat] = 1}, {~uttDict[~cat] = ~uttDict[~cat] + 1} );
-	~uttDict.postln;
-    //postf("\nupdated % to % ", cat, ~uttDict[cat]);
+    if(~uttDict[cat] >= 15, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
+	defer{var index, count;
+	index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
+	count =  ~uttDict[~cat].asString;
+    //postf("\nupdating index % to count % ", index, count);
+	~mc_labels[1][index].string = cat ++ "\n" ++ count;
+	~mc_labels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
+	}
+	//~uttDict.postln;
 };
 
 ~updateSample = {
@@ -144,19 +150,18 @@ PathName(~samplesPath).entries.do({
 	{editVol >= ~volMax}{ ~fadePatterns[cat][\vol] = ~volMax}
 	{true}{"end of addVolume".postln};
 	Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
-	postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
+	//postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
 	~fadePatterns.values.collect{
 		|v|
-		//v['vol'].postln;
 		allVolumes.add(v['vol']);
 	};
 
 	~fadeVols = allVolumes.sum;
 	defer{var index, height, text;
-	"updating mc: index % height  % text  %".format(index, height, text);
+	//"updating mc: index % height  % text  %".format(index, height, text);
 	index = ~fadingSynths.detectIndex({|it, i| it == cat});
 	height = ~fadePatterns[cat][\vol].linlin(0.001, 1.0, 10, 360);
-	text =  ~fadePatterns[cat][\vol].asString;
+	text =  ~fadePatterns[cat][\vol].trunc(0.001).asString;
 	~mc_track[1][index].resizeTo(100, height);
 	~mc_track[1][index].string = text;
 	}
@@ -173,15 +178,15 @@ PathName(~samplesPath).entries.do({
 		//postf("\nthe vol %  of the pattern   %\n", vol, cat);
 		c = case
 		{(vol > ~volMin) && (vol >= ~volThres)} {~fadePatterns[cat][\vol] = vol - (~volStep*2)} // loud volumes decrease fast
-		{(vol <= ~volThres) && (vol >= ~volMin)} {~fadePatterns[cat][\vol] = vol - ~volStep ;} // middle volumes decrease slower
+		{(vol <= ~volThres) && (vol >= ~volMin)} {~fadePatterns[cat][\vol] = vol - ~volStep;} // middle volumes decrease slower
 		{vol <= ~volMin} {~fadePatterns[cat][\vol] = ~volMin}
 		{true}{"end of fade cases"};
 		Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
 		defer{var index, height, text;
-			"updating mc: index % height  % text  %".format(index, height, text);
+			//"updating mc: index % height  % text  %".format(index, height, text);
 			index = ~fadingSynths.detectIndex({|it, i| it == cat});
 			height = ~fadePatterns[cat][\vol].linlin(0.001, 1.0, 10, 360);
-			text = ~fadePatterns[cat][\vol].asString;
+			text = ~fadePatterns[cat][\vol].trunc(0.001).asString;
 			~mc_track[1][index].resizeTo(100, height);
 			~mc_track[1][index].string = text;
 		}
@@ -205,9 +210,7 @@ PathName(~samplesPath).entries.do({
 ~setGlobal = {
 
     var c;
-    postf("\ntotalUtts % \n", ~totalUtts);
     c = case
-
     {~totalUtts == 20}{
         //start a drum pattern
         Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);

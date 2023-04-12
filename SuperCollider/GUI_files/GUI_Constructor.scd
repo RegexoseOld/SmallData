@@ -60,22 +60,24 @@
 
 ~build_mc_labels = {
 	// Builds a frame to contain the labels of the button rows
-	arg top_level, posx, posy, width, height, style, buttonsize, labels;
-	var array, compView;
+	arg top_level, posx, posy, width, height, style, buttonsize, uttdict;
+	var array, compView, labels, counts, label_data;
 	//"pos x %   pos y %".format(posx, posy).postln;
+	labels = uttdict.keys.asList ++ ["total"];
+	counts = uttdict.values ++ [0];
 	compView = CompositeView(top_level, Rect(posx, posy, width, height))
 	.background_(Color.white);
 	compView.addFlowLayout(0@0);
 	compView.decorator.gap_(0@0);
-	array = Array.fill(5, {arg i;
-		StaticText(compView, Rect(posx, posy, width/5, height))
-		.string_(labels.at(i))
-		.background_(style[~fadingSynths[i].asString])
+	array = Array.fill(6, {arg i;
+		StaticText(compView, Rect(posx, posy, width/6, height))
+		.string_(labels.at(i) ++ "\n" ++ counts[i])
+		.background_(style[labels[i].asString])
 		.font_(style.at("subheader_font"))
-		.align_(\center);
+		.align_(\top);
 	});
 	compView.decorator.nextLine;
-	compView;
+	label_data = [compView, array]
 };
 
 ~build_track_buttons_container_seq = {
@@ -122,7 +124,7 @@
 	// scrolls over it.
 	fields = Array.fill(columns, { arg i;
 		StaticText(trackCompView, Rect(i * buttonsize, posy, buttonsize,hheight.rand))
-		.background_(style[~fadingSynths[i].asString])
+		.background_(style[categories[i].asString])
 		.string_("value: \n%".format(5.rand))
 		.align_(\bottom);
 	});
@@ -224,15 +226,6 @@
 		{ track[1][index].background_(Color.rand) }.defer;
 		{ track[1][index-1].background_(Color.white) }.defer;
 	});
-};
-
-~update_mc_track = {
-	// Updates the height of the category-fields,
-	// and changing the values of the texts
-	arg index, height, text;
-	"updating mc: index % height  % text  %".format(index, height, text);
-	~mc_track[1][index].resizeTo(100, height);
-	~mc_track[1][index].string = text;
 };
 
 ~build_control_name_seq = {

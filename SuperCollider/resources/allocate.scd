@@ -61,6 +61,6 @@
     };
 
    ~addVolume.value(catName);
-    postf("\nsetting %\t with count %\n at status \t %\n", catName, count, status);
+    postf("\nsetting %\to status \t %\n", catName, status);
 
 };

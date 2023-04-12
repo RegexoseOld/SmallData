@@ -24,7 +24,7 @@
 //~volMin = 0.0002; // the min Volume for a faded Pattern
 ~volMin = 0.09; // the min Volume for a faded Pattern
 ~volThres = 0.22; // Threshold managed by ~addVolume and ~continuousFade
-~volStep = 0.003; //vol reduction in continuous FadeOut
+~volStep = 0.0003; //vol reduction in continuous FadeOut
 ~fadeVols = 0; //the volumes of all fading Patterns
 ~fadingSynths = [\pr, \dis, \con, \lec, \ins];
 ~additionalSynths = List.new;
