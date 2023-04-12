@@ -1,10 +1,10 @@
 ~makeDictionaries = {
 	~categorySymbols = (
-		dissent: \dis,
-		praise: \pr,
-		insinuation: \ins,
-		lecture: \lec,
-		concession: \con
+		\dissent: \dis,
+		\praise: \pr,
+		\insinuation: \ins,
+		\lecture: \lec,
+		\concession: \con
 	);
 	// Dictionary for channel allocation
 	~cat2Channel = (
@@ -88,7 +88,7 @@
 };
 
 ~uttDict = Dictionary.new;
-	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({
+	['praise', 'dissent', 'concession', 'lecture', 'insinuation'].do({
 		|cat|
 		~uttDict.add(cat-> 0)
 	});
@@ -112,9 +112,15 @@ PathName(~samplesPath).entries.do({
     |cat|
     //postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
     ~totalUtts = ~totalUtts + 1;
-    ~uttDict.postln;
-    if(~uttDict[~cat] >= 70, {~uttDict[~cat] = 1}, {~uttDict[~cat] = ~uttDict[~cat] + 1} );
-    //postf("\nupdated % to % ", cat, ~uttDict[cat]);
+    if(~uttDict[cat] >= 15, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
+	defer{var index, count;
+	index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
+	count =  ~uttDict[~cat].asString;
+    //postf("\nupdating index % to count % ", index, count);
+	~mc_labels[1][index].string = cat ++ "\n" ++ count;
+	~mc_labels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
+	}
+	//~uttDict.postln;
 };
 
 ~updateSample = {
@@ -122,43 +128,69 @@ PathName(~samplesPath).entries.do({
 	"updated Sample".postln;
 };
 
-~addVolume = {
-    |cat, add, max, thres|
-    var c, editVol, allVolumes=List.new;
-    editVol = ~fadePatterns[cat][\vol];
-    //postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
-    c = case
-    {editVol <= thres}{ ~fadePatterns[cat][\vol] = editVol + (add * ~volFac) }// double enhance when pattern is very quiet
-    {(editVol<= max) && (editVol>= thres)}{ ~fadePatterns[cat][\vol] = editVol + add}
-    {editVol >= max}{ ~fadePatterns[cat][\vol] = max}
-    {true}{"end of addVolume".postln};
-    Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
-    postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
-    ~fadePatterns.values.collect{
-        |v|
-        //v['vol'].postln;
-        allVolumes.add(v['vol']);
+~checkFadeVols = {
+	var allVolumes=List.new;
+	   ~fadingSynths.do{
+        |n|
+        allVolumes.add(~melos.amps[n]);
     };
+	//"FadeVolumes Sum    %".format(allVolumes.sum).postln;
+	~fadeVols = allVolumes.sum;
+	allVolumes.sum;
+};
 
-    ~fadeVols = allVolumes.sum;
-    //postf("\nthe vol of all patterns is   %\n", ~fadeVols);
+~addVolume = {
+	|cat|
+	var c, editVol, allVolumes=List.new;
+	editVol = ~fadePatterns[cat][\vol];
+	//postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
+	c = case
+	{editVol <= ~volThres}{ ~fadePatterns[cat][\vol] = editVol + (~volPlus * ~volFac) }// double enhance when pattern is very quiet
+	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~fadePatterns[cat][\vol] = editVol + ~volPlus}
+	{editVol >= ~volMax}{ ~fadePatterns[cat][\vol] = ~volMax}
+	{true}{"end of addVolume".postln};
+	Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
+	//postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
+	~fadePatterns.values.collect{
+		|v|
+		allVolumes.add(v['vol']);
+	};
+
+	~fadeVols = allVolumes.sum;
+	defer{var index, height, text;
+	//"updating mc: index % height  % text  %".format(index, height, text);
+	index = ~fadingSynths.detectIndex({|it, i| it == cat});
+	height = ~fadePatterns[cat][\vol].linlin(0.001, 1.0, 10, 360);
+	text =  ~fadePatterns[cat][\vol].trunc(0.001).asString;
+	~mc_track[1][index].resizeTo(100, height);
+	~mc_track[1][index].string = text;
+	}
+	//postf("\nthe vol of all patterns is   %\n", ~fadeVols);
 };
 
 ~continuousFadeOut = {
-	|listOfPatterns, min, step, thres|
-    //TODO wann schaltet sich das ein und evtl auch wieder ab?
-        listOfPatterns.do({
-            |cat|
-            var vol, c;
-            vol = ~fadePatterns[cat][\vol];
-            //postf("\nthe vol %  of the pattern   %\n", vol, cat);
-            c = case
-            {(vol > min) && (vol >= thres)} {~fadePatterns[cat][\vol] = vol - (step*4)} // loud volumes decrease fast
-            {(vol <= thres) && (vol >= min)} {~fadePatterns[cat][\vol] = vol - step ;} // middle volumes decrease slower
-            {vol <= min} {~fadePatterns[cat][\vol] = min}
-            {true}{"end of fade cases"};
-            Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
-        })
+	|listOfPatterns|
+	//TODO wann schaltet sich das ein und evtl auch wieder ab?
+	listOfPatterns.do({
+		|cat|
+		var vol, c;
+		vol = ~fadePatterns[cat][\vol];
+		//postf("\nthe vol %  of the pattern   %\n", vol, cat);
+		c = case
+		{(vol > ~volMin) && (vol >= ~volThres)} {~fadePatterns[cat][\vol] = vol - (~volStep*2)} // loud volumes decrease fast
+		{(vol <= ~volThres) && (vol >= ~volMin)} {~fadePatterns[cat][\vol] = vol - ~volStep;} // middle volumes decrease slower
+		{vol <= ~volMin} {~fadePatterns[cat][\vol] = ~volMin}
+		{true}{"end of fade cases"};
+		Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
+		defer{var index, height, text;
+			//"updating mc: index % height  % text  %".format(index, height, text);
+			index = ~fadingSynths.detectIndex({|it, i| it == cat});
+			height = ~fadePatterns[cat][\vol].linlin(0.001, 1.0, 10, 360);
+			text = ~fadePatterns[cat][\vol].trunc(0.001).asString;
+			~mc_track[1][index].resizeTo(100, height);
+			~mc_track[1][index].string = text;
+		}
+	})
 };
 
 ~allocateSynth = {
@@ -178,21 +210,7 @@ PathName(~samplesPath).entries.do({
 ~setGlobal = {
 
     var c;
-    postf("\ntotalUtts % \n", ~totalUtts);
     c = case
-
-    {~totalUtts == 95}{
-		"95 utts".postln;
-    }
-    {~totalUtts == 90}{
-		"90 utts".postln;
-	}
-    {~totalUtts == 85}{Pbindef(\drums).stop}
-
-    {~totalUtts == 65}{
-       Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], inf), \amp, 0.7).play(~t)
-    }
-
     {~totalUtts == 20}{
         //start a drum pattern
         Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
@@ -202,27 +220,32 @@ PathName(~samplesPath).entries.do({
         //send
 			"10 utts".postln;
     }
-
+    {(~totalUtts > 1) && (~totalUtts < 10) }{
+		Pbindef(\metronom).play(~t, quant:1);
+	}
     {(~totalUtts == 1)}{
         //"first utt".postln;
 		~runFx.();
 		~activateFaders.();
-        ~patternsPlaying = true;
-        ~fadingSynths.do{|name| ~fadePatterns[name][\vol] = ~volMin};
-        ~fadingSynths.do{|name| Pbindef(name, \amp, ~volMin).play(~t, quant:1)}
+        ~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
+		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:1)};
+		~patternsPlaying = true;
+		[\answer].do{|n| Pbindef(n).play(~t, quant:1)}
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);
-   /* ~t.schedAbs(~t.nextTimeOnGrid, {
-        if(~fadeVols >= 0.15, {
-            ~continuousFadeOut.value(~fadingSynths, ~volMin, ~volStep, ~volThres); 1})
-    });*/
+    ~t.schedAbs(~t.nextTimeOnGrid, {
+        if(~checkFadeVols.() >= 0.15, {
+            ~continuousFadeOut.value(~fadingSynths); 1},
+		{"not fading: fadeVols = %".format(~fadeVols).postln})
+    });
 };
+
 
 ~mock = {
     var cat = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'].choose;
-	~cat = 'insinuation';
-    //~cat = cat;
+	//~cat = 'insinuation';
+    ~cat = cat;
     ~updateUtts.(cat);
 	~setGlobal.value();
 };

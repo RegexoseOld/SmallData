@@ -21,6 +21,14 @@
 	"top_level_frame_color", Color.fromHexString("#CDEDFD"),
 	"header_frame_color", Color.fromHexString("#A9F8FB"),
 	"bank_frame_color", Color.fromHexString("#B6DCFE"),
-	"text_color", Color.fromHexString("#6F6866")
+	"text_color", Color.fromHexString("#6F6866"),
+	"praise", Color.fromHexString("#42f54b"),
+	"dissent", Color.fromHexString("#b342f5"),
+	"concession", Color.fromHexString("#e69400"),
+	"lecture", Color.fromHexString("#4260f5"),
+	"insinuation", Color.fromHexString("#b5a08a"),
+	"total", Color.white
 ]);
-)
+);
+
+
