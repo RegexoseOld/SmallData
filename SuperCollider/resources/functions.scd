@@ -229,6 +229,7 @@ PathName(~samplesPath).entries.do({
 		~activateFaders.();
         ~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
 		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:1)};
+		Pdefn(\melody).play(~t, quant:1);
 		~patternsPlaying = true;
 		[\answer].do{|n| Pbindef(n).play(~t, quant:1)}
     }
