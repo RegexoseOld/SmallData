@@ -49,7 +49,7 @@
 	compView.decorator.nextLine;
 	array = Array.fill(5, {arg i;
 		StaticText(compView, Rect(10+i*buttonsize+20, 10, width, buttonsize))
-		.string_(labels.at(i))
+		.string_(~categories.at(i))
 		.background_(style.at("header_frame_color"))
 		.font_(style.at("subheader_font"))
 		.align_(\right);

@@ -149,9 +149,13 @@ s.waitForBoot({
 )
 
 Window.closeAll;
-~uttDict.keys
+Pdefn(\melody).play(~t)
 // Testing
 s.makeWindow
+
+Pbindef.all.do(_.stop);
+~sim.stop
+~uttSamples[\praise].play
 
 (
 ~fadingSynths.do {|sy| Pbindef(sy).play};
