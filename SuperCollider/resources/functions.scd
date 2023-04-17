@@ -132,7 +132,7 @@ PathName(~samplesPath).entries.do({
 
 ~updateSample = {
 	|pathString|
-	~uttSamples[~cat] = Buffer.read(s,pathString)
+	~uttSamples[~cat] = Buffer.read(s, pathString ++ "/00_utterance.wav")
 };
 
 ~addSample = {
