@@ -3,7 +3,6 @@
 ~fx3Bus = Bus.audio(s,2);
 ~numSlots = 16;
 ~cat = "lecture";
-
 ~currentUttPattern = \mono;
 ~factor = 1;
 ~totalUtts = 0;
@@ -31,12 +30,15 @@
 ~faderControl = List.new; // Patterns controlled by MIDIFaders or OSC Controllers
 // booleans
 ~patternsPlaying = false;
+~categories = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'];
 
 ~fadePatterns = Dictionary.new;
 ~nameDict = Dictionary.new;
 ~buffers = Dictionary.new;
+~utts = Dictionary.new;
+~uttDict = Dictionary.new;
+~uttSamples = Dictionary.new;
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
-~uttSample = Buffer.read(s, ~samplesPath +/+ "zahlen/01eins.wav");
 
 
 

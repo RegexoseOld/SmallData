@@ -12,8 +12,8 @@ memory.atFail(\seq_mem, {
 		\currentOctave, 0,
 		\melody_octave, 6,
 		\melody_scale, Scale.major,
-		\melody_instrument, start_instrument,
-		\delta, ~t.beatDur/4,
+		\melody_instrument, \sampMon,
+		\delta, 0.25,
 		\melody_sus, 0.1,
 		\melody_amp, 0.5,
 		\pattern_out, 79,
@@ -42,9 +42,9 @@ memory.at(\seq_mem).put(\recGroup, Group.after(memory.at(\seq_mem).at(\ptrGroup)
 // #########
 
 // Build window, top_level and header
-window = ~build_window_seq.value("Sequencer", ~style_1, 10, 10,  buttonsize*columns+740, buttonsize*rows+380);
+window = ~build_window_seq.value("Sequencer", ~style_1, 10, 300,  buttonsize*columns+200, buttonsize*rows+200);
 top_level = ~build_top_level_seq.value(window, 10, 10, buttonsize*columns+720, buttonsize*rows+360, ~style_1);
-header = ~build_sequencer_header_seq.value(top_level, buttonsize*columns+700, 80, ~style_1, "Sequencer");
+header = ~build_sequencer_header_seq.value(top_level, buttonsize*columns+200, 80, ~style_1, "Sequencer");
 
 // Build Track
 labels = ~build_labels_seq.value(top_level, 100, (buttonsize) + (buttonsize*rows+20), ~style_1, buttonsize, categories);
@@ -73,17 +73,17 @@ Pdefn(\melody, Ppar(
 	stacked_buttons[0][1].collect({
 		arg c, r;
 		var currentOctaveDegree = stacked_buttons[0][1].size - r + memory.at(\seq_mem).at(\melody_octave);
+		var currentVol = memory.at(\seq_mem).at(\melody_amp);
 		Pbind(
-			\instrument, Pdefn(\p_melody_instrument, memory.at(\seq_mem).at(\melody_instrument)),
-			\scale, Pdefn(\p_scale, memory.at(\seq_mem).at(\melody_scale)),
-			\octave, Pdefn(\p_melody_octave, memory.at(\seq_mem).at(\melody_octave)),
-			\degree, Pif(Pseq(stacked_buttons[0][1][r], inf).coin, currentOctaveDegree, \rest),
-			\delta, Pdefn(\p_delta, memory.at(\seq_mem).at(\delta)),
+			\instrument, \sampMon,
+			\buf, Pfunc({~uttSamples[~categories[r]]}),
+			\degree, Pif(Pseq(stacked_buttons[0][1][r], inf).coin, 0, \rest),
+			\delta, memory.at(\seq_mem).at(\delta),
 			\sustain, Pdefn(\p_melody_sus,  memory.at(\seq_mem).at(\melody_sus)),
-			\amp, Pdefn(\p_melody_amp, memory.at(\seq_mem).at(\melody_amp)),
-			\out, Pdefn(\p_out, memory.at(\seq_mem).at(\pattern_out)),
-			\track_index, Pdefn(\p_track_index, Pseq((0..15), inf)),
-			\track_func, Pdefn(\p_track_func, Pfunc({|ev| ~update_track_seq.value(ev.track_index, track)}));
+			\amp,  Pif(Pseq(stacked_buttons[0][1][r], inf).coin, currentVol, \rest),
+			\out, 0,
+			\track_index, Pseq((0..15), inf),
+			\track_func, Pfunc({|ev| ~update_track_seq.value(ev.track_index, track)});
 )}), inf));
 
 

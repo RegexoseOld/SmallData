@@ -12,7 +12,7 @@
 	// Buildts a top level composite view that manages child views' spacing.
 	arg window, posx=10, posy=10, width, height, style;
 	var compView = CompositeView(window, Rect(posx, posy, width, height))
-	.background_(Color.fromHexString("#A9F8FB"));
+	.background_(style["top_level_frame_color"]);
 	compView.addFlowLayout(10@10);
 	compView.decorator.gap_(0@10);
 	compView;
@@ -24,7 +24,7 @@
 	var guiTitle;
 	guiTitle = StaticText(top, Rect(10, 10, hwidth, hheight));
 	guiTitle.string = string;
-	guiTitle.background = style.at("header_frame_color");
+	guiTitle.background = style["top_level_frame_color"];
 	guiTitle.font = style.at("header_font");
 	guiTitle.align = \center;
 	top.decorator.nextLine;
@@ -43,14 +43,14 @@
 
 	StaticText(compView, Rect(10, 10, width, buttonsize+10))
 	.string_("")
-	.background_(style.at("header_frame_color"))
+	.background_(style["bank_frame_color"])
 	.font_(style.at("header_font"))
 	.align_(\center);
 	compView.decorator.nextLine;
 	array = Array.fill(5, {arg i;
 		StaticText(compView, Rect(10+i*buttonsize+20, 10, width, buttonsize))
-		.string_(labels.at(i))
-		.background_(style.at("header_frame_color"))
+		.string_(~categories.at(i))
+		.background_(style["bank_frame_color"])
 		.font_(style.at("subheader_font"))
 		.align_(\right);
 	});
@@ -123,9 +123,9 @@
 	// plus StaticTExt that change text values
 	// scrolls over it.
 	fields = Array.fill(columns, { arg i;
-		StaticText(trackCompView, Rect(i * buttonsize, posy, buttonsize,hheight.rand))
+		StaticText(trackCompView, Rect(i * buttonsize, posy, buttonsize,hheight/10))
 		.background_(style[categories[i].asString])
-		.string_("value: \n%".format(5.rand))
+		.string_("value: \n%".format(hheight/10))
 		.align_(\bottom);
 	});
 
@@ -220,11 +220,11 @@
 	// off the previous index.
 	arg index, track;
 	if((index == 0), {
-		{ track[1][index].background_(Color.rand) }.defer;
-		{ track[1][track[1].size-1].background_(Color.white) }.defer;
+		{ track[1][index].background_(Color.rand).string_(index.asString) }.defer;
+		{ track[1][track[1].size-1].background_(Color.white).string_("") }.defer;
 	}, {
-		{ track[1][index].background_(Color.rand) }.defer;
-		{ track[1][index-1].background_(Color.white) }.defer;
+		{ track[1][index].background_(Color.rand).string_(index.asString) }.defer;
+		{ track[1][index-1].background_(Color.white).string_("") }.defer;
 	});
 };
 

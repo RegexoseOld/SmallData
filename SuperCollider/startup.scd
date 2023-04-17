@@ -122,11 +122,13 @@ s.waitForBoot({
 	OSCdef.newMatching(
 		\interpreter,
 		{ arg msg;
+			postf("\nmessage?: %\n", msg);
 			postf("\nnew utt: %", msg[1]);
 			postf("\nnew cat: %\n", msg[2]);
+			postf("\npath  % path is nil? % \n", msg[4], msg[4].isNil);
 			~cat = msg[2];
 			~updateUtts.(msg[2]);
-			~updateSample.();
+			~updateSample.(msg[4]);
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
@@ -145,17 +147,15 @@ s.waitForBoot({
         }
 ) }).play;
 )
-~sim.stop
-)
-
-
-Pbindef.all.do(_.stop);
-~fadingSynths.do{|n| "%  amp %".format(n, ~melos.amps[n]).postln;};
 
 Window.closeAll;
-~uttDict.keys
+Pdefn(\melody).play(~t)
 // Testing
 s.makeWindow
+
+Pbindef.all.do(_.stop);
+~sim.stop
+~uttSamples[\praise].play
 
 (
 ~fadingSynths.do {|sy| Pbindef(sy).play};
@@ -168,8 +168,6 @@ MIDIFunc.trace(false);
 MIDIFunc.trace(true);
 ~fadeVols = 0.3
 
-
-(
 Pbindef(\sn01).play(~t);
 Pbindef(\kik01).play(~t);
 Pbindef(\con).condition_({ |val, i| i.postln % 6 == 0 });
@@ -178,4 +176,3 @@ Pbindef(\dis, \amp);
 Pbindef(\dis).play;
 Pbindef(\zahl, \dur, 0.5, \amp, 0.3, \rate, (0.9, 0.95 .. 1.1), \cgain, 1, \zit1, 10, \zit2, 2, \w, 2).play(~t);
 
-)

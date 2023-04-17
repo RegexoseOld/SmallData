@@ -87,11 +87,18 @@
 	~faderControl.do{|chan, it| ~activateVolume.(chan, it)}
 };
 
-~uttDict = Dictionary.new;
-	['praise', 'dissent', 'concession', 'lecture', 'insinuation'].do({
-		|cat|
-		~uttDict.add(cat-> 0)
-	});
+// initialize utterance counter
+~categories.do({
+	|cat|
+	~uttDict.add(cat-> 0)
+});
+
+// initialize dictionary with audio utterances
+~categories.do({
+	|cat|
+	~uttSamples.add(cat-> Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav"))
+});
+
 
 // make buffers
 PathName(~samplesPath).entries.do({
@@ -124,7 +131,24 @@ PathName(~samplesPath).entries.do({
 };
 
 ~updateSample = {
-	// ~uttSample wird mit einem neuen File geladen und aktualisiert. Relevant für makeSlot in organist.scd
+	|pathString|
+	~uttSamples[~cat] = Buffer.read(s,pathString)
+};
+
+~addSample = {
+	|pathSymbol|
+	var path = pathSymbol.asString;
+	~utts.add(
+		PathName(path).fileName.asSymbol->
+		Array.fill(
+			PathName(path).entries.size,
+			{
+				|i|
+				 PathName(path).entries[i].postln;
+				Buffer.read(s, PathName(path).entries[i].fullPath);
+			}
+		)
+	);
 	"updated Sample".postln;
 };
 
@@ -244,9 +268,13 @@ PathName(~samplesPath).entries.do({
 
 
 ~mock = {
-    var cat = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'].choose;
-	//~cat = 'insinuation';
-    ~cat = cat;
+    var cat = ~categories.choose;
+	~cat = 'insinuation';
+    //~cat = cat;
+
     ~updateUtts.(cat);
 	~setGlobal.value();
 };
+
+
+PathName("/Users/staude/Projekte/").folderName.postln;
