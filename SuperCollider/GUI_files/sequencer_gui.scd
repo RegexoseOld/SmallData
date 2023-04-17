@@ -76,7 +76,7 @@ Pdefn(\melody, Ppar(
 		var currentVol = memory.at(\seq_mem).at(\melody_amp);
 		Pbind(
 			\instrument, \sampMon,
-			\buf, ~uttSamples[~categories[r]],
+			\buf, Pfunc({~uttSamples[~categories[r]]}),
 			\degree, Pif(Pseq(stacked_buttons[0][1][r], inf).coin, 0, \rest),
 			\delta, memory.at(\seq_mem).at(\delta),
 			\sustain, Pdefn(\p_melody_sus,  memory.at(\seq_mem).at(\melody_sus)),
