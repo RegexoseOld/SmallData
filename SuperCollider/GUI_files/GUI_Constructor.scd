@@ -2,16 +2,16 @@
 (
 ~build_window_seq = {
 	// Builds the main window that contains everything
-	arg window_title, style, width, height;
-	Window(window_title, Rect(10, 10, width, height))
+	arg window_title, style, x=10, y=10, width, height;
+	Window(window_title, Rect(x, y, width, height))
 	.background_(style.at("window_color"))
 	.front;
 };
 
 ~build_top_level_seq = {
 	// Buildts a top level composite view that manages child views' spacing.
-	arg window, width, height, style;
-	var compView = CompositeView(window, Rect(10, 10, width, height))
+	arg window, posx=10, posy=10, width, height, style;
+	var compView = CompositeView(window, Rect(posx, posy, width, height))
 	.background_(Color.fromHexString("#A9F8FB"));
 	compView.addFlowLayout(10@10);
 	compView.decorator.gap_(0@10);
@@ -33,8 +33,8 @@
 
 ~build_labels_seq = {
 	// Builds a frame to contain the labels of the button rows
-	arg top_level, width, height, style, buttonsize;
-	var array, label = ["Praise", "Concession", "Insinuation","Dissent","Lecture"];
+	arg top_level, width, height, style, buttonsize, labels;
+	var array ;
 
 	var compView = CompositeView(top_level, Rect(0, 0, width, height))
 	.background_(style.at("top_level_frame_color"));
@@ -49,7 +49,7 @@
 	compView.decorator.nextLine;
 	array = Array.fill(5, {arg i;
 		StaticText(compView, Rect(10+i*buttonsize+20, 10, width, buttonsize))
-		.string_(label.at(i))
+		.string_(labels.at(i))
 		.background_(style.at("header_frame_color"))
 		.font_(style.at("subheader_font"))
 		.align_(\right);
@@ -58,11 +58,34 @@
 	compView;
 };
 
+~build_mc_labels = {
+	// Builds a frame to contain the labels of the button rows
+	arg top_level, posx, posy, width, height, style, buttonsize, uttdict;
+	var array, compView, labels, counts, label_data;
+	//"pos x %   pos y %".format(posx, posy).postln;
+	labels = uttdict.keys.asList ++ ["total"];
+	counts = uttdict.values ++ [0];
+	compView = CompositeView(top_level, Rect(posx, posy, width, height))
+	.background_(Color.white);
+	compView.addFlowLayout(0@0);
+	compView.decorator.gap_(0@0);
+	array = Array.fill(6, {arg i;
+		StaticText(compView, Rect(posx, posy, width/6, height))
+		.string_(labels.at(i) ++ "\n" ++ counts[i])
+		.background_(style[labels[i].asString])
+		.font_(style.at("subheader_font"))
+		.align_(\top);
+	});
+	compView.decorator.nextLine;
+	label_data = [compView, array]
+};
+
 ~build_track_buttons_container_seq = {
 	// Builds a frame to contain and organize the track and the stack of buttons.
-	arg top_level, width, height, style;
-	var compView = CompositeView(top_level, Rect(0, 0, width, height))
-	.background_(style.at("top_level_frame_color"));
+	arg top_level, posx=0, posy=0, width, height, style;
+	var compView = CompositeView(top_level, Rect(posx, posy, width, height))
+	//.background_(style.at("top_level_frame_color"));
+	.background_(Color.red);
 	compView.addFlowLayout(0@0);
 	compView.decorator.gap_(0@0);
 	compView;
@@ -83,10 +106,31 @@
 		StaticText(trackCompView, Rect(i * buttonsize + 10, 10, buttonsize, buttonsize-20))
 		.background_(Color.white)
 	});
+	top.decorator.nextLine;
+	sequencer_track_data = [trackCompView, array]
+};
+
+~build_mc_track = {
+	// Builds the MC Track
+	arg top, posx, posy, hwidth, hheight, style, columns, buttonsize, categories;
+	var trackCompView, fields, values, sequencer_track_data;
+
+	// Track Composite View
+	trackCompView = CompositeView(top, Rect(posx, posy, buttonsize*columns+20, hheight-20))
+	.background_(Color.white);
+
+	// Sequencer Track: A set of static texts for labels
+	// plus StaticTExt that change text values
+	// scrolls over it.
+	fields = Array.fill(columns, { arg i;
+		StaticText(trackCompView, Rect(i * buttonsize, posy, buttonsize,hheight.rand))
+		.background_(style[categories[i].asString])
+		.string_("value: \n%".format(5.rand))
+		.align_(\bottom);
+	});
 
 	top.decorator.nextLine;
-
-	sequencer_track_data = [trackCompView, array]
+	sequencer_track_data = [trackCompView, fields]
 };
 
 ~build_sequencer_tabbed_stack_seq = {
