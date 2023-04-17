@@ -124,8 +124,8 @@ PathName(~samplesPath).entries.do({
 };
 
 ~updateSample = {
-	|pathSymbol|
-	var path = pathSymbol.asString;
+	|pathString|
+	~uttSamples[~cat] = Buffer.read(s,pathString)
 };
 
 ~addSample = {
