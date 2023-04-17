@@ -87,11 +87,17 @@
 	~faderControl.do{|chan, it| ~activateVolume.(chan, it)}
 };
 
-~uttDict = Dictionary.new;
-	['dissent', 'praise', 'insinuation', 'concession', 'lecture'].do({
-		|cat|
-		~uttDict.add(cat-> 0)
-	});
+// initialize utterance counter
+~categories.do({
+	|cat|
+	~uttDict.add(cat-> 0)
+});
+
+// initialize dictionary with audio utterances
+~categories.do({
+	|cat|
+	~uttSamples.add(cat-> Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav"))
+});
 
 // make buffers
 PathName(~samplesPath).entries.do({
@@ -118,6 +124,11 @@ PathName(~samplesPath).entries.do({
 };
 
 ~updateSample = {
+	|pathSymbol|
+	var path = pathSymbol.asString;
+};
+
+~addSample = {
 	|pathSymbol|
 	var path = pathSymbol.asString;
 	~utts.add(
@@ -232,7 +243,7 @@ PathName(~samplesPath).entries.do({
 };
 
 ~mock = {
-    var cat = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'].choose;
+    var cat = ~categories.choose;
 	~cat = 'insinuation';
     //~cat = cat;
     ~updateUtts.(cat);
