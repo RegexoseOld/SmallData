@@ -42,9 +42,9 @@ memory.at(\seq_mem).put(\recGroup, Group.after(memory.at(\seq_mem).at(\ptrGroup)
 // #########
 
 // Build window, top_level and header
-window = ~build_window_seq.value("Sequencer", ~style_1, 10, 10,  buttonsize*columns+740, buttonsize*rows+380);
+window = ~build_window_seq.value("Sequencer", ~style_1, 10, 300,  buttonsize*columns+200, buttonsize*rows+200);
 top_level = ~build_top_level_seq.value(window, 10, 10, buttonsize*columns+720, buttonsize*rows+360, ~style_1);
-header = ~build_sequencer_header_seq.value(top_level, buttonsize*columns+700, 80, ~style_1, "Sequencer");
+header = ~build_sequencer_header_seq.value(top_level, buttonsize*columns+200, 80, ~style_1, "Sequencer");
 
 // Build Track
 labels = ~build_labels_seq.value(top_level, 100, (buttonsize) + (buttonsize*rows+20), ~style_1, buttonsize, categories);
