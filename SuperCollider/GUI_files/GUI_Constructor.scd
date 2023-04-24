@@ -33,7 +33,7 @@
 
 ~build_labels_seq = {
 	// Builds a frame to contain the labels of the button rows
-	arg top_level, width, height, style, buttonsize, labels;
+	arg top_level, width, height, buttonsize, offset, style, labels;
 	var array ;
 
 	var compView = CompositeView(top_level, Rect(0, 0, width, height))
@@ -48,13 +48,30 @@
 	.align_(\center);
 	compView.decorator.nextLine;
 	array = Array.fill(5, {arg i;
-		StaticText(compView, Rect(10+i*buttonsize+20, 10, width, buttonsize))
+		StaticText(compView, Rect(10+(i*buttonsize)+20, 10, width, buttonsize))
 		.string_(~categories.at(i))
 		.background_(style["bank_frame_color"])
 		.font_(style.at("subheader_font"))
 		.align_(\right);
 	});
 	compView.decorator.nextLine;
+	StaticText(compView, Rect(10, 10, width, buttonsize+10))
+	.string_("")
+	.background_(style["bank_frame_color"])
+	.font_(style.at("header_font"))
+	.align_(\center);
+	compView.decorator.nextLine;
+	compView;
+};
+
+~build_track_buttons_container_seq = {
+	// Builds a frame to contain and organize the track and the stack of buttons.
+	arg top_level, width, height, style;
+	var compView = CompositeView(top_level, Rect(0, 0, width, height))
+	//.background_(style.at("top_level_frame_color"));
+	.background_(Color.red);
+	compView.addFlowLayout(0@0);
+	compView.decorator.gap_(0@0);
 	compView;
 };
 
@@ -80,16 +97,7 @@
 	label_data = [compView, array]
 };
 
-~build_track_buttons_container_seq = {
-	// Builds a frame to contain and organize the track and the stack of buttons.
-	arg top_level, posx=0, posy=0, width, height, style;
-	var compView = CompositeView(top_level, Rect(posx, posy, width, height))
-	//.background_(style.at("top_level_frame_color"));
-	.background_(Color.red);
-	compView.addFlowLayout(0@0);
-	compView.decorator.gap_(0@0);
-	compView;
-};
+
 
 ~build_sequencer_track_seq = {
 	// Builds the sequencer track.

@@ -1,6 +1,6 @@
 // Sequencer
 (
-var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100;
+var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100;
 var window, categories =  ["praise", "concession", "insinuation","dissent","lecture"], top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, start_instrument=\default, pattern, instruments=[\default, \peep_sequencer, \sin_tone_sequencer, \buzzy_bram_sequencer, \phase_mod_sequencer, \sin_fb_synth_sequencer, \subtract_noise_synth_sequencer], memory=~gm, mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
 var button_field_width=buttonsize*columns, button_field_height=buttonsize*rows;
 
@@ -59,17 +59,17 @@ mc_top = ~build_top_level_seq.(mc_window, 10, 10, mc_catwidth*5+ 720, mc_catheig
 // #########
 
 // Build window, top_level and header
-window = ~build_window_seq.value("Sequencer", ~style_1, 10, 300,  button_field_width+200, button_field_height+200);
-top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+180, button_field_height+180, ~style_1);
-header = ~build_sequencer_header_seq.value(top_level, button_field_width+200, 80, ~style_1, "Sequencer");
+window = ~build_window_seq.value("Sequencer", ~style_1, 10, 300,  button_field_width+labelwidth+(6*offset), buttonsize+offset+button_field_height+headerheight+(6*offset));
+top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+labelwidth+(4*offset), buttonsize+offset+button_field_height+headerheight+(4*offset), ~style_1);
+header = ~build_sequencer_header_seq.value(top_level, button_field_width+labelwidth, headerheight, ~style_1, "Sequencer");
 
 // Build Track
-labels = ~build_labels_seq.value(top_level, labelwidth, (buttonsize) + button_field_height+20, ~style_1, buttonsize, categories);
-track_buttons_container = ~build_track_buttons_container_seq.value(top_level, 0, 0, button_field_width+20, (buttonsize) + (button_field_height+20), ~style_1);
-track = ~build_sequencer_track_seq.value(track_buttons_container, button_field_width+20, buttonsize+20, ~style_1, columns, buttonsize);
+labels = ~build_labels_seq.value(top_level, labelwidth, buttonsize+button_field_height+(2*offset), buttonsize, offset, ~style_1, categories);
+track_buttons_container = ~build_track_buttons_container_seq.value(top_level, button_field_width+(2*offset), buttonsize+button_field_height+(2*offset), ~style_1);
+track = ~build_sequencer_track_seq.value(track_buttons_container, button_field_width+(2*offset), buttonsize+(2*offset), ~style_1, columns, buttonsize);
 
 // Build the Sequencer Buttons
-stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_container, sequencer_tab_buttons, button_field_width+20, button_field_height+20, 3, buttonsize, columns, rows, ~style_1, memory);
+stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_container, sequencer_tab_buttons, button_field_width+(2*offset), button_field_height+(2*offset), 3, buttonsize, columns, rows, ~style_1, memory);
 
 
 // ##############
