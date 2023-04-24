@@ -68,8 +68,7 @@
 	// Builds a frame to contain and organize the track and the stack of buttons.
 	arg top_level, width, height, style;
 	var compView = CompositeView(top_level, Rect(0, 0, width, height))
-	//.background_(style.at("top_level_frame_color"));
-	.background_(Color.red);
+	.background_(style.at("top_level_frame_color"));
 	compView.addFlowLayout(0@0);
 	compView.decorator.gap_(0@0);
 	compView;
@@ -190,7 +189,23 @@
 	buttonsStacked;
 };
 
+~build_slider_buttons_seq = {
+	arg top_level, sliderwidth, button_field_height, buttonsize, offset, rows, style;
+	var filler, compView, array, slider_button_data;
+	compView = CompositeView(top_level, Rect(0, 0, sliderwidth+offset, buttonsize+(2*offset)+button_field_height))
+	.background_(style.at("bank_frame_color"));
+	filler = CompositeView(compView, Rect(0, 0, sliderwidth+offset, buttonsize+offset))
+		.background_(style.at("bank_frame_color"));
 
+	// Slider Buttons
+	array = 0!rows;
+
+	array.do{ |rows, i|
+		RangeSlider(compView, Rect(0, buttonsize+offset+(i*buttonsize), sliderwidth, buttonsize))
+	};
+
+	slider_button_data = [compView, array];
+};
 
 
 ~build_sequencer_buttons_seq = {
