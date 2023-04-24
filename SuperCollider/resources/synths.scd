@@ -32,7 +32,7 @@ SynthDef.new(\quitt, {
     Out.ar(\out.kr(0), sig);
 }).add;
 
-SynthDef.new(\bass, {
+SynthDef(\fm, {
     |gate = 1|
     var  sig, env, mod;
     env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, 1, \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
@@ -52,7 +52,7 @@ SynthDef.new(\bass, {
 }).add;
 
 // simple electro kick drum
-SynthDef(\kik, { |freq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, out = 0|
+SynthDef(\kik1, { |freq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, out = 0|
    var fenv = EnvGen.kr(Env([envratio, 1], [freqdecay], \exp)) * freq,
       aenv = EnvGen.kr(Env.perc(0.005, ampdecay), doneAction:2),
 	subenv = EnvGen.kr(Env.perc(0.005, ampdecay/2), doneAction:0),
@@ -62,7 +62,7 @@ SynthDef(\kik, { |freq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, out
    Out.ar(out, (sig + sub) * \amp.kr(0.4));
 }).add;
 
-SynthDef(\sn, {
+SynthDef(\sn1, {
 	|freq = 800, ampdecay = 0.2, out = 0|
     var  sig, ghost, gEnv, snEnv, pEnv;
     snEnv = EnvGen.kr(Env.perc(0.001, ampdecay), doneAction:0);
@@ -72,14 +72,48 @@ SynthDef(\sn, {
 		|n|
 		var temp, dev;
 		dev = {ExpRand(0.6, 1.5)};
-		temp = Blip.ar(\ghosts.kr(20) * dev, \numharm.kr(100)) * dev * gEnv;
+		temp = Blip.ar(\ghosts.kr(20) * dev, \numharm.kr(100)) * dev;
 
 	}).sum;
-   ghost = ghost * \distort.kr(2).tanh;
+   ghost = ghost * gEnv * \distort.kr(2).tanh;
 	sig = WhiteNoise.ar(1) * snEnv;
-	sig = RHPF.ar(sig, \ffreq.kr(1000));
+	sig = RHPF.ar(sig, \ffreq.kr(1000), 0.4);
+	sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
 	sig = [sig + ghost] * \amp.kr(0.3);
    Out.ar(out, sig!2);
+}).add;
+
+SynthDef(\kik2, {
+	var sig;
+	sig = SinOsc.ar(\freq.kr(60) * (1 + (8* Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1));
+	sig = sig + (SinOsc.ar(XLine.ar(4000, 50, 0.01) * Env.perc(0.0001, 0.01).ar * -5.dbamp));
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 10120, 0.5) + Env.perc(0.001, 0.03).ar * -8.dbamp);
+	sig = sig * (1 + (2 * Env.perc(0.001, 0.2).ar));
+	sig = (sig * 0.dbamp).tanh;
+	sig = sig * Env.perc(0.001, 1.3, curve: -8).ar(Done.freeSelf);
+	sig = sig * \amp.kr(-5.dbamp);
+	sig = Pan2.ar(sig, \pan.kr(0));
+	Out.ar(\out.kr(0), sig);
+
+}).add;
+//https://www.youtube.com/watch?v=xYc7_PbbtuE&t=1579s  ab 30:00
+SynthDef(\sn2, {
+	var sig;
+	sig = SinOsc.ar(\freq.kr(200) * (1 + (2* Env.perc(0.001, 0.03).ar)) * [1, 2.3, 3.5, 5.8]); // multichannel
+	sig = sig * Env.perc(0, [2, 0.4, 0.2, 0.1]).ar; // multichannel
+	sig = sig * [0, -20, -12, -24].dbamp; // multichannel
+	sig = sig.sum;
+	sig = sig + (SinOsc.ar(XLine.ar(3000, 100, 0.03)) * Env.perc(0.01, 0.03).ar); // klick
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 2120, 0.3) + Env.perc(0.05, 0.1).ar * -3.dbamp); // different timmbres
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 4120, 0.6) + Env.perc(0.003, 0.15).ar * -8.dbamp);// different timmbres
+	sig = sig + ((sig * 13.dbamp).tanh * -10.dbamp); // paralell distortion
+	sig = sig * Env.perc(0.001, 0.25, curve: -4).ar;
+	sig = sig +( GVerb.ar(sig, 16, 2) * -30.dbamp);
+	sig = sig * Env.perc(0.001, 1, curve: -4).ar(Done.freeSelf);
+	sig = sig * \amp.kr(-5.dbamp);
+	sig = Pan2.ar(sig, \pan.kr(0));
+	Out.ar(\out.kr(0), sig);
+
 }).add;
 
 SynthDef.new(\impulse, {
@@ -154,6 +188,12 @@ SynthDef(\brPhsr, {
     Out.ar(\out.kr(0), sig!2);
 }).add;
 
+// record stuff with mic
+SynthDef(\rec, {
+	var sig;
+	sig = In.ar(\in.kr(2));
+	Out.ar(0, sig!2 * \amp.kr(0.5));
+}).add;
 // Granular Synth
 
 SynthDef(\tgrains, {
@@ -198,6 +238,7 @@ SynthDef.new(\oscfm, {
 	sig = sig * env;
 	Out.ar(\out.ir(0), sig);
 }).add;
+
 
 // building Effect Instruments
 // http://www.dewdrop-world.net/sc3/tutorials/index.php?id=5

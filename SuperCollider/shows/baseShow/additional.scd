@@ -11,7 +11,7 @@ patterns: (
 
 
 	kik01: (
-		instrument:'kik',
+		instrument:'kik1',
 		dur: 0.125,
 		freq: ~melos.melo.kik01,
 		freqdecay: 0.1,
@@ -20,36 +20,39 @@ patterns: (
 	),
 
 	kik02: (
-		instrument:'kik',
+		instrument:'kik2',
+		freq: ~melos.melo.kik01,
 		dur: 0.25,
-		freq: Pseq([60, 50, \],inf),
-		pDecay: 0.1,
-		ampdecay: Pseq([0.7, 2.5, \],inf),
-		ghosts: 20,
-		numharm:100,
 		out: ~ch3.inbus
 	),
 
 	sn01: (
-		instrument: 'sn',
+		instrument: 'sn2',
 		dur: 0.25,
-		atk1: 0.001,
+		atk1: 0.2,
 		rls1: Pwhite(0.2, 1.2, inf),
-		crv1: -2,
-		ghosts: Pseq([\, \, 50,  \, \, \, 45, \], inf),
+		crv1: 2,
+		ghosts: Pseq([\, \, 20,  \, \, \, 25, \], inf),
+		ampDecay: 0.4,
 		freqDecay: 2.3,
-		numharm: 100,
+		numharm: 30,
 		distort: 2,
 		ffreq: Pwhite(800, 2000, inf),
 		amp: 0.5,
 		out: ~ch3.inbus
 	),
+	sn02: (
+		instrument: 'sn2',
+		amp: Pseq([\, \, 0.4,  \, \, \, 0.3, \], inf),
+
+	),
 
 	hh01: (
 		instrument: 'percImp',
-		dur: 0.125,
+		dur: 0.25,
 		accent:  Pwhite(0, 9.0, inf),
 		decayScale:  Pwhite(0.01, 0.4, inf),
+		amp: 0.43,
 		out: ~ch3.inbus
 	),
 
@@ -121,20 +124,19 @@ patterns: (
 		pan:0,
 		amp: 0.3
 	),
-	answer: (
-		instrument:'bass',
-		scale: Scale.chromatic,
-		midinote:  Pseq([Pn(\, 20), 30, \, 33, Pn(\, 3), 30, 30, 33, Pn(\, 3)], inf),
-		dur: 0.125,
-		amp: 0.3,
+	bass: (
+		instrument:'fm',
+		midinote:  ~melos.melo.bass0,
+		dur: 0.25,
+		amp: 0.05,
 		atk: 0.02,
 		rls: 0.2,
 		crv: -3.0,
-		modRate:0.6,
+		modRate:0.2,
 		filTime: 0.1,
 		thr: 0.6,
 		fmFreq: 1400,
-		fmVol: 60,
+		fmVol: 20,
 		cgain: 2.0,
 		distort: 2.5,
 		fade: 1,

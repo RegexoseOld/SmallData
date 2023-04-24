@@ -6,8 +6,9 @@ path = thisProcess.nowExecutingPath;
 ~configFile.load;
 ~resourcePath = PathName(path).parentPath ++ "resources/";
 
-Server.default.options.numInputBusChannels_(0);
+Server.default.options.numInputBusChannels_(1);
 Server.default.options.outDevice_(~audioInterface);
+Server.default.options.inDevice_(~audioInterface);
 s.newBusAllocators;
 ServerTree.removeAll; // löscht alle funktionen
 
@@ -24,6 +25,7 @@ s.waitForBoot({
 
 	/// load SynthDefs, Constants, Functions
 	(~resourcePath ++ "synths.scd").load;
+	(~resourcePath ++ "story.scd").load;
 	(~resourcePath ++ "constants.scd").load;
 	(~resourcePath ++ "functions.scd").load;
 	(~resourcePath ++ "organist.scd").load;
@@ -122,19 +124,18 @@ s.waitForBoot({
 	OSCdef.newMatching(
 		\interpreter,
 		{ arg msg;
-			postf("\nmessage?: %\n", msg);
+			//postf("\nmessage?: %\n", msg);
 			postf("\nnew utt: %", msg[1]);
 			postf("\nnew cat: %\n", msg[2]);
-			postf("\npath  % path is nil? % \n", msg[4], msg[4].isNil);
+			//postf("\npath  % path is nil? % \n", msg[4], msg[4].isNil);
 			~cat = msg[2];
-			~updateUtts.(msg[2]);
-			~updateSample.(msg[4]);
+			~updateUtts.(msg[1], msg[2]);
+			//~updateSample.(msg[4]);
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
 		'/interpreter_input'
 	);
-
 	"done".postln;
 })
 );
@@ -142,10 +143,28 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [3, 4].choose.wait;
+        [4, 5].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
+)
+~sim.stop
+~t.beatsPerBar
+
+Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
+Pbindef(\sn02)
+Synth(\sn2)
+(
+~allocate.(\lec, 13)
+Pbindef(\con).play(~t, quant:4);
+Pbindef(\pr).play(~t, doReset: true,  quant:4);
+~states[\ins][\ins05]
+~allocate.(\pr, 6)
+~states[\pr][\pr05]
+)
+(
+~postBeats = {~t.beats.postln; 4};
+~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 
 Window.closeAll;
@@ -156,23 +175,25 @@ s.makeWindow
 Pbindef.all.do(_.stop);
 ~sim.stop
 ~uttSamples[\praise].play
-
 (
-~fadingSynths.do {|sy| Pbindef(sy).play};
-~runFx.();
+Routine({
+	s.record;
+	wait(0.02);
+	Synth(\rec, [\amp, 1.0, \in, 3]);
+	wait(2);
+	s.stopRecording
+}).play
 )
+~buffers[\catSampDe][0].play
+~buffers[\catSampEn][1].play
+~buffers[\wt].numFrames.isPowerOfTwo
 (
-Synth(\sn, [\ghosts, 20, \numharm, 100])
+var new = ~lastUtterances.rotate(1);
+new.put(0, "six");
+~lastUtterances = new;
+/*new.collect({|item, i|
+	item.postln;
+	if (i <2, {new.put((i+1), item)})
+});
+	new.put(0, "eight");*/
 )
-MIDIFunc.trace(false);
-MIDIFunc.trace(true);
-~fadeVols = 0.3
-
-Pbindef(\sn01).play(~t);
-Pbindef(\kik01).play(~t);
-Pbindef(\con).condition_({ |val, i| i.postln % 6 == 0 });
-Pbindef(\con).trace.play(~t);
-Pbindef(\dis, \amp);
-Pbindef(\dis).play;
-Pbindef(\zahl, \dur, 0.5, \amp, 0.3, \rate, (0.9, 0.95 .. 1.1), \cgain, 1, \zit1, 10, \zit2, 2, \w, 2).play(~t);
-
