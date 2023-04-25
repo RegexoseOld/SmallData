@@ -96,7 +96,8 @@
 // initialize dictionary with audio utterances
 ~categories.do({
 	|cat|
-	~uttSamples.add(cat-> Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav"))
+	var buf = Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav");
+	~uttSamples.add(cat-> [buf, 0, 0]);
 });
 
 
@@ -132,7 +133,8 @@ PathName(~samplesPath).entries.do({
 
 ~updateSample = {
 	|pathString|
-	~uttSamples[~cat] = Buffer.read(s, pathString ++ "/00_utterance.wav")
+	var buf = Buffer.read(s, pathString ++ "/00_utterance.wav");
+	~uttSamples[~cat] = [buf, 0, buf.numFrames];
 };
 
 ~addSample = {

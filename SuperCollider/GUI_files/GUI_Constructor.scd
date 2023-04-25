@@ -33,9 +33,8 @@
 
 ~build_labels_seq = {
 	// Builds a frame to contain the labels of the button rows
-	arg top_level, width, height, buttonsize, offset, style, labels;
-	var array ;
-
+	arg top_level, width, height, buttonsize, offset, style;
+	var array;
 	var compView = CompositeView(top_level, Rect(0, 0, width, height))
 	.background_(style.at("top_level_frame_color"));
 	compView.addFlowLayout(0@0);
@@ -201,7 +200,12 @@
 	array = 0!rows;
 
 	array.do{ |rows, i|
+		var numFrames = ~uttSamples[~categories.at(i)][0].numFrames;
 		RangeSlider(compView, Rect(0, buttonsize+offset+(i*buttonsize), sliderwidth, buttonsize))
+		.action_({ |slider|
+			~uttSamples[~categories.at(i)][1] = (slider.lo.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
+			~uttSamples[~categories.at(i)][2] = (slider.hi.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
+		})
 	};
 
 	slider_button_data = [compView, array];

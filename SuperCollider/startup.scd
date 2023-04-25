@@ -28,6 +28,14 @@ s.waitForBoot({
 	(~resourcePath ++ "functions.scd").load;
 	(~resourcePath ++ "organist.scd").load;
 
+
+	// TODO: this should go into functions.scd when populating ~uttSamples. However, that didnt work, bescasue the buffers were not filled right after the Buffer.read-call
+	s.sync;
+	~categories.do({|cat|
+		~uttSamples[cat][2] = ~uttSamples[cat][0].numFrames
+	});
+	~uttSamples.postln;
+
 	// LOAD GUI FILES
 	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/GUI_Styles.scd");
 	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/GUI_Constructor.scd");

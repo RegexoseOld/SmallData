@@ -64,7 +64,7 @@ top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+labelw
 header = ~build_sequencer_header_seq.value(top_level, button_field_width+labelwidth, headerheight, ~style_1, "Sequencer");
 
 // Build Track
-labels = ~build_labels_seq.value(top_level, labelwidth, buttonsize+button_field_height+(2*offset), buttonsize, offset, ~style_1, categories);
+labels = ~build_labels_seq.value(top_level, labelwidth, buttonsize+button_field_height+(2*offset), buttonsize, offset, ~style_1);
 track_buttons_container = ~build_track_buttons_container_seq.value(top_level, button_field_width+(2*offset), buttonsize+button_field_height+(2*offset), ~style_1);
 track = ~build_sequencer_track_seq.value(track_buttons_container, button_field_width+(2*offset), buttonsize+(2*offset), ~style_1, columns, buttonsize);
 
@@ -84,13 +84,14 @@ Pdefn(\melody, Ppar(
 		var currentOctaveDegree = stacked_buttons[0][1].size - r + memory.at(\seq_mem).at(\melody_octave);
 		var currentVol = memory.at(\seq_mem).at(\melody_amp);
 		Pbind(
-			\instrument, \sampMon,
-			\buf, Pfunc({~uttSamples[~categories[r]]}),
-			\degree, Pif(Pseq(stacked_buttons[0][1][r], inf).coin, 0, \rest),
+			\instrument, \uttSampler,
+			\buf, Pfunc({~uttSamples[~categories[r]][0]}),
 			\delta, memory.at(\seq_mem).at(\delta),
 			\sustain, Pdefn(\p_melody_sus,  memory.at(\seq_mem).at(\melody_sus)),
 			\amp,  Pif(Pseq(stacked_buttons[0][1][r], inf).coin, currentVol, \rest),
 			\out, 0,
+			\start, Pfunc({~uttSamples[~categories[r]][1]}),
+			\end, Pfunc({~uttSamples[~categories[r]][2]}),
 			\track_index, Pseq((0..15), inf),
 			\track_func, Pfunc({|ev| ~update_track_seq.value(ev.track_index, track)});
 )}), inf));
