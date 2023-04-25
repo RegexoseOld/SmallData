@@ -85,11 +85,11 @@ SynthDef(\sn1, {
 
 SynthDef(\kik2, {
 	var sig;
-	sig = SinOsc.ar(\freq.kr(60) * (1 + (8* Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1));
-	sig = sig + (SinOsc.ar(XLine.ar(4000, 50, 0.01) * Env.perc(0.0001, 0.01).ar * -5.dbamp));
-	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 10120, 0.5) + Env.perc(0.001, 0.03).ar * -8.dbamp);
+	sig = SinOsc.ar(\freq.kr(60) * (1 + (8 * Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1));
+	sig = sig + (SinOsc.ar(XLine.ar(4000, 40, 0.01) * Env.perc(0.0001, 0.01).ar * \shaper1.kr(0.5)));
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 10120, 0.5) + Env.perc(0.001, 0.04).ar * \shaper2.kr(0.39));
 	sig = sig * (1 + (2 * Env.perc(0.001, 0.2).ar));
-	sig = (sig * 0.dbamp).tanh;
+	sig = (sig * \distort.kr(1.2)).tanh;
 	sig = sig * Env.perc(0.001, 1.3, curve: -8).ar(Done.freeSelf);
 	sig = sig * \amp.kr(-5.dbamp);
 	sig = Pan2.ar(sig, \pan.kr(0));
