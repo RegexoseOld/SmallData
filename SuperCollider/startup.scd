@@ -6,8 +6,9 @@ path = thisProcess.nowExecutingPath;
 ~configFile.load;
 ~resourcePath = PathName(path).parentPath ++ "resources/";
 
-Server.default.options.numInputBusChannels_(0);
+Server.default.options.numInputBusChannels_(1);
 Server.default.options.outDevice_(~audioInterface);
+Server.default.options.inDevice_(~audioInterface);
 s.newBusAllocators;
 ServerTree.removeAll; // löscht alle funktionen
 
@@ -24,6 +25,7 @@ s.waitForBoot({
 
 	/// load SynthDefs, Constants, Functions
 	(~resourcePath ++ "synths.scd").load;
+	(~resourcePath ++ "story.scd").load;
 	(~resourcePath ++ "constants.scd").load;
 	(~resourcePath ++ "functions.scd").load;
 	(~resourcePath ++ "organist.scd").load;
@@ -122,12 +124,11 @@ s.waitForBoot({
 	OSCdef.newMatching(
 		\interpreter,
 		{ arg msg;
-			postf("\nmessage?: %\n", msg);
+			//postf("\nmessage?: %\n", msg);
 			postf("\nnew utt: %", msg[1]);
 			postf("\nnew cat: %\n", msg[2]);
-			postf("\npath  % path is nil? % \n", msg[4], msg[4].isNil);
 			~cat = msg[2];
-			~updateUtts.(msg[2]);
+			~updateUtts.(msg[1], msg[2]);
 			~updateSample.(msg[4]);
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
@@ -155,24 +156,15 @@ s.makeWindow
 
 Pbindef.all.do(_.stop);
 ~sim.stop
-~uttSamples[\praise].play
 
+// record some stuff..
 (
-~fadingSynths.do {|sy| Pbindef(sy).play};
-~runFx.();
+Routine({
+	s.record;
+	wait(0.02);
+	Synth(\rec, [\amp, 1.0, \in, 3]);
+	wait(2);
+	s.stopRecording
+}).play
 )
-(
-Synth(\sn, [\ghosts, 20, \numharm, 100])
-)
-MIDIFunc.trace(false);
-MIDIFunc.trace(true);
-~fadeVols = 0.3
-
-Pbindef(\sn01).play(~t);
-Pbindef(\kik01).play(~t);
-Pbindef(\con).condition_({ |val, i| i.postln % 6 == 0 });
-Pbindef(\con).trace.play(~t);
-Pbindef(\dis, \amp);
-Pbindef(\dis).play;
-Pbindef(\zahl, \dur, 0.5, \amp, 0.3, \rate, (0.9, 0.95 .. 1.1), \cgain, 1, \zit1, 10, \zit2, 2, \w, 2).play(~t);
 
