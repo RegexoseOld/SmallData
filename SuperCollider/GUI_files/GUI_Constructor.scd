@@ -124,8 +124,8 @@
 	// scrolls over it.
 	fields = Array.fill(columns, { arg i;
 		StaticText(trackCompView, Rect(i * buttonsize, posy, buttonsize,hheight/10))
-		.background_(style[categories[i].asString])
-		.string_("value: \n%".format(~volMin)
+		.background_(style[~categories[i].asString])
+		.string_("value: \n%".format(~volMin))
 		.align_(\bottom);
 	});
 
@@ -133,14 +133,14 @@
 	sequencer_track_data = [trackCompView, fields]
 };
 
-	~build_status = {
+~build_status = {
 	// Builds the status area
 	arg top, posx, posy, style, fWidth, fHeight, utterances;
 	var compView, state, utts, state_data;
 	// Track Composite View
 	compView = CompositeView(top, Rect(posx, posy, fWidth + 30, fHeight +30))
 	.background_(Color.white);
-     state = StaticText(compView, Rect(5, 5 , fWidth, fHeight))
+	state = StaticText(compView, Rect(5, 5 , fWidth, fHeight))
 	.background_(style["bank_frame_color"])
 	.font_(style.at("subheader_font"))
 	.string_("state: 00")

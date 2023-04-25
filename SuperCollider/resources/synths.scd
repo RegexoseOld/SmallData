@@ -177,8 +177,8 @@ SynthDef(\sampMon, {
 SynthDef(\brPhsr, {
     arg buf, rate=1, start, end;
     var sig, ptr, env;
-    ptr = Phasor.ar(0, BufRateScale.kr(buf)* rate, start, end);
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1) ), doneAction: 2);
+    ptr = Phasor.ar(0, BufRateScale.kr(buf)* rate, start, end, 0);
+    env = EnvGen.kr(Env.perc(\atk.kr(0.01), \rls.kr(1), curve: \crv.kr(-3)), doneAction:2);
     sig = 4.collect({
 		var lag = LFNoise1.kr(\lg1.kr(0)).bipolar(\lg2.kr(0.0));
 		lag = lag * s.sampleRate;

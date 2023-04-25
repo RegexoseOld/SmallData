@@ -261,7 +261,7 @@ PathName(~samplesPath).entries.do({
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);
     ~t.schedAbs(~t.nextTimeOnGrid, {
-        if(~checkFadeVols.() >= ~thresCont {
+        if(~checkFadeVols.() >= ~thresCont, {
             ~continuousFadeOut.value(~fadingSynths); 1},
 		{"not fading: fadeVols = %".format(~fadeVols).postln})
     });
