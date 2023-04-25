@@ -200,16 +200,16 @@
 	array = 0!rows;
 
 	array.do{ |rows, i|
-		var numFrames = ~uttSamples[~categories.at(i)][0].numFrames;
-		var buf = ~uttSamples[~categories.at(i)][0];
+		var buffer_info = ~uttSamples[~categories[i]];
+		var numFrames = buffer_info[0].numFrames;
 		SoundFileView(compView, Rect(0, buttonsize+offset+(i*buttonsize), sliderwidth, buttonsize*rel_height))
-		.readFile(SoundFile.openRead(buf.path), 0, buf.numFrames)
+		.readFile(SoundFile.openRead(buffer_info[0].path), 0, numFrames)
 		.drawsRMS_(false)
 		.yZoom_(2);
 		RangeSlider(compView, Rect(0, buttonsize*(1+rel_height)+offset+(i*buttonsize), sliderwidth, buttonsize*(1-rel_height)))
 		.action_({ |slider|
-			~uttSamples[~categories.at(i)][1] = (slider.lo.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
-			~uttSamples[~categories.at(i)][2] = (slider.hi.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
+			buffer_info[1] = (slider.lo.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
+			buffer_info[2] = (slider.hi.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
 		})
 		.background_(Color.white)
 	};
