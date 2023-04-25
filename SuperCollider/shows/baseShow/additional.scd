@@ -9,18 +9,15 @@ patterns: (
 		amp: 0.13
 	),
 
-
 	kik01: (
-		instrument:'kik1',
-		dur: 0.125,
+		instrument:'kik2',
 		freq: ~melos.melo.kik01,
-		freqdecay: 0.1,
-		ampdecay: Pseq([1.3, Pn(\, 7), 0.6, Pn(\, 7), 0.6, Pn(\, 6), 0.6, 1.5, Pn(\, 7) ], inf),
-		out: ~ch3.inbus,
+		dur: 0.25,
+		out: ~ch3.inbus
 	),
 
 	kik02: (
-		instrument:'kik2',
+		instrument:'kik1',
 		freq: ~melos.melo.kik01,
 		dur: 0.25,
 		out: ~ch3.inbus

@@ -21,7 +21,6 @@
 	var sig, wt, buf;
 	sig = Signal.sineFill(size.asInteger, Array.fill(6, {rrand(0.01, 1)}), [0,pi,0,pi,0,0].scramble);
 	wt = sig.asWavetable;
-	wt.size.postln;
 	r{
 		buf = Buffer.alloc(s, size*2);
 		s.sync;
@@ -125,7 +124,7 @@ PathName(~samplesPath).entries.do({
 	}};
 	~lastUtterances = lastUtts;
     ~totalUtts = ~totalUtts + 1;
-    if(~uttDict[cat] >= 15, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
+    if(~uttDict[cat] >= 25, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
 	defer{var index, count;
 	index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
 	count =  ~uttDict[~cat].asString;
@@ -244,17 +243,17 @@ PathName(~samplesPath).entries.do({
 			"10 utts".postln;
     }
     {(~totalUtts > 1) && (~totalUtts < 10) }{
-		Pbindef(\metronom).play(~t, quant:1);
+		//Pbindef(\metronom).play(~t, quant:1);
 	}
     {(~totalUtts == 1)}{
         //"first utt".postln;
 		~runFx.();
 		~activateFaders.();
         ~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
-		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:1)};
+		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
 		Pdefn(\melody).play(~t, quant:1);
 		~patternsPlaying = true;
-		[\answer].do{|n| Pbindef(n).play(~t, quant:1)}
+		[\kik01, \bass].do{|n| Pbindef(n).play(~t, quant:4)}
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);

@@ -15,10 +15,16 @@ melo: (
     con10: Pseq([65, 70, 69, 65], inf),
     lec10: Pseq([72, 75, 75,72], inf),
     dis10: Pseq([77, 76, 77, 76], inf),
+    pr20:  Pseq([Pn(60, 16)], inf),
+    ins20: Pseq([Pn(71, 16)], inf),
+    con20: Pseq([Pn(64, 16)], inf),
+    lec20: Pseq([Pn(68, 16)], inf),
+    dis20: Pseq([Pn(65, 16)], inf),
 	utt: ~numSlots.collect({|n| Buffer.new(s, 10000, 1)}), //  ändern in Buffer mit einen (leisen), Signal
     cad01: Pseq( [[60, 66, 42], [60, 48, 72], [60, 35, 42], [60, 66, 68]], inf),
     cad02: Pseq( [[60, 66, 42, 35], [35, 42, 66], [33, 35, 42], [60, 66, 68]], inf),
 	kik01: Pseq([60, Pn(\, 7), 60, Pn(\, 7), 60, Pn(\, 6), 60, 60, Pn(\, 7) ], inf),
+	kik02: Pseq([Pn(60, 3), \, 60, \, \, Pn([60, \, \], 2)], inf),
 	bass0: Pseq([48, Pn(\, 7), 36, Pn(\, 7)], inf),
 	bass1: Pseq([48, \, \, 39, \, \, 42, 43, 36, \, \, 36, \, \, \, \], inf),
 

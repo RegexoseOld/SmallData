@@ -155,9 +155,13 @@ Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \am
 Pbindef(\sn02)
 Synth(\sn2)
 (
-~allocate.(\lec, 13)
-Pbindef(\con).play(~t, quant:4);
-Pbindef(\pr).play(~t, doReset: true,  quant:4);
+~allocate.(\dis, 21)
+~allocate.(\ins, 21)
+~allocate.(\lec, 21)
+~allocate.(\pr, 21)
+~allocate.(\con, 11)
+Pbindef(\dis, \detune, Pn(Pgeom(30, 0.89, 16),inf));
+Pbindef(\pr, \cgain, 3)
 ~states[\ins][\ins05]
 ~allocate.(\pr, 6)
 ~states[\pr][\pr05]

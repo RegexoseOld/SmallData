@@ -3,6 +3,7 @@ patterns: (
 	pr0: (
 		instrument: 'fm',
 		midinote: ~melos.melo.pr,
+		detune: 0,
 		modRate: 0.4,
 		fmVol: 10,
 		devMin: 0.999,
@@ -72,12 +73,36 @@ patterns: (
         atk: 0.8,
         rls: 2,
         vibF: Pseq([0.6, 0.8, 1.0, 1.2],inf),
+		dev: 0.7,
         vibVol: 30,
         bpf1: Pwhite(200, 600, inf),
         bpf2: 5,
         bpf3: 0.3,
         bpfQ: 0.9,
 
-))
+),
+    pr20: (
+        instrument: 'bellFm',
+        midinote: ~melos[\melo][\pr20],
+		detune: Pn(Pgeom(30, 0.89, 16),inf),
+        dur: 0.25,
+        amp:  Pfunc({~melos.amps.pr}),
+        fade: 0.9,
+        thr: 0.5,
+        cgain: 3,
+        pan: 0,
+        atk: 0.03,
+        rls: 0.2,
+        vibF: 0.2,
+        vibVol: 1,
+		dev:  Pn(Pgeom(1.2, 0.8, 16), inf),
+        bpf1: Pwhite(200, 800, inf),
+        bpf2: 5,
+        bpf3: 0.3,
+        bpfQ: 0.9,
+
+),
+
+)
 
 )

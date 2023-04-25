@@ -3,6 +3,7 @@ patterns: (
 	ins0: (
 		instrument: 'fm',
 		midinote: ~melos.melo.ins,
+		detune: 0,
 		modRate: 0.4,
 		fmVol: 10,
 		devMin: 0.999,
@@ -74,39 +75,24 @@ patterns: (
 	),
 
 
-	ins11: (
-		instrument: 'oscfm',
+	ins20: (
+	   instrument: 'oscfm',
 		buf: Pfunc{~buffers[\wt]},
-		midinote: ~melos.melo.ins,
-		//dur: Pseq(~melos[\duras][\ins], inf),
-		dur: 1,
-		amp:  Pfunc({~melos.amps.ins}),
-		fade: 0.5,
-		atk: 0.3,
-		atkcrv: Prand([-3, -1, 3, 7], inf),
-		rls: 0.65,
-		rlscrv: Pkey(\atkcrv),
-		modfreq: Pwhite(500, 4000, inf),
-		modamp:80,
-		spread: 0.15,
-		dev: 0.9,
-	),
-	ins12: (
-		instrument: 'oscfm',
-		buf: Pfunc{~buffers[\wt]},
-		midinote: ~melos.melo.ins,
-		dur: Pseq(~melos[\duras][\ins], inf),
-	    amp:  Pfunc({~melos.amps.ins}),
-		fade: 0.5,
+		midinote: ~melos[\melo][\ins20],
+		detune: Pn(Pgeom(30, 0.89, 16),inf),
+		dur: 0.25,
+		amp: Pfunc({~melos.amps.ins}),
+		fade: 1,
 		atk: 0.02,
 		atkcrv: 1,
-		rls: 0.5,
-		rlscrv: -3,
+		rls: 0.14,
+		rlscrv: 1,
 		modfreq: 1000,
-		modamp:80,
-		spread: 0.05,
-		dev: 0.7,
+		modamp: 40,
+		spread: 10,
+		dev: Pn(Pgeom(1.2, 0.91, 16), inf),
 	),
+
 
 )
 )
