@@ -163,7 +163,9 @@ s.makeWindow
 
 Pbindef.all.do(_.stop);
 ~sim.stop
-~uttSamples[\praise].play
+~uttSamples[\praise][0].play
+
+
 
 (
 ~fadingSynths.do {|sy| Pbindef(sy).play};

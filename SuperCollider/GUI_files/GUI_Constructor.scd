@@ -190,7 +190,7 @@
 
 ~build_slider_buttons_seq = {
 	arg top_level, sliderwidth, button_field_height, buttonsize, offset, rows, style;
-	var filler, compView, array, slider_button_data;
+	var filler, compView, array, slider_button_data, rel_height=0.6;
 	compView = CompositeView(top_level, Rect(0, 0, sliderwidth+offset, buttonsize+(2*offset)+button_field_height))
 	.background_(style.at("bank_frame_color"));
 	filler = CompositeView(compView, Rect(0, 0, sliderwidth+offset, buttonsize+offset))
@@ -201,11 +201,17 @@
 
 	array.do{ |rows, i|
 		var numFrames = ~uttSamples[~categories.at(i)][0].numFrames;
-		RangeSlider(compView, Rect(0, buttonsize+offset+(i*buttonsize), sliderwidth, buttonsize))
+		var buf = ~uttSamples[~categories.at(i)][0];
+		SoundFileView(compView, Rect(0, buttonsize+offset+(i*buttonsize), sliderwidth, buttonsize*rel_height))
+		.readFile(SoundFile.openRead(buf.path), 0, buf.numFrames)
+		.drawsRMS_(false)
+		.yZoom_(2);
+		RangeSlider(compView, Rect(0, buttonsize*(1+rel_height)+offset+(i*buttonsize), sliderwidth, buttonsize*(1-rel_height)))
 		.action_({ |slider|
 			~uttSamples[~categories.at(i)][1] = (slider.lo.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
 			~uttSamples[~categories.at(i)][2] = (slider.hi.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
 		})
+		.background_(Color.white)
 	};
 
 	slider_button_data = [compView, array];
