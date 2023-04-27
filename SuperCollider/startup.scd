@@ -85,8 +85,8 @@ s.waitForBoot({
 					~states.put(k, patternStates[\patterns][k]);
 					Pbindef(k, *~states[k].asPairs);
 					~additionalSynths.add(k);
-					~cat2Channel.put(k, ~utt);
-					Pbindef(k, \out, ~cat2Channel[k].inbus);
+					//~cat2Channel.put(k, ~utt);
+					//Pbindef(k, \out, ~cat2Channel[k].inbus);
 				};
 			};
 		);
@@ -94,7 +94,7 @@ s.waitForBoot({
 
 	// set fade volume low at the beginning
 	~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005)); ~faderControl.add(k)};
-	~faderControl.add(~additionalSynths.asArray);
+[\bass, \kik01].do {|k| ~faderControl.add(k)};
 
 	// make Patterns for all fading Synths
 	~fadingSynths.do{
@@ -143,7 +143,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [4, 5].choose.wait;
+        [4, 3].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
@@ -158,10 +158,14 @@ Synth(\sn2)
 ~allocate.(\dis, 21)
 ~allocate.(\ins, 21)
 ~allocate.(\lec, 21)
-~allocate.(\pr, 21)
-~allocate.(\con, 11)
+~allocate.(\pr, 9)
+~allocate.(\con, 21)
 Pbindef(\dis, \detune, Pn(Pgeom(30, 0.89, 16),inf));
-Pbindef(\pr, \cgain, 3)
+Pbindef(\pr).play(~t)
+Pbindef(\pr, \vibVol, 30, \bpf, Pn(Pgeom(1000, 0.84, 16), inf), \fade, 0.5, \bpf2, 5, \bpf3, 0.05, \bpfQ, 0.3)
+Pbindef(\con, \detune, Pn(Pgeom(10, 0.5, 16), inf) )
+Pbindef(\sn01, \dur, 1/4, \freq, Pseq([\, \, Pn(200, 6), \, \, 190, \, \, Pn(200, 4), \, \], inf)).quant_(1)
+Pbindef(\sn01, \freq, 300)
 ~states[\ins][\ins05]
 ~allocate.(\pr, 6)
 ~states[\pr][\pr05]
@@ -178,7 +182,6 @@ s.makeWindow
 
 Pbindef.all.do(_.stop);
 ~sim.stop
-~uttSamples[\praise].play
 (
 Routine({
 	s.record;

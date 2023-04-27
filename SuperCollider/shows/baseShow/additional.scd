@@ -13,44 +13,32 @@ patterns: (
 		instrument:'kik2',
 		freq: ~melos.melo.kik01,
 		dur: 0.25,
-		out: ~ch3.inbus
+		out: ~perc.inbus
 	),
 
 	kik02: (
 		instrument:'kik1',
 		freq: ~melos.melo.kik01,
 		dur: 0.25,
-		out: ~ch3.inbus
+		out: ~perc.inbus
 	),
 
 	sn01: (
 		instrument: 'sn2',
+		freq: Pfunc({~melos.melo.sn01}),
 		dur: 0.25,
 		atk1: 0.2,
-		rls1: Pwhite(0.2, 1.2, inf),
-		crv1: 2,
-		ghosts: Pseq([\, \, 20,  \, \, \, 25, \], inf),
-		ampDecay: 0.4,
-		freqDecay: 2.3,
-		numharm: 30,
-		distort: 2,
-		ffreq: Pwhite(800, 2000, inf),
 		amp: 0.5,
-		out: ~ch3.inbus
-	),
-	sn02: (
-		instrument: 'sn2',
-		amp: Pseq([\, \, 0.4,  \, \, \, 0.3, \], inf),
-
+		out: ~perc.inbus
 	),
 
 	hh01: (
 		instrument: 'percImp',
 		dur: 0.25,
 		accent:  Pwhite(0, 9.0, inf),
-		decayScale:  Pwhite(0.01, 0.4, inf),
+		decayScale: Pwhite(0.1, 0.23, inf),
 		amp: 0.43,
-		out: ~ch3.inbus
+		out: ~perc.inbus
 	),
 
 	metronom: (
@@ -125,7 +113,7 @@ patterns: (
 		instrument:'fm',
 		midinote:  ~melos.melo.bass0,
 		dur: 0.25,
-		amp: 0.05,
+		amp: 0.12,
 		atk: 0.02,
 		rls: 0.2,
 		crv: -3.0,
@@ -137,7 +125,8 @@ patterns: (
 		cgain: 2.0,
 		distort: 2.5,
 		fade: 1,
-		sustain: 0.2
+		sustain: 0.2,
+		out: ~bass.inbus
 	)
 )
 )

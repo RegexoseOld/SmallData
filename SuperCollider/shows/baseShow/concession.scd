@@ -67,8 +67,8 @@ patterns: (
 		thr: 0.5,
 		cgain: 1,
 		pan: 0,
-		atk: 1,
-		rls: 2.7,
+		atk: 0.07,
+		rls: 1.1,
 		vibF: Pseq([0.7, 0.99, 1.4, 2.6], inf),
 		vibVol: 30,
 		dev: 0.04,
@@ -82,6 +82,7 @@ patterns: (
 	con20: (
 		instrument: 'bellFm',
 		midinote: ~melos[\melo][\con20],
+		detune: Pn(Pgeom(10, 0.54, 16), inf),
 		dur: 0.25,
 		fade: 0.9,
 		thr: 0.5,

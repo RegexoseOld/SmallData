@@ -13,6 +13,10 @@
 		\con: ~ch3,
 		\lec: ~ch4,
 		\ins: ~ch5,
+		\kik01: ~perc,
+		\sn01 : ~perc,
+		\h01: ~perc,
+		\bass: ~bass
 	);
 };
 
@@ -45,6 +49,8 @@
 		~ch4 = MixerChannel(\ch4, s, 2, 2, outbus: ~master);
 		~ch5 = MixerChannel(\ch5, s, 2, 2, outbus: ~master);
 		~utt = MixerChannel(\ch6, s, 2, 2, outbus: ~master);
+		~perc = MixerChannel(\ch7, s, 2, 2, outbus: ~master);
+		~bass = MixerChannel(\ch8, s, 2, 2, outbus: ~master);
 		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
 		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
 		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);

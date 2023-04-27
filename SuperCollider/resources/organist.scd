@@ -6,14 +6,13 @@
 	//"chan   %    and i   %  current  % ".format(ch, i, ~currentUttPattern.asString).postln;
 	value = MIDIFunc.cc({
 		arg ...args;
-		//args[..2].postln;
-		if (i < 5, {
-			"activated  % ".format(ch).postln;
+		args[..2].postln;
+		if (i < 6, {
+			"activated  % ".format(ch.asString).postln;
 			~cat2Channel[ch].level = args[0].linlin(0, 127, 0.0, 1.0);
 		}, {
-			//"activated  % ".format(~currentUttPattern.asString).postln;
-			~cat2Channel[~currentUttPattern].level = args[0].linlin(0, 127, 0.0, 1.0);
-			//Pbindef(~currentUttPattern, \grainAmp, Pfunc{args[0].linlin(0, 127, 0.0, 1.0)} ):
+			"activated  % ".format(ch.asString).postln;
+			~cat2Channel[ch].level = args[0].linlin(0, 127, 0.0, 1.0);
 		})
 	},
 	i,

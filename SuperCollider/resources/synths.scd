@@ -104,8 +104,8 @@ SynthDef(\sn2, {
 	sig = sig * [0, -20, -12, -24].dbamp; // multichannel
 	sig = sig.sum;
 	sig = sig + (SinOsc.ar(XLine.ar(3000, 100, 0.03)) * Env.perc(0.01, 0.03).ar); // klick
-	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 2120, 0.3) + Env.perc(0.05, 0.1).ar * -3.dbamp); // different timmbres
-	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 4120, 0.6) + Env.perc(0.003, 0.15).ar * -8.dbamp);// different timmbres
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 2120, 0.3) + Env.perc(0.05, 0.1).ar * \shaper1.kr(0.5)); // different timmbres
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 4120, 0.6) + Env.perc(0.003, 0.15).ar * \shaper2.kr(0.5));// different timmbres
 	sig = sig + ((sig * 13.dbamp).tanh * -10.dbamp); // paralell distortion
 	sig = sig * Env.perc(0.001, 0.25, curve: -4).ar;
 	sig = sig +( GVerb.ar(sig, 16, 2) * -30.dbamp);
