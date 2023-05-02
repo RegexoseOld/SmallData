@@ -144,8 +144,7 @@ PathName(~samplesPath).entries.do({
 ~updateSample = {
 	|pathString|
 	Buffer.read(s, pathString ++ "/00_utterance.wav", action: {arg buffer;
-		"New Sample Loaded".postln;
-		AppClock.sched(0, {buffer.postln; ~uttSamples.put(~cat, [buffer, 0, buffer.numFrames])});
+		AppClock.sched(0, {~uttSamples.put(~cat, [buffer, 0, buffer.numFrames-1])});
 		AppClock.sched(0, {~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames)
 			.drawsRMS_(false)
 			.yZoom_(2)});

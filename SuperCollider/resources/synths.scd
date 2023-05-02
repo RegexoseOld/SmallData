@@ -192,7 +192,7 @@ SynthDef(\uttSampler, {
     arg buf, rate=1, start, end;
     var sig, ptr, env;
     ptr = Phasor.ar(0, BufRateScale.kr(buf)*rate, start, end);
-	env = EnvGen.kr(Env.step([1], [(end-start)/s.sampleRate] ), doneAction: 2);
+	env = EnvGen.kr(Env.step([1], [(end-start)/BufSampleRate.kr(buf)] ), doneAction: 2);
 	sig = BufRd.ar(1, buf, ptr, 0.0);
     sig = sig * env * \amp.kr(0.3);
     Out.ar(\out.kr(0), sig!2);
