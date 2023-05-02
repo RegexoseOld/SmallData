@@ -100,7 +100,7 @@ patterns: (
 		buf: Pseq(~melos[\slots][\utt], inf),
 		dur: 2,
 		atk: 0.01,
-		rls: 1.4,
+		rls: 0.1,
 		start: 0,
 		end: 5000,
 		amp: 0.3

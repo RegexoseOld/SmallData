@@ -117,8 +117,16 @@ PathName(~samplesPath).entries.do({
 	});
 
 ~updateUtts = {
-    |cat|
+    |utt, cat|
     //postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
+	var lastUtts = ~lastUtterances.rotate(1), lastCats = ~lastCategories.rotate(1);
+	lastUtts.put(0, utt);
+	lastCats.put(0, cat);
+	defer {3. do{|i|
+		~status[2][i].string = lastCats[i] ++ " : " ++ lastUtts[i]
+	}};
+	~lastUtterances = lastUtts;
+	~lastCategories = lastCats;
     ~totalUtts = ~totalUtts + 1;
     if(~uttDict[cat] >= 15, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
 	defer{var index, count;
@@ -172,26 +180,19 @@ PathName(~samplesPath).entries.do({
 ~addVolume = {
 	|cat|
 	var c, editVol, allVolumes=List.new;
-	editVol = ~fadePatterns[cat][\vol];
+	editVol =  ~melos[\amps][cat];
 	//postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
 	c = case
-	{editVol <= ~volThres}{ ~fadePatterns[cat][\vol] = editVol + (~volPlus * ~volFac) }// double enhance when pattern is very quiet
-	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~fadePatterns[cat][\vol] = editVol + ~volPlus}
-	{editVol >= ~volMax}{ ~fadePatterns[cat][\vol] = ~volMax}
+	{editVol <= ~volThres}{ ~fadePatterns[cat][\vol] = editVol + (~volPlus * ~addFac) }// double enhance when pattern is very quiet
+	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~melos[\amps][cat] = editVol + ~volPlus}
+	{editVol >= ~volMax}{  ~melos[\amps][cat] = ~volMax}
 	{true}{"end of addVolume".postln};
-	Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
 	//postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
-	~fadePatterns.values.collect{
-		|v|
-		allVolumes.add(v['vol']);
-	};
-
-	~fadeVols = allVolumes.sum;
 	defer{var index, height, text;
 	//"updating mc: index % height  % text  %".format(index, height, text);
 	index = ~fadingSynths.detectIndex({|it, i| it == cat});
-	height = ~fadePatterns[cat][\vol].linlin(0.001, 1.0, 10, 360);
-	text =  ~fadePatterns[cat][\vol].trunc(0.001).asString;
+	height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
+	text =  ~melos[\amps][cat].trunc(0.001).asString;
 	~mc_track[1][index].resizeTo(100, height);
 	~mc_track[1][index].string = text;
 	}
@@ -204,19 +205,19 @@ PathName(~samplesPath).entries.do({
 	listOfPatterns.do({
 		|cat|
 		var vol, c;
-		vol = ~fadePatterns[cat][\vol];
+		vol = ~melos[\amps][cat];
 		//postf("\nthe vol %  of the pattern   %\n", vol, cat);
 		c = case
-		{(vol > ~volMin) && (vol >= ~volThres)} {~fadePatterns[cat][\vol] = vol - (~volStep*2)} // loud volumes decrease fast
-		{(vol <= ~volThres) && (vol >= ~volMin)} {~fadePatterns[cat][\vol] = vol - ~volStep;} // middle volumes decrease slower
-		{vol <= ~volMin} {~fadePatterns[cat][\vol] = ~volMin}
+		{(vol > ~volMin) && (vol >= ~volThres)} {~melos[\amps][cat] = vol - (~volStep * ~subFac)} // loud volumes decrease fast
+		{(vol <= ~volThres) && (vol >= ~volMin)} {~melos[\amps][cat]= vol - ~volStep;} // middle volumes decrease slower
+		{vol <= ~volMin} {~melos[\amps][cat] = ~volMin}
 		{true}{"end of fade cases"};
 		Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
 		defer{var index, height, text;
 			//"updating mc: index % height  % text  %".format(index, height, text);
 			index = ~fadingSynths.detectIndex({|it, i| it == cat});
-			height = ~fadePatterns[cat][\vol].linlin(0.001, 1.0, 10, 360);
-			text = ~fadePatterns[cat][\vol].trunc(0.001).asString;
+			height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
+			text = ~melos[\amps][cat].trunc(0.001).asString;
 			~mc_track[1][index].resizeTo(100, height);
 			~mc_track[1][index].string = text;
 		}
@@ -266,7 +267,7 @@ PathName(~samplesPath).entries.do({
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);
     ~t.schedAbs(~t.nextTimeOnGrid, {
-        if(~checkFadeVols.() >= 0.15, {
+        if(~checkFadeVols.() >= ~thresCont, {
             ~continuousFadeOut.value(~fadingSynths); 1},
 		{"not fading: fadeVols = %".format(~fadeVols).postln})
     });
@@ -275,12 +276,10 @@ PathName(~samplesPath).entries.do({
 
 ~mock = {
     var cat = ~categories.choose;
-	~cat = 'insinuation';
-    //~cat = cat;
-
-    ~updateUtts.(cat);
-	~setGlobal.value();
+	/* ~cat = 'insinuation';
+	~updateUtts.("das ist gut", cat);
+ 	~setGlobal.value();*/
+	m = NetAddr("127.0.0.1", 57120);
+	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], ~resourcePath ++ "samples/lec01/");
+	~storyIndex = ~storyIndex + 1;
 };
-
-
-PathName("/Users/staude/Projekte/").folderName.postln;

@@ -78,7 +78,7 @@
 	arg top_level, posx, posy, width, height, style, buttonsize, uttdict;
 	var array, compView, labels, counts, label_data;
 	//"pos x %   pos y %".format(posx, posy).postln;
-	labels = uttdict.keys.asList ++ ["total"];
+	labels = ~categories ++ ["total"];
 	counts = uttdict.values ++ [0];
 	compView = CompositeView(top_level, Rect(posx, posy, width, height))
 	.background_(Color.white);
@@ -118,7 +118,7 @@
 
 ~build_mc_track = {
 	// Builds the MC Track
-	arg top, posx, posy, hwidth, hheight, style, columns, buttonsize, categories;
+	arg top, posx, posy, hwidth, hheight, style, columns, buttonsize;
 	var trackCompView, fields, values, sequencer_track_data;
 
 	// Track Composite View
@@ -130,13 +130,38 @@
 	// scrolls over it.
 	fields = Array.fill(columns, { arg i;
 		StaticText(trackCompView, Rect(i * buttonsize, posy, buttonsize,hheight/10))
-		.background_(style[categories[i].asString])
-		.string_("value: \n%".format(hheight/10))
+		.background_(style[~categories[i].asString])
+		.string_("value: \n%".format(~volMin))
 		.align_(\bottom);
 	});
 
 	top.decorator.nextLine;
 	sequencer_track_data = [trackCompView, fields]
+};
+
+~build_status = {
+	// Builds the status area
+	arg top, posx, posy, style, fWidth, fHeight, utterances;
+	var compView, state, utts, state_data;
+	// Track Composite View
+	compView = CompositeView(top, Rect(posx, posy, fWidth + 30, fHeight +30))
+	.background_(Color.white);
+	state = StaticText(compView, Rect(5, 5 , fWidth, fHeight))
+	.background_(style["bank_frame_color"])
+	.font_(style.at("subheader_font"))
+	.string_("state: 00")
+	.align_(\bottomLeft);
+	compView.addFlowLayout(0@0);
+	compView.decorator.gap_(0@5);
+	utts = Array.fill(3, { arg i;
+		StaticText(compView, Rect(5, 20 * i, fWidth, fHeight/6))
+		.background_(style["header_frame_color"])
+		.font_(style.at("text_font"))
+		.string_(utterances[i])
+		.align_(\topLeft);
+	});
+	//top.decorator.nextLine;
+	state_data = [compView, state, utts]
 };
 
 ~build_sequencer_tabbed_stack_seq = {
