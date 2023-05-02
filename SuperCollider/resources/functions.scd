@@ -270,11 +270,10 @@ PathName(~samplesPath).entries.do({
 
 ~mock = {
     var cat = ~categories.choose;
-	~cat = 'insinuation';
-    m = NetAddr("127.0.0.1", 57120);
-	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/resources/samples/catSampDe/Belehrung.aiff");
+	/* ~cat = 'insinuation';
+	~updateUtts.("das ist gut", cat);
+ 	~setGlobal.value();*/
+	m = NetAddr("127.0.0.1", 57120);
+	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], ~resourcePath ++ "samples/lec01/");
 	~storyIndex = ~storyIndex + 1;
 };
-
-
-PathName("/Users/staude/Projekte/").folderName.postln;
