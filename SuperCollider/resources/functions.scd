@@ -144,19 +144,17 @@ PathName(~samplesPath).entries.do({
 ~updateSample = {
 	|pathString|
 	Buffer.read(s, pathString ++ "/00_utterance.wav", action: {arg buffer;
-		AppClock.sched(0, {~uttSamples.put(~cat, [buffer, 0, buffer.numFrames-1])});
-		AppClock.sched(0, {~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames)
-			.drawsRMS_(false)
-			.yZoom_(2)});
-		AppClock.sched(0,
-			{~slider_buttons[1][~cat][1].lo_(0);
+		AppClock.sched(0, {
+			~uttSamples.put(~cat, [buffer, 0, buffer.numFrames-1]);
+			~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames);
+			~slider_buttons[1][~cat][1].lo_(0);
 			~slider_buttons[1][~cat][1].hi_(1);
-				~slider_buttons[1][~cat][1]
-				.action_({ |slider|
-					~uttSamples[~cat][1] = (slider.lo.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
-					~uttSamples[~cat][2] = (slider.hi.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
-				})
-		})
+			~slider_buttons[1][~cat][1]
+			.action_({ |slider|
+				~uttSamples[~cat][1] = (slider.lo.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
+				~uttSamples[~cat][2] = (slider.hi.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
+			})
+		});
 	});
 };
 
