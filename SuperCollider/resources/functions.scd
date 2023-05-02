@@ -96,8 +96,10 @@
 // initialize dictionary with audio utterances
 ~categories.do({
 	|cat|
-	var buf = Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav");
-	~uttSamples.add(cat-> [buf, 0, 0]);
+	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav",
+		action: {arg buffer;
+			~uttSamples.add(cat-> [buffer, 0, buffer.numFrames]);
+	});
 });
 
 
@@ -141,12 +143,22 @@ PathName(~samplesPath).entries.do({
 
 ~updateSample = {
 	|pathString|
-	var buf;
-	buf = Buffer.read(s, pathString ++ "/00_utterance.wav");
-	AppClock.sched(0, {~uttSamples.put(~cat, [buf, 0, buf.numFrames])});
-	AppClock.sched(0, {~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buf.path), 0, buf.numFrames)
+	Buffer.read(s, pathString ++ "/00_utterance.wav", action: {arg buffer;
+		"New Sample Loaded".postln;
+		AppClock.sched(0, {buffer.postln; ~uttSamples.put(~cat, [buffer, 0, buffer.numFrames])});
+		AppClock.sched(0, {~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames)
 			.drawsRMS_(false)
-		.yZoom_(2)});
+			.yZoom_(2)});
+		AppClock.sched(0,
+			{~slider_buttons[1][~cat][1].lo_(0);
+			~slider_buttons[1][~cat][1].hi_(1);
+				~slider_buttons[1][~cat][1]
+				.action_({ |slider|
+					~uttSamples[~cat][1] = (slider.lo.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
+					~uttSamples[~cat][2] = (slider.hi.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
+				})
+		})
+	});
 };
 
 ~addSample = {
