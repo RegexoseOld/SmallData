@@ -133,8 +133,12 @@ PathName(~samplesPath).entries.do({
 
 ~updateSample = {
 	|pathString|
-	var buf = Buffer.read(s, pathString ++ "/00_utterance.wav");
-	~uttSamples[~cat] = [buf, 0, buf.numFrames];
+	var buf;
+	buf = Buffer.read(s, pathString ++ "/00_utterance.wav");
+	AppClock.sched(0, {~uttSamples.put(~cat, [buf, 0, buf.numFrames])});
+	AppClock.sched(0, {~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buf.path), 0, buf.numFrames)
+			.drawsRMS_(false)
+		.yZoom_(2)});
 };
 
 ~addSample = {

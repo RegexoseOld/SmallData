@@ -1,7 +1,7 @@
 // Sequencer
 (
 var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=200;
-var window, categories =  ["praise", "concession", "insinuation","dissent","lecture"], top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, slider_container, slider_buttons, start_instrument=\default, pattern, instruments=[\default, \peep_sequencer, \sin_tone_sequencer, \buzzy_bram_sequencer, \phase_mod_sequencer, \sin_fb_synth_sequencer, \subtract_noise_synth_sequencer], memory=~gm, mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
+var window, categories =  ["praise", "concession", "insinuation","dissent","lecture"], top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, slider_container, start_instrument=\default, pattern, instruments=[\default, \peep_sequencer, \sin_tone_sequencer, \buzzy_bram_sequencer, \phase_mod_sequencer, \sin_fb_synth_sequencer, \subtract_noise_synth_sequencer], memory=~gm, mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
 var button_field_width=buttonsize*columns, button_field_height=buttonsize*rows;
 
 // #############################
@@ -72,7 +72,7 @@ track = ~build_sequencer_track_seq.value(track_buttons_container, button_field_w
 stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_container, sequencer_tab_buttons, button_field_width+(2*offset), button_field_height+(2*offset), 3, buttonsize, columns, rows, ~style_1, memory);
 
 // slider_container = ~build_track_buttons_container_seq.value(top_level, sliderwidth, buttonsize+button_field_height+(2*offset), ~style_1);
-slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
+~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
 
 // ##############
 // Build Patterns

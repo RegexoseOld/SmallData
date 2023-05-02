@@ -190,31 +190,31 @@
 
 ~build_slider_buttons_seq = {
 	arg top_level, sliderwidth, button_field_height, buttonsize, offset, rows, style;
-	var filler, compView, array, slider_button_data, rel_height=0.6;
+	var filler, compView, sliderAndFileViews, slider_button_data, rel_height=0.6;
 	compView = CompositeView(top_level, Rect(0, 0, sliderwidth+offset, buttonsize+(2*offset)+button_field_height))
 	.background_(style.at("bank_frame_color"));
 	filler = CompositeView(compView, Rect(0, 0, sliderwidth+offset, buttonsize+offset))
 		.background_(style.at("bank_frame_color"));
 
-	// Slider Buttons
-	array = 0!rows;
-
-	array.do{ |rows, i|
+	sliderAndFileViews=Dictionary.new;
+	~categories.do({arg cat, i;
 		var buffer_info = ~uttSamples[~categories[i]];
 		var numFrames = buffer_info[0].numFrames;
-		SoundFileView(compView, Rect(0, buttonsize+offset+(i*buttonsize), sliderwidth, buttonsize*rel_height))
-		.readFile(SoundFile.openRead(buffer_info[0].path), 0, numFrames)
-		.drawsRMS_(false)
-		.yZoom_(2);
-		RangeSlider(compView, Rect(0, buttonsize*(1+rel_height)+offset+(i*buttonsize), sliderwidth, buttonsize*(1-rel_height)))
-		.action_({ |slider|
-			buffer_info[1] = (slider.lo.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
-			buffer_info[2] = (slider.hi.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
-		})
-		.background_(Color.white)
-	};
+		sliderAndFileViews[cat] = [
+			SoundFileView(compView, Rect(0, buttonsize+offset+(i*buttonsize), sliderwidth, buttonsize*rel_height))
+			.readFile(SoundFile.openRead(buffer_info[0].path), 0, numFrames)
+			.drawsRMS_(false)
+			.yZoom_(2),
+			RangeSlider(compView, Rect(0, buttonsize*(1+rel_height)+offset+(i*buttonsize), sliderwidth, buttonsize*(1-rel_height)))
+			.action_({ |slider|
+				buffer_info[1] = (slider.lo.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
+				buffer_info[2] = (slider.hi.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
+			})
+			.background_(Color.white)
+		]
+	});
 
-	slider_button_data = [compView, array];
+	slider_button_data = [compView, sliderAndFileViews];
 };
 
 
