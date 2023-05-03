@@ -72,7 +72,7 @@ track = ~build_sequencer_track_seq.value(track_buttons_container, button_field_w
 // Build the Sequencer Buttons
 stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_container, sequencer_tab_buttons, button_field_width+(2*offset), button_field_height+(2*offset), 3, buttonsize, columns, rows, ~style_1, memory);
 
-// slider_container = ~build_track_buttons_container_seq.value(top_level, sliderwidth, buttonsize+button_field_height+(2*offset), ~style_1);
+// Build SoundFileView and RangeSliders
 ~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
 
 // ##############
@@ -98,5 +98,8 @@ Pdefn(\melody, Ppar(
 )}), inf));
 
 
-CmdPeriod.add({window.close;});
+CmdPeriod.add({
+	window.close;
+	mc_window.close;
+});
 )
