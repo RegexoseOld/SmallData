@@ -145,11 +145,11 @@ PathName(~samplesPath).entries.do({
 	|pathString|
 	Buffer.read(s, pathString ++ "/00_utterance.wav", action: {arg buffer;
 		AppClock.sched(0, {
-			~uttSamples.put(~cat, [buffer, 0, buffer.numFrames-1]);
-			~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames);
-			~slider_buttons[1][~cat][1].lo_(0);
-			~slider_buttons[1][~cat][1].hi_(1);
-			~slider_buttons[1][~cat][1]
+			~uttSamples.put(~cat, [buffer, 0, buffer.numFrames-1]); // update sample
+			~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames); // update SoundFileView
+			~slider_buttons[1][~cat][1].lo_(0); // reset low-end of Slider
+			~slider_buttons[1][~cat][1].hi_(1); // reset hi-end of Slider
+			~slider_buttons[1][~cat][1]  // update  start and end of sample
 			.action_({ |slider|
 				~uttSamples[~cat][1] = (slider.lo.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
 				~uttSamples[~cat][2] = (slider.hi.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;

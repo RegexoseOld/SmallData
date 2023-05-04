@@ -98,8 +98,8 @@ Pdefn(\melody, Ppar(
 )}), inf));
 
 
-CmdPeriod.add({
+/*CmdPeriod.add({
 	window.close;
 	mc_window.close;
-});
+});*/
 )
