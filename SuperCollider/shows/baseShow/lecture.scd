@@ -90,19 +90,19 @@ patterns: (
 		dur: 0.25,
 	    amp:  Pfunc({~melos.amps.lec}),
 		atk: 0.002,
-		rls: 0.15,
+		rls: 0.1,
 		sus: 1,
 		crv: -3.0,
 		modRate: 0.9,
-		filTime: 0.6,
+		filTime: 0.1,
 		devMin: Pn(Pgeom(0.999, 0.999, 16), inf),
 		devMax: Pn(Pgeom(1.001, 1.001, 16), inf),
 		fmFreq: 800,
-		fmVol: 200,
+		fmVol: 150,
 		cgain: 2,
 		distort: 2.5,
 		fade: Pkey(\harmonic).lincurve(1, 20, 0.85, 0.2, -4),
-		sustain: 0.2
+		sustain: 0.12
 	),
 
 )

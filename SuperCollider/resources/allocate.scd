@@ -17,7 +17,7 @@
 		Pbindef(\kik01, \freq, ~melos.melo.kik01, \amp, 0.43).quant_(4);
 	    Pbindef(\sn01).stop;
 		Pbindef(\hh01).stop;
-		status = "state 00 init";
+		status = "state 00 layered chords";
 	}
     {(count >= 5) && (count <= 10)} {
         in_count = count-4;
@@ -30,7 +30,7 @@
 		Pbindef(\sn01, \freq, Pif((count %3==0), ~melos.melo.sn03, ~melos.melo.sn02, ~melos.melo.sn01)).play(~t, quant:1);
 		Pbindef(\hh01).stop;
         numNotes = 2;
-        status = "state 01 instrument changed \n bass line increases ";
+        status = "state 01 instrument changed \n bass line increases, switching beats ";
     }
     {(count > 10) && (count <=20)} {
         in_count = count - 10;
@@ -39,13 +39,13 @@
 		Pbindef(\hh01, \decayScale, Pwhite(0.1, 0.3, inf)).play(~t, quant:1);
         Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 	    Pbindef(\bass, \amp, Pif((in_count%3 == 0), 0, 0.25, 0.25 ),
-			\midinote, Pif(in_count.even, ~melos.melo.bass1 -3.midicps, ~melos.melo.bass2, ~melos.melo.bass0);
+			\midinote, Pif(in_count.even, ~melos.melo.bass1 +12, ~melos.melo.bass2, ~melos.melo.bass0);
 		).quant_(4);
 		Pbindef(\sn01, \freq, Pif((count%3 ==0), ~melos.melo.sn03, ~melos.melo.sn01, ~melos.melo.sn01)).quant_(1);
         numNotes = 3;
-        status = "state 02 Hihat"
+        status = "state 02 changing bass lines \n longer notes"
 	}
-    {(count > 20) && (count <=25)} {
+    {(count > 20) && (count <=29)} {
         in_count = count - 10;
         patName = catName ++ "20";
 		Pbindef(\kik01, \freq, ~melos.melo.kik01, \amp, 0.43).quant_(4);
@@ -55,7 +55,7 @@
         Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 	    Pbindef(\bass, \amp, Pif((in_count%3 == 0), 0, 0.25, 0.25 )).quant_(4);
         numNotes = 3;
-        status = "state 03 glissando";
+        status = "state 03 one-notes with downward glissando";
     }
     {true} { "end of attCat reached".postln};
 

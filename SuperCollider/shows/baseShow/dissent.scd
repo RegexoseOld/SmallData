@@ -84,7 +84,7 @@ patterns:(
 		instrument: 'quitt',
 		midinote: ~melos.melo.dis20,
 		dur: 0.25,
-		amp:  Pfunc({~melos.amps.dis}),
+		amp: Pfunc({~melos.amps.dis}),
 		fade: 0.9,
 		thr: 0.5,
 		cgain: 3,
@@ -93,8 +93,13 @@ patterns:(
 		rls: 0.14,
 		width: 0.4,
 		detune: Pn(Pgeom(30, 0.89, 16),inf),
-		gendAmp: 0,
-		pulseMul: 0.15,
+		gendAmp: 0.9,
+		pulseMul: 0.35,
+		lag: 0,
+		ffreq: 2000,
+		rq: 0.8,
+		width: 0.3,
+
 
 	),
 

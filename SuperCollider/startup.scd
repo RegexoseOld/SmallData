@@ -143,7 +143,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [4, 3].choose.wait;
+        [5, 3].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
@@ -158,13 +158,14 @@ Synth(\sn2)
 ~allocate.(\dis, 21)
 ~allocate.(\ins, 21)
 ~allocate.(\lec, 21)
-~allocate.(\pr, 9)
+~allocate.(\pr, 21)
 ~allocate.(\con, 21)
-Pbindef(\dis, \detune, Pn(Pgeom(30, 0.89, 16),inf));
+Pbindef(\dis, \thr, 0.7, \cgain, 1.4, \gendAmp, 0.9, \ffreq, 2600, \rq, 0.8, \lag, 0, \pulseMul, 0.6, \add, 0, \width, 0.3);
 Pbindef(\pr).play(~t)
-Pbindef(\pr, \vibVol, 30, \bpf, Pn(Pgeom(1000, 0.84, 16), inf), \fade, 0.5, \bpf2, 5, \bpf3, 0.05, \bpfQ, 0.3)
-Pbindef(\con, \detune, Pn(Pgeom(10, 0.5, 16), inf) )
+Pbindef(\pr, \cgain, 1.0, \vibF, Pseq([0.2, 4, 2.0, 0.4],inf), \bpf, Pwhite(300, 600, inf) )
+Pbindef(\con, \detune, 0)
 Pbindef(\sn01, \dur, 1/4, \freq, Pseq([\, \, Pn(200, 6), \, \, 190, \, \, Pn(200, 4), \, \], inf)).quant_(1)
+Pbindef(\lec, \fmVol, 150, \fmVol, 150, \filTime, 0.1, \modRate, 0.9, \rls, 0.1, \sustain, 0.15)
 Pbindef(\sn01, \freq, 300)
 ~states[\ins][\ins05]
 ~allocate.(\pr, 6)
