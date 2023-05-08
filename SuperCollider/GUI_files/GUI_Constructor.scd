@@ -151,7 +151,7 @@
 	.font_(style.at("subheader_font"))
 	.string_("state: 00")
 	.align_(\bottomLeft);
-	compView.addFlowLayout(0@0);
+	compView.addFlowLayout(5@0);
 	compView.decorator.gap_(0@5);
 	utts = Array.fill(3, { arg i;
 		StaticText(compView, Rect(5, 20 * i, fWidth, fHeight/6))
@@ -162,6 +162,25 @@
 	});
 	//top.decorator.nextLine;
 	state_data = [compView, state, utts]
+};
+
+~build_rotary_fader = {
+	|top, posx, posy, style, size, constants, mins, maxes|
+	var knobs, knobView, constant;
+	knobs = Array.fill(3, {|i|
+		Knob(top, Rect(posx, (posy + size) * i, size, size))
+		.mode_(\round)
+		.visible_(true)
+		.enabled_(true)
+		.action_({
+			|v|
+			constants[i].postln;
+			currentEnvironment.put(constants[i], v.value.lincurve(0.0, 1.0, mins[i], maxes[i]));
+			"knob value %\nconstant value %".format(v.value, currentEnvironment.at(constants[i])).postln;
+
+		});
+	});
+	knobView = knobs;
 };
 
 ~build_sequencer_tabbed_stack_seq = {

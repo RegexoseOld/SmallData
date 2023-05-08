@@ -1,7 +1,7 @@
 // Sequencer
 (
 var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300;
-var window, categories =  ["praise", "concession", "insinuation","dissent","lecture"], top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, slider_container, start_instrument=\default, pattern, instruments=[\default, \peep_sequencer, \sin_tone_sequencer, \buzzy_bram_sequencer, \phase_mod_sequencer, \sin_fb_synth_sequencer, \subtract_noise_synth_sequencer], memory=~gm, mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
+var window, top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, slider_container, start_instrument=\default, pattern, instruments=[\default, \peep_sequencer, \sin_tone_sequencer, \buzzy_bram_sequencer, \phase_mod_sequencer, \sin_fb_synth_sequencer, \subtract_noise_synth_sequencer], memory=~gm, mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
 var button_field_width=buttonsize*columns, button_field_height=buttonsize*rows;
 
 // #############################
@@ -46,13 +46,14 @@ memory.at(\seq_mem).put(\recGroup, Group.after(memory.at(\seq_mem).at(\ptrGroup)
 
 mc_catwidth = 100;
 mc_catheight = 120;
-mc_window = ~build_window_seq.("MC", ~style_1, 10, 10, mc_catwidth*5+500, mc_catheight + 380);
+mc_window = ~build_window_seq.("MC", ~style_1, 10, 10, mc_catwidth*6+500, mc_catheight + 380);
 mc_top = ~build_top_level_seq.(mc_window, 10, 10, mc_catwidth*5+ 720, mc_catheight*5+360, ~style_1);
 
 // frame for MC Track
 ~mc_track = ~build_mc_track.(mc_top, 10, 0,  mc_catwidth*5+20, mc_catheight *3, ~style_1, 5, mc_catwidth);
 ~mc_labels = ~build_mc_labels.(mc_top, 10, mc_catheight *3 + 30, mc_catwidth*6 , 60, ~style_1, mc_catwidth, ~uttDict);
-~status = ~build_status.(mc_window, mc_catwidth *6, 20, ~style_1, mc_catwidth * 3, mc_catheight * 3.5, ~lastUtterances);
+~status = ~build_status.(mc_window, mc_catwidth*6 +50, 20, ~style_1, mc_catwidth * 3, mc_catheight * 3.5, ~lastUtterances);
+~knobs = ~build_rotary_fader.(mc_window, mc_catwidth *10, 20, ~style_1, mc_catwidth *2/3, [\thresCont, \addFac, \subFac], [0.05, 0.5, 0.2], [0.4, 1.7, 2.2]);
 
 
 // #########

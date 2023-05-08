@@ -143,12 +143,12 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [3, 4].choose.wait;
+        [6, 10].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
 )
-
+~sim.stop
 Window.closeAll;
 Pdefn(\melody).play(~t)
 // Testing
