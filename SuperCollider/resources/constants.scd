@@ -38,7 +38,7 @@
 ~utts = Dictionary.new;
 ~uttDict = Dictionary.new;
 ~uttSamples = Dictionary.new;
-//~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
+~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
 
 
 
