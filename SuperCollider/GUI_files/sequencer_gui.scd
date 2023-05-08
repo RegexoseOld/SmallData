@@ -61,7 +61,7 @@ mc_top = ~build_top_level_seq.(mc_window, 10, 10, mc_catwidth*5+ 720, mc_catheig
 // #########
 
 // Build window, top_level and header
-window = ~build_window_seq.value("Sequencer", ~style_1, 10, 300,  labelwidth+button_field_width+sliderwidth+(7*offset), buttonsize+offset+button_field_height+headerheight+(6*offset));
+window = ~build_window_seq.value("Sequencer", ~style_1, 10, 550,  labelwidth+button_field_width+sliderwidth+(7*offset), buttonsize+offset+button_field_height+headerheight+(6*offset));
 top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+labelwidth+sliderwidth+(5*offset), buttonsize+offset+button_field_height+headerheight+(4*offset), ~style_1);
 header = ~build_sequencer_header_seq.value(top_level, button_field_width+labelwidth, headerheight, ~style_1, "Sequencer");
 
@@ -101,8 +101,8 @@ Pdefn(\melody, Ppar(
 )}), inf));
 
 
-/*CmdPeriod.add({
+CmdPeriod.add({
 	window.close;
 	mc_window.close;
-});*/
+});
 )
