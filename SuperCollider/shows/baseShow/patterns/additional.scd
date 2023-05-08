@@ -121,7 +121,7 @@ patterns: (
 		pan:0,
 		amp: 0.3
 	),
-	answer: (
+	bass: (
 		instrument:'bass',
 		scale: Scale.chromatic,
 		midinote:  Pseq([Pn(\, 20), 30, \, 33, Pn(\, 3), 30, 30, 33, Pn(\, 3)], inf),
