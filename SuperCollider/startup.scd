@@ -43,7 +43,9 @@ s.waitForBoot({
 	Window.closeAll;
 	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/sequencer_gui.scd");
 
+	// Load song specific files
 	~allocate = (~showFolder ++ "allocate.scd").load;
+	(~showFolder ++ "constants.scd").load;
 
     MixerChannel.freeAll;
 	s.sync;

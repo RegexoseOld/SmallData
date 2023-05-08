@@ -7,7 +7,7 @@
 ~currentUttPattern = \mono;
 ~factor = 1;
 ~totalUtts = 0;
-~t = TempoClock(80/60).permanent_(true);
+~t = TempoClock(40/60).permanent_(true);
 ///////
 ~fbVol = 0.07; //global Volume of feedback for incoming Utts
 // values for addVolume
@@ -21,14 +21,16 @@
 ~volStep = 0.004; //vol reduction in continuous FadeOut
 ~volMax = 0.45; // max Volume should be less than 1.0/5
 ~fadeVols = 0; //the volumes of all fading Patterns
-~thresCont = 0.15; // threshold from which to continuously fade Out
+~thresCont = 0.2; // threshold from which to continuously fade Out
+
 ~fadingSynths = [\pr, \dis, \con, \lec, \ins];
 ~additionalSynths = List.new;
 ~faderControl = List.new; // Patterns controlled by MIDIFaders or OSC Controllers
 // booleans
 ~patternsPlaying = false;
-~categories = [ 'praise', 'dissent', 'concession', 'lecture', 'insinuation'];
+~categories = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'];
 ~lastUtterances = Array.with("one", "two", "three");
+~lastCategories = Array.with("praise", "dissent", "insinuation");
 ~fadePatterns = Dictionary.new;
 ~nameDict = Dictionary.new;
 ~buffers = Dictionary.new;
