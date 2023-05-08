@@ -157,7 +157,7 @@ Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \am
 Pbindef(\sn02)
 Synth(\sn2)
 (
-~allocate.(\dis, 21)
+~allocate.(\dis, 1)
 ~allocate.(\ins, 21)
 ~allocate.(\lec, 21)
 ~allocate.(\pr, 21)

@@ -11,7 +11,7 @@ patterns: (
 
 
 	kik01: (
-		instrument:'kik',
+		instrument:'kik1',
 		dur: 0.125,
 		freq: ~melos.melo.kik01,
 		freqdecay: 0.1,
@@ -20,7 +20,7 @@ patterns: (
 	),
 
 	kik02: (
-		instrument:'kik',
+		instrument:'kik1',
 		dur: 0.25,
 		freq: Pseq([60, 50, \],inf),
 		pDecay: 0.1,
@@ -31,7 +31,7 @@ patterns: (
 	),
 
 	sn01: (
-		instrument: 'sn',
+		instrument: 'sn1',
 		dur: 0.25,
 		atk1: 0.001,
 		rls1: Pwhite(0.2, 1.2, inf),
