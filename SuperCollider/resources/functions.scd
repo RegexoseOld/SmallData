@@ -92,22 +92,23 @@
 	~faderControl.do{|chan, it| ~activateVolume.(chan, it)}
 };
 
-// initialize utterance counter
-~categories.do({
-	|cat|
-	~uttDict.add(cat-> 0)
-});
-
 // initialize dictionary with audio utterances
 ~categories.do({
 	|cat|
-	~uttSamples.add(cat-> Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav"))
+	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav",
+		action: {arg buffer;
+			//"edited buffer % numFrames %".format(cat, buffer.numFrames ).postln;
+			~uttSamples.add(cat-> [buffer, 0, buffer.numFrames]);
+	});
 });
 
+// initialize utterance counter
+~categories.do({ |cat| ~uttDict.add(cat-> 0) });
 
 // make buffers
 PathName(~samplesPath).entries.do({
 		arg subfolder;
+	//subfolder.postln;
 		~buffers.add(
 			subfolder.folderName.asSymbol ->
 			Array.fill(
@@ -144,7 +145,21 @@ PathName(~samplesPath).entries.do({
 
 ~updateSample = {
 	|pathString|
-	~uttSamples[~cat] = Buffer.read(s, pathString ++ "/00_utterance.wav")
+	Buffer.read(s, pathString ++ "/00_utterance.wav", action: {arg buffer;
+		AppClock.sched(0, {~uttSamples.put(~cat, [buffer, 0, buffer.numFrames-1])});
+		AppClock.sched(0, {~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames)
+			.drawsRMS_(false)
+			.yZoom_(2)});
+		AppClock.sched(0,
+			{~slider_buttons[1][~cat][1].lo_(0);
+				~slider_buttons[1][~cat][1].hi_(1);
+				~slider_buttons[1][~cat][1]
+				.action_({ |slider|
+					~uttSamples[~cat][1] = (slider.lo.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
+					~uttSamples[~cat][2] = (slider.hi.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
+				})
+		})
+	});
 };
 
 ~addSample = {
@@ -273,12 +288,7 @@ PathName(~samplesPath).entries.do({
 ~mock = {
     var cat = ~categories.choose,
 	m = NetAddr("127.0.0.1", 57120);
-	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/SuperCollider/resources/samples/catSampDe/Belehrung.aiff");
-	~storyIndex = ~storyIndex + 1;
-	//~cat = 'insinuation';
-/*    ~cat = cat;
-    ~updateUtts.(cat);
-	~setGlobal.value();*/
+	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], ~resourcePath ++ "samples/lec01/");
 };
 
 

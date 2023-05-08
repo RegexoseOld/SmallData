@@ -15,6 +15,7 @@
 	.background_(style["top_level_frame_color"]);
 	compView.addFlowLayout(10@10);
 	compView.decorator.gap_(0@10);
+	//"built toplevel".postln;
 	compView;
 };
 
@@ -28,12 +29,13 @@
 	guiTitle.font = style.at("header_font");
 	guiTitle.align = \center;
 	top.decorator.nextLine;
+	//"built header".postln;
 	guiTitle;
 };
 
 ~build_labels_seq = {
 	// Builds a frame to contain the labels of the button rows
-	arg top_level, width, height, style, buttonsize, labels;
+	arg top_level, width, height, buttonsize, offset, style;
 	var array ;
 
 	var compView = CompositeView(top_level, Rect(0, 0, width, height))
@@ -55,8 +57,27 @@
 		.align_(\right);
 	});
 	compView.decorator.nextLine;
+	StaticText(compView, Rect(10, 10, width, buttonsize+10))
+	.string_("")
+	.background_(style["bank_frame_color"])
+	.font_(style.at("header_font"))
+	.align_(\center);
+	compView.decorator.nextLine;
+	//"built labels".postln;
 	compView;
 };
+
+~build_track_buttons_container_seq = {
+	// Builds a frame to contain and organize the track and the stack of buttons.
+	arg top_level, width, height, style;
+	var compView = CompositeView(top_level, Rect(0, 0, width, height))
+	.background_(style.at("top_level_frame_color"));
+	compView.addFlowLayout(0@0);
+	compView.decorator.gap_(0@0);
+    //"built track buttons container".postln;
+	compView;
+};
+
 
 ~build_mc_labels = {
 	// Builds a frame to contain the labels of the button rows
@@ -80,16 +101,7 @@
 	label_data = [compView, array]
 };
 
-~build_track_buttons_container_seq = {
-	// Builds a frame to contain and organize the track and the stack of buttons.
-	arg top_level, posx=0, posy=0, width, height, style;
-	var compView = CompositeView(top_level, Rect(posx, posy, width, height))
-	//.background_(style.at("top_level_frame_color"));
-	.background_(Color.red);
-	compView.addFlowLayout(0@0);
-	compView.decorator.gap_(0@0);
-	compView;
-};
+
 
 ~build_sequencer_track_seq = {
 	// Builds the sequencer track.
@@ -107,6 +119,7 @@
 		.background_(Color.white)
 	});
 	top.decorator.nextLine;
+    //"built sequncer track".postln;
 	sequencer_track_data = [trackCompView, array]
 };
 
@@ -205,7 +218,7 @@
 		});
 
 	});
-
+	//"built tabbed stack".postln;
 	top_level.decorator.nextLine;
 	buttonsStacked;
 };
@@ -262,6 +275,34 @@
 	var str;
 	str = memory.at(\seq_mem).at(\current_name) ++ "_" ++ name;
 	str.asSymbol;
+};
+
+~build_slider_buttons_seq = {
+	arg top_level, sliderwidth, button_field_height, buttonsize, offset, rows, style;
+	var filler, compView, sliderAndFileViews, slider_button_data, rel_height=0.6;
+	compView = CompositeView(top_level, Rect(0, 0, sliderwidth+offset, buttonsize+(2*offset)+button_field_height))
+	.background_(style.at("bank_frame_color"));
+	filler = CompositeView(compView, Rect(0, 0, sliderwidth+offset, buttonsize+offset))
+		.background_(style.at("bank_frame_color"));
+	sliderAndFileViews=Dictionary.new;
+	~categories.do({arg cat, i;
+		var buffer_info = ~uttSamples[~categories[i]];
+		var numFrames = buffer_info[0].numFrames;
+		sliderAndFileViews[cat] = [
+			SoundFileView(compView, Rect(0, buttonsize+offset+(i*buttonsize), sliderwidth, buttonsize*rel_height))
+			.readFile(SoundFile.openRead(buffer_info[0].path), 0, numFrames)
+			.drawsRMS_(false)
+			.yZoom_(2),
+			RangeSlider(compView, Rect(0, buttonsize*(1+rel_height)+offset+(i*buttonsize), sliderwidth, buttonsize*(1-rel_height)))
+			.action_({ |slider|
+				buffer_info[1] = (slider.lo.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
+				buffer_info[2] = (slider.hi.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
+			})
+			.background_(Color.white)
+		]
+	});
+    //"built slider buttons".postln;
+	slider_button_data = [compView, sliderAndFileViews];
 };
 
 ~set_buttons_sliders_numBoxes_seq = {

@@ -72,10 +72,7 @@ slots:(
 	lec: ~buffers[\catSampEn][3],
 	pr: ~buffers[\catSampEn][4],
 
-)
-
-
-
+),
 
 )
 

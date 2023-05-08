@@ -95,7 +95,7 @@ s.waitForBoot({
 	});
 
 	// set fade volume low at the beginning
-	~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005)); ~faderControl.add(k)};
+	~fadingSynths.do{| k|  ~faderControl.add(k)};
 [\bass, \kik01].do {|k| ~faderControl.add(k)};
 
 	// make Patterns for all fading Synths
@@ -132,7 +132,7 @@ s.waitForBoot({
 			//postf("\npath  % path is nil? % \n", msg[4], msg[4].isNil);
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
-			//~updateSample.(msg[4]);
+			~updateSample.(msg[4]);
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
@@ -197,13 +197,5 @@ Routine({
 ~buffers[\catSampDe][0].play
 ~buffers[\catSampEn][1].play
 ~buffers[\wt].numFrames.isPowerOfTwo
-(
-var new = ~lastUtterances.rotate(1);
-new.put(0, "six");
-~lastUtterances = new;
-/*new.collect({|item, i|
-	item.postln;
-	if (i <2, {new.put((i+1), item)})
-});
-	new.put(0, "eight");*/
-)
+
+
