@@ -15,6 +15,7 @@
 	.background_(style["top_level_frame_color"]);
 	compView.addFlowLayout(10@10);
 	compView.decorator.gap_(0@10);
+	//"built toplevel".postln;
 	compView;
 };
 
@@ -28,13 +29,14 @@
 	guiTitle.font = style.at("header_font");
 	guiTitle.align = \center;
 	top.decorator.nextLine;
+	//"built header".postln;
 	guiTitle;
 };
 
 ~build_labels_seq = {
 	// Builds a frame to contain the labels of the button rows
 	arg top_level, width, height, buttonsize, offset, style;
-	var array;
+	var array ;
 	var compView = CompositeView(top_level, Rect(0, 0, width, height))
 	.background_(style.at("top_level_frame_color"));
 	compView.addFlowLayout(0@0);
@@ -113,6 +115,7 @@
 		.background_(Color.white)
 	});
 	top.decorator.nextLine;
+    //"built sequncer track".postln;
 	sequencer_track_data = [trackCompView, array]
 };
 
@@ -139,6 +142,30 @@
 	sequencer_track_data = [trackCompView, fields]
 };
 
+~build_status = {
+	// Builds the status area
+	arg top, posx, posy, style, fWidth, fHeight, utterances;
+	var compView, state, utts, state_data;
+	// Track Composite View
+	compView = CompositeView(top, Rect(posx, posy, fWidth + 30, fHeight +30))
+	.background_(Color.white);
+	state = StaticText(compView, Rect(5, 5 , fWidth, fHeight))
+	.background_(style["bank_frame_color"])
+	.font_(style.at("subheader_font"))
+	.string_("state: 00")
+	.align_(\bottomLeft);
+	compView.addFlowLayout(0@0);
+	compView.decorator.gap_(0@5);
+	utts = Array.fill(3, { arg i;
+		StaticText(compView, Rect(5, 20 * i, fWidth, fHeight/6))
+		.background_(style["header_frame_color"])
+		.font_(style.at("text_font"))
+		.string_(utterances[i])
+		.align_(\topLeft);
+	});
+	//top.decorator.nextLine;
+	state_data = [compView, state, utts]
+};
 
 ~build_slider_buttons_seq = {
 	arg top_level, sliderwidth, button_field_height, buttonsize, offset, rows, style;
@@ -212,7 +239,6 @@
 		{ track[1][index-1].background_(Color.white).string_("") }.defer;
 	});
 };
-
 )
 
 

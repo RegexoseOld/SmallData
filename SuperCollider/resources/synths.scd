@@ -32,6 +32,25 @@ SynthDef.new(\quitt, {
     Out.ar(\out.kr(0), sig);
 }).add;
 
+SynthDef(\fm, {
+    |gate = 1|
+    var  sig, env, mod;
+    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, 1, \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
+    mod = SinOsc.kr(\modRate.kr(1.2));
+    sig = 4.collect({
+		var fm, dev;
+		dev = {ExpRand(\devMin.kr(0.9), \devMax.kr(1.1))};
+		fm = SinOsc.ar(\fmFreq.kr(2000) * mod, mul:\fmVol.kr(20));
+		VarSaw.ar((\freq.kr(100) * dev) + fm, 0, \filTime.kr(0.1), 1);
+	}).sum;
+    sig = (sig * \distort.kr(1.5)).tanh;
+    sig = sig * env;
+    sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
+    sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
+    Out.ar(\out.kr(0), sig );
+    //Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
+}).add;
+
 SynthDef.new(\bass, {
     |gate = 1|
     var  sig, env, mod;
@@ -52,7 +71,7 @@ SynthDef.new(\bass, {
 }).add;
 
 // simple electro kick drum
-SynthDef(\kik, { |freq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, out = 0|
+SynthDef(\kik1, { |freq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, out = 0|
    var fenv = EnvGen.kr(Env([envratio, 1], [freqdecay], \exp)) * freq,
       aenv = EnvGen.kr(Env.perc(0.005, ampdecay), doneAction:2),
 	subenv = EnvGen.kr(Env.perc(0.005, ampdecay/2), doneAction:0),
@@ -62,7 +81,7 @@ SynthDef(\kik, { |freq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, out
    Out.ar(out, (sig + sub) * \amp.kr(0.4));
 }).add;
 
-SynthDef(\sn, {
+SynthDef(\sn1, {
 	|freq = 800, ampdecay = 0.2, out = 0|
     var  sig, ghost, gEnv, snEnv, pEnv;
     snEnv = EnvGen.kr(Env.perc(0.001, ampdecay), doneAction:0);
@@ -72,12 +91,13 @@ SynthDef(\sn, {
 		|n|
 		var temp, dev;
 		dev = {ExpRand(0.6, 1.5)};
-		temp = Blip.ar(\ghosts.kr(20) * dev, \numharm.kr(100)) * dev * gEnv;
+		temp = Blip.ar(\ghosts.kr(20) * dev, \numharm.kr(100)) * dev;
 
 	}).sum;
-   ghost = ghost * \distort.kr(2).tanh;
+   ghost = ghost * gEnv * \distort.kr(2).tanh;
 	sig = WhiteNoise.ar(1) * snEnv;
-	sig = RHPF.ar(sig, \ffreq.kr(1000));
+	sig = RHPF.ar(sig, \ffreq.kr(1000), 0.4);
+	sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
 	sig = [sig + ghost] * \amp.kr(0.3);
    Out.ar(out, sig!2);
 }).add;
@@ -104,8 +124,8 @@ SynthDef(\sn2, {
 	sig = sig * [0, -20, -12, -24].dbamp; // multichannel
 	sig = sig.sum;
 	sig = sig + (SinOsc.ar(XLine.ar(3000, 100, 0.03)) * Env.perc(0.01, 0.03).ar); // klick
-	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 2120, 0.3) + Env.perc(0.05, 0.1).ar * -3.dbamp); // different timmbres
-	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 4120, 0.6) + Env.perc(0.003, 0.15).ar * -8.dbamp);// different timmbres
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 2120, 0.3) + Env.perc(0.05, 0.1).ar * \shaper1.kr(0.5)); // different timmbres
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 4120, 0.6) + Env.perc(0.003, 0.15).ar * \shaper2.kr(0.5));// different timmbres
 	sig = sig + ((sig * 13.dbamp).tanh * -10.dbamp); // paralell distortion
 	sig = sig * Env.perc(0.001, 0.25, curve: -4).ar;
 	sig = sig +( GVerb.ar(sig, 16, 2) * -30.dbamp);
@@ -174,6 +194,18 @@ SynthDef(\sampMon, {
     Out.ar(\out.kr(0), sig) ;
 }).add;
 
+SynthDef(\uttSampler, {
+    arg buf, rate=1, start, end;
+    var sig, ptr, env;
+    ptr = Phasor.ar(0, BufRateScale.kr(buf)*rate, start, end);
+	env = EnvGen.kr(
+		Env.new(levels: [0, 1, 1, 0], times: [0.01, (end-start)/BufSampleRate.kr(buf)-0.02, 0.01, 0], curve: [-5, 0, 5])
+		, doneAction: 2);
+	sig = BufRd.ar(1, buf, ptr, 0.0);
+    sig = sig * env * \amp.kr(0.3);
+    Out.ar(\out.kr(0), sig!2);
+}).add;
+
 SynthDef(\brPhsr, {
     arg buf, rate=1, start, end;
     var sig, ptr, env;
@@ -184,18 +216,6 @@ SynthDef(\brPhsr, {
 		lag = lag * s.sampleRate;
 		BufRd.ar(1, buf, ptr + lag);
 	}).sum ;
-    sig = sig * env * \amp.kr(0.3);
-    Out.ar(\out.kr(0), sig!2);
-}).add;
-
-SynthDef(\uttSampler, {
-    arg buf, rate=1, start, end;
-    var sig, ptr, env;
-    ptr = Phasor.ar(0, BufRateScale.kr(buf)*rate, start, end);
-	env = EnvGen.kr(
-		Env.new(levels: [0, 1, 1, 0], times: [0.01, (end-start)/BufSampleRate.kr(buf)-0.02, 0.01, 0], curve: [-5, 0, 5])
-		, doneAction: 2);
-	sig = BufRd.ar(1, buf, ptr, 0.0);
     sig = sig * env * \amp.kr(0.3);
     Out.ar(\out.kr(0), sig!2);
 }).add;
@@ -251,6 +271,7 @@ SynthDef.new(\oscfm, {
 	sig = sig * env;
 	Out.ar(\out.ir(0), sig);
 }).add;
+
 
 // building Effect Instruments
 // http://www.dewdrop-world.net/sc3/tutorials/index.php?id=5
