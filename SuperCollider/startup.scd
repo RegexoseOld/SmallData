@@ -43,7 +43,7 @@ s.waitForBoot({
 	Window.closeAll;
 	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/sequencer_gui.scd");
 
-	~allocate = (~resourcePath ++ "allocate.scd").load;
+	~allocate = (~showFolder ++ "allocate.scd").load;
 
     MixerChannel.freeAll;
 	s.sync;
@@ -68,7 +68,7 @@ s.waitForBoot({
 // load state patterns into a Dictionary with different states for the 5 categories
 	//~states = ~states ? ();
 	~states = ();
-	PathName(~showFolder).entries.do({
+	(PathName(~showFolder) +/+ "patterns").entries.do({
 		|pathName, i|
 		var categorySymbol, category, patternStates;
 		category = pathName.fileNameWithoutExtension;
