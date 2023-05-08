@@ -22,6 +22,7 @@
 ~volMax = 0.45; // max Volume should be less than 1.0/5
 ~fadeVols = 0; //the volumes of all fading Patterns
 ~thresCont = 0.2; // threshold from which to continuously fade Out
+~loopCounter = 15; // counter to reset the category counter
 
 ~fadingSynths = [\pr, \dis, \con, \lec, \ins];
 ~additionalSynths = List.new;

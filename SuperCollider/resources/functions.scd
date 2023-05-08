@@ -130,7 +130,7 @@ PathName(~samplesPath).entries.do({
 	}};
 	~lastUtterances = lastUtts;
     ~totalUtts = ~totalUtts + 1;
-    if(~uttDict[cat] >= 29, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
+    if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
 	defer{var index, count;
 	index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
 	count =  ~uttDict[~cat].asString;
