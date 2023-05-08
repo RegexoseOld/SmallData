@@ -1,3 +1,4 @@
+
 ~allocate = {
     |catName, counter|
     var c, dura, patName, status, count, in_count, local_feedbackVol, numNotes;
@@ -11,9 +12,8 @@
     c = case
 	{count < 5}{
 		in_count = count;
-		patName = (catName.asString ++ "1").asSymbol;
-		Pbindef(\metronom, \amp, (0.05 * count)).play(~t);
-		Pbindef(\answer, \amp, (0.02 * count));
+		Pbindef(\metronom, \amp, (0.05 * in_count)).play(~t);
+		Pbindef(\bass, \amp, (0.02 * in_count));
 		Pbindef(\kik01).play(~t, quant:1);
 	    Pbindef(\sn01).stop;
 		status = "state 00";
@@ -22,10 +22,10 @@
         in_count = count-4;
         patName = catName.asString ++ "10";
 		Pbindef(\metronom).stop;
-		Pbindef(\answer, \amp, (0.05 * count));
+		Pbindef(\bass, \amp, (0.05 * count));
 		//Pbindef(\kik01).stop;
 		Pbindef(\sn01).play(~t, quant:1);
-		Pbindef(catName, ~states[catName][patName.asSymbol].asPairs);
+		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs);
 		Pbindef(catName, \harmonic, [in_count, count]);
         numNotes = 2;
         status = "state 01";
@@ -36,7 +36,7 @@
 		Pbindef(\kik01).play(~t, quant:1);
 		Pbindef(\hh01).play(~t, quant:1);
         Pbindef(catName, ~states[catName][patName.asSymbol].asPairs);
-			Pbindef(\answer).stop;
+			Pbindef(\bass).stop;
         numNotes = 3;
         status = "state 02";
     }
@@ -49,7 +49,7 @@
         Pbind(
             \instrument, \quitt,
             \dur, Prand([0.25, 0.31], numNotes),
-            \midinote, ~melos[\melo][catName][0],
+            \midinote, ~melos[\melo][catName],
             \detune, Pwhite(-6, 6, numNotes),
             \amp, ~fbVol * local_feedbackVol, \pan, Pwhite(-1.0, 1.0, numNotes),
             \ampDist, 2, \durDist, 0.2,

@@ -1,10 +1,9 @@
 (
-var path;
-path = thisProcess.nowExecutingPath;
+~projectRoot = PathName(thisProcess.nowExecutingPath).parentPath;
 
-~configFile = PathName(path).parentPath ++ "config.scd";
+~configFile = ~projectRoot ++ "config.scd";
 ~configFile.load;
-~resourcePath = PathName(path).parentPath ++ "resources/";
+~resourcePath = ~projectRoot ++ "resources/";
 
 Server.default.options.numInputBusChannels_(1);
 Server.default.options.outDevice_(~audioInterface);
@@ -31,8 +30,8 @@ s.waitForBoot({
 	(~resourcePath ++ "organist.scd").load;
 
 	// LOAD GUI FILES
-	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/GUI_Styles.scd");
-	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/GUI_Constructor.scd");
+	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/GUI_Styles.scd");
+	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/GUI_Constructor.scd");
 	// Wait until boot is done and then begin launching the rest of the prograam
 	s.sync;
 	// Set global memory storage
@@ -41,9 +40,11 @@ s.waitForBoot({
 	});
 
 	Window.closeAll;
-	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/sequencer_gui.scd");
+	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/sequencer_gui.scd");
 
-	~allocate = (~resourcePath ++ "allocate.scd").load;
+	// Load song specific files
+	~allocate = (~showFolder +/+ "allocate.scd").load;
+	(~showFolder +/+ "constants.scd").load;
 
     MixerChannel.freeAll;
 	s.sync;
@@ -68,7 +69,7 @@ s.waitForBoot({
 // load state patterns into a Dictionary with different states for the 5 categories
 	//~states = ~states ? ();
 	~states = ();
-	PathName(~showFolder).entries.do({
+	(PathName(~showFolder) +/+ "patterns").entries.do({
 		|pathName, i|
 		var categorySymbol, category, patternStates;
 		category = pathName.fileNameWithoutExtension;
@@ -85,16 +86,16 @@ s.waitForBoot({
 					~states.put(k, patternStates[\patterns][k]);
 					Pbindef(k, *~states[k].asPairs);
 					~additionalSynths.add(k);
-					~cat2Channel.put(k, ~utt);
-					Pbindef(k, \out, ~cat2Channel[k].inbus);
+					//~cat2Channel.put(k, ~utt);
+					//Pbindef(k, \out, ~cat2Channel[k].inbus);
 				};
 			};
 		);
 	});
 
 	// set fade volume low at the beginning
-	~fadingSynths.do{| k| ~fadePatterns.add(k -> (\vol: 0.005)); ~faderControl.add(k)};
-	~faderControl.add(~additionalSynths.asArray);
+	~fadingSynths.do{| k|  ~faderControl.add(k)};
+[\bass, \kik01].do {|k| ~faderControl.add(k)};
 
 	// make Patterns for all fading Synths
 	~fadingSynths.do{
@@ -135,7 +136,6 @@ s.waitForBoot({
 		},
 		'/interpreter_input'
 	);
-
 	"done".postln;
 })
 );
@@ -143,10 +143,37 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [3, 4].choose.wait;
+        [5, 3].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
+)
+~sim.stop
+~t.beatsPerBar
+
+Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
+Pbindef(\sn02)
+Synth(\sn2)
+(
+~allocate.(\dis, 1)
+~allocate.(\ins, 21)
+~allocate.(\lec, 21)
+~allocate.(\pr, 21)
+~allocate.(\con, 21)
+Pbindef(\dis, \thr, 0.7, \cgain, 1.4, \gendAmp, 0.9, \ffreq, 2600, \rq, 0.8, \lag, 0, \pulseMul, 0.6, \add, 0, \width, 0.3);
+Pbindef(\pr).play(~t)
+Pbindef(\pr, \cgain, 1.0, \vibF, Pseq([0.2, 4, 2.0, 0.4],inf), \bpf, Pwhite(300, 600, inf) )
+Pbindef(\con, \detune, 0)
+Pbindef(\sn01, \dur, 1/4, \freq, Pseq([\, \, Pn(200, 6), \, \, 190, \, \, Pn(200, 4), \, \], inf)).quant_(1)
+Pbindef(\lec, \fmVol, 150, \fmVol, 150, \filTime, 0.1, \modRate, 0.9, \rls, 0.1, \sustain, 0.15)
+Pbindef(\sn01, \freq, 300)
+~states[\ins][\ins05]
+~allocate.(\pr, 6)
+~states[\pr][\pr05]
+)
+(
+~postBeats = {~t.beats.postln; 4};
+~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 
 Window.closeAll;
@@ -157,7 +184,6 @@ Pbindef(\vox, \rls, 1, \crv, -1, \lg1, 1, \lg2, 0.8).play
 
 Pbindef.all.do(_.stop);
 ~sim.stop
-
 
 // record some stuff..
 (

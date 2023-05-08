@@ -1,8 +1,9 @@
 // Sequencer
 (
 var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300;
-var window, categories =  ["praise", "concession", "insinuation","dissent","lecture"], top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, slider_container, start_instrument=\default, pattern, instruments=[\default, \peep_sequencer, \sin_tone_sequencer, \buzzy_bram_sequencer, \phase_mod_sequencer, \sin_fb_synth_sequencer, \subtract_noise_synth_sequencer], memory=~gm, mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
-var button_field_width=buttonsize*columns, button_field_height=buttonsize*rows;
+var window, top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, start_instrument=\default, pattern, memory=~gm;
+var mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
+var button_field_width = buttonsize*columns, button_field_height=buttonsize*rows;
 
 // #############################
 // Initialize Base Memory Values
@@ -90,6 +91,8 @@ Pdefn(\melody, Ppar(
 			\delta, memory.at(\seq_mem).at(\delta),
 			\sustain, Pdefn(\p_melody_sus,  memory.at(\seq_mem).at(\melody_sus)),
 			\amp,  Pif(Pseq(stacked_buttons[0][1][r], inf).coin, currentVol, \rest),
+			\start, Pfunc({~uttSamples[~categories[r]][1]}),
+			\end, Pfunc({~uttSamples[~categories[r]][2]}),
 			\out, 0,
 			\start, Pfunc({~uttSamples[~categories[r]][1]}),
 			\end, Pfunc({~uttSamples[~categories[r]][2]}),
