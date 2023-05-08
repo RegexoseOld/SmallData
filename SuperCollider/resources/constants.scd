@@ -39,6 +39,4 @@
 ~uttDict = Dictionary.new;
 ~uttSamples = Dictionary.new;
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
-
-
-
+~showFolder = ~projectRoot +/+ "shows" +/+ ~showName;

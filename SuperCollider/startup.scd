@@ -1,10 +1,9 @@
 (
-var path;
-path = thisProcess.nowExecutingPath;
+~projectRoot = PathName(thisProcess.nowExecutingPath).parentPath;
 
-~configFile = PathName(path).parentPath ++ "config.scd";
+~configFile = ~projectRoot ++ "config.scd";
 ~configFile.load;
-~resourcePath = PathName(path).parentPath ++ "resources/";
+~resourcePath = ~projectRoot ++ "resources/";
 
 Server.default.options.numInputBusChannels_(1);
 Server.default.options.outDevice_(~audioInterface);
@@ -31,8 +30,8 @@ s.waitForBoot({
 	(~resourcePath ++ "organist.scd").load;
 
 	// LOAD GUI FILES
-	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/GUI_Styles.scd");
-	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/GUI_Constructor.scd");
+	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/GUI_Styles.scd");
+	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/GUI_Constructor.scd");
 	// Wait until boot is done and then begin launching the rest of the prograam
 	s.sync;
 	// Set global memory storage
@@ -41,11 +40,11 @@ s.waitForBoot({
 	});
 
 	Window.closeAll;
-	thisProcess.interpreter.executeFile(PathName(path).parentPath +/+ "GUI_files/sequencer_gui.scd");
+	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/sequencer_gui.scd");
 
 	// Load song specific files
-	~allocate = (~showFolder ++ "allocate.scd").load;
-	(~showFolder ++ "constants.scd").load;
+	~allocate = (~showFolder +/+ "allocate.scd").load;
+	(~showFolder +/+ "constants.scd").load;
 
     MixerChannel.freeAll;
 	s.sync;
