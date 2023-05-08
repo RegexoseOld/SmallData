@@ -40,6 +40,7 @@ memory.at(\seq_mem).put(\inputGroup, Group.new);
 memory.at(\seq_mem).put(\ptrGroup, Group.after(memory.at(\seq_mem).at(\inputGroup)));
 memory.at(\seq_mem).put(\recGroup, Group.after(memory.at(\seq_mem).at(\ptrGroup)));
 
+
 // #########
 // BUILD SEQUENCER
 // #########
@@ -57,9 +58,8 @@ stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_containe
 ~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
 
 // #########
-// BUILD MC  GUI
+// BUILD MC WINDOW
 // #########
-// build the MC Window
 
 mc_catwidth = 100;
 mc_catheight = 120;
@@ -71,6 +71,26 @@ mc_top = ~build_top_level_seq.(mc_window, 10, 10, mc_catwidth*5+ 720, mc_catheig
 ~mc_labels = ~build_mc_labels.(mc_top, 10, mc_catheight *3 + 30, mc_catwidth*6 , 60, ~style_1, mc_catwidth, ~uttDict);
 ~status = ~build_status.(mc_window, mc_catwidth *6, 20, ~style_1, mc_catwidth * 3, mc_catheight * 3.5, ~lastUtterances);
 
+
+// #########
+// BUILD SEQUENCER
+// #########
+
+// Build window, top_level and header
+window = ~build_window_seq.value("Sequencer", ~style_1, 10, 300,  labelwidth+button_field_width+sliderwidth+(7*offset), buttonsize+offset+button_field_height+headerheight+(6*offset));
+top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+labelwidth+sliderwidth+(5*offset), buttonsize+offset+button_field_height+headerheight+(4*offset), ~style_1);
+header = ~build_sequencer_header_seq.value(top_level, button_field_width+labelwidth, headerheight, ~style_1, "Sequencer");
+
+// Build Track
+labels = ~build_labels_seq.value(top_level, labelwidth, buttonsize+button_field_height+(2*offset), buttonsize, offset, ~style_1);
+track_buttons_container = ~build_track_buttons_container_seq.value(top_level, button_field_width+(2*offset), buttonsize+button_field_height+(2*offset), ~style_1);
+track = ~build_sequencer_track_seq.value(track_buttons_container, button_field_width+(2*offset), buttonsize+(2*offset), ~style_1, columns, buttonsize);
+
+// Build the Sequencer Buttons
+stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_container, sequencer_tab_buttons, button_field_width+(2*offset), button_field_height+(2*offset), 3, buttonsize, columns, rows, ~style_1, memory);
+
+// slider_container = ~build_track_buttons_container_seq.value(top_level, sliderwidth, buttonsize+button_field_height+(2*offset), ~style_1);
+~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
 
 // ##############
 // Build Patterns
@@ -84,13 +104,14 @@ Pdefn(\melody, Ppar(
 		Pbind(
 			\instrument, \uttSampler,
 			\buf, Pfunc({~uttSamples[~categories[r]][0]}),
-			\degree, Pif(Pseq(stacked_buttons[0][1][r], inf).coin, 0, \rest),
 			\delta, memory.at(\seq_mem).at(\delta),
 			\sustain, Pdefn(\p_melody_sus,  memory.at(\seq_mem).at(\melody_sus)),
 			\amp,  Pif(Pseq(stacked_buttons[0][1][r], inf).coin, currentVol, \rest),
 			\start, Pfunc({~uttSamples[~categories[r]][1]}),
 			\end, Pfunc({~uttSamples[~categories[r]][2]}),
 			\out, 0,
+			\start, Pfunc({~uttSamples[~categories[r]][1]}),
+			\end, Pfunc({~uttSamples[~categories[r]][2]}),
 			\track_index, Pseq((0..15), inf),
 			\track_func, Pfunc({|ev| ~update_track_seq.value(ev.track_index, track)});
 )}), inf));

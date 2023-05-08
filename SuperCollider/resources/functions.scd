@@ -97,7 +97,6 @@
 	|cat|
 	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav",
 		action: {arg buffer;
-			//"edited buffer % numFrames %".format(cat, buffer.numFrames ).postln;
 			~uttSamples.add(cat-> [buffer, 0, buffer.numFrames]);
 	});
 });
@@ -124,12 +123,14 @@ PathName(~samplesPath).entries.do({
 ~updateUtts = {
     |utt, cat|
     //postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
-	var lastUtts = ~lastUtterances.rotate(1);
+	var lastUtts = ~lastUtterances.rotate(1), lastCats = ~lastCategories.rotate(1);
 	lastUtts.put(0, utt);
+	lastCats.put(0, cat);
 	defer {3. do{|i|
-		~status[2][i].string =  lastUtts[i]
+		~status[2][i].string = lastCats[i] ++ " : " ++ lastUtts[i]
 	}};
 	~lastUtterances = lastUtts;
+	~lastCategories = lastCats;
     ~totalUtts = ~totalUtts + 1;
     if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
 	defer{var index, count;
@@ -205,7 +206,7 @@ PathName(~samplesPath).entries.do({
 	//"updating mc: index % height  % text  %".format(index, height, text);
 	index = ~fadingSynths.detectIndex({|it, i| it == cat});
 	height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
-	text = ~melos[\amps][cat].trunc(0.001).asString;
+	text =  ~melos[\amps][cat].trunc(0.001).asString;
 	~mc_track[1][index].resizeTo(100, height);
 	~mc_track[1][index].string = text;
 	}
@@ -222,7 +223,7 @@ PathName(~samplesPath).entries.do({
 		//postf("\nthe vol %  of the pattern   %\n", vol, cat);
 		c = case
 		{(vol > ~volMin) && (vol >= ~volThres)} {~melos[\amps][cat] = vol - (~volStep * ~subFac)} // loud volumes decrease fast
-		{(vol <= ~volThres) && (vol >= ~volMin)} {~melos[\amps][cat] = vol - ~volStep;} // middle volumes decrease slower
+		{(vol <= ~volThres) && (vol >= ~volMin)} {~melos[\amps][cat]= vol - ~volStep;} // middle volumes decrease slower
 		{vol <= ~volMin} {~melos[\amps][cat] = ~volMin}
 		{true}{"end of fade cases"};
 		Pbindef(cat, \amp, ~melos[\amps][cat]);
@@ -290,6 +291,4 @@ PathName(~samplesPath).entries.do({
 	m = NetAddr("127.0.0.1", 57120);
 	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], ~resourcePath ++ "samples/lec01/");
 };
-
-
 

@@ -129,7 +129,6 @@ s.waitForBoot({
 			//postf("\nmessage?: %\n", msg);
 			postf("\nnew utt: %", msg[1]);
 			postf("\nnew cat: %\n", msg[2]);
-			//postf("\npath  % path is nil? % \n", msg[4], msg[4].isNil);
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
 			~updateSample.(msg[4]);
@@ -182,9 +181,12 @@ Window.closeAll;
 Pdefn(\melody).play(~t)
 // Testing
 s.makeWindow
+Pbindef(\vox, \rls, 1, \crv, -1, \lg1, 1, \lg2, 0.8).play
 
 Pbindef.all.do(_.stop);
 ~sim.stop
+
+// record some stuff..
 (
 Routine({
 	s.record;
@@ -194,8 +196,4 @@ Routine({
 	s.stopRecording
 }).play
 )
-~buffers[\catSampDe][0].play
-~buffers[\catSampEn][1].play
-~buffers[\wt].numFrames.isPowerOfTwo
-
 

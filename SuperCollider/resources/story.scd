@@ -30,4 +30,5 @@
 	"sie guckte dadurch",
 	"und da wurde ein Sog so stark, dass ihr auge immer näher an die Muschel herangesogen wurde",
 	"das fragte sie sich, ob ihres Leben schön war"
+	"Wie kann das sein?"
 ]

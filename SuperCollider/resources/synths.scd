@@ -102,19 +102,20 @@ SynthDef(\sn1, {
    Out.ar(out, sig!2);
 }).add;
 
+//https://www.youtube.com/watch?v=xYc7_PbbtuE&t=1579s  ab 5:00
 SynthDef(\kik2, {
 	var sig;
-	sig = SinOsc.ar(\freq.kr(60) * (1 + (8 * Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1));
-	sig = sig + (SinOsc.ar(XLine.ar(4000, 40, 0.01) * Env.perc(0.0001, 0.01).ar * \shaper1.kr(0.5)));
-	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 10120, 0.5) + Env.perc(0.001, 0.04).ar * \shaper2.kr(0.39));
+	sig = SinOsc.ar(\freq.kr(60) * (1 + (8* Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1));
+	sig = sig + (SinOsc.ar(XLine.ar(4000, 50, 0.01) * Env.perc(0.0001, 0.01).ar * -5.dbamp));
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 10120, 0.5) + Env.perc(0.001, 0.03).ar * -8.dbamp);
 	sig = sig * (1 + (2 * Env.perc(0.001, 0.2).ar));
-	sig = (sig * \distort.kr(1.2)).tanh;
+	sig = (sig * 0.dbamp).tanh;
 	sig = sig * Env.perc(0.001, 1.3, curve: -8).ar(Done.freeSelf);
 	sig = sig * \amp.kr(-5.dbamp);
 	sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig);
-
 }).add;
+
 //https://www.youtube.com/watch?v=xYc7_PbbtuE&t=1579s  ab 30:00
 SynthDef(\sn2, {
 	var sig;
@@ -132,8 +133,8 @@ SynthDef(\sn2, {
 	sig = sig * \amp.kr(-5.dbamp);
 	sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig);
-
 }).add;
+
 
 SynthDef.new(\impulse, {
     var channels, temp, env, vol, sig, sweep;
@@ -208,8 +209,8 @@ SynthDef(\uttSampler, {
 SynthDef(\brPhsr, {
     arg buf, rate=1, start, end;
     var sig, ptr, env;
-    ptr = Phasor.ar(0, BufRateScale.kr(buf)* rate, start, end);
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1) ), doneAction: 2);
+    ptr = Phasor.ar(0, BufRateScale.kr(buf)* rate, start, end, 0);
+    env = EnvGen.kr(Env.perc(\atk.kr(0.01), \rls.kr(1), curve: \crv.kr(-3)), doneAction:2);
     sig = 4.collect({
 		var lag = LFNoise1.kr(\lg1.kr(0)).bipolar(\lg2.kr(0.0));
 		lag = lag * s.sampleRate;
@@ -225,6 +226,7 @@ SynthDef(\rec, {
 	sig = In.ar(\in.kr(2));
 	Out.ar(0, sig!2 * \amp.kr(0.5));
 }).add;
+
 // Granular Synth
 
 SynthDef(\tgrains, {
@@ -339,4 +341,3 @@ Instr(#[\busfx, \limiter], { arg bus, numChannels, level, lookAhead, gain;
 }, [\mybuf, ObjectSpec(2), #[0, 1, \linear, 0, 1], #[0.001, 0.2],
    #[0.1, 4, \exponential, 0, 1]]
 );
-

@@ -37,7 +37,6 @@
 	// Builds a frame to contain the labels of the button rows
 	arg top_level, width, height, buttonsize, offset, style;
 	var array ;
-
 	var compView = CompositeView(top_level, Rect(0, 0, width, height))
 	.background_(style.at("top_level_frame_color"));
 	compView.addFlowLayout(0@0);
@@ -50,7 +49,7 @@
 	.align_(\center);
 	compView.decorator.nextLine;
 	array = Array.fill(5, {arg i;
-		StaticText(compView, Rect(10+i*buttonsize+20, 10, width, buttonsize))
+		StaticText(compView, Rect(10+(i*buttonsize)+20, 10, width, buttonsize))
 		.string_(~categories.at(i))
 		.background_(style["bank_frame_color"])
 		.font_(style.at("subheader_font"))
@@ -63,7 +62,6 @@
 	.font_(style.at("header_font"))
 	.align_(\center);
 	compView.decorator.nextLine;
-	//"built labels".postln;
 	compView;
 };
 
@@ -74,10 +72,8 @@
 	.background_(style.at("top_level_frame_color"));
 	compView.addFlowLayout(0@0);
 	compView.decorator.gap_(0@0);
-    //"built track buttons container".postln;
 	compView;
 };
-
 
 ~build_mc_labels = {
 	// Builds a frame to contain the labels of the button rows
@@ -150,12 +146,10 @@
 	// Builds the status area
 	arg top, posx, posy, style, fWidth, fHeight, utterances;
 	var compView, state, utts, state_data;
-
 	// Track Composite View
 	compView = CompositeView(top, Rect(posx, posy, fWidth + 30, fHeight +30))
 	.background_(Color.white);
-
-     state = StaticText(compView, Rect(5, 5 , fWidth, fHeight))
+	state = StaticText(compView, Rect(5, 5 , fWidth, fHeight))
 	.background_(style["bank_frame_color"])
 	.font_(style.at("subheader_font"))
 	.string_("state: 00")
@@ -169,7 +163,6 @@
 		.string_(utterances[i])
 		.align_(\topLeft);
 	});
-
 	//top.decorator.nextLine;
 	state_data = [compView, state, utts]
 };
@@ -223,7 +216,34 @@
 	buttonsStacked;
 };
 
+~build_slider_buttons_seq = {
+	arg top_level, sliderwidth, button_field_height, buttonsize, offset, rows, style;
+	var filler, compView, sliderAndFileViews, slider_button_data, rel_height=0.6;
+	compView = CompositeView(top_level, Rect(0, 0, sliderwidth+offset, buttonsize+(2*offset)+button_field_height))
+	.background_(style.at("bank_frame_color"));
+	filler = CompositeView(compView, Rect(0, 0, sliderwidth+offset, buttonsize+offset))
+		.background_(style.at("bank_frame_color"));
 
+	sliderAndFileViews=Dictionary.new;
+	~categories.do({arg cat, i;
+		var buffer_info = ~uttSamples[~categories[i]];
+		var numFrames = buffer_info[0].numFrames;
+		sliderAndFileViews[cat] = [
+			SoundFileView(compView, Rect(0, buttonsize+offset+(i*buttonsize), sliderwidth, buttonsize*rel_height))
+			.readFile(SoundFile.openRead(buffer_info[0].path), 0, numFrames)
+			.drawsRMS_(false)
+			.yZoom_(2),
+			RangeSlider(compView, Rect(0, buttonsize*(1+rel_height)+offset+(i*buttonsize), sliderwidth, buttonsize*(1-rel_height)))
+			.action_({ |slider|
+				buffer_info[1] = (slider.lo.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
+				buffer_info[2] = (slider.hi.lincurve(0, 1, 0 , numFrames, 0)).asInteger;
+			})
+			.background_(Color.white)
+		]
+	});
+
+	slider_button_data = [compView, sliderAndFileViews];
+};
 
 
 ~build_sequencer_buttons_seq = {
