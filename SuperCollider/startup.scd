@@ -143,7 +143,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [6, 10].choose.wait;
+        [16, 10].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
@@ -197,3 +197,4 @@ Routine({
 }).play
 )
 
+currentEnvironment.keys.do(_.postln)

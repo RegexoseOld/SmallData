@@ -217,21 +217,27 @@
 
 ~build_rotary_fader = {
 	|top, posx, posy, style, size, constants, mins, maxes|
-	var knobs, knobView, constant;
+	var knobs, knobView, constant, knobData, newValues;
+	knobView = CompositeView(top, Rect(posx, posy, size *3, size*5))
+	.background_(Color.white);
 	knobs = Array.fill(3, {|i|
-		Knob(top, Rect(posx, (posy + size) * i, size, size))
-		.mode_(\round)
+		Knob(knobView, Rect(0,  size * i, size, size))
+		.background_(style["lightgrey"])
 		.visible_(true)
 		.enabled_(true)
-		.action_({
-			|v|
-			constants[i].postln;
+		.action_({|v|
 			currentEnvironment.put(constants[i], v.value.lincurve(0.0, 1.0, mins[i], maxes[i]));
-			"knob value %\nconstant value %".format(v.value, currentEnvironment.at(constants[i])).postln;
-
+			newValues[i].string = constants[i] ++ " : " ++ v.value.lincurve(0.0, 1.0, mins[i], maxes[i]).trunc(0.001);
 		});
 	});
-	knobView = knobs;
+	newValues = Array.fill(3, {|i|
+		StaticText(knobView, Rect(size+10, size * i, size, size))
+		.string_(constants[i] ++ " : " ++ currentEnvironment.at(constants[i]))
+		.background_(Color.white)
+		.font_(style.at("text_font"))
+		.align_(\left)
+	});
+	knobData = [knobView, knobs, newValues];
 };
 
 ~build_sequencer_tabbed_stack_seq = {
