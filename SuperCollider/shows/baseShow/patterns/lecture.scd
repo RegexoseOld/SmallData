@@ -3,7 +3,7 @@ patterns: (
 	lec0: (
 		instrument: 'bellFm',
 		scale: Scale.chromatic,
-		midinote: Pseq(~melos[\melo][\lec], inf),
+		midinote: ~melos.melo.lec,
 		dur: Pseq(~melos.duras.lec, inf),
 	    amp: Pfunc({~melos.amps.lec}),
 		fade: Pkey(\midinote).lincurve(20, 100, 0.75, 0.25, -4),
@@ -26,7 +26,7 @@ patterns: (
 	lec1: (
 		instrument: 'bellFm',
 		scale: Scale.chromatic,
-		midinote: Pseq(~melos[\melo][\lec], inf),
+		midinote: ~melos.melo.lec,
 		dur: Pseq(~melos.duras.lec[..1], 1),
 		 amp: Pfunc({~melos.amps.lec}),
 		fade: Pkey(\midinote).lincurve(20, 100, 0.25, 0.01, -4),
@@ -49,7 +49,7 @@ patterns: (
 	lec2: (
 		instrument: 'bellFm',
 		scale: Scale.chromatic,
-		midinote: Pseq(~melos[\melo][\lec], inf),
+		midinote:  ~melos.melo.lec,
 		dur: Pseq(~melos.duras.lec[..1], 1),
 		 amp: Pfunc({~melos.amps.lec}),
 		fade: 0.5,
@@ -91,7 +91,7 @@ patterns: (
 	lec11: (
 		instrument:'bass',
 		scale: Scale.chromatic,
-		midinote: Pseq(~melos[\melo][\lec], inf),
+		midinote: ~melos.melo.lec,
 		dur: Pseq(~melos[\duras][\lec], inf),
 		amp:  Pfunc({~melos.amps.lec}),
 		atk: 0.05,
@@ -108,7 +108,7 @@ patterns: (
 	lec12: (
 		instrument:'bass',
 		scale: Scale.chromatic,
-		midinote: Pseq(~melos[\melo][\lec], inf),
+		midinote: ~melos.melo.lec,
 		dur: Pseq(~melos[\duras][\lec], inf),
 		amp:  Pfunc({~melos.amps.lec}),
 		atk: 0.05,

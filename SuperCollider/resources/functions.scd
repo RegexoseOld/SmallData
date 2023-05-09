@@ -13,6 +13,10 @@
 		\con: ~ch3,
 		\lec: ~ch4,
 		\ins: ~ch5,
+		\kik01: ~perc,
+		\sn01 : ~perc,
+		\h01: ~perc,
+		\bass: ~bass
 	);
 };
 
@@ -21,7 +25,6 @@
 	var sig, wt, buf;
 	sig = Signal.sineFill(size.asInteger, Array.fill(6, {rrand(0.01, 1)}), [0,pi,0,pi,0,0].scramble);
 	wt = sig.asWavetable;
-	wt.size.postln;
 	r{
 		buf = Buffer.alloc(s, size*2);
 		s.sync;
@@ -46,6 +49,8 @@
 		~ch4 = MixerChannel(\ch4, s, 2, 2, outbus: ~master);
 		~ch5 = MixerChannel(\ch5, s, 2, 2, outbus: ~master);
 		~utt = MixerChannel(\ch6, s, 2, 2, outbus: ~master);
+		~perc = MixerChannel(\ch7, s, 2, 2, outbus: ~master);
+		~bass = MixerChannel(\ch8, s, 2, 2, outbus: ~master);
 		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
 		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
 		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
@@ -87,12 +92,6 @@
 	~faderControl.do{|chan, it| ~activateVolume.(chan, it)}
 };
 
-// initialize utterance counter
-~categories.do({
-	|cat|
-	~uttDict.add(cat-> 0)
-});
-
 // initialize dictionary with audio utterances
 ~categories.do({
 	|cat|
@@ -102,10 +101,13 @@
 	});
 });
 
+// initialize utterance counter
+~categories.do({ |cat| ~uttDict.add(cat-> 0) });
 
 // make buffers
 PathName(~samplesPath).entries.do({
 		arg subfolder;
+	//subfolder.postln;
 		~buffers.add(
 			subfolder.folderName.asSymbol ->
 			Array.fill(
@@ -130,13 +132,14 @@ PathName(~samplesPath).entries.do({
 	~lastUtterances = lastUtts;
 	~lastCategories = lastCats;
     ~totalUtts = ~totalUtts + 1;
-    if(~uttDict[cat] >= 15, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
+    if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
 	defer{var index, count;
 	index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
 	count =  ~uttDict[~cat].asString;
     //postf("\nupdating index % to count % ", index, count);
 	~mc_labels[1][index].string = cat ++ "\n" ++ count;
 	~mc_labels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
+
 	}
 	//~uttDict.postln;
 };
@@ -144,19 +147,17 @@ PathName(~samplesPath).entries.do({
 ~updateSample = {
 	|pathString|
 	Buffer.read(s, pathString ++ "/00_utterance.wav", action: {arg buffer;
-		AppClock.sched(0, {~uttSamples.put(~cat, [buffer, 0, buffer.numFrames-1])});
-		AppClock.sched(0, {~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames)
-			.drawsRMS_(false)
-			.yZoom_(2)});
-		AppClock.sched(0,
-			{~slider_buttons[1][~cat][1].lo_(0);
-			~slider_buttons[1][~cat][1].hi_(1);
-				~slider_buttons[1][~cat][1]
-				.action_({ |slider|
-					~uttSamples[~cat][1] = (slider.lo.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
-					~uttSamples[~cat][2] = (slider.hi.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
-				})
-		})
+		AppClock.sched(0, {
+			~uttSamples.put(~cat, [buffer, 0, buffer.numFrames-1]); // update sample
+			~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames); // update SoundFileView
+			~slider_buttons[1][~cat][1].lo_(0); // reset low-end of Slider
+			~slider_buttons[1][~cat][1].hi_(1); // reset hi-end of Slider
+			~slider_buttons[1][~cat][1]  // update  start and end of sample
+			.action_({ |slider|
+				~uttSamples[~cat][1] = (slider.lo.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
+				~uttSamples[~cat][2] = (slider.hi.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
+			})
+		});
 	});
 };
 
@@ -223,7 +224,7 @@ PathName(~samplesPath).entries.do({
 		{(vol <= ~volThres) && (vol >= ~volMin)} {~melos[\amps][cat]= vol - (~volStep * ~subFac)} // middle volumes decrease slower
 		{vol <= ~volMin} {~melos[\amps][cat] = ~volMin}
 		{true}{"end of fade cases"};
-		Pbindef(cat, \amp, ~fadePatterns[cat][\vol]);
+		Pbindef(cat, \amp, ~melos[\amps][cat]);
 		defer{var index, height, text;
 			//"updating mc: index % height  % text  %".format(index, height, text);
 			index = ~fadingSynths.detectIndex({|it, i| it == cat});
@@ -234,7 +235,6 @@ PathName(~samplesPath).entries.do({
 		}
 	})
 };
-
 ~allocateSynth = {
 		|s_name, count|
 		var c;
@@ -263,17 +263,17 @@ PathName(~samplesPath).entries.do({
 			"10 utts".postln;
     }
     {(~totalUtts > 1) && (~totalUtts < 10) }{
-		Pbindef(\metronom).play(~t, quant:1);
+		//Pbindef(\metronom).play(~t, quant:1);
 	}
     {(~totalUtts == 1)}{
         //"first utt".postln;
 		~runFx.();
 		~activateFaders.();
         ~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
-		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:1)};
+		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
 		Pdefn(\melody).play(~t, quant:1);
 		~patternsPlaying = true;
-		[\answer].do{|n| Pbindef(n).play(~t, quant:1)}
+		[\kik01, \bass].do{|n| Pbindef(n).play(~t, quant:4)}
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);
@@ -284,13 +284,9 @@ PathName(~samplesPath).entries.do({
     });
 };
 
-
 ~mock = {
-    var cat = ~categories.choose;
-	/* ~cat = 'insinuation';
-	~updateUtts.("das ist gut", cat);
- 	~setGlobal.value();*/
+    var cat = ~categories.choose,
 	m = NetAddr("127.0.0.1", 57120);
 	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], ~resourcePath ++ "samples/lec01/");
-	~storyIndex = ~storyIndex + 1;
 };
+

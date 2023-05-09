@@ -15,6 +15,7 @@
 	.background_(style["top_level_frame_color"]);
 	compView.addFlowLayout(10@10);
 	compView.decorator.gap_(0@10);
+	//"built toplevel".postln;
 	compView;
 };
 
@@ -28,13 +29,14 @@
 	guiTitle.font = style.at("header_font");
 	guiTitle.align = \center;
 	top.decorator.nextLine;
+	//"built header".postln;
 	guiTitle;
 };
 
 ~build_labels_seq = {
 	// Builds a frame to contain the labels of the button rows
 	arg top_level, width, height, buttonsize, offset, style;
-	var array;
+	var array ;
 	var compView = CompositeView(top_level, Rect(0, 0, width, height))
 	.background_(style.at("top_level_frame_color"));
 	compView.addFlowLayout(0@0);
@@ -95,7 +97,54 @@
 	label_data = [compView, array]
 };
 
+~build_sequencer_tabbed_stack_seq = {
+ 	// Builds n stacks of columns * rows buttons that control different sequencer levels.
+ 	arg top_level, sequencer_tab_buttons, width, height, num_tab_buttons, buttonsize, columns, rows, style, memory;
+ 	var view, stack, buttonsStacked, compViews;
 
+ 	// A view container to place a vertical + stack layout.
+ 	view = View(top_level, Rect(0, 0, width, height));
+ 	view.background = style.at("bank_frame_color");
+
+ 	// Builds an array of sequencer buttons (themselves a 2DArray).
+ 	buttonsStacked = Array.fill(num_tab_buttons, {arg i; ~build_sequencer_buttons_seq.value(view, buttonsize*columns, buttonsize*rows, style, columns, rows, buttonsize)});
+
+ 	// The individual composite views that the buttons will be placed.
+ 	compViews = Array.fill(num_tab_buttons, {arg i; buttonsStacked[i][0]});
+
+ 	// Places the button compviews in the StackLayout
+ 	view.layout = VLayout(
+ 		stack = StackLayout(
+ 			*compViews;
+ 		);
+ 	);
+
+ 	// The tab buttons gain the action of controlling which stack of buttons is shown
+ 	sequencer_tab_buttons.do({
+ 		arg item, i;
+ 		item.action_({
+ 			arg button;
+ 			stack.index = i;
+ 			memory.at(\seq_mem).put(\current_name, button.string);
+ 			sequencer_tab_buttons.do({
+ 				arg item, i;
+ 				if (button != item, {
+ 					if (item.value == 1,
+ 						{ item.value = 0 }
+ 					);
+ 				}, {
+ 					button.value = 1;
+ 				});
+ 			});
+ 			// Set the buttons and sliders on the GUI from memory.
+ 			~set_buttons_sliders_numBoxes.value(memory);
+ 		});
+
+ 	});
+ 	//"built tabbed stack".postln;
+ 	top_level.decorator.nextLine;
+ 	buttonsStacked;
+ };
 
 ~build_sequencer_track_seq = {
 	// Builds the sequencer track.
@@ -113,6 +162,7 @@
 		.background_(Color.white)
 	});
 	top.decorator.nextLine;
+    //"built sequncer track".postln;
 	sequencer_track_data = [trackCompView, array]
 };
 
@@ -163,6 +213,7 @@
 	//top.decorator.nextLine;
 	state_data = [compView, state, utts]
 };
+
 
 ~build_rotary_fader = {
 	|top, posx, posy, style, size, constants, mins, maxes|
@@ -304,62 +355,6 @@
 		{ track[1][index-1].background_(Color.white).string_("") }.defer;
 	});
 };
-
-~build_control_name_seq = {
-	// A helper function that builds a control name according to the name defined.
-	arg memory, name;
-	var str;
-	str = memory.at(\seq_mem).at(\current_name) ++ "_" ++ name;
-	str.asSymbol;
-};
-
-~set_buttons_sliders_numBoxes_seq = {
-	// Function that sets specific sliders/buttons/menus that should update when the
-	// tab button changes.
-	arg memory;
-	var control_name;
-	memory.at(\seq_mem).at(\noteDurationSlider).value = memory.at(\seq_mem).at(~build_control_name_seq.value(memory, \sus));
-	memory.at(\seq_mem).at(\volumeSlider).value = memory.at(\seq_mem).at(~build_control_name_seq.value(memory, \amp));
-	memory.at(\seq_mem).at(\instrumentMenu).value = memory.at(\seq_mem).at(~build_control_name_seq.value(memory, \instrument) ++ '_idx');
-};
-
-~build_level_indicator = {
-	arg input, container, width, height;
-	var bus, indicator, updateIndicator, soundSynth, val;
-
-	container.onClose_({   // stop routine when the window is closed
-		updateIndicator.stop;
-		updateIndicator.free
-	});
-
-	bus = Bus.control();
-	bus.postln;
-	soundSynth = Synth(\levelIndicator_1ch, [\input, input, \bus, bus], addAction: 'addToTail');
-
-	indicator = LevelIndicator(container, Rect(0,0,width,height))
-	.warning_(0.5)           // set warning level
-	.critical_(0.7)          // set critical level
-	.background_(Color.white) // set Color
-	.drawsPeak_(true)
-	.style_('\led')
-	.stepWidth_(3);       // draw Peak Values
-
-	// update the Indicator's value with a routine
-	updateIndicator = fork{
-		loop{
-			bus.get({   // get current value from the bus
-				arg value;
-				{
-					indicator.value_(value);     // set Indicator's value
-					indicator.peakLevel_(value); // set Indicator's peak value
-				}.defer(); // schedule in the AppClock
-			});
-			0.01.wait; // indicator will be updated every 0.01 seconds
-		}
-	};
-
-};
-
 )
 
 

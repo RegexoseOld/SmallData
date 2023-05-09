@@ -1,8 +1,10 @@
 // Sequencer
 (
 var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300;
-var window, top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, slider_container, start_instrument=\default, pattern, instruments=[\default, \peep_sequencer, \sin_tone_sequencer, \buzzy_bram_sequencer, \phase_mod_sequencer, \sin_fb_synth_sequencer, \subtract_noise_synth_sequencer], memory=~gm, mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
-var button_field_width=buttonsize*columns, button_field_height=buttonsize*rows;
+
+var window, top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, start_instrument=\default, pattern, memory=~gm;
+var mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
+var button_field_width = buttonsize*columns, button_field_height=buttonsize*rows;
 
 // #############################
 // Initialize Base Memory Values
@@ -61,7 +63,7 @@ mc_top = ~build_top_level_seq.(mc_window, 10, 10, mc_catwidth*5+ 720, mc_catheig
 // #########
 
 // Build window, top_level and header
-window = ~build_window_seq.value("Sequencer", ~style_1, 10, 300,  labelwidth+button_field_width+sliderwidth+(7*offset), buttonsize+offset+button_field_height+headerheight+(6*offset));
+window = ~build_window_seq.value("Sequencer", ~style_1, 10, 550,  labelwidth+button_field_width+sliderwidth+(7*offset), buttonsize+offset+button_field_height+headerheight+(6*offset));
 top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+labelwidth+sliderwidth+(5*offset), buttonsize+offset+button_field_height+headerheight+(4*offset), ~style_1);
 header = ~build_sequencer_header_seq.value(top_level, button_field_width+labelwidth, headerheight, ~style_1, "Sequencer");
 
@@ -73,7 +75,7 @@ track = ~build_sequencer_track_seq.value(track_buttons_container, button_field_w
 // Build the Sequencer Buttons
 stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_container, sequencer_tab_buttons, button_field_width+(2*offset), button_field_height+(2*offset), 3, buttonsize, columns, rows, ~style_1, memory);
 
-// slider_container = ~build_track_buttons_container_seq.value(top_level, sliderwidth, buttonsize+button_field_height+(2*offset), ~style_1);
+// Build SoundFileView and RangeSliders
 ~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
 
 // ##############
@@ -91,6 +93,8 @@ Pdefn(\melody, Ppar(
 			\delta, memory.at(\seq_mem).at(\delta),
 			\sustain, Pdefn(\p_melody_sus,  memory.at(\seq_mem).at(\melody_sus)),
 			\amp,  Pif(Pseq(stacked_buttons[0][1][r], inf).coin, currentVol, \rest),
+			\start, Pfunc({~uttSamples[~categories[r]][1]}),
+			\end, Pfunc({~uttSamples[~categories[r]][2]}),
 			\out, 0,
 			\start, Pfunc({~uttSamples[~categories[r]][1]}),
 			\end, Pfunc({~uttSamples[~categories[r]][2]}),
@@ -99,5 +103,8 @@ Pdefn(\melody, Ppar(
 )}), inf));
 
 
-CmdPeriod.add({window.close;});
+CmdPeriod.add({
+	window.close;
+	mc_window.close;
+});
 )
