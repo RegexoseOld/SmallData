@@ -5,9 +5,9 @@
 ~configFile.load;
 ~resourcePath = ~projectRoot ++ "resources/";
 
-Server.default.options.numInputBusChannels_(1);
+Server.default.options.numInputBusChannels_(0);
 Server.default.options.outDevice_(~audioInterface);
-Server.default.options.inDevice_(~audioInterface);
+//Server.default.options.inDevice_(~audioInterface);
 s.newBusAllocators;
 ServerTree.removeAll; // löscht alle funktionen
 
@@ -16,10 +16,10 @@ s.waitForBoot({
 	Buffer.freeAll;
 	Pbindef.all.do(_.clear);
 	s.sync;
-	MIDIClient.init;
+	/*MIDIClient.init;
 	MIDIIn.connectAll;
 	~midiOut = MIDIOut.new(0);
-	~midiIn = MIDIIn.new(0);
+	~midiIn = MIDIIn.new(0);*/
 
 
 	/// load SynthDefs, Constants, Functions
@@ -143,7 +143,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5, 3].choose.wait;
+        [20, 7, 5].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;

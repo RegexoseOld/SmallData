@@ -62,16 +62,23 @@
 // feedback sound
 
     2.do{
-        |n|
-        Pbind(
+        var dur = [0.25, 0.31].choose;
+        var samp, pitch;
+        samp = Pbind(
             \instrument, \sampMon,
-            \dur, Prand([0.25, 0.31], numNotes),
-			\buf, ~melos[\slots][catName],
-            \amp, ~fbVol * local_feedbackVol, \pan, Pwhite(-1.0, 1.0, numNotes),
-			\rate, [1, (numNotes * 1.33)],
-            \atk, 0.05, \rls, Pkey(\dur), \crv, -4,
-			\out, ~utt.inbus
-        ).play;
+            \dur, dur,
+            \buf, ~melos[\slots][catName],
+            \amp, ~fbVol * local_feedbackVol, \pan, Pwhite(-1.0, 1.0, 1),
+            \rate, [1, (numNotes * 1.33)],
+            \atk, 0.05, \rls, Pkey(\dur), \crv, -4);
+        pitch = Pbind(
+            \instrument, \bellFm,
+            \dur, dur,
+            \midinote, ~melos.feedback[catName],
+            \amp, ~fbVol * local_feedbackVol,
+            \pan, Pwhite(-1.0, 1.0, 1),
+            \atk, 0.04, \rls, 0.2);
+        Ppar([samp, pitch], numNotes).play;
     };
 
    ~addVolume.value(catName);

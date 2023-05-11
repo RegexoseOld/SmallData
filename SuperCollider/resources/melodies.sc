@@ -35,6 +35,14 @@ melo: (
 
 ),
 
+feedback:(
+    pr: 60,
+	ins: 71,
+    con: 64,
+    lec: 68,
+    dis: 65,
+),
+
 duras:(
     pr: Array.fill(~numSlots, {4}),
     ins: Array.fill(~numSlots, {4}),
