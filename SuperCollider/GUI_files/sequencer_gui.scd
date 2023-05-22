@@ -76,7 +76,7 @@ stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_containe
 // Build SoundFileView and RangeSliders
 ~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
 
-~utterance_selectors = ~build_utterance_selectors_seq.value(top_level, selector_width, buttonsize, button_field_height, offset, rows);
+~utterance_selectors = ~build_utterance_selectors_seq.value(top_level, selector_width, button_field_height, buttonsize, offset, rows);
 
 // ##############
 // Build Patterns

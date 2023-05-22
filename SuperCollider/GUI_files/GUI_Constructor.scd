@@ -249,7 +249,13 @@
 	var compView, selectors;
 	compView = CompositeView(top_level, Rect(0, 0, selector_width+offset, buttonsize+(2*offset) + button_field_height))
 	.background_(~style_1.at("bank_frame_color"));
-	compView;
+	selectors = Dictionary.new;
+	~categories.do({arg cat, i;
+
+		selectors[cat] = PopUpMenu(compView, Rect(0, buttonsize+offset+(i*buttonsize), selector_width, buttonsize))
+		.items_([cat]);
+	});
+	selectors;
 };
 
 
