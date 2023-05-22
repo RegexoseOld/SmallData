@@ -1,6 +1,6 @@
 // Sequencer
 (
-var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300;
+var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300, selector_width=200;
 var window, top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, start_instrument=\default, pattern, memory=~gm;
 var mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
 var button_field_width = buttonsize*columns, button_field_height=buttonsize*rows;
@@ -61,8 +61,8 @@ mc_top = ~build_top_level_seq.(mc_window, 10, 10, mc_catwidth*5+ 720, mc_catheig
 // #########
 
 // Build window, top_level and header
-window = ~build_window_seq.value("Sequencer", ~style_1, 10, 550,  labelwidth+button_field_width+sliderwidth+(7*offset), buttonsize+offset+button_field_height+headerheight+(6*offset));
-top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+labelwidth+sliderwidth+(5*offset), buttonsize+offset+button_field_height+headerheight+(4*offset), ~style_1);
+window = ~build_window_seq.value("Sequencer", ~style_1, 10, 550,  labelwidth+button_field_width+sliderwidth+selector_width+(8*offset), buttonsize+offset+button_field_height+headerheight+(6*offset));
+top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+labelwidth+sliderwidth+selector_width+(6*offset), buttonsize+offset+button_field_height+headerheight+(4*offset), ~style_1);
 header = ~build_sequencer_header_seq.value(top_level, button_field_width+labelwidth, headerheight, ~style_1, "Sequencer");
 
 // Build Track
@@ -75,6 +75,8 @@ stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_containe
 
 // Build SoundFileView and RangeSliders
 ~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
+
+~utterance_selectors = ~build_utterance_selectors_seq.value(top_level, selector_width, buttonsize, button_field_height, offset, rows);
 
 // ##############
 // Build Patterns

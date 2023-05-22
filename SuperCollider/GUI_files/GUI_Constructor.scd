@@ -215,6 +215,7 @@
 };
 
 ~build_slider_buttons_seq = {
+	// build the views for the soundfiles and the range sliders
 	arg top_level, sliderwidth, button_field_height, buttonsize, offset, rows, style;
 	var filler, compView, sliderAndFileViews, slider_button_data, rel_height=0.6;
 	compView = CompositeView(top_level, Rect(0, 0, sliderwidth+offset, buttonsize+(2*offset)+button_field_height))
@@ -241,6 +242,14 @@
 	});
 
 	slider_button_data = [compView, sliderAndFileViews];
+};
+
+~build_utterance_selectors_seq = {
+	arg top_level, selector_width, button_field_height, buttonsize, offset, rows;
+	var compView, selectors;
+	compView = CompositeView(top_level, Rect(0, 0, selector_width+offset, buttonsize+(2*offset) + button_field_height))
+	.background_(~style_1.at("bank_frame_color"));
+	compView;
 };
 
 
