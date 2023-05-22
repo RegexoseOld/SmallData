@@ -37,6 +37,7 @@
 ~buffers = Dictionary.new;
 ~utts = Dictionary.new;
 ~uttDict = Dictionary.new;
-~uttSamples = Dictionary.new;
+~uttSamples = Dictionary.new;  // The currently selected samples
+~samplePaths = Dictionary.new; // The paths to all sample files
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
 ~showFolder = ~projectRoot +/+ "shows" +/+ ~showName;

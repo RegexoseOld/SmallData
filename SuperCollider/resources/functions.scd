@@ -92,14 +92,22 @@
 	~faderControl.do{|chan, it| ~activateVolume.(chan, it)}
 };
 
-// initialize dictionary with audio utterances
+// initialize dictionary with currentaudio utterances
 ~categories.do({
 	|cat|
-	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav",
+	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav",
 		action: {arg buffer;
 			~uttSamples.add(cat-> [buffer, 0, buffer.numFrames]);
 	});
 });
+
+// initialize dictionary with paths to audio utterances
+~categories.do({
+	|cat|
+	var path = PathName(PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat);
+	~samplePaths.add(cat -> Dictionary[path.fileName.asSymbol -> path]);
+});
+
 
 // initialize utterance counter
 ~categories.do({ |cat| ~uttDict.add(cat-> 0) });
@@ -146,7 +154,15 @@ PathName(~samplesPath).entries.do({
 
 ~updateSample = {
 	|pathString|
-	Buffer.read(s, pathString ++ "/00_utterance.wav", action: {arg buffer;
+	var pathToFile, itemlist, itemName;
+    pathToFile = PathName(pathString ++ "00_utterance.wav");
+	itemName = pathToFile.folderName;
+	~samplePaths[~cat].add(itemName -> pathToFile);
+	itemlist = ~utterance_selectors[1][~cat].items;
+	itemlist.add(itemName);
+	AppClock.sched(0, {~utterance_selectors[1][~cat].items_(itemlist);});
+
+	Buffer.read(s, pathToFile.fullPath, action: {arg buffer;
 		AppClock.sched(0, {
 			~uttSamples.put(~cat, [buffer, 0, buffer.numFrames-1]); // update sample
 			~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames); // update SoundFileView
