@@ -159,22 +159,14 @@ Synth(\sn2)
 ~allocate.(\ins, 21)
 ~allocate.(\lec, 21)
 ~allocate.(\pr, 21)
-~allocate.(\con, 21)
-Pbindef(\dis, \thr, 0.7, \cgain, 1.4, \gendAmp, 0.9, \ffreq, 2600, \rq, 0.8, \lag, 0, \pulseMul, 0.6, \add, 0, \width, 0.3);
-Pbindef(\pr).play(~t)
-Pbindef(\pr, \cgain, 1.0, \vibF, Pseq([0.2, 4, 2.0, 0.4],inf), \bpf, Pwhite(300, 600, inf) )
-Pbindef(\con, \detune, 0)
-Pbindef(\sn01, \dur, 1/4, \freq, Pseq([\, \, Pn(200, 6), \, \, 190, \, \, Pn(200, 4), \, \], inf)).quant_(1)
-Pbindef(\lec, \fmVol, 150, \fmVol, 150, \filTime, 0.1, \modRate, 0.9, \rls, 0.1, \sustain, 0.15)
-Pbindef(\sn01, \freq, 300)
-~states[\ins][\ins05]
-~allocate.(\pr, 6)
-~states[\pr][\pr05]
+~allocate.(\con, 2)
+
 )
 (
 ~postBeats = {~t.beats.postln; 4};
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
+~t.tempo = 120/60
 
 Window.closeAll;
 Pdefn(\melody).play(~t)
@@ -195,4 +187,5 @@ Routine({
 	s.stopRecording
 }).play
 )
+~categories
 

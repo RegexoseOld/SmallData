@@ -8,13 +8,15 @@ SynthDef.new(\bellFm, {
     trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.5), \varDur.kr(1));
     sig2 =  SinOsc.ar(freq * mRatio, mul:freq * mRatio * index);
     sig = 3.collect({
-		var spread;
+		var spread, temp;
 		spread = LFNoise1.kr(\spread.kr(0.05)).bipolar(\dev.ir(0.7)).midiratio;
-		SinOsc.ar(freq * trem * spread + sig2 , mul: volMod);
+		temp = SinOsc.ar(freq * trem * spread + sig2 , mul: volMod);
+		temp = BPF.ar(temp, XLine.kr(bpf, bpf * \bpf2.kr(1) * spread.abs, \bpf3.kr(0.2)), \bpfQ.kr(0.9), \bpfMul.kr(2));
 	}).sum;
     sig = sig * \fade.kr(1) ;
     sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-    sig = BPF.ar(sig, XLine.kr(bpf, bpf * \bpf2.kr(5), \bpf3.kr(0.2)), \bpfQ.kr(0.9), \bpfMul.kr(2));
+
+	//sig = MidEQ.ar(sig, SinOsc.kr(\bpf3.kr(0.2), 0, 24, 84).midicps, \bpfQ.kr(0.9), \bpfMul.kr(2));
     sig = Pan2.ar(sig * env * \amp.kr(0.1) ,\pan.kr(0.0));
     Out.ar(\out.kr(0), sig);
 }).add;
@@ -160,7 +162,7 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
         { ExpRand(0.1, 0.4) }!2
     ], exc, accent + 1, \frqOff.kr(0.0), decayScale);// accent ist die höhe, decayScale die Länge des Sounds
 	}).sum;
-	sig = LeakDC.ar(sig, 0.998);
+	//sig = LeakDC.ar(sig);
     DetectSilence.ar(sig, doneAction: Done.freeSelf);
     sig = Pan2.ar(sig * \amp.kr(0.1) * \fade.kr(1.0), \pan.kr(0.0));
     Out.ar(\out.kr(0), sig);

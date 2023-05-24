@@ -269,7 +269,7 @@ PathName(~samplesPath).entries.do({
         //"first utt".postln;
 		~runFx.();
 		~activateFaders.();
-        ~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
+        //~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
 		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
 		Pdefn(\melody).play(~t, quant:1);
 		~patternsPlaying = true;

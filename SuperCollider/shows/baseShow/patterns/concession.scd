@@ -15,8 +15,8 @@ patterns: (
 	con1: (
 	    instrument: 'percImp',
 		midinote:  ~melos.melo.con,
-		dur: Pseq(~melos[\duras][\con], inf),
 		amp: Pfunc({~melos.amps.con}),
+		dur: Pseq(~melos[\duras][\con], inf),
 		fade:  Pseq([Pseq([0.9, 0.2, 0.2, 0.9, 0.2, 0.2, 0.9, 0.2], 4)], inf),
 		accent: Pseq([
 			Pseq([0, -0.01, 0, 0.5, 0, 0.05, 0, -0.02], 1),
@@ -30,10 +30,9 @@ patterns: (
 	),
 	con2: (
 		instrument: 'bellFm',
-		scale: Scale.chromatic,
 		midinote:  ~melos.melo.con,
+		amp:Pfunc({~melos.amps.con}),
 		dur: Pseq(~melos.duras.con[..1], 1),
-		amp: 0.1,
 		fade: 0.5,
 		thr: 0.5,
 		cgain: 1,
@@ -52,10 +51,10 @@ patterns: (
 	),
 	con10: (
 	instrument: 'bellFm',
-		scale: Scale.chromatic,
 		midinote: ~melos[\melo][\cad01],
 		dur: Pseq(~melos[\duras][\con], inf),
-		fade: Pkey(\midinote).lincurve(20, 100, 0.75, 0.25, -4),
+		amp: Pfunc({~melos.amps.con}),
+		fade: 0.5,
 		thr: 0.5,
 		cgain: 1,
 		pan: 0,
@@ -73,7 +72,6 @@ patterns: (
 
 	con20: (
 		instrument: 'percImp',
-		scale: Scale.chromatic,
 		dur: Pseq(~melos[\duras][\con], inf),
 		amp: Pfunc({~melos.amps.con}),
 		fade: 0.5,
@@ -86,7 +84,6 @@ patterns: (
 
 	con21: (
 		instrument: 'percImp',
-		scale: Scale.chromatic,
 		dur: Pseq(~melos[\duras][\con], inf),
 		amp:  Pfunc({~melos.amps.con}),
 		fade: 0.5,

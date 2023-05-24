@@ -2,11 +2,10 @@
 patterns: (
      ins0: (
         instrument: 'bellFm',
-        scale: Scale.chromatic,
         midinote:  ~melos.melo.ins,
         dur: Pseq(~melos[\duras][\ins], inf),
         amp:  Pfunc({~melos.amps.ins}),
-        fade: Pkey(\midinote).lincurve(20, 100, 0.75, 0.25, -4),
+        fade: 0.5,
         thr: 0.5,
         cgain: 1,
         pan: 0,
@@ -24,10 +23,9 @@ patterns: (
     ),
 	 ins1: (
 	   instrument: 'bellFm',
-        scale: Scale.chromatic,
         midinote: ~melos.melo.ins,
+       amp: Pfunc({~melos.amps.ins}),
         dur: Pseq(~melos.duras.ins[..1], 1),
-       amp: Pkey(\midinote).lincurve(20, 100, 0.25, 0.01, -4),
 		fade: 0.5,
         thr: 0.5,
         cgain: 1,
@@ -46,10 +44,9 @@ patterns: (
 	),
 	 ins2: (
         instrument: 'bellFm',
-        scale: Scale.chromatic,
         midinote: ~melos.melo.ins,
+         amp: Pfunc({~melos.amps.ins}),
         dur: Pseq(~melos[\duras][\ins], 1),
-        amp:0.1,
         fade: 0.5,
         thr: 0.5,
         cgain: 1,
@@ -88,9 +85,8 @@ patterns: (
 	ins11: (
 		instrument: 'oscfm',
 		buf: Pfunc{~buffers[\wt]},
-		midinote: ~melos.melo.ins,
-		dur: 1,
 		amp:  Pfunc({~melos.amps.ins}),
+		dur: 1,
 		fade: 0.5,
 		atk: 0.3,
 		atkcrv: Prand([-3, -1, 3, 7], inf),
@@ -104,9 +100,8 @@ patterns: (
 	ins12: (
 		instrument: 'oscfm',
 		buf: Pfunc{~buffers[\wt]},
-		midinote: ~melos.melo.ins,
-		dur: Pseq(~melos[\duras][\ins], inf),
 	    amp:  Pfunc({~melos.amps.ins}),
+		dur: Pseq(~melos[\duras][\ins], inf),
 		fade: 0.5,
 		atk: 0.02,
 		atkcrv: 1,

@@ -123,8 +123,7 @@ patterns: (
 	),
 	bass: (
 		instrument:'bass',
-		scale: Scale.chromatic,
-		midinote:  Pseq([Pn(\, 20), 30, \, 33, Pn(\, 3), 30, 30, 33, Pn(\, 3)], inf),
+		midinote:  ~melos.melo.bass0,
 		dur: 0.125,
 		amp: 0.3,
 		atk: 0.02,

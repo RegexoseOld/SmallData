@@ -2,11 +2,10 @@
 patterns: (
     pr0: (
         instrument: 'bellFm',
-        scale: Scale.chromatic,
         midinote: ~melos.melo.pr,
         dur: Pseq(~melos[\duras][\pr], inf),
         amp: Pfunc({~melos.amps.pr}),
-        fade: Pkey(\midinote).lincurve(20, 100, 0.75, 0.25, -4),
+        fade: 0.5,
         thr: 0.5,
         cgain: 1,
         pan: 0,
@@ -19,14 +18,14 @@ patterns: (
         bpf1: 300,
         bpf2: 5,
         bpf3: 0.3,
-        bpfQ: 0.9,
+        bpfQ: 0.5,
 
     ),
 
 	    pr1: (
         instrument: 'bellFm',
-        scale: Scale.chromatic,
         midinote: ~melos.melo.pr,
+		amp:  Pfunc({~melos.amps.pr}),
         dur: Pseq(~melos.duras.pr[..1], 1),
         fade: 0.5,
         thr: 0.5,
@@ -38,7 +37,6 @@ patterns: (
         vibVol: 30,
         dev: 0.08,
         spread: 0.16,
-		amp: Pkey(\midinote).lincurve(20, 100, 0.25, 0.01, -4),
         bpf1: Pwhite(200, 1000, inf),
         bpf2: 5,
         bpf3: 0.3,
@@ -47,10 +45,9 @@ patterns: (
     ),
 	    pr2: (
         instrument: 'bellFm',
-        scale: Scale.chromatic,
         midinote: ~melos.melo.pr,
         dur: Pseq(~melos.duras.pr[..1], 1),
-        amp: 0.1,
+        amp: Pfunc({~melos.amps.pr}),
         fade: 0.5,
         thr: 0.5,
         cgain: 1,
@@ -70,7 +67,6 @@ patterns: (
 
     pr10: (
         instrument: 'bellFm',
-        scale: Scale.chromatic,
         midinote: ~melos[\melo][\cad01],
         dur: Pseq(~melos[\duras][\pr], inf),
         amp:  Pfunc({~melos.amps.pr}),

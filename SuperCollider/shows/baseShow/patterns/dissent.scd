@@ -3,11 +3,10 @@ patterns:(
 
 	dis0: (
 		instrument: 'bellFm',
-		scale: Scale.chromatic,
 		midinote:  ~melos.melo.dis,
 		dur: Pseq(~melos[\duras][\dis], inf),
 		amp: Pfunc({~melos.amps.dis}),
-		fade: Pkey(\midinote).lincurve(20, 100, 0.75, 0.25, -4),
+		fade: 0.5,
 		thr: 0.5,
 		cgain: 1,
 		pan: 0,
@@ -26,10 +25,9 @@ patterns:(
 
 	dis1: (
 		instrument: 'bellFm',
-		scale: Scale.chromatic,
 		midinote:  ~melos.melo.dis,
 		dur: Pseq(~melos.duras.dis[..1], 1),
-		amp: Pkey(\midinote).lincurve(20, 100, 0.25, 0.01, -4),
+		amp: Pfunc({~melos.amps.dis}),
 		fade: 0.5,
 		thr: 0.5,
 		cgain: 1,
@@ -49,10 +47,9 @@ patterns:(
 
 	dis2: (
 		instrument: 'bellFm',
-		scale: Scale.chromatic,
 		midinote:  ~melos.melo.dis,
+		amp: Pfunc({~melos.amps.dis}),
 		dur: Pseq(~melos.duras.dis[..1], 1),
-		amp: 0.1,
 		fade: 0.5,
 		thr: 0.5,
 		cgain: 1,
@@ -71,11 +68,10 @@ patterns:(
 	),
 	dis10: (
 		instrument: 'quitt',
-		scale: Scale.chromatic,
 		midinote: ~melos[\melo][\cad01],
 		dur: Pseq(~melos[\duras][\dis], inf),
 		amp:  Pfunc({~melos.amps.dis}),
-		fade: Pkey(\midinote).lincurve(20, 100, 0.75, 0.25, -4),
+		fade: 0.5,
 		thr: 0.5,
 		cgain: 2,
 		pan: 0,
@@ -90,10 +86,9 @@ patterns:(
 	),
 	dis20: (
 		instrument: 'quitt',
-		scale: Scale.chromatic,
 		midinote:  ~melos.melo.dis,
-		dur: Pseq(~melos[\duras][\dis], inf),
 		amp:  Pfunc({~melos.amps.dis}),
+		dur: Pseq(~melos[\duras][\dis], inf),
 		fade: 0.5,
 		thr: 0.5,
 		cgain: 2,
@@ -109,10 +104,9 @@ patterns:(
 	),
 	dis21: (
 		instrument: 'quitt',
-		scale: Scale.chromatic,
 		midinote: ~melos.melo.dis,
-		dur: Pseq(~melos[\duras][\dis], inf),
 		amp: Pfunc({~melos.amps.dis}),
+		dur: Pseq(~melos[\duras][\dis], inf),
 		fade: 0.5,
 		thr: 0.5,
 		cgain: 2,
@@ -128,10 +122,9 @@ patterns:(
 	),
 	dis12: (
 		instrument: 'quitt',
-		scale: Scale.chromatic,
 		midinote:  ~melos.melo.dis,
-		dur: Pseq(~melos[\duras][\dis], inf),
 		amp: Pfunc({~melos.amps.dis}),
+		dur: Pseq(~melos[\duras][\dis], inf),
 		fade: 0.5,
 		thr: 0.5,
 		cgain: 2,

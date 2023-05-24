@@ -12,16 +12,17 @@
     c = case
 	{count < 5}{
 		in_count = count;
-		Pbindef(\metronom, \amp, (0.05 * in_count)).play(~t);
+		Pbindef(\metronom).stop;
 		Pbindef(\bass, \amp, (0.02 * in_count));
 		Pbindef(\kik01).play(~t, quant:1);
+		Pbindef(catName, \bpf, 300, \bpf2, 10, \bpf3, 4, \bpfQ, 0.2, \bpfMul, 10);
 	    Pbindef(\sn01).stop;
 		status = "state 00";
 	}
     {(count >= 5) && (count <= 10)} {
         in_count = count-4;
         patName = catName.asString ++ "10";
-		Pbindef(\metronom).stop;
+		Pbindef(\metronom, \amp, (0.05 * in_count)).play(~t);
 		Pbindef(\bass, \amp, (0.05 * count));
 		//Pbindef(\kik01).stop;
 		Pbindef(\sn01).play(~t, quant:1);
