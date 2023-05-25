@@ -288,5 +288,6 @@ PathName(~samplesPath).entries.do({
     var cat = ~categories.choose,
 	m = NetAddr("127.0.0.1", 57120);
 	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], ~resourcePath ++ "samples/lec01/");
+	~storyIndex = ~storyIndex +1;
 };
 

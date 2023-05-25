@@ -150,17 +150,26 @@ s.waitForBoot({
 )
 ~sim.stop
 ~t.beatsPerBar
+~states[\bass]
 
 Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
 Pbindef(\sn02)
 Synth(\sn2)
 (
-~allocate.(\dis, 1)
-~allocate.(\ins, 21)
-~allocate.(\lec, 21)
-~allocate.(\pr, 21)
-~allocate.(\con, 2)
+~allocate.(\dis, 7)
+~allocate.(\ins, 7)
+~allocate.(\lec,7)
+~allocate.(\pr, 7)
+~allocate.(\con, 7)
 
+)
+(
+Pbindef(\pr).play
+Pbindef(\pr, \mRatio, 0.8, \cRatio, 1.1, \fmDur, 4, \index, 10, \bpf, 300, \bpf2, 10, \bpf3, 4, \bpfQ, 0.2, \bpfMul, 10, \vibF, 0.002 )
+Pbindef(\con).play
+Pbindef(\con).stop
+Pbindef(\con, \dur, 1, \rls, 2.3)
+Pbindef(\metronom).stop
 )
 (
 ~postBeats = {~t.beats.postln; 4};
@@ -175,7 +184,6 @@ s.makeWindow
 Pbindef(\vox, \rls, 1, \crv, -1, \lg1, 1, \lg2, 0.8).play
 
 Pbindef.all.do(_.stop);
-~sim.stop
 
 // record some stuff..
 (

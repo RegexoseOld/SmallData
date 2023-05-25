@@ -6,7 +6,7 @@ SynthDef.new(\bellFm, {
     env = EnvGen.kr(Env.perc(atk, rls, curve: crv), doneAction:2);
     volMod = SinOsc.kr(\vibF.kr(0.2), 0, \vibVol.kr(30))  ; // vol modulation
     trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.5), \varDur.kr(1));
-    sig2 =  SinOsc.ar(freq * mRatio, mul:freq * mRatio * index);
+    sig2 =  SinOsc.ar(freq * XLine.kr(mRatio, mRatio * cRatio, \fmDur.kr(0.02)), mul:freq * mRatio * index);
     sig = 3.collect({
 		var spread, temp;
 		spread = LFNoise1.kr(\spread.kr(0.05)).bipolar(\dev.ir(0.7)).midiratio;
@@ -153,8 +153,9 @@ SynthDef.new(\impulse, {
 }).add;
 
 SynthDef(\percImp, { |accent=0, decayScale=1|
-    var exc = PinkNoise.ar(\carAmp.kr(0.5))
-    * Decay2.kr(Impulse.kr(0.1), 0.01, 0.05),
+	var env, sig, exc;
+    exc = PinkNoise.ar(\carAmp.kr(0.5)) * Decay2.kr(Impulse.kr(0.01), 0.01, 0.05);
+    env = EnvGen.kr(Env.perc(\atk.kr(0.01), \rls.kr(1.8), 1.0));
     sig = 5.collect({
 		Klank.ar(`[
 		{ ExpRand(\freq.kr(80), \maxfrq.kr(1000)) }!2,
@@ -162,9 +163,9 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
         { ExpRand(0.1, 0.4) }!2
     ], exc, accent + 1, \frqOff.kr(0.0), decayScale);// accent ist die höhe, decayScale die Länge des Sounds
 	}).sum;
-	//sig = LeakDC.ar(sig);
+	sig = sig * env * \amp.kr(0.1) * \fade.kr(1.0);
     DetectSilence.ar(sig, doneAction: Done.freeSelf);
-    sig = Pan2.ar(sig * \amp.kr(0.1) * \fade.kr(1.0), \pan.kr(0.0));
+    sig = Pan2.ar(sig,  \pan.kr(0.0));
     Out.ar(\out.kr(0), sig);
 }).add;
 

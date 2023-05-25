@@ -48,8 +48,8 @@ patterns: (
 	hh01: (
 		instrument: 'percImp',
 		dur: 0.125,
-		accent:  Pwhite(0, 9.0, inf),
-		decayScale:  Pwhite(0.01, 0.4, inf),
+		accent:  Pwhite(3, 5, inf),
+		decayScale:  Pwhite(0.01, 0.2, inf),
 		out: ~ch3.inbus
 	),
 
@@ -121,9 +121,10 @@ patterns: (
 		pan:0,
 		amp: 0.3
 	),
+
 	bass: (
 		instrument:'bass',
-		midinote:  ~melos.melo.bass0,
+		midinote:  ~melos.melo.bass3,
 		dur: 0.125,
 		amp: 0.3,
 		atk: 0.02,
@@ -136,6 +137,25 @@ patterns: (
 		fmVol: 60,
 		cgain: 2.0,
 		distort: 2.5,
+		fade: 1,
+		sustain: 0.2
+	),
+
+	bass1: (
+		instrument:'bass',
+		midinote:  ~melos.melo.bass4,
+		dur: 0.125,
+		amp: 0.3,
+		atk: 0.02,
+		rls: 0.2,
+		crv: -3.0,
+		modRate: 0.2,
+		filTime: 0.65,
+		thr: 0.6,
+		fmFreq: 1400,
+		fmVol: 110,
+		cgain: 2.0,
+		distort: 1.5,
 		fade: 1,
 		sustain: 0.2
 	)
