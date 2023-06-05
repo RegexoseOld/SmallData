@@ -218,10 +218,10 @@
 ~build_rotary_fader = {
 	|top, posx, posy, style, size, constants, mins, maxes|
 	var knobs, knobView, constant, knobData, newValues;
-	knobView = CompositeView(top, Rect(posx, posy, size *3, size*5))
+	knobView = CompositeView(top, Rect(posx, posy, size *3, size*2))
 	.background_(Color.white);
 	knobs = Array.fill(3, {|i|
-		Knob(knobView, Rect(0,  size * i, size, size))
+		Knob(knobView, Rect(size * i, 0, size, size))
 		.background_(style["lightgrey"])
 		.visible_(true)
 		.enabled_(true)
@@ -231,7 +231,7 @@
 		});
 	});
 	newValues = Array.fill(3, {|i|
-		StaticText(knobView, Rect(size+10, size * i, size, size))
+		StaticText(knobView, Rect(size * i, size+10, size, size))
 		.string_(constants[i] ++ " : " ++ currentEnvironment.at(constants[i]))
 		.background_(Color.white)
 		.font_(style.at("text_font"))

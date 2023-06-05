@@ -66,6 +66,8 @@ window = ~build_window_seq.value("Sequencer", ~style_1, 10, 550,  labelwidth+but
 top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+labelwidth+sliderwidth+(5*offset), buttonsize+offset+button_field_height+headerheight+(4*offset), ~style_1);
 header = ~build_sequencer_header_seq.value(top_level, button_field_width+labelwidth, headerheight, ~style_1, "Sequencer");
 
+~density_knobs = ~build_rotary_fader.(window, labelwidth+(buttonsize *columns)+(6*offset), offset, ~style_1, rotarysize, [\thresCont, \addFac, \subFac], [0.05, 0.5, 0.2], [0.4, 1.7, 2.2]);
+
 // Build Track
 labels = ~build_labels_seq.value(top_level, labelwidth, buttonsize+button_field_height+(2*offset), buttonsize, offset, ~style_1);
 track_buttons_container = ~build_track_buttons_container_seq.value(top_level, button_field_width+(2*offset), buttonsize+button_field_height+(2*offset), ~style_1);
@@ -76,7 +78,7 @@ stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_containe
 
 // Build SoundFileView and RangeSliders
 ~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
-~density_knobs = ~build_rotary_fader.(window, labelwidth+(buttonsize *columns)+sliderwidth+(6*offset), 10, ~style_1, rotarysize, [\thresCont, \addFac, \subFac], [0.05, 0.5, 0.2], [0.4, 1.7, 2.2]);
+
 
 // ##############
 // Build Patterns
