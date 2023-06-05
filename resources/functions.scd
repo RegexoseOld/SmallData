@@ -26,7 +26,6 @@
 	var cat, pathToFile;
 	cat = menu.name.asSymbol;
 	pathToFile = ~samplePaths[cat][menu.item.asSymbol];
-	pathToFile.postln;
 	Buffer.read(s, pathToFile.fullPath, action: {arg buffer;
 		AppClock.sched(0, {
 			~uttSamples.put(cat, [buffer, 0, buffer.numFrames-1]); // update sample

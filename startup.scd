@@ -42,6 +42,7 @@ s.waitForBoot({
 
 	Window.closeAll;
 	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/sequencer_gui.scd");
+	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/mc_gui.scd");
 
 	// Load song specific files
 	~allocate = (~showFolder +/+ "allocate.scd").load;
