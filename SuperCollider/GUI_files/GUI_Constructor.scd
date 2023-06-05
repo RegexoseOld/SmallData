@@ -252,7 +252,9 @@
 	selectors = Dictionary.new;
 	~categories.do({arg cat, i;
 		selectors[cat] = PopUpMenu(compView, Rect(0, buttonsize+offset+(i*buttonsize), selector_width, buttonsize))
-		.items_([cat]);
+		.items_([cat])
+		.action_({arg pm; ~selectorAction.(pm);})
+		.name_(cat);
 	});
 	selectorData = [compView, selectors];
 };

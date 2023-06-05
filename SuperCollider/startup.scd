@@ -130,7 +130,7 @@ s.waitForBoot({
 			postf("\nnew cat: %\n", msg[2]);
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
-			~updateSample.(msg[4]);
+			~addNewSample.(msg[4]);
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
@@ -150,6 +150,8 @@ s.waitForBoot({
 )
 ~sim.stop
 ~t.beatsPerBar
+
+~samplePaths[\insinuation]["lec01"]
 
 Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
 Pbindef(\sn02)
