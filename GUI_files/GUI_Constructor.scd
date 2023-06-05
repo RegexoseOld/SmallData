@@ -130,10 +130,10 @@
 	view.background = style.at("bank_frame_color");
 
 	// Builds an array of sequencer buttons (themselves a 2DArray).
-	buttonsStacked = Array.fill(num_tab_buttons, {arg i; ~build_sequencer_buttons_seq.value(view, buttonsize*columns, buttonsize*rows, style, columns, rows, buttonsize)});
+	buttonsStacked = ~build_sequencer_buttons_seq.value(view, buttonsize*columns, buttonsize*rows, style, columns, rows, buttonsize);
 
 	// The individual composite views that the buttons will be placed.
-	compViews = Array.fill(num_tab_buttons, {arg i; buttonsStacked[i][0]});
+	compViews = Array.with(buttonsStacked[0], buttonsStacked[0]);
 
 	// Places the button compviews in the StackLayout
 	view.layout = VLayout(
@@ -141,29 +141,6 @@
 			*compViews;
 		);
 	);
-
-	// The tab buttons gain the action of controlling which stack of buttons is shown
-	sequencer_tab_buttons.do({
-		arg item, i;
-		item.action_({
-			arg button;
-			stack.index = i;
-			memory.at(\seq_mem).put(\current_name, button.string);
-			sequencer_tab_buttons.do({
-				arg item, i;
-				if (button != item, {
-					if (item.value == 1,
-						{ item.value = 0 }
-					);
-				}, {
-					button.value = 1;
-				});
-			});
-			// Set the buttons and sliders on the GUI from memory.
-			~set_buttons_sliders_numBoxes.value(memory);
-		});
-
-	});
 
 	top_level.decorator.nextLine;
 	buttonsStacked;

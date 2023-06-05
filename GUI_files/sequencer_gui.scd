@@ -71,16 +71,16 @@ stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_containe
 // ##############
 
 Pdefn(\melody, Ppar(
-	stacked_buttons[0][1].collect({
+	stacked_buttons[1].collect({
 		arg c, r;
-		var currentOctaveDegree = stacked_buttons[0][1].size - r + memory.at(\seq_mem).at(\melody_octave);
+		var currentOctaveDegree = stacked_buttons[1].size - r + memory.at(\seq_mem).at(\melody_octave);
 		var currentVol = memory.at(\seq_mem).at(\melody_amp);
 		Pbind(
 			\instrument, \uttSampler,
 			\buf, Pfunc({~uttSamples[~categories[r]][0]}),
 			\delta, memory.at(\seq_mem).at(\delta),
 			\sustain, Pdefn(\p_melody_sus,  memory.at(\seq_mem).at(\melody_sus)),
-			\amp,  Pif(Pseq(stacked_buttons[0][1][r], inf).coin, currentVol, \rest),
+			\amp,  Pif(Pseq(stacked_buttons[1][r], inf).coin, currentVol, \rest),
 			\start, Pfunc({~uttSamples[~categories[r]][1]}),
 			\end, Pfunc({~uttSamples[~categories[r]][2]}),
 			\out, 0,
