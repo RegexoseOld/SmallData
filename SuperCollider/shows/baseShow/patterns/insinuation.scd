@@ -28,7 +28,7 @@ patterns: (
 	 ins1: (
 	   instrument: 'bellFm',
         midinote: ~melos.melo.ins,
-       amp: Pfunc({~melos.amps.ins}),
+        amp: Pfunc({~melos.amps.ins}),
         dur: Pseq(~melos.duras.ins[..1], 1),
 		fade: 0.5,
         thr: 0.5,
@@ -120,6 +120,5 @@ patterns: (
 		spread: 0.05,
 		dev: 0.7,
 	),
-
 )
 )

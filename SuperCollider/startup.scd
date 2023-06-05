@@ -130,7 +130,8 @@ s.waitForBoot({
 			postf("\nnew cat: %\n", msg[2]);
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
-			~updateSample.(msg[4]);
+			~blinkSelector.();
+			~addNewSample.(msg[4]);
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
@@ -143,15 +144,19 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5, 3].choose.wait;
+        [16, 10].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
 )
 ~sim.stop
+
 ~t.beatsPerBar
 ~states[\bass]
 
+~samplePaths["dissent".asSymbol]
+~uttSamples["dissent".asSymbol]
+~slider_buttons[1]["dissent"]
 Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
 Pbindef(\sn02)
 Synth(\sn2)
@@ -197,3 +202,4 @@ Routine({
 )
 ~categories
 
+currentEnvironment.keys.do(_.postln)

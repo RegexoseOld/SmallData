@@ -22,6 +22,7 @@
 	"header_frame_color", Color.fromHexString("#b0d2d4"),
 	"bank_frame_color", Color.fromHexString("#B6DCFE"),
 	"text_color", Color.fromHexString("#6F6866"),
+	"lightgrey", Color.fromHexString("#e0dede"),
 	"praise", Color.fromHexString("#42f54b"),
 	"dissent", Color.fromHexString("#b342f5"),
 	"concession", Color.fromHexString("#e69400"),
