@@ -24,7 +24,7 @@
 ~thresCont = 0.15; // threshold from which to continuously fade Out
 ~maxCatCounter = 15; // max value of categoryCounter (counter is reset if this value is reached
 
-~fadingSynths = [\pr, \dis, \con, \lec, \ins];
+~fadingSynths = [\dis, \pr,  \ins, \con, \lec];
 ~additionalSynths = List.new;
 ~faderControl = List.new; // Patterns controlled by MIDIFaders or OSC Controllers
 // booleans

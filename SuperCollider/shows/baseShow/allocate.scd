@@ -12,21 +12,23 @@
     c = case
 	{count < 5}{
 		in_count = count;
-		Pbindef(\metronom, \amp, (0.05 * in_count)).play(~t);
-		Pbindef(\bass, \amp, (0.02 * in_count));
-		Pbindef(\kik01).play(~t, quant:1);
+		Pbindef(\metronom).stop;
+		Pbindef(\bass, *~states[\bass].asPairs).quant_(1);
+		Pbindef(\kik01).play(~t, quant:4);
+		Pbindef(catName, \index, 0.27 * in_count).quant_(4);
 	    Pbindef(\sn01).stop;
+	    Pbindef(\hh01).stop;
 		status = "state 00";
 	}
     {(count >= 5) && (count <= 10)} {
         in_count = count-4;
         patName = catName.asString ++ "10";
-		Pbindef(\metronom).stop;
-		Pbindef(\bass, \amp, (0.05 * count));
+		Pbindef(\metronom, \amp, (0.033 * in_count)).play(~t);
+		Pbindef(\bass, *~states[\bass1].asPairs).play(~t, quant:1);
 		//Pbindef(\kik01).stop;
-		Pbindef(\sn01).play(~t, quant:1);
-		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs);
-		Pbindef(catName, \harmonic, [in_count, count]);
+		Pbindef(\sn01).play(~t, quant:4);
+		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
+		//Pbindef(catName, \harmonic, [in_count, count]);
         numNotes = 2;
         status = "state 01";
     }
@@ -35,8 +37,10 @@
         patName = catName ++ "10";
 		Pbindef(\kik01).play(~t, quant:1);
 		Pbindef(\hh01).play(~t, quant:1);
-        Pbindef(catName, ~states[catName][patName.asSymbol].asPairs);
-			Pbindef(\bass).stop;
+		Pbindef(\sn01, \numharm, ~melos.melo.sn03);
+        Pbindef(catName, ~states[catName][patName.asSymbol].asPairs).quant_(4);
+	    Pbindef(\bass, \midinote, ~melos.melo.bass5).quant_(1);
+		Pbindef(\metronom).stop;
         numNotes = 3;
         status = "state 02";
     }

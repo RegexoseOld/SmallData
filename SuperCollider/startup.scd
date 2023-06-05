@@ -152,6 +152,7 @@ s.waitForBoot({
 ~sim.stop
 
 ~t.beatsPerBar
+~states[\bass]
 
 ~samplePaths["dissent".asSymbol]
 ~uttSamples["dissent".asSymbol]
@@ -160,26 +161,26 @@ Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \am
 Pbindef(\sn02)
 Synth(\sn2)
 (
-~allocate.(\dis, 1)
-~allocate.(\ins, 21)
-~allocate.(\lec, 21)
-~allocate.(\pr, 21)
-~allocate.(\con, 21)
-Pbindef(\dis, \thr, 0.7, \cgain, 1.4, \gendAmp, 0.9, \ffreq, 2600, \rq, 0.8, \lag, 0, \pulseMul, 0.6, \add, 0, \width, 0.3);
-Pbindef(\pr).play(~t)
-Pbindef(\pr, \cgain, 1.0, \vibF, Pseq([0.2, 4, 2.0, 0.4],inf), \bpf, Pwhite(300, 600, inf) )
-Pbindef(\con, \detune, 0)
-Pbindef(\sn01, \dur, 1/4, \freq, Pseq([\, \, Pn(200, 6), \, \, 190, \, \, Pn(200, 4), \, \], inf)).quant_(1)
-Pbindef(\lec, \fmVol, 150, \fmVol, 150, \filTime, 0.1, \modRate, 0.9, \rls, 0.1, \sustain, 0.15)
-Pbindef(\sn01, \freq, 300)
-~states[\ins][\ins05]
-~allocate.(\pr, 6)
-~states[\pr][\pr05]
+~allocate.(\dis, 7)
+~allocate.(\ins, 7)
+~allocate.(\lec,7)
+~allocate.(\pr, 7)
+~allocate.(\con, 7)
+
+)
+(
+Pbindef(\pr).play
+Pbindef(\pr, \mRatio, 0.8, \cRatio, 1.1, \fmDur, 4, \index, 10, \bpf, 300, \bpf2, 10, \bpf3, 4, \bpfQ, 0.2, \bpfMul, 10, \vibF, 0.002 )
+Pbindef(\con).play
+Pbindef(\con).stop
+Pbindef(\con, \dur, 1, \rls, 2.3)
+Pbindef(\metronom).stop
 )
 (
 ~postBeats = {~t.beats.postln; 4};
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
+~t.tempo = 120/60
 
 Window.closeAll;
 Pdefn(\melody).play(~t)
@@ -188,7 +189,6 @@ s.makeWindow
 Pbindef(\vox, \rls, 1, \crv, -1, \lg1, 1, \lg2, 0.8).play
 
 Pbindef.all.do(_.stop);
-~sim.stop
 
 // record some stuff..
 (
@@ -200,5 +200,6 @@ Routine({
 	s.stopRecording
 }).play
 )
+~categories
 
 currentEnvironment.keys.do(_.postln)

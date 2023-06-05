@@ -305,7 +305,7 @@ PathName(~samplesPath).entries.do({
         //"first utt".postln;
 		~runFx.();
 		~activateFaders.();
-        ~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
+        //~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
 		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
 		Pdefn(\melody).play(~t, quant:1);
 		~patternsPlaying = true;
@@ -324,5 +324,6 @@ PathName(~samplesPath).entries.do({
     var cat = ~categories.choose,
 	m = NetAddr("127.0.0.1", 57120);
 	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], ~resourcePath ++ "samples/lec01/");
+	~storyIndex = ~storyIndex +1;
 };
 
