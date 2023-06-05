@@ -172,6 +172,13 @@ PathName(~samplesPath).entries.do({
 	});
 };
 
+~blinkSelector = {
+	// var col = ~utterance_selectors[1][~cat].background;
+	AppClock.sched(0, {~utterance_selectors[1][~cat].background_(Color.red)});
+	AppClock.sched(1, {~utterance_selectors[1][~cat].background_(Color.white)});
+};
+
+
 // adds incomming audio samples to the selectors and the ~samplePaths-dictionary
 ~addNewSample = {
 	|pathString|

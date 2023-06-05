@@ -130,6 +130,7 @@ s.waitForBoot({
 			postf("\nnew cat: %\n", msg[2]);
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
+			~blinkSelector.();
 			~addNewSample.(msg[4]);
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
@@ -151,8 +152,9 @@ s.waitForBoot({
 ~sim.stop
 ~t.beatsPerBar
 
-~samplePaths[\insinuation]["lec01"]
-
+~samplePaths["dissent".asSymbol]
+~uttSamples["dissent".asSymbol]
+~slider_buttons[1]["dissent"]
 Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
 Pbindef(\sn02)
 Synth(\sn2)
