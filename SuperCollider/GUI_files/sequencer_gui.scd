@@ -1,6 +1,6 @@
 // Sequencer
 (
-var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300, rotarywidth=200, rotarysize=75;
+var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300, selector_width=200, rotarywidth=200, rotarysize=75;
 
 var window, top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, start_instrument=\default, pattern, memory=~gm;
 var mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
@@ -62,8 +62,8 @@ mc_top = ~build_top_level_seq.(mc_window, 10, 10, mc_catwidth*5+ 720, mc_catheig
 // #########
 
 // Build window, top_level and header
-window = ~build_window_seq.value("Sequencer", ~style_1, 10, 550,  labelwidth+button_field_width+sliderwidth+rotarywidth +(7*offset), buttonsize+offset+button_field_height+headerheight+(6*offset));
-top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+labelwidth+sliderwidth+(5*offset), buttonsize+offset+button_field_height+headerheight+(4*offset), ~style_1);
+window = ~build_window_seq.value("Sequencer", ~style_1, 10, 550,  labelwidth+button_field_width+sliderwidth+selector_width+(8*offset), buttonsize+offset+button_field_height+headerheight+(6*offset));
+top_level = ~build_top_level_seq.value(window, 10, 10, button_field_width+labelwidth+sliderwidth+selector_width+(6*offset), buttonsize+offset+button_field_height+headerheight+(4*offset), ~style_1);
 header = ~build_sequencer_header_seq.value(top_level, button_field_width+labelwidth, headerheight, ~style_1, "Sequencer");
 
 ~density_knobs = ~build_rotary_fader.(window, labelwidth+(buttonsize *columns)+(6*offset), offset, ~style_1, rotarysize, [\thresCont, \addFac, \subFac], [0.05, 0.5, 0.2], [0.4, 1.7, 2.2]);
@@ -79,6 +79,7 @@ stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_containe
 // Build SoundFileView and RangeSliders
 ~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
 
+~utterance_selectors = ~build_utterance_selectors_seq.value(top_level, selector_width, button_field_height, buttonsize, offset, rows);
 
 // ##############
 // Build Patterns

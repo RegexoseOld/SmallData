@@ -92,14 +92,22 @@
 	~faderControl.do{|chan, it| ~activateVolume.(chan, it)}
 };
 
-// initialize dictionary with audio utterances
+// initialize dictionary with currentaudio utterances
 ~categories.do({
 	|cat|
-	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat ++ ".wav",
+	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav",
 		action: {arg buffer;
 			~uttSamples.add(cat-> [buffer, 0, buffer.numFrames]);
 	});
 });
+
+// initialize dictionary with paths to audio utterances
+~categories.do({
+	|cat|
+	var path = PathName(PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav");
+	~samplePaths.add(cat -> Dictionary[cat.asSymbol -> path]);
+});
+
 
 // initialize utterance counter
 ~categories.do({ |cat| ~uttDict.add(cat-> 0) });
@@ -141,23 +149,51 @@ PathName(~samplesPath).entries.do({
 	~mc_labels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
 
 	}
-	//~uttDict.postln;
 };
 
-~updateSample = {
-	|pathString|
-	Buffer.read(s, pathString ++ "/00_utterance.wav", action: {arg buffer;
+~selectorAction = {
+	|menu|
+	var cat, pathToFile;
+	cat = menu.name.asSymbol;
+	pathToFile = ~samplePaths[cat][menu.item.asSymbol];
+	pathToFile.postln;
+	Buffer.read(s, pathToFile.fullPath, action: {arg buffer;
 		AppClock.sched(0, {
-			~uttSamples.put(~cat, [buffer, 0, buffer.numFrames-1]); // update sample
-			~slider_buttons[1][~cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames); // update SoundFileView
-			~slider_buttons[1][~cat][1].lo_(0); // reset low-end of Slider
-			~slider_buttons[1][~cat][1].hi_(1); // reset hi-end of Slider
-			~slider_buttons[1][~cat][1]  // update  start and end of sample
+			~uttSamples.put(cat, [buffer, 0, buffer.numFrames-1]); // update sample
+			~slider_buttons[1][cat][0].readFile(SoundFile.openRead(buffer.path), 0, buffer.numFrames); // update SoundFileView
+			~slider_buttons[1][cat][1].lo_(0); // reset low-end of Slider
+			~slider_buttons[1][cat][1].hi_(1); // reset hi-end of Slider
+			~slider_buttons[1][cat][1]  // update  start and end of sample
 			.action_({ |slider|
-				~uttSamples[~cat][1] = (slider.lo.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
-				~uttSamples[~cat][2] = (slider.hi.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
+				~uttSamples[cat][1] = (slider.lo.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
+				~uttSamples[cat][2] = (slider.hi.lincurve(0, 1, 0 , buffer.numFrames, 0)).asInteger;
 			})
 		});
+	});
+};
+
+~blinkSelector = {
+	// var col = ~utterance_selectors[1][~cat].background;
+	AppClock.sched(0, {~utterance_selectors[1][~cat].background_(Color.red)});
+	AppClock.sched(1, {~utterance_selectors[1][~cat].background_(Color.white)});
+};
+
+
+// adds incomming audio samples to the selectors and the ~samplePaths-dictionary
+~addNewSample = {
+	|pathString|
+	var pathToFile, itemlist, itemName, currentValue;
+	pathToFile = PathName(pathString ++ "00_utterance.wav");
+	itemName = pathToFile.folderName;
+	~samplePaths[~cat].add(itemName.asSymbol -> pathToFile);
+
+	itemlist = ~utterance_selectors[1][~cat].items;
+	itemlist.add(itemName);
+	//TODO: set the state of the selector to the previous entry after updating the itemlist!
+	AppClock.sched(0, {
+		currentValue = ~utterance_selectors[1][~cat].value;
+		~utterance_selectors[1][~cat].items_(itemlist);
+		~utterance_selectors[1][~cat].value_(currentValue);
 	});
 };
 
