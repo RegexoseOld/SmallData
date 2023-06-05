@@ -23,21 +23,3 @@
 ~fadeVols = 0; //the volumes of all fading Patterns
 ~thresCont = 0.15; // threshold from which to continuously fade Out
 ~maxCatCounter = 15; // max value of categoryCounter (counter is reset if this value is reached
-
-~fadingSynths = [\dis, \pr,  \ins, \con, \lec];
-~additionalSynths = List.new;
-~faderControl = List.new; // Patterns controlled by MIDIFaders or OSC Controllers
-// booleans
-~patternsPlaying = false;
-~categories = ['dissent', 'praise', 'insinuation', 'concession', 'lecture'];
-~lastUtterances = Array.with("one", "two", "three");
-~lastCategories = Array.with("praise", "dissent", "insinuation");
-~fadePatterns = Dictionary.new;
-~nameDict = Dictionary.new;
-~buffers = Dictionary.new;
-~utts = Dictionary.new;
-~uttDict = Dictionary.new;
-~uttSamples = Dictionary.new;  // The currently selected samples
-~samplePaths = Dictionary.new; // The paths to all sample files
-~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
-~showFolder = ~projectRoot +/+ "shows" +/+ ~showName;

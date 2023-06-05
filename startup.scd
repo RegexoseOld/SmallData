@@ -26,6 +26,7 @@ s.waitForBoot({
 	(~resourcePath ++ "synths.scd").load;
 	(~resourcePath ++ "story.scd").load;
 	(~resourcePath ++ "constants.scd").load;
+	(~resourcePath ++ "initialisation.scd").load;
 	(~resourcePath ++ "functions.scd").load;
 	(~resourcePath ++ "organist.scd").load;
 
@@ -54,10 +55,10 @@ s.waitForBoot({
 	 ~makeWaveTable.(4096); // for WaveTable Synth
 	s.sync;
 
-//make Dictionary with effekt Patches
+	//make Dictionary with effekt Patches
 	~patches = (~resourcePath ++ "fx_patches.scd").load;
 	//make all other Dictionaries, that can't be made in constants
-	~makeDictionaries.();
+
 
 	//load melodies
 	~melPath = ~resourcePath ++ "melodies.sc";

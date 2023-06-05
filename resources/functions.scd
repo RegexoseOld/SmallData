@@ -1,133 +1,3 @@
-~makeDictionaries = {
-	~categorySymbols = (
-		\dissent: \dis,
-		\praise: \pr,
-		\insinuation: \ins,
-		\lecture: \lec,
-		\concession: \con
-	);
-	// Dictionary for channel allocation
-	~cat2Channel = (
-		\pr: ~ch1,
-		\dis: ~ch2,
-		\con: ~ch3,
-		\lec: ~ch4,
-		\ins: ~ch5,
-		\kik01: ~perc,
-		\sn01 : ~perc,
-		\h01: ~perc,
-		\bass: ~bass
-	);
-};
-
-~makeWaveTable = {
-	|size|
-	var sig, wt, buf;
-	sig = Signal.sineFill(size.asInteger, Array.fill(6, {rrand(0.01, 1)}), [0,pi,0,pi,0,0].scramble);
-	wt = sig.asWavetable;
-	r{
-		buf = Buffer.alloc(s, size*2);
-		s.sync;
-		buf.sendCollection(wt);
-		//buf.plot;
-		s.sync;
-		~buffers.add(\wt ->buf);
-	}.play(AppClock);
-
-};
-
-
-~makeNodes = {
-	//~channels.do{|c| if (c.active, {postf("free channel %\n", c.asString); c.free;})};
-	s.bind(
-		//
-		// Mixer Channels, you have to install dewdrop_lib and ddwMixerChannel with Quarks.gui
-		~master = MixerChannel(\master, s, 2, 2);
-		~ch1 = MixerChannel(\ch1, s, 2, 2, outbus: ~master);
-		~ch2 = MixerChannel(\ch2, s, 2, 2, outbus: ~master);
-		~ch3 = MixerChannel(\ch3, s, 2, 2, outbus: ~master);
-		~ch4 = MixerChannel(\ch4, s, 2, 2, outbus: ~master);
-		~ch5 = MixerChannel(\ch5, s, 2, 2, outbus: ~master);
-		~utt = MixerChannel(\ch6, s, 2, 2, outbus: ~master);
-		~perc = MixerChannel(\ch7, s, 2, 2, outbus: ~master);
-		~bass = MixerChannel(\ch8, s, 2, 2, outbus: ~master);
-		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
-		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
-		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
-
-)};
-
-~runFx = {
-~fx = (
-	\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
-	\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
-	\chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
-	\mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
-    \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
-	\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	//\ch6_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01]))
-)
-};
-
-~bypass = {
-	|key, on|
-	if (on, {~fx[key].synth.run(false)}, {~fx[key].synth.run(true);
-})
-};
-
-~activateFaders = {
-	var i = 0;
-	~sends.keys.asList.sort.do({
-		|snd|
-		if ("vrb".matchRegexp(snd.asString), {
-			("found  " ++ snd).postln;
-		    ~activateReverb.(snd, i, 89 );
-			i = i+1;
-		})
-	});
-
-	~faderControl.do{|chan, it| ~activateVolume.(chan, it)}
-};
-
-// initialize dictionary with currentaudio utterances
-~categories.do({
-	|cat|
-	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav",
-		action: {arg buffer;
-			~uttSamples.add(cat-> [buffer, 0, buffer.numFrames]);
-	});
-});
-
-// initialize dictionary with paths to audio utterances
-~categories.do({
-	|cat|
-	var path = PathName(PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav");
-	~samplePaths.add(cat -> Dictionary[cat.asSymbol -> path]);
-});
-
-
-// initialize utterance counter
-~categories.do({ |cat| ~uttDict.add(cat-> 0) });
-
-// make buffers
-PathName(~samplesPath).entries.do({
-		arg subfolder;
-	//subfolder.postln;
-		~buffers.add(
-			subfolder.folderName.asSymbol ->
-			Array.fill(
-				subfolder.entries.size,
-				{
-					arg i;
-					Buffer.read(s, subfolder.entries[i].fullPath);
-				}
-			)
-		)
-	});
-
 ~updateUtts = {
     |utt, cat|
     //postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
@@ -214,6 +84,39 @@ PathName(~samplesPath).entries.do({
 	"updated Sample".postln;
 };
 
+~runFx = {
+~fx = (
+	\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
+	\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
+	\chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
+	\mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
+    \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+	\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+	\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
+	\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+	\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+	//\ch6_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01]))
+)
+};
+
+~bypass = {
+	|key, on|
+	if (on, {~fx[key].synth.run(false)}, {~fx[key].synth.run(true);})
+};
+
+~activateFaders = {
+	var i = 0;
+	~sends.keys.asList.sort.do({
+		|snd|
+		if ("vrb".matchRegexp(snd.asString), {
+			("found  " ++ snd).postln;
+		    ~activateReverb.(snd, i, 89 );
+			i = i+1;
+		})
+	});
+	~faderControl.do{|chan, it| ~activateVolume.(chan, it)}
+};
+
 ~checkFadeVols = {
 	var allVolumes=List.new;
 	   ~fadingSynths.do{
@@ -271,6 +174,7 @@ PathName(~samplesPath).entries.do({
 		}
 	})
 };
+
 ~allocateSynth = {
 		|s_name, count|
 		var c;
@@ -282,11 +186,9 @@ PathName(~samplesPath).entries.do({
     {s_name == 'lecture'} {~allocate.value(\lec, count)}
     {s_name == 'concession'} {~allocate.value(\con, count)}
 		{true}{"end of allocation".postln};
-
-	};
+};
 
 ~setGlobal = {
-
     var c;
     c = case
     {~totalUtts == 20}{
