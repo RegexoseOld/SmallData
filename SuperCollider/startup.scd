@@ -143,12 +143,13 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5, 3].choose.wait;
+        [16, 10].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
 )
 ~sim.stop
+
 ~t.beatsPerBar
 
 Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
@@ -196,3 +197,4 @@ Routine({
 }).play
 )
 
+currentEnvironment.keys.do(_.postln)
