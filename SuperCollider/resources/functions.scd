@@ -231,8 +231,8 @@ PathName(~samplesPath).entries.do({
 	editVol =  ~melos[\amps][cat];
 	//postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
 	c = case
-	{editVol <= ~volThres}{~melos[\amps][cat] = editVol + (~volPlus * ~addFac) }// double enhance when pattern is very quiet
-	{(editVol<= ~volMax) && (editVol>= ~volThres)}{  ~melos[\amps][cat] = editVol + ~volPlus}
+	{editVol <= ~volThres}{ ~melos[\amps][cat]= editVol + (~volPlus * ~addFac) }// double enhance when pattern is very quiet
+	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~melos[\amps][cat] = editVol + (~volPlus * ~addFac)}
 	{editVol >= ~volMax}{  ~melos[\amps][cat] = ~volMax}
 	{true}{"end of addVolume".postln};
 	//postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
@@ -257,7 +257,7 @@ PathName(~samplesPath).entries.do({
 		//postf("\nthe vol %  of the pattern   %\n", vol, cat);
 		c = case
 		{(vol > ~volMin) && (vol >= ~volThres)} {~melos[\amps][cat] = vol - (~volStep * ~subFac)} // loud volumes decrease fast
-		{(vol <= ~volThres) && (vol >= ~volMin)} {~melos[\amps][cat]= vol - ~volStep;} // middle volumes decrease slower
+		{(vol <= ~volThres) && (vol >= ~volMin)} {~melos[\amps][cat]= vol - (~volStep * ~subFac)} // middle volumes decrease slower
 		{vol <= ~volMin} {~melos[\amps][cat] = ~volMin}
 		{true}{"end of fade cases"};
 		Pbindef(cat, \amp, ~melos[\amps][cat]);

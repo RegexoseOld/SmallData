@@ -144,12 +144,13 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5, 3].choose.wait;
+        [16, 10].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
 )
 ~sim.stop
+
 ~t.beatsPerBar
 
 ~samplePaths["dissent".asSymbol]
@@ -200,3 +201,4 @@ Routine({
 }).play
 )
 
+currentEnvironment.keys.do(_.postln)

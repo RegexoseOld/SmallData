@@ -13,7 +13,7 @@
 // values for addVolume
 ~volPlus = 0.06; // this much volume is added each time a category comes in
 ~addFac = 1.2; // factor of volPlus with vols below the threshold
-~subFac = 1.8; // factor of volStep with vols below the threshold
+~subFac = 1.8; // factor of volStep with vols above the threshold
 ~volMax = 0.55; // max Volume should be less than 1.0/5
 //~volMin = 0.0002; // the min Volume for a faded Pattern
 ~volMin = 0.002; // the min Volume for a faded Pattern

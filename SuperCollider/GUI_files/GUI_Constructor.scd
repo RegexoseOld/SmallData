@@ -201,7 +201,7 @@
 	.font_(style.at("subheader_font"))
 	.string_("state: 00")
 	.align_(\bottomLeft);
-	compView.addFlowLayout(0@0);
+	compView.addFlowLayout(5@0);
 	compView.decorator.gap_(0@5);
 	utts = Array.fill(3, { arg i;
 		StaticText(compView, Rect(5, 20 * i, fWidth, fHeight/6))
@@ -212,6 +212,81 @@
 	});
 	//top.decorator.nextLine;
 	state_data = [compView, state, utts]
+};
+
+
+~build_rotary_fader = {
+	|top, posx, posy, style, size, constants, mins, maxes|
+	var knobs, knobView, constant, knobData, newValues;
+	knobView = CompositeView(top, Rect(posx, posy, size *3, size*2))
+	.background_(Color.white);
+	knobs = Array.fill(3, {|i|
+		Knob(knobView, Rect(size * i, 0, size, size))
+		.background_(style["lightgrey"])
+		.visible_(true)
+		.enabled_(true)
+		.action_({|v|
+			currentEnvironment.put(constants[i], v.value.lincurve(0.0, 1.0, mins[i], maxes[i]));
+			newValues[i].string = constants[i] ++ " : " ++ v.value.lincurve(0.0, 1.0, mins[i], maxes[i]).trunc(0.001);
+		});
+	});
+	newValues = Array.fill(3, {|i|
+		StaticText(knobView, Rect(size * i, size+10, size, size))
+		.string_(constants[i] ++ " : " ++ currentEnvironment.at(constants[i]))
+		.background_(Color.white)
+		.font_(style.at("text_font"))
+		.align_(\left)
+	});
+	knobData = [knobView, knobs, newValues];
+};
+
+~build_sequencer_tabbed_stack_seq = {
+	// Builds n stacks of columns * rows buttons that control different sequencer levels.
+	arg top_level, sequencer_tab_buttons, width, height, num_tab_buttons, buttonsize, columns, rows, style, memory;
+	var view, stack, buttonsStacked, compViews;
+
+	// A view container to place a vertical + stack layout.
+	view = View(top_level, Rect(0, 0, width, height));
+	view.background = style.at("bank_frame_color");
+
+	// Builds an array of sequencer buttons (themselves a 2DArray).
+	buttonsStacked = Array.fill(num_tab_buttons, {arg i; ~build_sequencer_buttons_seq.value(view, buttonsize*columns, buttonsize*rows, style, columns, rows, buttonsize)});
+
+	// The individual composite views that the buttons will be placed.
+	compViews = Array.fill(num_tab_buttons, {arg i; buttonsStacked[i][0]});
+
+	// Places the button compviews in the StackLayout
+	view.layout = VLayout(
+		stack = StackLayout(
+			*compViews;
+		);
+	);
+
+	// The tab buttons gain the action of controlling which stack of buttons is shown
+	sequencer_tab_buttons.do({
+		arg item, i;
+		item.action_({
+			arg button;
+			stack.index = i;
+			memory.at(\seq_mem).put(\current_name, button.string);
+			sequencer_tab_buttons.do({
+				arg item, i;
+				if (button != item, {
+					if (item.value == 1,
+						{ item.value = 0 }
+					);
+				}, {
+					button.value = 1;
+				});
+			});
+			// Set the buttons and sliders on the GUI from memory.
+			~set_buttons_sliders_numBoxes.value(memory);
+		});
+
+	});
+
+	top_level.decorator.nextLine;
+	buttonsStacked;
 };
 
 ~build_slider_buttons_seq = {
