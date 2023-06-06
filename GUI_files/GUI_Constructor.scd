@@ -120,45 +120,21 @@
 	knobData = [knobView, knobs, newValues];
 };
 
-~build_sequencer_tabbed_stack_seq = {
+~build_sequencer_buttons_seq = {
 	// Builds n stacks of columns * rows buttons that control different sequencer levels.
-	arg top_level, sequencer_tab_buttons, width, height, num_tab_buttons, buttonsize, columns, rows, style, memory;
-	var view, stack, buttonsStacked, compViews;
+	arg top_level, width, height, buttonsize, columns, rows, style, memory;
+	var view, stack, buttonsStacked, butCompView, array;
 
 	// A view container to place a vertical + stack layout.
 	view = View(top_level, Rect(0, 0, width, height));
 	view.background = style.at("bank_frame_color");
 
 	// Builds an array of sequencer buttons (themselves a 2DArray).
-	buttonsStacked = ~build_sequencer_buttons_seq.value(view, buttonsize*columns, buttonsize*rows, style, columns, rows, buttonsize);
-
-	// The individual composite views that the buttons will be placed.
-	compViews = Array.with(buttonsStacked[0], buttonsStacked[0]);
-
-	// Places the button compviews in the StackLayout
-	view.layout = VLayout(
-		stack = StackLayout(
-			*compViews;
-		);
-	);
-
-	top_level.decorator.nextLine;
-	buttonsStacked;
-};
-
-~build_sequencer_buttons_seq = {
-	// A function to build a 2D array of buttons that turn on and off the notes
-	// selected in the sequencer pattern.
-	arg top, hwidth, hheight, style, columns, rows, buttonsize;
-	var butCompView, array, sequencer_button_data;
-
-	// Button Composite View
-	butCompView = CompositeView(top, Rect(0, 0, buttonsize*columns, buttonsize*rows));
+	butCompView = CompositeView(view, Rect(0, 0, buttonsize*columns, buttonsize*rows));
 	butCompView.background = style.at("bank_frame_color");
 
 	// Sequencer Buttons
 	array = 0!columns!rows;
-
 	array.do{ |rows, i|
 		rows.do{ |cell, j|
 			// var buttonsize=50;
@@ -173,7 +149,16 @@
 		};
 	};
 
-	sequencer_button_data = [butCompView, array];
+
+	// Places the button compviews in the StackLayout
+	view.layout = VLayout(
+		stack = StackLayout(
+			butCompView;
+		);
+	);
+
+	top_level.decorator.nextLine;
+	buttonsStacked = [butCompView, array];
 };
 
 ~build_slider_buttons_seq = {

@@ -2,7 +2,7 @@
 (
 var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300, selector_width=200, rotarywidth=200, rotarysize=75;
 
-var window, top_level, track_buttons_container, labels, header, buttons, track, sequencer_tab_buttons, stacked_buttons, start_instrument=\default, pattern, memory=~gm;
+var window, top_level, track_buttons_container, labels, header, buttons, track, sequencer_buttons, start_instrument=\default, pattern, memory=~gm;
 var button_field_width = buttonsize*columns, button_field_height=buttonsize*rows;
 
 // #############################
@@ -59,7 +59,7 @@ track_buttons_container = ~build_track_buttons_container_seq.value(top_level, bu
 track = ~build_sequencer_track_seq.value(track_buttons_container, button_field_width+(2*offset), buttonsize+(2*offset), ~style_1, columns, buttonsize);
 
 // Build the Sequencer Buttons
-stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_container, sequencer_tab_buttons, button_field_width+(2*offset), button_field_height+(2*offset), 3, buttonsize, columns, rows, ~style_1, memory);
+sequencer_buttons = ~build_sequencer_buttons_seq.value(track_buttons_container, button_field_width+(2*offset), button_field_height+(2*offset), buttonsize, columns, rows, ~style_1, memory);
 
 // Build SoundFileView and RangeSliders
 ~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
@@ -71,16 +71,16 @@ stacked_buttons = ~build_sequencer_tabbed_stack_seq.value(track_buttons_containe
 // ##############
 
 Pdefn(\melody, Ppar(
-	stacked_buttons[1].collect({
+	sequencer_buttons[1].collect({
 		arg c, r;
-		var currentOctaveDegree = stacked_buttons[1].size - r + memory.at(\seq_mem).at(\melody_octave);
+		var currentOctaveDegree = sequencer_buttons[1].size - r + memory.at(\seq_mem).at(\melody_octave);
 		var currentVol = memory.at(\seq_mem).at(\melody_amp);
 		Pbind(
 			\instrument, \uttSampler,
 			\buf, Pfunc({~uttSamples[~categories[r]][0]}),
 			\delta, memory.at(\seq_mem).at(\delta),
 			\sustain, Pdefn(\p_melody_sus,  memory.at(\seq_mem).at(\melody_sus)),
-			\amp,  Pif(Pseq(stacked_buttons[1][r], inf).coin, currentVol, \rest),
+			\amp,  Pif(Pseq(sequencer_buttons[1][r], inf).coin, currentVol, \rest),
 			\start, Pfunc({~uttSamples[~categories[r]][1]}),
 			\end, Pfunc({~uttSamples[~categories[r]][2]}),
 			\out, 0,
