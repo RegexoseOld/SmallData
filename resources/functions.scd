@@ -15,8 +15,8 @@
 	index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
 	count =  ~uttDict[~cat].asString;
     //postf("\nupdating index % to count % ", index, count);
-	~mc_labels[1][index].string = cat ++ "\n" ++ count;
-	~mc_labels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
+	~mcLabels[1][index].string = cat ++ "\n" ++ count;
+	~mcLabels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
 
 	}
 };
@@ -142,8 +142,8 @@
 	index = ~fadingSynths.detectIndex({|it, i| it == cat});
 	height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
 	text =  ~melos[\amps][cat].trunc(0.001).asString;
-	~mc_track[1][index].resizeTo(100, height);
-	~mc_track[1][index].string = text;
+	~mcTrack[1][index].resizeTo(100, height);
+	~mcTrack[1][index].string = text;
 	}
 	//postf("\nthe vol of all patterns is   %\n", ~fadeVols);
 };
@@ -167,8 +167,8 @@
 			index = ~fadingSynths.detectIndex({|it, i| it == cat});
 			height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
 			text = ~melos[\amps][cat].trunc(0.001).asString;
-			~mc_track[1][index].resizeTo(100, height);
-			~mc_track[1][index].string = text;
+			~mcTrack[1][index].resizeTo(100, height);
+			~mcTrack[1][index].string = text;
 		}
 	})
 };

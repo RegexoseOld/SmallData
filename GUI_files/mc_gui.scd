@@ -1,15 +1,15 @@
-var mc_window, mc_top, mc_toplevel, mc_category_container, mc_catwidth, mc_catheight;
+var mcWindow, mcTop, mcToplevel, mcCatwidth, mcCatheight;
 
-mc_catwidth = 100;
-mc_catheight = 120;
-mc_window = ~build_window_seq.("MC", ~style_1, 10, 10, mc_catwidth*6+500, mc_catheight + 380);
-mc_top = ~build_top_level_seq.(mc_window, 10, 10, mc_catwidth*5+ 720, mc_catheight*5+360, ~style_1);
+mcCatwidth = 100;
+mcCatheight = 120;
+mcWindow = ~buildWindow.("MC", 10, 10, mcCatwidth*6+500, mcCatheight + 380);
+mcTop = ~buildTopLevel.(mcWindow, 10, 10, mcCatwidth*5+ 720, mcCatheight*5+360);
 
 // frame for MC Track
-~mc_track = ~build_mc_track.(mc_top, 10, 0,  mc_catwidth*5+20, mc_catheight *3, ~style_1, 5, mc_catwidth);
-~mc_labels = ~build_mc_labels.(mc_top, 10, mc_catheight *3 + 30, mc_catwidth*6 , 60, ~style_1, mc_catwidth, ~uttDict);
-~status = ~build_status.(mc_window, mc_catwidth*6 +50, 20, ~style_1, mc_catwidth * 3, mc_catheight * 3.5, ~lastUtterances);
+~mcTrack = ~buildMcTrack.(mcTop, 10, 0,  mcCatwidth*5+20, mcCatheight *3, 5, mcCatwidth);
+~mcLabels = ~buildMcLabels.(mcTop, 10, mcCatheight *3 + 30, mcCatwidth*6 , 60, mcCatwidth, ~uttDict);
+~status = ~buildStatus.(mcWindow, mcCatwidth*6 +50, 20, mcCatwidth * 3, mcCatheight * 3.5, ~lastUtterances);
 
 CmdPeriod.add({
-	mc_window.close;
+	mcWindow.close;
 });

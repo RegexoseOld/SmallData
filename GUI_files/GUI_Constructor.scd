@@ -207,9 +207,9 @@
 
 //// MC_GUI CONSTRUCTOR
 
-~build_mc_track = {
+~buildMcTrack = {
 	// Builds the MC Track
-	arg top, posx, posy, hwidth, hheight, style, columns, buttonsize;
+	arg top, posx, posy, hwidth, hheight, columns, buttonsize;
 	var trackCompView, fields, values, sequencer_track_data;
 
 	// Track Composite View
@@ -221,7 +221,7 @@
 	// scrolls over it.
 	fields = Array.fill(columns, { arg i;
 		StaticText(trackCompView, Rect(i * buttonsize, posy, buttonsize,hheight/10))
-		.background_(style[~categories[i].asString])
+		.background_(~style_1[~categories[i].asString])
 		.string_("value: \n%".format(~volMin))
 		.align_(\bottom);
 	});
@@ -231,24 +231,24 @@
 };
 
 
-~build_status = {
+~buildStatus = {
 	// Builds the status area
-	arg top, posx, posy, style, fWidth, fHeight, utterances;
+	arg top, posx, posy, fWidth, fHeight, utterances;
 	var compView, state, utts, state_data;
 	// Track Composite View
 	compView = CompositeView(top, Rect(posx, posy, fWidth + 30, fHeight +30))
 	.background_(Color.white);
 	state = StaticText(compView, Rect(5, 5 , fWidth, fHeight))
-	.background_(style["bank_frame_color"])
-	.font_(style.at("subheader_font"))
+	.background_(~style_1["bank_frame_color"])
+	.font_(~style_1.at("subheader_font"))
 	.string_("state: 00")
 	.align_(\bottomLeft);
 	compView.addFlowLayout(5@0);
 	compView.decorator.gap_(0@5);
 	utts = Array.fill(3, { arg i;
 		StaticText(compView, Rect(5, 20 * i, fWidth, fHeight/6))
-		.background_(style["header_frame_color"])
-		.font_(style.at("text_font"))
+		.background_(~style_1["header_frame_color"])
+		.font_(~style_1.at("text_font"))
 		.string_(utterances[i])
 		.align_(\topLeft);
 	});
@@ -257,9 +257,9 @@
 };
 
 
-~build_mc_labels = {
+~buildMcLabels = {
 	// Builds a frame to contain the labels of the button rows
-	arg top_level, posx, posy, width, height, style, buttonsize, uttdict;
+	arg top_level, posx, posy, width, height, buttonsize, uttdict;
 	var array, compView, labels, counts, label_data;
 	//"pos x %   pos y %".format(posx, posy).postln;
 	labels = ~categories ++ ["total"];
@@ -271,8 +271,8 @@
 	array = Array.fill(6, {arg i;
 		StaticText(compView, Rect(posx, posy, width/6, height))
 		.string_(labels.at(i) ++ "\n" ++ counts[i])
-		.background_(style[labels[i].asString])
-		.font_(style.at("subheader_font"))
+		.background_(~style_1[labels[i].asString])
+		.font_(~style_1.at("subheader_font"))
 		.align_(\top);
 	});
 	compView.decorator.nextLine;
