@@ -1,6 +1,6 @@
 //// SEQUENCER_GUI CONSTRUCTOR
 (
-~build_window_seq = {
+~buildWindow = {
 	// Builds the main window that contains everything
 	arg window_title, x=10, y=10, width, height;
 	Window(window_title, Rect(x, y, width, height))
@@ -8,7 +8,7 @@
 	.front;
 };
 
-~build_top_level_seq = {
+~buildTopLevel = {
 	// Buildts a top level composite view that manages child views' spacing.
 	arg window, posx=10, posy=10, width, height;
 	var compView = CompositeView(window, Rect(posx, posy, width, height))
@@ -19,7 +19,7 @@
 	compView;
 };
 
-~build_sequencer_header_seq = {
+~buildSequencerHeader = {
 	// Builds a header frame with a static text box with the title of the window
 	arg top, hwidth, hheight, string;
 	var guiTitle;
@@ -33,7 +33,7 @@
 	guiTitle;
 };
 
-~build_labels_seq = {
+~buildCategoryLabels = {
 	// Builds a frame to contain the labels of the button rows
 	arg top_level, width, height, buttonsize, offset;
 	var array ;
@@ -65,7 +65,7 @@
 	compView;
 };
 
-~build_track_buttons_container_seq = {
+~buildTrackButtonsContainer = {
 	// Builds a frame to contain and organize the track and the stack of buttons.
 	arg top_level, width, height;
 	var compView = CompositeView(top_level, Rect(0, 0, width, height))
@@ -75,7 +75,7 @@
 	compView;
 };
 
-~build_sequencer_track_seq = {
+~buildSequencerTrack = {
 	// Builds the sequencer track.
 	arg top, columns, buttonsize;
 	var trackCompView, array, sequencer_track_data;
@@ -94,7 +94,7 @@
 	sequencer_track_data = [trackCompView, array]
 };
 
-~build_rotary_fader = {
+~buildRotaryFader = {
 	|top, posx, posy, size, constants, mins, maxes|
 	var knobs, knobView, constant, knobData, newValues;
 	knobView = CompositeView(top, Rect(posx, posy, size *3, size*2))
@@ -119,7 +119,7 @@
 	knobData = [knobView, knobs, newValues];
 };
 
-~build_sequencer_buttons_seq = {
+~buildSequencerButtons = {
 	// Builds n stacks of columns * rows buttons that control different sequencer levels.
 	arg top_level, width, height, buttonsize, offset, rows, columns;
 	var butCompView, array, buttonsData;
@@ -146,7 +146,7 @@
 	buttonsData = [butCompView, array];
 };
 
-~build_slider_buttons_seq = {
+~buildSliderButtons = {
 	// build the views for the soundfiles and the range sliders
 	arg top_level, sliderwidth, button_field_height, buttonsize, offset, rows;
 	var filler, compView, sliderAndFileViews, slider_button_data, rel_height=0.6;
@@ -176,7 +176,7 @@
 	slider_button_data = [compView, sliderAndFileViews];
 };
 
-~build_utterance_selectors_seq = {
+~buildUtteranceSelectors = {
 	arg top_level, selector_width, button_field_height, buttonsize, offset, rows;
 	var selectorData, compView, selectors;
 	compView = CompositeView(top_level, Rect(0, 0, selector_width+offset, buttonsize+(2*offset) + button_field_height))

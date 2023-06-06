@@ -143,7 +143,7 @@ s.waitForBoot({
     { loop ( {
         ~mock.();
         [2, 4].choose.wait;
-		//"mocked" .po stln;
+		//"mocked".postln;
         }
 ) }).play;
 )
@@ -154,7 +154,7 @@ s.waitForBoot({
 
 ~samplePaths["dissent".asSymbol]
 ~uttSamples["dissent".asSymbol]
-~slider_buttons[1]["dissent"]
+~sliderButtons[1]["dissent"]
 Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
 Pbindef(\sn02)
 Synth(\sn2)
