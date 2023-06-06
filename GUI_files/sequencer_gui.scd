@@ -56,7 +56,7 @@ header = ~build_sequencer_header_seq.value(top_level, button_field_width+labelwi
 // Build Track
 labels = ~build_labels_seq.value(top_level, labelwidth, buttonsize+button_field_height+(2*offset), buttonsize, offset);
 track_buttons_container = ~build_track_buttons_container_seq.value(top_level, button_field_width+(2*offset), buttonsize+button_field_height+(2*offset));
-track = ~build_sequencer_track_seq.value(track_buttons_container, button_field_width+(2*offset), buttonsize+(2*offset), columns, buttonsize);
+track = ~build_sequencer_track_seq.value(track_buttons_container, columns, buttonsize);
 
 // Build the Sequencer Buttons
 sequencer_buttons = ~build_sequencer_buttons_seq.value(track_buttons_container, button_field_width+(2*offset), button_field_height+(2*offset), buttonsize, offset, rows, columns);

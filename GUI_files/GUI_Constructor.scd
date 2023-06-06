@@ -77,21 +77,20 @@
 
 ~build_sequencer_track_seq = {
 	// Builds the sequencer track.
-	arg top, hwidth, hheight, columns, buttonsize;
+	arg top, columns, buttonsize;
 	var trackCompView, array, sequencer_track_data;
 
 	// Track Composite View
-	trackCompView = CompositeView(top, Rect(0, 0, buttonsize*columns+20, hheight-20));
+	trackCompView = CompositeView(top, Rect(0, 0, buttonsize*columns+20, buttonsize));
 	trackCompView.background = ~style_1.at("bank_frame_color");
 
 	// Sequencer Track: A set of static texts that change colors when the pattern
 	// scrolls over it.
 	array = Array.fill(columns, { arg i;
-		StaticText(trackCompView, Rect(i * buttonsize + 10, 10, buttonsize, buttonsize-20))
+		StaticText(trackCompView, Rect(i * buttonsize + 10, 10, buttonsize, buttonsize/2))
 		.background_(Color.white)
 	});
 	top.decorator.nextLine;
-    //"built sequncer track".postln;
 	sequencer_track_data = [trackCompView, array]
 };
 
