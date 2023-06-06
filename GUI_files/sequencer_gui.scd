@@ -2,45 +2,8 @@
 (
 var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300, selector_width=200, rotarywidth=200, rotarysize=75;
 
-var window, top_level, track_buttons_container, labels, header, buttons, track, sequencer_buttons, start_instrument=\default, pattern, memory=~gm;
+var window, top_level, track_buttons_container, labels, header, buttons, track, sequencer_buttons, start_instrument=\default, pattern;
 var button_field_width = buttonsize*columns, button_field_height=buttonsize*rows;
-
-// #############################
-// Initialize Base Memory Values
-// #############################
-
-memory.atFail(\seq_mem, {
-	memory.put(\seq_mem, Dictionary.newFrom([
-		// Some pattern data for start up.
-		\currentOctave, 0,
-		\melody_octave, 6,
-		\melody_scale, Scale.major,
-		\melody_instrument, \sampMon,
-		\delta, 0.25,
-		\melody_sus, 0.1,
-		\melody_amp, 0.5,
-		\pattern_out, 79,
-		\current_name, \melody
-	]));
-});
-
-// ##################################
-// Create objects for sound synthesis
-// ##################################
-
-// Create a buffer
-memory.at(\seq_mem).put(\buffer, Buffer.alloc(s, s.sampleRate * columns * memory.at(\seq_mem).at(\delta), 1));
-
-// Initialize input and pointer buses for granulator control.
-memory.at(\seq_mem).put(\inputBus, Bus.audio(s, 1));
-memory.at(\seq_mem).put(\ptrBus, Bus.audio(s, 1));
-
-// Initialize groups to organize order of execution on the scsynth side.
-memory.at(\seq_mem).put(\inputGroup, Group.new);
-memory.at(\seq_mem).put(\ptrGroup, Group.after(memory.at(\seq_mem).at(\inputGroup)));
-memory.at(\seq_mem).put(\recGroup, Group.after(memory.at(\seq_mem).at(\ptrGroup)));
-
-
 
 // #########
 // BUILD SEQUENCER
@@ -73,13 +36,12 @@ sequencer_buttons = ~build_sequencer_buttons_seq.value(track_buttons_container, 
 Pdefn(\melody, Ppar(
 	sequencer_buttons[1].collect({
 		arg c, r;
-		var currentOctaveDegree = sequencer_buttons[1].size - r + memory.at(\seq_mem).at(\melody_octave);
-		var currentVol = memory.at(\seq_mem).at(\melody_amp);
+		var delta = 0.25, currentVol = 0.5, sustain = 0.1;
 		Pbind(
 			\instrument, \uttSampler,
 			\buf, Pfunc({~uttSamples[~categories[r]][0]}),
-			\delta, memory.at(\seq_mem).at(\delta),
-			\sustain, Pdefn(\p_melody_sus,  memory.at(\seq_mem).at(\melody_sus)),
+			\delta, delta,
+			\sustain, Pdefn(\p_melody_sus, sustain),
 			\amp,  Pif(Pseq(sequencer_buttons[1][r], inf).coin, currentVol, \rest),
 			\start, Pfunc({~uttSamples[~categories[r]][1]}),
 			\end, Pfunc({~uttSamples[~categories[r]][2]}),

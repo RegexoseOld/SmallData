@@ -35,10 +35,6 @@ s.waitForBoot({
 	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/GUI_Constructor.scd");
 	// Wait until boot is done and then begin launching the rest of the prograam
 	s.sync;
-	// Set global memory storage
-	if (~gm == nil, {
-		~gm = Dictionary.new();
-	});
 
 	Window.closeAll;
 	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/sequencer_gui.scd");
@@ -146,7 +142,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [16, 10].choose.wait;
+        [2, 4].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
