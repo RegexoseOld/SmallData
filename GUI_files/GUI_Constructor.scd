@@ -122,26 +122,20 @@
 
 ~build_sequencer_buttons_seq = {
 	// Builds n stacks of columns * rows buttons that control different sequencer levels.
-	arg top_level, width, height, buttonsize, columns, rows, style, memory;
-	var view, stack, buttonsStacked, butCompView, array;
-
-	// A view container to place a vertical + stack layout.
-	view = View(top_level, Rect(0, 0, width, height));
-	view.background = style.at("bank_frame_color");
+	arg top_level, width, height, buttonsize, offset, rows, columns;
+	var butCompView, array, buttonsData;
 
 	// Builds an array of sequencer buttons (themselves a 2DArray).
-	butCompView = CompositeView(view, Rect(0, 0, buttonsize*columns, buttonsize*rows));
-	butCompView.background = style.at("bank_frame_color");
+	butCompView = CompositeView(top_level, Rect(0, 0, width, height)).background_(~style_1.at("bank_frame_color"));
 
 	// Sequencer Buttons
 	array = 0!columns!rows;
 	array.do{ |rows, i|
 		rows.do{ |cell, j|
-			// var buttonsize=50;
-			Button(butCompView, Rect(j*buttonsize, i*buttonsize, buttonsize, buttonsize))
+			Button(butCompView, Rect(j*buttonsize+offset, i*buttonsize+offset, buttonsize, buttonsize))
 			.states_([
-				["", style.at("text_color"), Color.white],
-				["", Color.white, style.at("text_color")],
+				["", ~style_1.at("text_color"), Color.white],
+				["", Color.white, ~style_1.at("text_color")],
 			])
 			.action_{ |v|
 				array[i][j] = v.value;
@@ -149,16 +143,8 @@
 		};
 	};
 
-
-	// Places the button compviews in the StackLayout
-	view.layout = VLayout(
-		stack = StackLayout(
-			butCompView;
-		);
-	);
-
 	top_level.decorator.nextLine;
-	buttonsStacked = [butCompView, array];
+	buttonsData = [butCompView, array];
 };
 
 ~build_slider_buttons_seq = {

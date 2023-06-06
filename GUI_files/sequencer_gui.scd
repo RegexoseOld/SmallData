@@ -59,7 +59,7 @@ track_buttons_container = ~build_track_buttons_container_seq.value(top_level, bu
 track = ~build_sequencer_track_seq.value(track_buttons_container, button_field_width+(2*offset), buttonsize+(2*offset), ~style_1, columns, buttonsize);
 
 // Build the Sequencer Buttons
-sequencer_buttons = ~build_sequencer_buttons_seq.value(track_buttons_container, button_field_width+(2*offset), button_field_height+(2*offset), buttonsize, columns, rows, ~style_1, memory);
+sequencer_buttons = ~build_sequencer_buttons_seq.value(track_buttons_container, button_field_width+(2*offset), button_field_height+(2*offset), buttonsize, offset, rows, columns);
 
 // Build SoundFileView and RangeSliders
 ~slider_buttons = ~build_slider_buttons_seq.value(top_level, sliderwidth, button_field_height, buttonsize, offset, rows, ~style_1);
