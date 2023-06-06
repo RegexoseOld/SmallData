@@ -95,12 +95,12 @@
 };
 
 ~buildRotaryFader = {
-	|top, posx, posy, size, constants, mins, maxes|
+	|top, posx, posy, offset, size, constants, mins, maxes|
 	var knobs, knobView, constant, knobData, newValues;
-	knobView = CompositeView(top, Rect(posx, posy, size *3, size*2))
-	.background_(Color.white);
+	knobView = CompositeView(top, Rect(posx, posy, (size*3) + (4*offset), size*2 + offset))
+	.background_(~style_1.at("bank_frame_color"));
 	knobs = Array.fill(3, {|i|
-		Knob(knobView, Rect(size * i, 0, size, size))
+		Knob(knobView, Rect((size+offset) * i + offset, offset, size, size))
 		.background_(~style_1["lightgrey"])
 		.visible_(true)
 		.enabled_(true)
@@ -110,11 +110,11 @@
 		});
 	});
 	newValues = Array.fill(3, {|i|
-		StaticText(knobView, Rect(size * i, size+10, size, size))
+		StaticText(knobView, Rect((size+offset) * i + offset, size+(2*offset), size, size))
 		.string_(constants[i] ++ " : " ++ currentEnvironment.at(constants[i]))
-		.background_(Color.white)
+		.background_(~style_1.at("bank_frame_color"))
 		.font_(~style_1.at("text_font"))
-		.align_(\left)
+		.align_(\center)
 	});
 	knobData = [knobView, knobs, newValues];
 };
