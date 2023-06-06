@@ -28,8 +28,6 @@
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
 ~showFolder = ~projectRoot +/+ "shows" +/+ ~showName;
 ~fadePatterns = Dictionary.new;
-~nameDict = Dictionary.new;
-~utts = Dictionary.new;
 
 ~buffers = Dictionary.new;
 ~uttDict = Dictionary.new;

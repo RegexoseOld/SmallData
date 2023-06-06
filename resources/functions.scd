@@ -65,10 +65,11 @@
 	});
 };
 
+// a helper function to load all samples in the provided path
 ~addSample = {
 	|pathSymbol|
-	var path = pathSymbol.asString;
-	~utts.add(
+	var path = pathSymbol.asString, samples = Dictionary.new;;
+	samples.add(
 		PathName(path).fileName.asSymbol->
 		Array.fill(
 			PathName(path).entries.size,
@@ -80,6 +81,7 @@
 		)
 	);
 	"updated Sample".postln;
+	samples;
 };
 
 ~runFx = {
