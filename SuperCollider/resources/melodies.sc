@@ -20,7 +20,6 @@ melo: (
     con20: Pseq([Pn(64, 16)], inf),
     lec20: Pseq([Pn(68, 16)], inf),
     dis20: Pseq([Pn(65, 16)], inf),
-	utt: ~numSlots.collect({|n| Buffer.new(s, 10000, 1)}), //  ändern in Buffer mit einen (leisen), Signal
     cad01: Pseq( [[60, 66, 42], [60, 48, 72], [60, 35, 42], [60, 66, 68]], inf),
     cad02: Pseq( [[60, 66, 42, 35], [35, 42, 66], [33, 35, 42], [60, 66, 68]], inf),
 	kik01: Pseq([60, Pn(\, 7), 60, Pn(\, 7), 60, Pn(\, 6), 60, 60, Pn(\, 7) ], inf),
@@ -37,6 +36,15 @@ melo: (
 	bass5: Pseq([36, Pn(\, 31)], inf),
 
 ),
+
+feedbacks: (
+	pr: 60,
+    ins: 71,
+    con: 74,
+    lec: 68,
+    dis: 65,
+),
+
 
 duras:(
     pr: Array.fill(~numSlots, {4}),

@@ -51,14 +51,14 @@
         Pbind(
             \instrument, \quitt,
             \dur, Prand([0.25, 0.31], numNotes),
-            \midinote, ~melos[\melo][catName],
+			\midinote, ~melos[\feedbacks][catName],
             \detune, Pwhite(-6, 6, numNotes),
             \amp, ~fbVol * local_feedbackVol, \pan, Pwhite(-1.0, 1.0, numNotes),
             \ampDist, 2, \durDist, 0.2,
-            \gendAmp, Pwrand([0.05, 0.14, 0.33], [0.6, 0.3, 0.1], numNotes),
+            \gendAmp, Pwrand([0.05, 0.14, 0.33], [0.4, 0.38, 0.26].normalizeSum, numNotes),
             \ffreq, Pwhite( 300, 800, numNotes),
             \minFreq, 600, \maxFreq, 1400,
-            \atk, 0.05, \rls, Pkey(\dur), \crv, -4
+            \atk, 0.15, \rls, 3, \crv, -8
         ).play;
     };
 

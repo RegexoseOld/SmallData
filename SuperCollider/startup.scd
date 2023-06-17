@@ -74,7 +74,6 @@ s.waitForBoot({
 		var categorySymbol, category, patternStates;
 		category = pathName.fileNameWithoutExtension;
 		patternStates = thisProcess.interpreter.compileFile(pathName.absolutePath).value;
-		category.postln;
 		if (~categorySymbols.includesKey(category.asSymbol),
 			{
 				categorySymbol = ~categorySymbols[category.asSymbol];
@@ -156,8 +155,9 @@ s.waitForBoot({
 ~uttSamples["dissent".asSymbol]
 ~slider_buttons[1]["dissent"]
 Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
-Pbindef(\sn02)
-Pbindef(\kik01)
+Pbindef(\pr).play
+Pbindef(\con).play
+Pbindef(\con, \dev, 0.4, \spread, 0.1, \midinote, [30, 60, 90] )
 ~allocate.(\dis, 7)
 ~allocate.(\ins, 7)
 ~allocate.(\lec,7)
