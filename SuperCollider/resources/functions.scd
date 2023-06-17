@@ -13,9 +13,8 @@
 		\con: ~ch3,
 		\lec: ~ch4,
 		\ins: ~ch5,
-		\kik01: ~perc,
-		\sn01 : ~perc,
-		\h01: ~perc,
+		\utt: ~utt,
+		\perc: ~perc,
 		\bass: ~bass
 	);
 };
@@ -291,7 +290,7 @@ PathName(~samplesPath).entries.do({
     c = case
     {~totalUtts == 20}{
         //start a drum pattern
-        Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
+        //Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
 
     }
 	{~totalUtts == 10}{
@@ -305,11 +304,10 @@ PathName(~samplesPath).entries.do({
         //"first utt".postln;
 		~runFx.();
 		~activateFaders.();
-        //~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
 		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
 		Pdefn(\melody).play(~t, quant:1);
-		~patternsPlaying = true;
-		[\kik01, \bass].do{|n| Pbindef(n).play(~t, quant:4)}
+		//~patternsPlaying = true;
+		[\kik02, \bass].do{|n| Pbindef(n).play(~t, quant:4)}
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);

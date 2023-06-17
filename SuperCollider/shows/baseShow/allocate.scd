@@ -4,7 +4,7 @@
     var c, dura, patName, status, count, in_count, local_feedbackVol, numNotes;
     count = floor(counter * ~factor).asInteger;
     status = "";
-    local_feedbackVol = 0.4;
+    local_feedbackVol = 0.9;
     numNotes = 1;
     dura = Env.new([1,0], [count], [-2]).asPseg;
     patName = catName.asString ++ "0";
@@ -14,11 +14,11 @@
 		in_count = count;
 		Pbindef(\metronom).stop;
 		Pbindef(\bass, *~states[\bass].asPairs).quant_(1);
-		Pbindef(\kik01).play(~t, quant:4);
+		Pbindef(\kik02).play(~t, quant:4);
 		Pbindef(catName, \index, 0.27 * in_count).quant_(4);
 	    Pbindef(\sn01).stop;
 	    Pbindef(\hh01).stop;
-		status = "state 00";
+		status = "initial values";
 	}
     {(count >= 5) && (count <= 10)} {
         in_count = count-4;
@@ -28,14 +28,13 @@
 		//Pbindef(\kik01).stop;
 		Pbindef(\sn01).play(~t, quant:4);
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
-		//Pbindef(catName, \harmonic, [in_count, count]);
         numNotes = 2;
-        status = "state 01";
+        status = "a cadence";
     }
     {(count > 11) && (count <=20)} {
         in_count = count - 10;
         patName = catName ++ "10";
-		Pbindef(\kik01).play(~t, quant:1);
+		Pbindef(\kik02).play(~t, quant:1);
 		Pbindef(\hh01).play(~t, quant:1);
 		Pbindef(\sn01, \numharm, ~melos.melo.sn03);
         Pbindef(catName, ~states[catName][patName.asSymbol].asPairs).quant_(4);
@@ -65,6 +64,7 @@
     };
 
    ~addVolume.value(catName);
+	defer{~status[1].string = catName ++ " : " ++ status};
     postf("\nsetting %\to status \t %\n", catName, status);
 
 };

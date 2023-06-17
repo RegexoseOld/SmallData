@@ -13,21 +13,22 @@ patterns: (
 	kik01: (
 		instrument:'kik1',
 		dur: 0.125,
+		amp: 0.6,
 		freq: ~melos.melo.kik01,
 		freqdecay: 0.1,
 		ampdecay: Pseq([1.3, Pn(\, 7), 0.6, Pn(\, 7), 0.6, Pn(\, 6), 0.6, 1.5, Pn(\, 7) ], inf),
-		out: ~ch3.inbus,
+		out: ~perc.inbus,
 	),
 
 	kik02: (
-		instrument:'kik1',
-		dur: 0.25,
-		freq: Pseq([60, 50, \],inf),
-		pDecay: 0.1,
-		ampdecay: Pseq([0.7, 2.5, \],inf),
-		ghosts: 20,
-		numharm:100,
-		out: ~ch3.inbus
+		instrument:'kik2',
+		dur: 0.125,
+		freq: ~melos.melo.kik01,
+		amp: 0.67,
+		timb1: -8,
+		timb2: -20,
+		dist: 1,
+		out: ~perc.inbus
 	),
 
 	sn01: (
@@ -42,7 +43,7 @@ patterns: (
 		distort: 2,
 		ffreq: Pwhite(800, 2000, inf),
 		amp: 0.5,
-		out: ~ch3.inbus
+		out: ~perc.inbus
 	),
 
 	hh01: (
@@ -50,7 +51,7 @@ patterns: (
 		dur: 0.125,
 		accent:  Pwhite(3, 5, inf),
 		decayScale:  Pwhite(0.01, 0.2, inf),
-		out: ~ch3.inbus
+		out: ~perc.inbus
 	),
 
 	metronom: (
@@ -59,7 +60,8 @@ patterns: (
 		amp: 0.1,
 		minfrq: 800,
 		maxfrq: 900,
-		accent: Pseq([4, 1, 1, 1], inf)
+		accent: Pseq([4, 1, 1, 1], inf),
+		out: ~perc.inbus
 	),
 
 	mono: (
@@ -138,7 +140,8 @@ patterns: (
 		cgain: 2.0,
 		distort: 2.5,
 		fade: 1,
-		sustain: 0.2
+		sustain: 0.2,
+		out: ~bass.inbus
 	),
 
 	bass1: (
@@ -157,7 +160,8 @@ patterns: (
 		cgain: 2.0,
 		distort: 1.5,
 		fade: 1,
-		sustain: 0.2
+		sustain: 0.2,
+	    out: ~bass.inbus
 	)
 )
 )

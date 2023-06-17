@@ -17,9 +17,13 @@ patterns: (
 	),
 
 	kik02: (
-		instrument:'kik1',
+		instrument:'kik2',
 		freq: ~melos.melo.kik01,
+		amp: 0.65,
 		dur: 0.25,
+		timb1: -6,
+		timb2: -12,
+		dist: 1,
 		out: ~perc.inbus
 	),
 
@@ -47,7 +51,8 @@ patterns: (
 		amp: 0.1,
 		minfrq: 800,
 		maxfrq: 900,
-		accent: Pseq([4, 1, 1, 1], inf)
+		accent: Pseq([4, 1, 1, 1], inf),
+		out: ~perc.inbus
 	),
 
 	mono: (

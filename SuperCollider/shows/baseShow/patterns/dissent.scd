@@ -81,7 +81,7 @@ patterns:(
 	dis10: (
 		instrument: 'quitt',
 		midinote: ~melos[\melo][\cad01],
-		dur: Pseq(~melos[\duras][\dis], inf),
+		dur: Pseq([2, 2, 1, 1], inf),
 		amp:  Pfunc({~melos.amps.dis}),
 		fade: 0.5,
 		thr: 0.5,

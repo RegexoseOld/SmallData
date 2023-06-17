@@ -95,7 +95,7 @@ s.waitForBoot({
 
 	// set fade volume low at the beginning
 	~fadingSynths.do{| k|  ~faderControl.add(k)};
-[\bass, \kik01].do {|k| ~faderControl.add(k)};
+[\utt, \perc, \bass].do {|k| ~faderControl.add(k)};
 
 	// make Patterns for all fading Synths
 	~fadingSynths.do{
@@ -144,7 +144,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [16, 10].choose.wait;
+        [6, 3.2].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
@@ -152,15 +152,13 @@ s.waitForBoot({
 ~sim.stop
 
 ~t.beatsPerBar
-~states[\bass]
-
+~cat2Channel[\perc]
 ~samplePaths["dissent".asSymbol]
 ~uttSamples["dissent".asSymbol]
 ~slider_buttons[1]["dissent"]
 Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
 Pbindef(\sn02)
-Synth(\sn2)
-(
+Pbindef(\kik01)
 ~allocate.(\dis, 7)
 ~allocate.(\ins, 7)
 ~allocate.(\lec,7)
@@ -173,8 +171,9 @@ Pbindef(\pr).play
 Pbindef(\pr, \mRatio, 0.8, \cRatio, 1.1, \fmDur, 4, \index, 10, \bpf, 300, \bpf2, 10, \bpf3, 4, \bpfQ, 0.2, \bpfMul, 10, \vibF, 0.002 )
 Pbindef(\con).play
 Pbindef(\con).stop
+Pbindef(\kik01).pause
 Pbindef(\con, \dur, 1, \rls, 2.3)
-Pbindef(\metronom).stop
+Pbindef(\kik02, \timb1, -6, \timb2, -4, \amp, 0.2, \dist, 1)
 )
 (
 ~postBeats = {~t.beats.postln; 4};
