@@ -70,14 +70,19 @@
             \buf, ~melos[\slots][catName],
             \amp, ~fbVol * local_feedbackVol, \pan, Pwhite(-1.0, 1.0, 1),
             \rate, [1, (numNotes * 1.33)],
-            \atk, 0.05, \rls, Pkey(\dur), \crv, -4);
+            \atk, 0.05, \rls, Pkey(\dur), \crv, -4,
+            \out, ~utt.inbus
+        );
+
         pitch = Pbind(
             \instrument, \bellFm,
             \dur, dur,
             \midinote, ~melos.feedback[catName],
             \amp, ~fbVol * local_feedbackVol,
             \pan, Pwhite(-1.0, 1.0, 1),
-            \atk, 0.04, \rls, 0.2);
+            \atk, 0.04, \rls, 0.2,
+            \out, ~utt.inbus
+        );
         Ppar([samp, pitch], numNotes).play;
     };
 

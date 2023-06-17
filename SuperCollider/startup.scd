@@ -16,10 +16,10 @@ s.waitForBoot({
 	Buffer.freeAll;
 	Pbindef.all.do(_.clear);
 	s.sync;
-	/*MIDIClient.init;
+	MIDIClient.init;
 	MIDIIn.connectAll;
 	~midiOut = MIDIOut.new(0);
-	~midiIn = MIDIIn.new(0);*/
+	~midiIn = MIDIIn.new(0);
 
 
 	/// load SynthDefs, Constants, Functions
