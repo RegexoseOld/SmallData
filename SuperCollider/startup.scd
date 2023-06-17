@@ -74,6 +74,7 @@ s.waitForBoot({
 		var categorySymbol, category, patternStates;
 		category = pathName.fileNameWithoutExtension;
 		patternStates = thisProcess.interpreter.compileFile(pathName.absolutePath).value;
+		category.postln;
 		if (~categorySymbols.includesKey(category.asSymbol),
 			{
 				categorySymbol = ~categorySymbols[category.asSymbol];
@@ -86,8 +87,6 @@ s.waitForBoot({
 					~states.put(k, patternStates[\patterns][k]);
 					Pbindef(k, *~states[k].asPairs);
 					~additionalSynths.add(k);
-					//~cat2Channel.put(k, ~utt);
-					//Pbindef(k, \out, ~cat2Channel[k].inbus);
 				};
 			};
 		);
@@ -95,7 +94,7 @@ s.waitForBoot({
 
 	// set fade volume low at the beginning
 	~fadingSynths.do{| k|  ~faderControl.add(k)};
-[\utt, \perc, \bass].do {|k| ~faderControl.add(k)};
+	[\utt, \perc, \bass].do {|k| ~faderControl.add(k)};
 
 	// make Patterns for all fading Synths
 	~fadingSynths.do{

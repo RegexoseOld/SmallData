@@ -18,25 +18,24 @@
 		Pbindef(catName, \index, 0.27 * in_count).quant_(4);
 	    Pbindef(\sn01).stop;
 	    Pbindef(\hh01).stop;
-		status = "initial values";
+		status = "initial values, basic bass drum";
 	}
     {(count >= 5) && (count <= 10)} {
         in_count = count-4;
         patName = catName.asString ++ "10";
 		Pbindef(\metronom, \amp, (0.033 * in_count)).play(~t);
 		Pbindef(\bass, *~states[\bass1].asPairs).play(~t, quant:1);
-		//Pbindef(\kik01).stop;
 		Pbindef(\sn01).play(~t, quant:4);
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
         numNotes = 2;
-        status = "a cadence";
+        status = "a cadence and a sizzling snare";
     }
     {(count > 11) && (count <=20)} {
         in_count = count - 10;
         patName = catName ++ "10";
 		Pbindef(\kik02).play(~t, quant:1);
 		Pbindef(\hh01).play(~t, quant:1);
-		Pbindef(\sn01, \numharm, ~melos.melo.sn03);
+		Pbindef(\sn01, \numharm, ~melos.melo.sn03).quant_(4);
         Pbindef(catName, ~states[catName][patName.asSymbol].asPairs).quant_(4);
 	    Pbindef(\bass, \midinote, ~melos.melo.bass5).quant_(1);
 		Pbindef(\metronom).stop;
