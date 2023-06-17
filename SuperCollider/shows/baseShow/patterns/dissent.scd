@@ -53,17 +53,36 @@ patterns:(
 
 	),
 
-	dis2: (
+	dis10: (
+		instrument: 'quitt',
+		midinote: ~melos[\melo][\cad01],
+		dur: Pseq([2, 2, 1, 1], inf),
+		amp:  Pfunc({~melos.amps.dis}),
+		fade: 0.22,
+		thr: 0.5,
+		cgain: 2,
+		pan: 0,
+		atk: 0.1,
+		rls: 0.9,
+		minfreq: 100,
+		maxfreq: 1000,
+		ffreq: 300,
+		width: 0.4,
+		pulseMul: 0.15,
+
+	),
+
+	dis11: (
 		instrument: 'bellFm',
-		midinote:  ~melos.melo.dis,
+		midinote:  ~melos.meloBase.dis11,
 		amp: Pfunc({~melos.amps.dis}),
-		dur: Pseq(~melos.duras.dis[..1], 1),
+		dur: Pseq([Pn(1, 6), Pn(0.25, 8)], inf),
 		fade: 0.5,
 		thr: 0.5,
 		cgain: 1,
 		pan: 0,
-		atk: 1,
-		rls: 2.7,
+		atk: 0.061,
+		rls: 0.14,
 		vibF: 0.6,
 		vibVol: 30,
 		dev: 0.08,
@@ -76,24 +95,6 @@ patterns:(
 		mRatio: 1,
 		cRatio: 1,
 		fmDur: 0,
-
-	),
-	dis10: (
-		instrument: 'quitt',
-		midinote: ~melos[\melo][\cad01],
-		dur: Pseq([2, 2, 1, 1], inf),
-		amp:  Pfunc({~melos.amps.dis}),
-		fade: 0.5,
-		thr: 0.5,
-		cgain: 2,
-		pan: 0,
-		atk: 0.1,
-		rls: 0.9,
-		minfreq: 100,
-		maxfreq: 1000,
-		ffreq: 300,
-		width: 0.4,
-		pulseMul: 0.15,
 
 	),
 	dis20: (

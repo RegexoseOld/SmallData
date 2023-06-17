@@ -27,33 +27,13 @@ patterns: (
 		frqOff: Pseq( [Pseq([0, -300, 0, 800, -100, 0, 0, -500],4)], inf)
 
 	),
-	con2: (
-		instrument: 'bellFm',
-		midinote:  ~melos.melo.con,
-		amp:Pfunc({~melos.amps.con}),
-		dur: Pseq(~melos.duras.con[..1], 1),
-		fade: 0.5,
-		thr: 0.5,
-		cgain: 1,
-		pan: 0,
-		atk: 1,
-		rls: 2.7,
-		vibF: 0.8,
-		vibVol: 40,
-		dev: 0.08,
-		spread: 0.07,
-		bpf1: 600,
-		bpf2: 5,
-		bpf3: 0.3,
-		bpfQ: 0.9,
 
-	),
 	con10: (
 		instrument: 'bellFm',
 		midinote: ~melos[\melo][\cad01],
 		dur: Pseq([2, 2, 1, 1], inf),
 		amp: Pfunc({~melos.amps.con}),
-		fade: 0.5,
+		fade: 0.22,
 		thr: 0.5,
 		cgain: 1,
 		pan: 0,
@@ -67,6 +47,28 @@ patterns: (
 		bpf2: 5,
 		bpf3: 0.3,
 		bpfQ: 0.9,
+	),
+
+	con11: (
+		instrument: 'bellFm',
+		midinote:  ~melos.meloBase.con11,
+		amp:Pfunc({~melos.amps.con}),
+		dur: Pseq([Pn(1, 6), Pn(0.25, 8)], inf),
+		fade: 0.5,
+		thr: 0.5,
+		cgain: 1,
+		pan: 0,
+		atk: 0.05,
+		rls: 0.15,
+		vibF: 0.8,
+		vibVol: 40,
+		dev: 0.08,
+		spread: 0.07,
+		bpf1: 600,
+		bpf2: 5,
+		bpf3: 0.3,
+		bpfQ: 0.9,
+
 	),
 
 	con20: (

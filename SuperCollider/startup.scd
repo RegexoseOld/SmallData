@@ -142,7 +142,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [6, 3.2].choose.wait;
+        [5, 12, 17].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
@@ -158,15 +158,15 @@ Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \am
 Pbindef(\pr).play
 Pbindef(\con).play
 Pbindef(\con, \dev, 0.4, \spread, 0.1, \midinote, [30, 60, 90] )
-~allocate.(\dis, 7)
-~allocate.(\ins, 7)
-~allocate.(\lec,7)
-~allocate.(\pr, 7)
-~allocate.(\con, 7)
+~allocate.(\dis, 6)
+~allocate.(\ins, 6)
+~allocate.(\lec,6)
+~allocate.(\pr, 6)
+~allocate.(\con, 6)
 
 )
 (
-Pbindef(\pr).play
+Pbindef(\lec, \atk, 0.001, \rls, 0.01, \sus, 0.4, \filTime, 0.15, \fmFreq, 1500, \fmVol, 20, \modRate, 0.5, \thr, 0.9)
 Pbindef(\pr, \mRatio, 0.8, \cRatio, 1.1, \fmDur, 4, \index, 10, \bpf, 300, \bpf2, 10, \bpf3, 4, \bpfQ, 0.2, \bpfMul, 10, \vibF, 0.002 )
 Pbindef(\con).play
 Pbindef(\con).stop

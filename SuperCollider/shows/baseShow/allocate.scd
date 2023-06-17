@@ -15,7 +15,7 @@
 		Pbindef(\metronom).stop;
 		Pbindef(\bass, *~states[\bass].asPairs).quant_(1);
 		Pbindef(\kik02).play(~t, quant:4);
-		Pbindef(catName, \index, 0.27 * in_count).quant_(4);
+		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 	    Pbindef(\sn01).stop;
 	    Pbindef(\hh01).stop;
 		status = "initial values, basic bass drum";
@@ -25,18 +25,18 @@
         patName = catName.asString ++ "10";
 		Pbindef(\metronom, \amp, (0.033 * in_count)).play(~t);
 		Pbindef(\bass, *~states[\bass1].asPairs).play(~t, quant:1);
-		Pbindef(\sn01).play(~t, quant:4);
+		Pbindef(\sn01).play(~t, quant:1);
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
         numNotes = 2;
         status = "a cadence and a sizzling snare";
     }
-    {(count > 11) && (count <=20)} {
+    {(count >= 11) && (count <=20)} {
         in_count = count - 10;
-        patName = catName ++ "10";
-		Pbindef(\kik02).play(~t, quant:1);
+        patName = catName ++ "11";
+		Pbindef(\kik02, \freq, ~melos.melo.kik03, \dur, 0.5).quant_(4);
 		Pbindef(\hh01).play(~t, quant:1);
 		Pbindef(\sn01, \numharm, ~melos.melo.sn03).quant_(4);
-        Pbindef(catName, ~states[catName][patName.asSymbol].asPairs).quant_(4);
+        Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 	    Pbindef(\bass, \midinote, ~melos.melo.bass5).quant_(1);
 		Pbindef(\metronom).stop;
         numNotes = 3;
@@ -58,7 +58,8 @@
             \gendAmp, Pwrand([0.05, 0.14, 0.33], [0.4, 0.38, 0.26].normalizeSum, numNotes),
             \ffreq, Pwhite( 300, 800, numNotes),
             \minFreq, 600, \maxFreq, 1400,
-            \atk, 0.15, \rls, 3, \crv, -8
+            \atk, 0.15, \rls, 3, \crv, -8,
+			\out, ~utt.inbus
         ).play;
     };
 

@@ -8,7 +8,7 @@ melo: (
     pr05: Pseq([Pn(60, 4), Pn(63, 4), Pn(63, 4), 60, \, \, \], inf),
     ins05: Pseq([Pn(63, 4), Pn( 66, 4), Pn( 66, 4), 65, \, \, \], inf),
     con05:  Pseq([Pn( 65, 4), Pn(70, 4), Pn(69, 4), 65, \, \, \], inf),
-    lec05: Pseq([Pn( 72, 4), Pn(75, 4), Pn(75, 4), 72, \, \, \], inf),
+    lec05: Pseq([Pn(72, 4), Pn(75, 4), Pn(75, 4), 72, \, \, \], inf),
     dis05: Pseq([Pn(77, 4), Pn(76, 4), Pn(77, 4), 76, \, \, \], inf),
     pr10: Pseq([60, 63, 63, 60], inf),
     ins10: Pseq([63, 66, 66, 65], inf),
@@ -35,6 +35,14 @@ melo: (
 	bass4: Pseq([48, Pn(\, 7), 36, Pn(\, 7), 42, Pn(\, 7), 46, Pn(\, 7)], inf),
 	bass5: Pseq([36, Pn(\, 31)], inf),
 
+),
+meloBase: (
+
+	pr11: Pseq([Pn(72, 6), Prand([60, 72, 48], 8)], inf),
+	ins11: Pseq([Pn(75, 6), Prand([63, 75, 87], 8)], inf),
+	con11: Pseq([Pn(65, 6), Prand([65, 77, 53], 8)], inf),
+	lec11: Pseq([Pn(68, 6), Prand([68, 80, 54], 8)], inf),
+	dis11: Pseq([Pn(64, 6), Prand([64, 76, 52], 8)], inf)
 ),
 
 feedbacks: (
