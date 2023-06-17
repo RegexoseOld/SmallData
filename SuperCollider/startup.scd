@@ -186,7 +186,7 @@ Window.closeAll;
 Pdefn(\melody).play(~t)
 // Testing
 s.makeWindow
-Pbindef(\vox, \rls, 1, \crv, -1, \lg1, 1, \lg2, 0.8).play
+Pbindef(\kik02, \timb2, -2)
 
 Pbindef.all.do(_.stop);
 
