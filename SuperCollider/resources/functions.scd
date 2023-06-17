@@ -13,9 +13,8 @@
 		\con: ~ch3,
 		\lec: ~ch4,
 		\ins: ~ch5,
-		\kik01: ~perc,
-		\sn01 : ~perc,
-		\h01: ~perc,
+		\utt: ~utt,
+		\perc: ~perc,
 		\bass: ~bass
 	);
 };
@@ -309,7 +308,7 @@ PathName(~samplesPath).entries.do({
 		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
 		Pdefn(\melody).play(~t, quant:1);
 		~patternsPlaying = true;
-		[\kik01, \bass].do{|n| Pbindef(n).play(~t, quant:4)}
+		[\kik02, \bass].do{|n| Pbindef(n).play(~t, quant:4)}
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);

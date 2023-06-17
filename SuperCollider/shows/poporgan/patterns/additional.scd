@@ -10,7 +10,7 @@ patterns: (
 	),
 
 	kik01: (
-		instrument:'kik2',
+		instrument:'kik1',
 		freq: ~melos.melo.kik01,
 		dur: 0.25,
 		out: ~perc.inbus
@@ -20,6 +20,9 @@ patterns: (
 		instrument:'kik1',
 		freq: ~melos.melo.kik01,
 		dur: 0.25,
+		timb1: -6,
+		timb2: -12,
+		dist: 1,
 		out: ~perc.inbus
 	),
 

@@ -95,7 +95,7 @@ s.waitForBoot({
 
 	// set fade volume low at the beginning
 	~fadingSynths.do{| k|  ~faderControl.add(k)};
-[\bass, \kik01].do {|k| ~faderControl.add(k)};
+[\utt, \perc, \bass].do {|k| ~faderControl.add(k)};
 
 	// make Patterns for all fading Synths
 	~fadingSynths.do{
@@ -144,7 +144,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [16, 10].choose.wait;
+        [6, 10].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
