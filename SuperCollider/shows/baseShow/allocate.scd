@@ -21,14 +21,13 @@
 	}
     {(count >= 5) && (count <= 10)} {
         in_count = count-4;
-        patName = catName.asString ++ "05";
-		patName.postln;
-		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs);
-		Pbindef(catName, \dur, Pif((in_count%3 == 0), 1, 0.25, 0.25 )).quant_(4);
-		Pbindef(\kik01, \freq, ~melos.melo.kik02, \amp, 0.43, \shaper1, Pwhite(0.05, 0.2, inf)).quant_(4);
-		Pbindef(\bass, \amp, (0.055 * in_count), \midinote, ~melos.melo.bass1).quant_(4);
-		Pbindef(\sn01, \freq, Pif((count %3==0), ~melos.melo.sn03, ~melos.melo.sn02, ~melos.melo.sn01)).play(~t, quant:1);
-		Pbindef(\hh01).stop;
+        patName = catName.asString ++ "10";
+		Pbindef(\metronom, \amp, (0.033 * in_count)).play(~t);
+		Pbindef(\bass, *~states[\bass1].asPairs).play(~t, quant:1);
+		//Pbindef(\kik01).stop;
+		Pbindef(\sn01).play(~t, quant:4);
+		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
+		//Pbindef(catName, \harmonic, [in_count, count]);
         numNotes = 2;
         status = "state 01 instrument changed \n bass line increases, switching beats ";
     }

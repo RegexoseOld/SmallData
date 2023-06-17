@@ -13,7 +13,7 @@
 // values for addVolume
 ~volPlus = 0.06; // this much volume is added each time a category comes in
 ~addFac = 1.2; // factor of volPlus with vols below the threshold
-~subFac = 1.8; // factor of volStep with vols below the threshold
+~subFac = 1.8; // factor of volStep with vols above the threshold
 ~volMax = 0.55; // max Volume should be less than 1.0/5
 //~volMin = 0.0002; // the min Volume for a faded Pattern
 ~volMin = 0.002; // the min Volume for a faded Pattern
@@ -24,7 +24,7 @@
 ~thresCont = 0.15; // threshold from which to continuously fade Out
 ~maxCatCounter = 15; // max value of categoryCounter (counter is reset if this value is reached
 
-~fadingSynths = [\pr, \dis, \con, \lec, \ins];
+~fadingSynths = [\dis, \pr,  \ins, \con, \lec];
 ~additionalSynths = List.new;
 ~faderControl = List.new; // Patterns controlled by MIDIFaders or OSC Controllers
 // booleans
@@ -37,6 +37,7 @@
 ~buffers = Dictionary.new;
 ~utts = Dictionary.new;
 ~uttDict = Dictionary.new;
-~uttSamples = Dictionary.new;
+~uttSamples = Dictionary.new;  // The currently selected samples
+~samplePaths = Dictionary.new; // The paths to all sample files
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
 ~showFolder = ~projectRoot +/+ "shows" +/+ ~showName;
