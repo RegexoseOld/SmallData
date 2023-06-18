@@ -13,6 +13,9 @@
 		\con: ~ch3,
 		\lec: ~ch4,
 		\ins: ~ch5,
+		\kik02: ~perc,
+		\sn01: ~perc,
+		\hh01: ~perc,
 		\utt: ~utt,
 		\perc: ~perc,
 		\bass: ~bass
@@ -243,7 +246,6 @@ PathName(~samplesPath).entries.do({
 	~mc_track[1][index].resizeTo(100, height);
 	~mc_track[1][index].string = text;
 	}
-	//postf("\nthe vol of all patterns is   %\n", ~fadeVols);
 };
 
 ~continuousFadeOut = {
@@ -260,14 +262,17 @@ PathName(~samplesPath).entries.do({
 		{vol <= ~volMin} {~melos[\amps][cat] = ~volMin}
 		{true}{"end of fade cases"};
 		Pbindef(cat, \amp, ~melos[\amps][cat]);
-		defer{var index, height, text;
+		if (~fadingSynths.includes(cat),
+		{	defer{var index, height, text;
 			//"updating mc: index % height  % text  %".format(index, height, text);
 			index = ~fadingSynths.detectIndex({|it, i| it == cat});
 			height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
 			text = ~melos[\amps][cat].trunc(0.001).asString;
 			~mc_track[1][index].resizeTo(100, height);
 			~mc_track[1][index].string = text;
-		}
+		}}
+		)
+
 	})
 };
 ~allocateSynth = {
@@ -313,7 +318,7 @@ PathName(~samplesPath).entries.do({
     ~allocateSynth.(~cat, ~uttDict[~cat]);
     ~t.schedAbs(~t.nextTimeOnGrid, {
         if(~checkFadeVols.() >= ~thresCont, {
-            ~continuousFadeOut.value(~fadingSynths); 1},
+			~continuousFadeOut.value(~fadingSynths); 1},
 		{"not fading: fadeVols = %".format(~fadeVols).postln})
     });
 };

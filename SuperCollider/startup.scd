@@ -142,7 +142,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5, 12, 17].choose.wait;
+        [5, 8, 16].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
@@ -154,18 +154,22 @@ s.waitForBoot({
 ~samplePaths["dissent".asSymbol]
 ~uttSamples["dissent".asSymbol]
 ~slider_buttons[1]["dissent"]
-Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
+Pbindef(\sn01, \ampdecay, 1)
 Pbindef(\pr).play
 Pbindef(\con).play
-Pbindef(\con, \dev, 0.4, \spread, 0.1, \midinote, [30, 60, 90] )
-~allocate.(\dis, 6)
-~allocate.(\ins, 6)
-~allocate.(\lec,6)
-~allocate.(\pr, 6)
-~allocate.(\con, 6)
+Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
+
+~mock.()
+~allocate.(\dis, 7)
+~allocate.(\dis, 17)
+~allocate.(\ins, 12)
+~allocate.(\lec, 13)
+~allocate.(\pr, 17)
+~allocate.(\con, 12)
 
 )
 (
+Pbindef(\sn01, \numharm, 100, \ghosts, 100)
 Pbindef(\lec, \atk, 0.001, \rls, 0.01, \sus, 0.4, \filTime, 0.15, \fmFreq, 1500, \fmVol, 20, \modRate, 0.5, \thr, 0.9)
 Pbindef(\pr, \mRatio, 0.8, \cRatio, 1.1, \fmDur, 4, \index, 10, \bpf, 300, \bpf2, 10, \bpf3, 4, \bpfQ, 0.2, \bpfMul, 10, \vibF, 0.002 )
 Pbindef(\con).play
@@ -179,25 +183,4 @@ Pbindef(\kik02, \timb1, -6, \timb2, -4, \amp, 0.2, \dist, 1)
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 ~t.tempo = 120/60
-
-Window.closeAll;
-Pdefn(\melody).play(~t)
-// Testing
-s.makeWindow
-Pbindef(\vox, \rls, 1, \crv, -1, \lg1, 1, \lg2, 0.8).play
-
-Pbindef.all.do(_.stop);
-
-// record some stuff..
-(
-Routine({
-	s.record;
-	wait(0.02);
-	Synth(\rec, [\amp, 1.0, \in, 3]);
-	wait(2);
-	s.stopRecording
-}).play
-)
-~categories
-
-currentEnvironment.keys.do(_.postln)
+~fadingSynths.includes(\kik02)

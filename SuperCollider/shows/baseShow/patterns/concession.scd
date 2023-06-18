@@ -7,8 +7,10 @@ patterns: (
 		amp:Pfunc({~melos.amps.con}),
 		fade: 1,
 		accent: Pseq([Pseq([0, -0.01, 0, 0.5, 0, 0.05, 0, -0.02], 4)], inf),
-		decayScale: 8,
+		decayScale: 20,
 		maxfrq: 600,
+		atk: 0.5,
+		rls: 6,
 		frqOff: Pseq( [Pseq([0, -300, 0, 800, -100, 0, 0, -500],4)], inf)
 	),
 	con1: (

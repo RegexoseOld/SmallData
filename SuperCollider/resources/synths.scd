@@ -96,7 +96,7 @@ SynthDef(\sn1, {
 		temp = Blip.ar(\ghosts.kr(20) * dev, \numharm.kr(100)) * dev;
 
 	}).sum;
-   ghost = ghost * gEnv * \distort.kr(2).tanh;
+    ghost = ghost * gEnv * \distort.kr(2).tanh;
 	sig = WhiteNoise.ar(1) * snEnv;
 	sig = RHPF.ar(sig, \ffreq.kr(1000), 0.4);
 	sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));

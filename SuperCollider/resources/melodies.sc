@@ -42,7 +42,14 @@ meloBase: (
 	ins11: Pseq([Pn(75, 6), Prand([63, 75, 87], 8)], inf),
 	con11: Pseq([Pn(65, 6), Prand([65, 77, 53], 8)], inf),
 	lec11: Pseq([Pn(68, 6), Prand([68, 80, 54], 8)], inf),
-	dis11: Pseq([Pn(64, 6), Prand([64, 76, 52], 8)], inf)
+	dis11: Pseq([Pn(64, 6), Prand([64, 76, 52], 8)], inf),
+	kik01: Pseq([60, Pn(\, 7), 60, Pn(\, 7), 60, Pn(\, 6), 60, 60, Pn(\, 7) ], inf),
+	kik02: Pseq([Pn(60, 4), Pn(\, 4) ], inf),
+	kik03: Pseq([Pn(110, 4), Pn(\, 4) ], inf),
+	kik04: Pseq([Pn(60, 3), \, 60, \, \, Pn([60, \, \], 2), \, \, \], inf),
+	sn01: Pseq([\, \, 80,  \, \, \, 75, \], inf),
+	sn02: Pseq([\, \, 55,  \, \, \, 50, \], inf),
+	sn03: Pseq([\, \, Pn(200, 2), \, \, 190, \, \, Pn(200, 4), \, \], inf),
 ),
 
 feedbacks: (
@@ -70,6 +77,9 @@ amps:(
     lec: 0.2,
     dis: 0.2,
     utt: 0.2,
+	bass: 0.3,
+	kik02: 0.3,
+	sn01: 0.25
 
 ),
 

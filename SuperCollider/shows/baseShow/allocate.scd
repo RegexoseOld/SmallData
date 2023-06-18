@@ -14,7 +14,7 @@
 		in_count = count;
 		Pbindef(\metronom).stop;
 		Pbindef(\bass, *~states[\bass].asPairs).quant_(1);
-		Pbindef(\kik02).play(~t, quant:4);
+		Pbindef(\kik02, \timb2, Pif(count.even, -12, -20), \freq, ~melos.meloBase.kik01).play(~t, quant:4);
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 	    Pbindef(\sn01).stop;
 	    Pbindef(\hh01).stop;
@@ -25,7 +25,8 @@
         patName = catName.asString ++ "10";
 		Pbindef(\metronom, \amp, (0.033 * in_count)).play(~t);
 		Pbindef(\bass, *~states[\bass1].asPairs).play(~t, quant:1);
-		Pbindef(\sn01).play(~t, quant:1);
+		Pbindef(\kik02, \freq, Pif((count%3==0), ~melos.meloBase.kik02, ~melos.meloBase.kik01));
+		Pbindef(\sn01, \ghosts, ~melos.meloBase.sn01).play(~t, quant:1);
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
         numNotes = 2;
         status = "a cadence and a sizzling snare";
@@ -33,14 +34,14 @@
     {(count >= 11) && (count <=20)} {
         in_count = count - 10;
         patName = catName ++ "11";
-		Pbindef(\kik02, \freq, ~melos.melo.kik03, \dur, 0.5).quant_(4);
+		Pbindef(\kik02, \freq, ~melos.meloBase.kik04, \dur, Pif((count%3==0), 0.25, 0.5)).quant_(4);
 		Pbindef(\hh01).play(~t, quant:1);
-		Pbindef(\sn01, \numharm, ~melos.melo.sn03).quant_(4);
+		Pbindef(\sn01, \numharm, Pif((count%4==0), 60, 100), \ghosts, Pif((count%3==0), ~melos.meloBase.sn02, ~melos.meloBase.sn01)).quant_(4);
         Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 	    Pbindef(\bass, \midinote, ~melos.melo.bass5).quant_(1);
 		Pbindef(\metronom).stop;
         numNotes = 3;
-        status = "state 02";
+        status = "telephone peeps";
     }
     {true} { "end of attCat reached".postln};
 

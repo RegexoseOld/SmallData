@@ -24,7 +24,7 @@ patterns: (
 		instrument:'kik2',
 		dur: 0.125,
 		freq: ~melos.melo.kik01,
-		amp: 0.67,
+		amp: 0.5,
 		timb1: -8,
 		timb2: -20,
 		dist: 1,
