@@ -5,9 +5,9 @@
 ~configFile.load;
 ~resourcePath = ~projectRoot ++ "resources/";
 
-Server.default.options.numInputBusChannels_(1);
+Server.default.options.numInputBusChannels_(0);
 Server.default.options.outDevice_(~audioInterface);
-Server.default.options.inDevice_(~audioInterface);
+//Server.default.options.inDevice_(~audioInterface);
 s.newBusAllocators;
 ServerTree.removeAll; // löscht alle funktionen
 
@@ -86,8 +86,6 @@ s.waitForBoot({
 					~states.put(k, patternStates[\patterns][k]);
 					Pbindef(k, *~states[k].asPairs);
 					~additionalSynths.add(k);
-					//~cat2Channel.put(k, ~utt);
-					//Pbindef(k, \out, ~cat2Channel[k].inbus);
 				};
 			};
 		);
@@ -95,8 +93,8 @@ s.waitForBoot({
 
 	// set fade volume low at the beginning
 	~fadingSynths.do{| k|  ~faderControl.add(k)};
-[\utt, \perc, \bass].do {|k| ~faderControl.add(k)};
 
+	[\utt, \perc, \bass].do {|k| ~faderControl.add(k)};
 	// make Patterns for all fading Synths
 	~fadingSynths.do{
 		|name|
@@ -144,7 +142,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [6, 10].choose.wait;
+        [5, 8, 16].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
@@ -152,54 +150,36 @@ s.waitForBoot({
 ~sim.stop
 
 ~t.beatsPerBar
-~states[\bass]
-
+~cat2Channel[\perc]
 ~samplePaths["dissent".asSymbol]
 ~uttSamples["dissent".asSymbol]
 ~slider_buttons[1]["dissent"]
-Pbindef(\sn01, \ffreq, 1200, \cgain, 1, \thr, 0.8, \rls1, 0.1, \numharm, 20, \ampDecay, 0.9)
-Pbindef(\sn02)
-Synth(\sn2)
-(
+Pbindef(\sn01, \ampdecay, 1)
+Pbindef(\pr).play
+Pbindef(\con).play
+Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
+
+~mock.()
 ~allocate.(\dis, 7)
-~allocate.(\ins, 7)
-~allocate.(\lec,7)
-~allocate.(\pr, 7)
-~allocate.(\con, 7)
+~allocate.(\dis, 17)
+~allocate.(\ins, 12)
+~allocate.(\lec, 13)
+~allocate.(\pr, 17)
+~allocate.(\con, 12)
 
 )
 (
-Pbindef(\pr).play
+Pbindef(\sn01, \numharm, 100, \ghosts, 100)
+Pbindef(\lec, \atk, 0.001, \rls, 0.01, \sus, 0.4, \filTime, 0.15, \fmFreq, 1500, \fmVol, 20, \modRate, 0.5, \thr, 0.9)
 Pbindef(\pr, \mRatio, 0.8, \cRatio, 1.1, \fmDur, 4, \index, 10, \bpf, 300, \bpf2, 10, \bpf3, 4, \bpfQ, 0.2, \bpfMul, 10, \vibF, 0.002 )
 Pbindef(\con).play
 Pbindef(\con).stop
+Pbindef(\kik01).pause
 Pbindef(\con, \dur, 1, \rls, 2.3)
-Pbindef(\metronom).stop
+Pbindef(\kik02, \timb1, -6, \timb2, -4, \amp, 0.2, \dist, 1)
 )
 (
 ~postBeats = {~t.beats.postln; 4};
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 ~t.tempo = 120/60
-
-Window.closeAll;
-Pdefn(\melody).play(~t)
-// Testing
-s.makeWindow
-Pbindef(\kik02, \timb2, -2)
-
-Pbindef.all.do(_.stop);
-
-// record some stuff..
-(
-Routine({
-	s.record;
-	wait(0.02);
-	Synth(\rec, [\amp, 1.0, \in, 3]);
-	wait(2);
-	s.stopRecording
-}).play
-)
-~categories
-
-currentEnvironment.keys.do(_.postln)

@@ -56,7 +56,7 @@ SynthDef(\fm, {
 SynthDef.new(\bass, {
     |gate = 1|
     var  sig, env, mod;
-    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, 1, \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
+    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(1.0), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
     mod = SinOsc.kr(\modRate.kr(1.2));
     sig = 4.collect({
 		var fm, dev;
@@ -96,7 +96,7 @@ SynthDef(\sn1, {
 		temp = Blip.ar(\ghosts.kr(20) * dev, \numharm.kr(100)) * dev;
 
 	}).sum;
-   ghost = ghost * gEnv * \distort.kr(2).tanh;
+    ghost = ghost * gEnv * \distort.kr(2).tanh;
 	sig = WhiteNoise.ar(1) * snEnv;
 	sig = RHPF.ar(sig, \ffreq.kr(1000), 0.4);
 	sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
@@ -108,12 +108,12 @@ SynthDef(\sn1, {
 SynthDef(\kik2, {
 	var sig;
 	sig = SinOsc.ar(\freq.kr(60) * (1 + (8* Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1));
-	sig = sig + (SinOsc.ar(XLine.ar(4000, 50, 0.01) * Env.perc(0.0001, 0.01).ar *  \timb1.kr(-5).dbamp));
-	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 10120, 0.5) + Env.perc(0.001, 0.03).ar *  \timb2.kr(-8).dbamp);
+	sig = sig + (SinOsc.ar(XLine.ar(4000, 50, 0.01) * Env.perc(0.0001, 0.01).ar * \timb1.kr(-5).dbamp));
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 10120, 0.5) + Env.perc(0.001, 0.03).ar * \timb2.kr(-8).dbamp);
 	sig = sig * (1 + (2 * Env.perc(0.001, 0.2).ar));
-	sig = (sig *  \dist.kr(1).dbamp).tanh;
+	sig = (sig * \dist.kr(0).dbamp).tanh;
 	sig = sig * Env.perc(0.001, 1.3, curve: -8).ar(Done.freeSelf);
-	sig = sig * \amp.kr(-5.dbamp);
+	sig = sig * \amp.kr(0.3);
 	sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig);
 }).add;
