@@ -68,7 +68,7 @@
 // a helper function to load all samples in the provided path
 ~addSample = {
 	|pathSymbol|
-	var path = pathSymbol.asString, samples = Dictionary.new;;
+	var path = pathSymbol.asString, samples = Dictionary.new;
 	samples.add(
 		PathName(path).fileName.asSymbol->
 		Array.fill(
