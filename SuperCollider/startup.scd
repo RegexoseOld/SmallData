@@ -5,9 +5,9 @@
 ~configFile.load;
 ~resourcePath = ~projectRoot ++ "resources/";
 
-Server.default.options.numInputBusChannels_(1);
+Server.default.options.numInputBusChannels_(0);
 Server.default.options.outDevice_(~audioInterface);
-Server.default.options.inDevice_(~audioInterface);
+//Server.default.options.inDevice_(~audioInterface);
 s.newBusAllocators;
 ServerTree.removeAll; // löscht alle funktionen
 
