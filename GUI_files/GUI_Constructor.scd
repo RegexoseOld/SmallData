@@ -78,7 +78,7 @@
 ~buildSequencerTrack = {
 	// Builds the sequencer track.
 	arg top, columns, buttonsize;
-	var trackCompView, array, sequencer_track_data;
+	var trackCompView, array, sequencer_track_data, buttonColor;
 
 	// Track Composite View
 	trackCompView = CompositeView(top, Rect(0, 0, buttonsize*columns+20, buttonsize));
@@ -87,8 +87,13 @@
 	// Sequencer Track: A set of static texts that change colors when the pattern
 	// scrolls over it.
 	array = Array.fill(columns, { arg i;
+		if (floor(i/4).asInteger.even) {
+			buttonColor = Color.white;
+		} {
+			buttonColor = ~style_1["lightgrey"];
+		};
 		StaticText(trackCompView, Rect(i * buttonsize + 10, 10, buttonsize, buttonsize/2))
-		.background_(Color.white)
+		.background_(buttonColor);
 	});
 	top.decorator.nextLine;
 	sequencer_track_data = [trackCompView, array]
@@ -195,12 +200,16 @@
 	// Updates the track, giving one of the StaticText objects a random color and turning
 	// off the previous index.
 	arg index, track;
+	var buttonColor = Color.white;
+	// Determine button background based on position in track
+	if (floor((index-1)/4).asInteger.odd) {
+		buttonColor = ~style_1["lightgrey"];
+	};
+	{ track[1][index].background_(Color.rand).string_(index.asString) }.defer;
 	if((index == 0), {
-		{ track[1][index].background_(Color.rand).string_(index.asString) }.defer;
-		{ track[1][track[1].size-1].background_(Color.white).string_("") }.defer;
+		{ track[1][track[1].size-1].background_(buttonColor).string_("") }.defer;
 	}, {
-		{ track[1][index].background_(Color.rand).string_(index.asString) }.defer;
-		{ track[1][index-1].background_(Color.white).string_("") }.defer;
+		{ track[1][index-1].background_(buttonColor).string_("") }.defer;
 	});
 };
 
