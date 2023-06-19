@@ -64,7 +64,7 @@ s.waitForBoot({
 	~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
 
 
-// load state patterns into a Dictionary with different states for the 5 categories
+	// load state patterns into a Dictionary with different states for the 5 categories
 	//~states = ~states ? ();
 	~states = ();
 	(PathName(~showFolder) +/+ "patterns").entries.do({
