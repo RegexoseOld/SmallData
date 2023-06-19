@@ -10,7 +10,7 @@ patterns: (
 	),
 
 	kik01: (
-		instrument:'kik2',
+		instrument:'kik1',
 		freq: ~melos.melo.kik01,
 		dur: 0.25,
 		out: ~perc.inbus
@@ -32,7 +32,7 @@ patterns: (
 		freq: Pfunc({~melos.melo.sn01}),
 		dur: 0.25,
 		atk1: 0.2,
-		amp: 0.5,
+		amp: 0.35,
 		out: ~perc.inbus
 	),
 

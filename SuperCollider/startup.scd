@@ -93,8 +93,8 @@ s.waitForBoot({
 
 	// set fade volume low at the beginning
 	~fadingSynths.do{| k|  ~faderControl.add(k)};
-	[\utt, \perc, \bass].do {|k| ~faderControl.add(k)};
 
+	[\utt, \perc, \bass].do {|k| ~faderControl.add(k)};
 	// make Patterns for all fading Synths
 	~fadingSynths.do{
 		|name|
@@ -183,4 +183,3 @@ Pbindef(\kik02, \timb1, -6, \timb2, -4, \amp, 0.2, \dist, 1)
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 ~t.tempo = 120/60
-~fadingSynths.includes(\kik02)
