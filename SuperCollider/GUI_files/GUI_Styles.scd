@@ -15,8 +15,8 @@
 (
 ~style_1 = Dictionary.newFrom([
 	"header_font", Font("DIN Condensed", 32),
-	"subheader_font", Font("DIN Condensed", 20),
-	"text_font", Font("DIN Condensed", 16),
+	"subheader_font", Font("DIN Condensed", 25),
+	"text_font", Font("DIN Condensed", 22),
 	"window_color", Color.fromHexString("#a8adad"),
 	"top_level_frame_color", Color.fromHexString("#CDEDFD"),
 	"header_frame_color", Color.fromHexString("#b0d2d4"),
