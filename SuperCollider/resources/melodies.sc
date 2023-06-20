@@ -40,7 +40,8 @@ melo: (
 meloPoporgan: (
 	bass0: Pseq([48, Pn(\, 7), 36,Pn(\, 7),], inf),
 	bass1: Pseq([48, \, \, \, \, \, \, \, 36, \, \, 36, \, \, \, \], inf),
-	//hh02: Pseq([Pn(Pwhite(0.18, 0.27), 16), ])
+	hh01: Pxrand([0.18, 0.27, 0.16 ], inf),
+	hh02: Pseq([Pn(Pwhite(0.18, 0.27, 16), 1), Pseq([0.26, \, 0.3, \], 3)], inf)
 
 ),
 meloBase: (
