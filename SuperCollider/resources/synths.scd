@@ -39,9 +39,9 @@ SynthDef(\fm, {
     var  sig, env, mod;
     env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, 1, \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
     mod = SinOsc.kr(\modRate.kr(1.2));
-    sig = 4.collect({
+    sig = 5.collect({
 		var fm, dev;
-		dev = {ExpRand(\devMin.kr(0.9), \devMax.kr(1.1))};
+		dev = {ExpRand(\devMin.kr(0.95), \devMax.kr(1.05))};
 		fm = SinOsc.ar(\fmFreq.kr(2000) * mod, mul:\fmVol.kr(20));
 		VarSaw.ar((\freq.kr(100) * dev) + fm, 0, \filTime.kr(0.1), 1);
 	}).sum;

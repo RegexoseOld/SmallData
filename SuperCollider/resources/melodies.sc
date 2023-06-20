@@ -33,7 +33,14 @@ melo: (
 	bass2: Pseq([48, \, \, 60, \, \, 48, 45, 48, \, \, 36, \, \, \, \], inf),
 	bass3: Pseq([48, Pn(\, 7), 36, Pn(\, 7)], inf),
 	bass4: Pseq([48, Pn(\, 7), 36, Pn(\, 7), 42, Pn(\, 7), 46, Pn(\, 7)], inf),
-	bass5: Pseq([36, Pn(\, 31)], inf),
+	bass5: Pseq([36, Pn(\, 7), 39, Pn(\, 7), 40, Pn(\, 7), 39, Pn(\, 7), 40, Pn(\, 7), 34, Pn(\, 7)], inf),
+	bass6: Pseq([36, Pn(\, 7), 35, Pn(\, 7)], inf),
+),
+
+meloPoporgan: (
+	bass0: Pseq([48, Pn(\, 7), 36,Pn(\, 7),], inf),
+	bass1: Pseq([48, \, \, \, \, \, \, \, 36, \, \, 36, \, \, \, \], inf),
+	//hh02: Pseq([Pn(Pwhite(0.18, 0.27), 16), ])
 
 ),
 meloBase: (
