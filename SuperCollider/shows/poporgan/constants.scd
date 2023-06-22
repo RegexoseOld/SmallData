@@ -11,7 +11,7 @@
 ~addFac = 1.2; // factor of volPlus with vols below the threshold
 ~subFac = 1.8; // factor of volStep with vols below the threshold
 ~volMax = 0.55; // max Volume should be less than 1.0/5
-~volMin = 0.002; // the min Volume for a faded Pattern
+~volMin = 0.0005; // the min Volume for a faded Pattern
 ~volThres = 0.35; // Threshold managed by ~addVolume and ~continuousFade
 ~volStep = 0.004; //vol reduction in continuous FadeOut
 ~volMax = 0.45; // max Volume should be less than 1.0/5
