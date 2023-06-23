@@ -35,9 +35,9 @@ SynthDef.new(\quitt, {
 }).add;
 
 SynthDef(\fm, {
-    |gate=1.0, atk=0.01, rls=1.0|
+    |atk=0.01, rls=1.0|
     var  sig, env, mod;
-	env = EnvGen.kr(Env([0, 1, 0], [atk, rls], \crv.kr(-4.0)), gate, doneAction:2);
+	env = EnvGen.kr(Env([0, 1, 0], [atk, rls], \crv.kr(-4.0)), doneAction:2);
     mod = SinOsc.kr(\modRate.kr(1.2));
     sig = 5.collect({
 		var fm, dev;

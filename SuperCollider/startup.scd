@@ -155,10 +155,11 @@ s.waitForBoot({
 ~slider_buttons[1]["dissent"]
 Pbindef(\sn01, \ampdecay, 1)
 Pbindef(\pr, \rls, 0.27, \sustain, 1.4)
-Pbindef(\dis).play(~t)
+Pbindef(\bass).play(~t)
+Pbindef(\bass,  \modRate, 1, \midinote, ~melos.meloPoporgan.bass21, \dur, 1, \rls, 0.1, \fmVol, 130, \cgain, 2.2, \amp, 0.3,)
 Synth(\fm, [\freq, 300])
 Pbindef(\lec).play(~t)
-Pbindef(\lec, \rls, 0.62)
+Pbindef(\bass, \rls, 0.5)
 
 ~mock.()
 ~allocate.(\dis, 2)
@@ -187,4 +188,6 @@ Pbind(\midinote, Pseq([Pseq([ 91, 93,  91, 88], 2), Pseq([95, 94], 16)], inf), \
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 ~t.tempo = 120/60
-{ PinkNoise.ar(EnvGen.kr(Env.new([0, 1, 0], [0.01, 1.0], 1, curve:\crv.kr(-4.0)), doneAction:2)) }.play
+{ PinkNoise.ar(EnvGen.kr(Env.new([0, 1, 0], [0.01, 1.0], 1,-4.0), doneAction:2).isSustained) }.play
+
+Env.new([0, 1, 0], [0.01, 1.0], 1,-4.0).isSustained.postln

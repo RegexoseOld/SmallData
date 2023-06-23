@@ -23,6 +23,9 @@ patterns: (
 	lec1: (
 		instrument: 'fm',
 		midinote: ~melos.melo.lec,
+		amp: Pfunc({~melos.amps.lec}),
+		fade: 0.8,
+		detune: 0,
 		modRate: 0.4,
 		fmVol: 10,
 		devMin: 0.999,
@@ -34,8 +37,6 @@ patterns: (
 		rls: 0.27,
 		crv: -5,
 		dur: 0.25,
-		amp: Pfunc({~melos.amps.lec}),
-		fade: 0.8,
 	),
 
 	lec05: (

@@ -22,7 +22,10 @@ patterns: (
 	con1: (
 		instrument: 'fm',
 		midinote: ~melos.melo.con,
+		amp: Pfunc({~melos.amps.con}),
+		fade: 0.5,
 		modRate: 0.4,
+		detune:0,
 		fmVol: 10,
 		devMin: 0.999,
 		devMax: 1.0001,
@@ -33,8 +36,6 @@ patterns: (
 		rls: 0.28,
 		crv: -5,
 		dur: 0.25,
-		amp: Pfunc({~melos.amps.con}),
-		fade: 0.5,
 
 	),
 	con05: (
@@ -87,7 +88,7 @@ patterns: (
 		dur: 0.25,
 		fade: 0.5,
 		thr: 0.5,
-		cgain: 3,
+		cgain: 2.2,
 		pan: 0,
 		atk: 0.03,
 		rls: 0.13,
@@ -95,7 +96,7 @@ patterns: (
 		vibVol: 35,
 		dev: 0.04,
 		spread: 0.02,
-		bpf1: Pn(Pgeom(3000, 0.73, 16), inf),
+		bpf1: 3000,
 		bpf2: 5,
 		bpf3: 0.3,
 		bpfQ: 0.9,

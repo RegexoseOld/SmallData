@@ -22,6 +22,9 @@ patterns: (
 	ins1: (
 		instrument: 'fm',
 		midinote: ~melos.melo.ins,
+		amp: Pfunc({~melos.amps.ins}),
+		fade: 0.8,
+		detune: 0,
 		modRate: 0.4,
 		fmVol: 10,
 		devMin: 0.999,
@@ -33,8 +36,6 @@ patterns: (
 		rls: 0.27,
 		crv: -3,
 		dur: 0.25,
-		amp: Pfunc({~melos.amps.ins}),
-		fade: 0.8,
 	),
 
 	 ins05: (

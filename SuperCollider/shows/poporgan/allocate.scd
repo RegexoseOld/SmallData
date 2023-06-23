@@ -42,7 +42,7 @@
 		).play(~t, quant:4);
         Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 	    Pbindef(\bass, \modRate, 1, \midinote, ~melos.meloPoporgan.bass21, \dur, 1,
-			\rls, 0.2, \fmVol, Pif((count%3==0), 130, 60), \cgain, 2.2, \amp, 0.3,
+			\rls, 0.3, \fmVol, Pif((count%3==0), 130, 60), \cgain, 2.2, \amp, 0.3,
 		).quant_(4);
         numNotes = 4;
         status = "crazy happy melody";
