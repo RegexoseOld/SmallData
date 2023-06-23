@@ -118,7 +118,7 @@ patterns: (
 		instrument:'fm',
 		midinote:  ~melos.meloPoporgan.bass0,
 		dur: 0.25,
-		amp: 0.12,
+		amp: 0.29,
 		atk: 0.02,
 		rls: 0.2,
 		crv: -1.0,

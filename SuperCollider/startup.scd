@@ -142,8 +142,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5, 6,].choose.wait;
-		//"mocked" .po stln;
+        [5, 6, 11].choose.wait;
         }
 ) }).play;
 )
@@ -155,19 +154,21 @@ s.waitForBoot({
 ~uttSamples["dissent".asSymbol]
 ~slider_buttons[1]["dissent"]
 Pbindef(\sn01, \ampdecay, 1)
-Pbindef(\pr).play
-Pbindef(\con).play
-Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
+Pbindef(\pr, \rls, 0.27, \sustain, 1.4)
+Pbindef(\dis).play(~t)
+Synth(\fm, [\freq, 300])
+Pbindef(\lec).play(~t)
+Pbindef(\lec, \rls, 0.62)
 
 ~mock.()
 ~allocate.(\dis, 2)
 ~allocate.(\dis, 8)
-~allocate.(\dis, 15)
-~allocate.(\dis, 25)
-~allocate.(\ins, 12)
-~allocate.(\lec, 13)
-~allocate.(\pr, 17)
-~allocate.(\con, 12)
+~allocate.(\dis, 11)
+~allocate.(\dis, 22)
+~allocate.(\ins, 11)
+~allocate.(\lec, 12)
+~allocate.(\con, 11)
+~allocate.(\pr, 11)
 
 )
 (
@@ -180,8 +181,10 @@ Pbindef(\kik01).pause
 Pbindef(\con, \dur, 1, \rls, 2.3)
 Pbindef(\kik02, \timb1, -6, \timb2, -4, \amp, 0.2, \dist, 1)
 )
+Pbind(\midinote, Pseq([Pseq([ 91, 93,  91, 88], 2), Pseq([95, 94], 16)], inf), \dur, Pseq([Pn(0.5, 8), Pn(0.125, 32)], inf)).play(~t)
 (
 ~postBeats = {~t.beats.postln; 4};
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 ~t.tempo = 120/60
+{ PinkNoise.ar(EnvGen.kr(Env.new([0, 1, 0], [0.01, 1.0], 1, curve:\crv.kr(-4.0)), doneAction:2)) }.play

@@ -12,12 +12,12 @@ patterns: (
 		thr: 0.99,
 		cgain: 1.0,
 		atk: 0.02,
-		rls: 0.08,
+		rls: 0.33,
 		crv: -5,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.con}),
-		fade: 0.3,
-		sustain: 0.14
+		fade: 0.5,
+
 	),
 	con1: (
 		instrument: 'fm',
@@ -30,12 +30,11 @@ patterns: (
 		thr: 0.99,
 		cgain: 1.0,
 		atk: 0.02,
-		rls: 0.08,
+		rls: 0.28,
 		crv: -5,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.con}),
-		fade: 0.4,
-		sustain: 0.14
+		fade: 0.5,
 
 	),
 	con05: (
@@ -43,7 +42,7 @@ patterns: (
 		midinote: ~melos.melo.con05,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.con}),
-		fade: 0.3,
+		fade: 0.6,
 		thr: 0.5,
 		cgain: 1,
 		pan: 0,
@@ -80,7 +79,7 @@ patterns: (
 		bpfQ: 0.9,
 	),
 
-	con20: (
+	con16: (
 		instrument: 'bellFm',
 		midinote: ~melos[\melo][\con20],
 		detune: Pn(Pgeom(20, 0.84, 16), inf),
@@ -103,16 +102,24 @@ patterns: (
 	),
 
 	con21: (
-		instrument: 'percImp',
-		scale: Scale.chromatic,
-		dur: Pseq(~melos[\duras][\con], inf),
+		instrument: 'bellFm',
+		midinote: ~melos.meloPoporgan.con21,
+		dur: ~melos.duras.con21,
 		amp:  Pfunc({~melos.amps.con}),
-		fade: 0.5,
+		fade: 0.7,
+		thr: 0.5,
+		cgain: 3,
 		pan: 0,
-		accent: 0,
-		decayScale: 1,
-		minfrq: 80,
-		frqOff: 0,
+		atk: 0.03,
+		rls: 0.13,
+		vibF: 0.7,
+		vibVol: 35,
+		dev: 0.04,
+		spread: 0.02,
+		bpf1: Pn(Pgeom(3000, 0.73, 16), inf),
+		bpf2: 5,
+		bpf3: 0.3,
+		bpfQ: 0.9,
 	),
 )
 )

@@ -12,12 +12,11 @@ patterns: (
 		thr: 0.99,
 		cgain: 1.0,
 		atk: 0.02,
-		rls: 0.07,
+		rls: 0.17,
 		crv: -3,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.ins}),
 		fade: 0.8,
-		sustain: 0.14
 
 	),
 	ins1: (
@@ -31,12 +30,11 @@ patterns: (
 		thr: 0.99,
 		cgain: 1.0,
 		atk: 0.02,
-		rls: 0.07,
+		rls: 0.27,
 		crv: -3,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.ins}),
 		fade: 0.8,
-		sustain: 0.14
 	),
 
 	 ins05: (
@@ -45,7 +43,7 @@ patterns: (
 		buf: Pfunc{~buffers[\wt]},
 		amp: Pfunc({~melos.amps.ins}),
 		dur: 0.25,
-      	fade: 0.5,
+      	fade: 0.8,
 		atk: 0.02,
 		atkcrv: 0,
 		rls: 0.1,
@@ -75,20 +73,38 @@ patterns: (
 	),
 
 
-	ins20: (
+	ins16: (
 	   instrument: 'oscfm',
 		buf: Pfunc{~buffers[\wt]},
 		midinote: ~melos[\melo][\ins20],
 		detune: Pn(Pgeom(30, 0.89, 16),inf),
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.ins}),
-		fade: 1,
+		fade: 0.65,
 		atk: 0.02,
 		atkcrv: 1,
 		rls: 0.14,
 		rlscrv: 1,
 		modfreq: 1000,
 		modamp: 40,
+		spread: 10,
+		dev: Pn(Pgeom(1.2, 0.91, 16), inf),
+	),
+
+	ins21: (
+	   instrument: 'oscfm',
+		buf: Pfunc{~buffers[\wt]},
+		midinote: ~melos.meloPoporgan.ins21,
+		detune: Pn(Pgeom(30, 0.89, 16),inf),
+		dur:~melos.duras.ins21,
+		amp: Pfunc({~melos.amps.ins}),
+		fade: 0.55,
+		atk: 0.02,
+		atkcrv: 1,
+		rls: 0.14,
+		rlscrv: -2,
+		modfreq:  Pwhite( 40, 120, inf),
+		modamp: Pwhite(100, 200, inf),
 		spread: 10,
 		dev: Pn(Pgeom(1.2, 0.91, 16), inf),
 	),

@@ -38,8 +38,14 @@ melo: (
 ),
 
 meloPoporgan: (
+	pr21: Pseq([Pseq([91, 93, 91, 88], 2), Pseq([95, 94], 16)], inf),
+	con21: Pseq([88,84,88,84,81,79,81,83], inf) -12,
+    lec21:  Pseq([Pseq([84, 86, 87, 88], 2), Pseq([91, 93], 16)], inf),
+	dis21: Pseq([79,80,81,82,83,82,81,82,83,82,83,84,82,84,83,82], inf),
+	ins21: Pseq([91, Pn(92, 4), Pn(91, 3), 90, 91 ,90, 88, 90, Pn(85, 4), Pn(87, 4), Pn(88, 4), Pn(90, 4), Pn(91, 3),], inf),
 	bass0: Pseq([48, Pn(\, 7), 36,Pn(\, 7),], inf),
 	bass1: Pseq([48, \, \, \, \, \, \, \, 36, \, \, 36, \, \, \, \], inf),
+	bass21: Pseq([43, 36, 40, 41, 43, 42, 41, 40], inf),
 	hh01: Pxrand([0.18, 0.27, 0.16 ], inf),
 	hh02: Pseq([Pn(Pwhite(0.18, 0.27, 16), 1), Pseq([0.26, \, 0.3, \], 3)], inf)
 
@@ -71,10 +77,15 @@ feedbacks: (
 
 duras:(
     pr: Array.fill(~numSlots, {4}),
+	pr21: Pseq([Pn(0.25, 8), Pn(0.125, 32)], inf),
     ins: Array.fill(~numSlots, {4}),
+	ins21: 0.25,
     con: Array.fill(~numSlots, {4}),
+	con21: Pseq([1, 1, 1, 0.5, 0.5, 1, 1, 2], inf),
     lec: Array.fill(~numSlots, {4}),
+	lec21: Pseq([Pn(1, 8), Pn(0.25, 32)], inf),
     dis: Array.fill(~numSlots, {4}),
+	dis21: 0.5,
 
 ),
 
