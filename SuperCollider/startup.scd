@@ -142,7 +142,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5, 6, 11].choose.wait;
+        [5, 10, 11].choose.wait;
         }
 ) }).play;
 )
@@ -168,7 +168,7 @@ Pbindef(\bass, \rls, 0.5)
 ~allocate.(\dis, 22)
 ~allocate.(\ins, 11)
 ~allocate.(\lec, 12)
-~allocate.(\con, 11)
+~allocate.(\con, 21)
 ~allocate.(\pr, 11)
 
 )

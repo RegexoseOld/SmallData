@@ -27,7 +27,7 @@
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs);
 		Pbindef(catName, \dur, Pif((in_count%3 == 0), 1, 0.25, 0.25 )).quant_(4);
 		Pbindef(\kik02, \freq, ~melos.melo.kik02, \amp, 0.28, \timb1, Pwhite(0.05, 0.2, inf)).quant_(4);
-		Pbindef(\bass, \rls, 0.3, \amp, 0.29, \midinote, ~melos.melo.bass1).quant_(4);
+		Pbindef(\bass, \dur, 0.25, \rls, 0.3, \amp, 0.33, \midinote, ~melos.melo.bass1).quant_(4);
 		Pbindef(\sn01, \freq, Pif((count %3==0), ~melos.melo.sn03, ~melos.melo.sn02)).play(~t, quant:1);
 		Pbindef(\hh01).stop;
         numNotes = 2;

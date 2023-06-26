@@ -64,7 +64,7 @@ patterns: (
 		midinote: ~melos[\melo][\con10],
 		amp: Pfunc({~melos.amps.con}),
 		dur: 1,
-		fade: Pkey(\midinote).lincurve(20, 100, 0.75, 0.2, -4),
+		fade: 0.7,
 		thr: 0.5,
 		cgain: 1,
 		pan: 0,
