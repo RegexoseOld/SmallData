@@ -12,19 +12,20 @@ patterns: (
 		thr: 0.99,
 		cgain: 1.0,
 		atk: 0.02,
-		rls: 0.07,
+		rls: 0.17,
 		crv: -5,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.lec}),
 		fade: 0.8,
-	    sustain: 0.14
 
 	),
 
 	lec1: (
-		instrument: 'bellFm',
 		instrument: 'fm',
 		midinote: ~melos.melo.lec,
+		amp: Pfunc({~melos.amps.lec}),
+		fade: 0.8,
+		detune: 0,
 		modRate: 0.4,
 		fmVol: 10,
 		devMin: 0.999,
@@ -33,13 +34,9 @@ patterns: (
 		thr: 0.99,
 		cgain: 1.0,
 		atk: 0.02,
-		rls: 0.07,
+		rls: 0.27,
 		crv: -5,
 		dur: 0.25,
-		amp: Pfunc({~melos.amps.lec}),
-		fade: 0.8,
-		sustain: 0.14
-
 	),
 
 	lec05: (
@@ -47,7 +44,7 @@ patterns: (
 		midinote: ~melos[\melo][\lec05],
 		dur: 0.25,
 		amp:0.1,
-		fade: 0.5,
+		fade: 0.8,
 		thr: 0.5,
 		cgain: 1,
 		pan: 0,
@@ -68,8 +65,9 @@ patterns: (
 		midinote: ~melos[\melo][\lec10],
 		dur: 1,
 	    amp:  Pfunc({~melos.amps.lec}),
+		fade: 0.65,
 		atk: 0.002,
-		rls: 0.2,
+		rls: 0.6,
 		sus: 1,
 		crv: -3.0,
 		modRate: 0.9,
@@ -79,19 +77,16 @@ patterns: (
 		fmVol: 200,
 		cgain: 1,
 		distort: 2.5,
-		fade: Pkey(\harmonic).lincurve(1, 20, 0.85, 0.2, -4),
-		sustain: 0.2
 	),
 
-	lec20: (
+	lec16: (
 		instrument:'fm',
 		midinote: ~melos[\melo][\lec20],
-		detune: Pn(Pgeom(30, 0.89, 16),inf),
 		dur: 0.25,
 	    amp:  Pfunc({~melos.amps.lec}),
+		fade: 0.7,
 		atk: 0.002,
 		rls: 0.1,
-		sus: 1,
 		crv: -3.0,
 		modRate: 0.9,
 		filTime: 0.1,
@@ -101,8 +96,25 @@ patterns: (
 		fmVol: 150,
 		cgain: 2,
 		distort: 2.5,
-		fade: Pkey(\harmonic).lincurve(1, 20, 0.85, 0.2, -4),
-		sustain: 0.12
+	),
+
+	lec21: (
+		instrument:'fm',
+		midinote: ~melos.meloPoporgan.lec21,
+		dur: ~melos.duras.lec21,
+	    amp:  Pfunc({~melos.amps.lec}),
+		fade: 0.65,
+		atk: 0.01,
+		rls: 0.6,
+		crv: 0.0,
+		modRate: 0.9,
+		filTime: 0.1,
+		devMin: 0.999,
+		devMax: 1.001,
+		fmFreq: 800,
+		fmVol: 150,
+		cgain: 2,
+		distort: 2.1,
 	),
 
 )

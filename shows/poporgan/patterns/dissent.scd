@@ -13,7 +13,7 @@ patterns:(
 		thr: 0.99,
 		cgain: 1.0,
 		atk: 0.02,
-		rls: 0.07,
+		rls: 0.17,
 		crv: -5,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.dis}),
@@ -24,6 +24,9 @@ patterns:(
 	dis1: (
 		instrument: 'fm',
 		midinote: ~melos.melo.dis,
+		amp: Pfunc({~melos.amps.dis}),
+		fade: 0.8,
+		detune:0,
 		modRate: 0.4,
 		fmVol: 10,
 		devMin: 0.999,
@@ -32,11 +35,9 @@ patterns:(
 		thr: 0.99,
 		cgain: 1.0,
 		atk: 0.02,
-		rls: 0.07,
+		rls: 0.27,
 		crv: -8,
 		dur: 0.25,
-		amp: Pfunc({~melos.amps.dis}),
-		fade: 0.8,
 		sustain: 0.14
 
 	),
@@ -46,7 +47,7 @@ patterns:(
 		midinote: ~melos.melo.dis05,
 		dur: 0.25,
 		amp: 0.1,
-		fade: 0.5,
+		fade: 0.8,
 		thr: 0.5,
 		cgain: 1,
 		pan: 0,
@@ -80,7 +81,7 @@ patterns:(
 		pulseMul: 0.15,
 
 	),
-	dis20: (
+	dis16: (
 		instrument: 'quitt',
 		midinote: ~melos.melo.dis20,
 		dur: 0.25,
@@ -99,8 +100,25 @@ patterns:(
 		ffreq: 2000,
 		rq: 0.8,
 		width: 0.3,
+	),
 
-
+	dis21: (
+		instrument: 'fm',
+		midinote:~melos.meloPoporgan.dis21,
+		dur: ~melos.duras.dis21,
+		amp: Pfunc({~melos.amps.dis}),
+		modRate: 0.4,
+		fmVol: 10,
+		devMin: 0.999,
+		devMax: 1.0001,
+		distort: 1.5,
+		thr: 0.99,
+		cgain: 1.0,
+		atk: 0.02,
+		rls: 0.1,
+		crv: -5,
+		fade: 0.8,
+		sustain: 0.14
 	),
 
 )
