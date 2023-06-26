@@ -35,22 +35,21 @@ SynthDef.new(\quitt, {
 }).add;
 
 SynthDef(\fm, {
-    |gate = 1|
+    |atk=0.01, rls=1.0|
     var  sig, env, mod;
-    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, 1, \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
+	env = EnvGen.kr(Env([0, 1, 0], [atk, rls], \crv.kr(-4.0)), doneAction:2);
     mod = SinOsc.kr(\modRate.kr(1.2));
-    sig = 4.collect({
+    sig = 5.collect({
 		var fm, dev;
-		dev = {ExpRand(\devMin.kr(0.9), \devMax.kr(1.1))};
+		dev = {ExpRand(\devMin.kr(0.95), \devMax.kr(1.05))};
 		fm = SinOsc.ar(\fmFreq.kr(2000) * mod, mul:\fmVol.kr(20));
 		VarSaw.ar((\freq.kr(100) * dev) + fm, 0, \filTime.kr(0.1), 1);
 	}).sum;
     sig = (sig * \distort.kr(1.5)).tanh;
-    sig = sig * env;
-    sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
+    sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
-    Out.ar(\out.kr(0), sig );
-    //Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
+    sig = sig * env;
+    Out.ar(\out.kr(0), sig);
 }).add;
 
 SynthDef.new(\bass, {
