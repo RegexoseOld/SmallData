@@ -147,7 +147,6 @@
 	~mcTrack[1][index].resizeTo(100, height);
 	~mcTrack[1][index].string = text;
 	}
-	//postf("\nthe vol of all patterns is   %\n", ~fadeVols);
 };
 
 ~continuousFadeOut = {
@@ -164,7 +163,8 @@
 		{vol <= ~volMin} {~melos[\amps][cat] = ~volMin}
 		{true}{"end of fade cases"};
 		Pbindef(cat, \amp, ~melos[\amps][cat]);
-		defer{var index, height, text;
+		if (~fadingSynths.includes(cat),
+		{	defer{var index, height, text;
 			//"updating mc: index % height  % text  %".format(index, height, text);
 			index = ~fadingSynths.detectIndex({|it, i| it == cat});
 			height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
@@ -193,7 +193,7 @@
     c = case
     {~totalUtts == 20}{
         //start a drum pattern
-        Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
+        //Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
 
     }
 	{~totalUtts == 10}{
@@ -207,17 +207,15 @@
         //"first utt".postln;
 		~runFx.();
 		~activateFaders.();
-        //~fadingSynths.do{|name| ~melos[\amps][name] = ~volMin};
 		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
 		Pdefn(\melody).play(~t, quant:1);
-		~patternsPlaying = true;
-		[\kik01, \bass].do{|n| Pbindef(n).play(~t, quant:4)}
+		[\kik02, \bass].do{|n| Pbindef(n).play(~t, quant:4)}
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);
     ~t.schedAbs(~t.nextTimeOnGrid, {
         if(~checkFadeVols.() >= ~thresCont, {
-            ~continuousFadeOut.value(~fadingSynths); 1},
+			~continuousFadeOut.value(~fadingSynths); 1},
 		{"not fading: fadeVols = %".format(~fadeVols).postln})
     });
 };

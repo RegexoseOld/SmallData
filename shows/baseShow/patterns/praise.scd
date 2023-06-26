@@ -50,17 +50,38 @@ patterns: (
 		cRatio: 1,
 		fmDur: 0,
     ),
-	    pr2: (
+
+
+    pr10: (
         instrument: 'bellFm',
-        midinote: ~melos.melo.pr,
-        dur: Pseq(~melos.duras.pr[..1], 1),
+        midinote: ~melos[\melo][\cad01],
+        dur: Pseq([2, 2, 1, 1], inf),
+        amp:  Pfunc({~melos.amps.pr}),
+        fade: 0.22,
+        thr: 0.5,
+        cgain: 2,
+        pan: 0,
+        atk: 0.1,
+        rls: 1,
+        vibF: 0.2,
+        vibVol: 30,
+        bpf1: 300,
+        bpf2: 5,
+        bpf3: 0.3,
+        bpfQ: 0.9,
+
+),
+	    pr11: (
+        instrument: 'bellFm',
+        midinote: ~melos.meloBase.pr11,
+        dur: Pseq([Pn(1, 6), Pn(0.25, 8)], inf),
         amp: Pfunc({~melos.amps.pr}),
         fade: 0.5,
         thr: 0.5,
         cgain: 1,
-        pan: 0,
-        atk: 1,
-        rls: 2.76,
+        pan: Pwhite(-0.6, 0.6, inf),
+        atk: 0.091,
+        rls: 0.16,
         vibF: 0.8,
         vibVol: 30,
         dev: 0.08,
@@ -71,24 +92,5 @@ patterns: (
         bpfQ: 0.9,
 
     ),
-
-    pr10: (
-        instrument: 'bellFm',
-        midinote: ~melos[\melo][\cad01],
-        dur: Pseq(~melos[\duras][\pr], inf),
-        amp:  Pfunc({~melos.amps.pr}),
-        fade: 0.5,
-        thr: 0.5,
-        cgain: 2,
-        pan: 0,
-        atk: 0.8,
-        rls: 2,
-        vibF: 0.2,
-        vibVol: 30,
-        bpf1: 300,
-        bpf2: 5,
-        bpf3: 0.3,
-        bpfQ: 0.9,
-
-))
+)
 )
