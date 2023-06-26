@@ -163,8 +163,7 @@
 		{vol <= ~volMin} {~melos[\amps][cat] = ~volMin}
 		{true}{"end of fade cases"};
 		Pbindef(cat, \amp, ~melos[\amps][cat]);
-		if (~fadingSynths.includes(cat),
-		{	defer{var index, height, text;
+		defer{var index, height, text;
 			//"updating mc: index % height  % text  %".format(index, height, text);
 			index = ~fadingSynths.detectIndex({|it, i| it == cat});
 			height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
@@ -226,4 +225,3 @@
 	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], ~resourcePath ++ "samples/lec01/");
 	~storyIndex = ~storyIndex +1;
 };
-
