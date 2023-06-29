@@ -52,7 +52,7 @@ meloPoporgan: (
 ),
 
 meloEdge: (
-	pr00: Pseq([Pn(\, 24), 66, 63, Pn(\, 6)], inf).trace,
+	pr00: Pseq([Pn(\, 24), 66, 63, Pn(\, 6)], inf),
 	kik01: Pseq([60, Pn(\, 7), 60, Pn(\, 7), 60, Pn(\, 6), 60, 60, Pn(\, 7) ], inf),
 
 ),

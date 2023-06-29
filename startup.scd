@@ -101,7 +101,7 @@ s.waitForBoot({
 		default = (name ++ "0").asSymbol;
 		default.postln;
 		Pbindef(name, *~states[name][default].asPairs);
-	    Pbindef(name, \out, ~cat2Channel[name].inbus); //assign to channel input
+	    //Pbindef(name, \out, ~cat2Channel[name].inbus); //assign to channel input
 	};
 
 	// Send Objekte machen
@@ -170,3 +170,6 @@ Pbindef(\pr).play(~t)
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 ~t.tempo = 120/60
+~cat2Channel[\dis]
+
+

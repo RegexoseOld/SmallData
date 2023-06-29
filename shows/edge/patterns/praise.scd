@@ -3,7 +3,6 @@ patterns: (
 	pr0: (
 		instrument: 'fm',
 		midinote: ~melos.meloEdge.pr00,
-		//freq: Pwhite(100, 170, inf),
 		amp: Pfunc({~melos.amps.pr}),
 		fade: 0.8,
 		detune: 0,
