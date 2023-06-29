@@ -100,7 +100,6 @@ s.waitForBoot({
 		default = (name ++ "0").asSymbol;
 		default.postln;
 		Pbindef(name, *~states[name][default].asPairs);
-	    Pbindef(name, \out, ~cat2Channel[name].inbus); //assign to channel input
 	};
 
 	// Send Objekte machen
@@ -140,7 +139,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5, 8, 16].choose.wait;
+        [5,3].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;

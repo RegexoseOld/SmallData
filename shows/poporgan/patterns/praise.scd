@@ -17,6 +17,8 @@ patterns: (
 		rls: 0.27,
 		crv: -7,
 		dur: 0.25,
+		out: ~ch2.inbus
+
 	),
 
 	pr1: (

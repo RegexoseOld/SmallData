@@ -18,7 +18,8 @@ patterns:(
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.dis}),
 		fade: 0.8,
-		sustain: 0.14
+		sustain: 0.14,
+		out: ~ch1.inbus
 	),
 
 	dis1: (

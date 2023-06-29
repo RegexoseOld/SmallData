@@ -13,8 +13,8 @@
 		\concession: \con
 	);
 ~cat2Channel = (
-		\pr: ~ch1,
-		\dis: ~ch2,
+		\dis: ~ch1,
+		\pr: ~ch2,
 		\con: ~ch3,
 		\lec: ~ch4,
 		\ins: ~ch5,
