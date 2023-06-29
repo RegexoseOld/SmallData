@@ -50,8 +50,13 @@ meloPoporgan: (
 	hh02: Pseq([Pn(Pwhite(0.18, 0.27, 16), 1), Pseq([0.26, \, 0.3, \], 3)], inf)
 
 ),
-meloBase: (
 
+meloEdge: (
+	pr00: Pseq([Pn(\, 24), 66, 63, Pn(\, 6)], inf).trace,
+	kik01: Pseq([60, Pn(\, 7), 60, Pn(\, 7), 60, Pn(\, 6), 60, 60, Pn(\, 7) ], inf),
+
+),
+meloBase: (
 	pr11: Pseq([Pn(72, 6), Prand([60, 72, 48], 8)], inf),
 	ins11: Pseq([Pn(75, 6), Prand([63, 75, 87], 8)], inf),
 	con11: Pseq([Pn(65, 6), Prand([65, 77, 53], 8)], inf),

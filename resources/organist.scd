@@ -3,7 +3,7 @@
 ~activateVolume = {
 	|ch, i|
 	var value;
-	//"chan   %    and i   %  current  % ".format(ch, i, ~currentUttPattern.asString).postln;
+	"chan   %    and i   %  current  % ".format(ch, i, ~currentUttPattern.asString).postln;
 	value = MIDIFunc.cc({
 		arg ...args;
 		args[..2].postln;

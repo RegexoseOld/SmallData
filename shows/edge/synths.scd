@@ -1,8 +1,7 @@
-
 SynthDef.new(\bellFm, {
     // Fm so wie https://www.youtube.com/watch?v=dLMSR2Kjq6Y -> 11:30
     //
-    |freq=200, index=1, mRatio=1, cRatio=1, atk=0.4, rls=2, crv= 5, bpf=100|
+    |freq=75, index=1, mRatio=1, cRatio=1, atk=0.4, rls=2, crv= 5, bpf=100|
     var sig, sig2, env, volMod, trem;
     env = EnvGen.kr(Env.perc(atk, rls, curve: crv), doneAction:2);
     volMod = SinOsc.kr(\vibF.kr(0.2), 0, \vibVol.kr(30))  ; // vol modulation
@@ -72,16 +71,6 @@ SynthDef.new(\bass, {
     //Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
 }).add;
 
-// simple electro kick drum
-SynthDef(\kik1, { |freq = 50, envratio = 3, freqdecay = 0.02, ampdecay = 0.5, out = 0|
-   var fenv = EnvGen.kr(Env([envratio, 1], [freqdecay], \exp)) * freq,
-      aenv = EnvGen.kr(Env.perc(0.005, ampdecay), doneAction:2),
-	subenv = EnvGen.kr(Env.perc(0.005, ampdecay/2), doneAction:0),
-	sig, sub;
-	sub = SinOsc.ar(freq*2/3, mul:subenv);
-	sig = SinOsc.ar(fenv, 0.5pi, aenv)!2;
-   Out.ar(out, (sig + sub) * \amp.kr(0.4));
-}).add;
 
 SynthDef(\sn1, {
 	|freq = 800, ampdecay = 0.2, out = 0|
@@ -107,12 +96,12 @@ SynthDef(\sn1, {
 //https://www.youtube.com/watch?v=xYc7_PbbtuE&t=1579s  ab 5:00
 SynthDef(\kik2, {
 	var sig;
-	sig = SinOsc.ar(\freq.kr(60) * (1 + (8* Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1));
-	sig = sig + (SinOsc.ar(XLine.ar(4000, 50, 0.01) * Env.perc(0.0001, 0.01).ar * \timb1.kr(-5).dbamp));
+	sig = SinOsc.ar(\freq.kr(60) * (1 + (8 * Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1));
+	sig = sig + (SinOsc.ar(XLine.ar(4000, 50, \timb1Sweep.kr(0.01)) * Env.perc(0.0001, \timb1Sweep.kr(0.01)).ar * \timb1.kr(-5).dbamp));
 	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 10120, 0.5) + Env.perc(0.001, 0.03).ar * \timb2.kr(-8).dbamp);
 	sig = sig * (1 + (2 * Env.perc(0.001, 0.2).ar));
 	sig = (sig * \dist.kr(0).dbamp).tanh;
-	sig = sig * Env.perc(0.001, 1.3, curve: -8).ar(Done.freeSelf);
+	sig = sig * Env.perc(0.001, \rls.kr(1.3), curve: -8).ar(Done.freeSelf);
 	sig = sig * \amp.kr(0.3);
 	sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig);
@@ -160,7 +149,7 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
 		Klank.ar(`[
 		{ ExpRand(\freq.kr(80), \maxfrq.kr(1000)) }!2,
         1 !2,
-        { ExpRand(0.1, 0.4) }!2
+			{ ExpRand(\minRing.kr(0.1),\maxRing.kr(0.4)) }!2
     ], exc, accent + 1, \frqOff.kr(0.0), decayScale);// accent ist die höhe, decayScale die Länge des Sounds
 	}).sum;
 	sig = sig * env * \amp.kr(0.1) * \fade.kr(1.0);
@@ -169,66 +158,6 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
     Out.ar(\out.kr(0), sig);
 }).add;
 
-// Sample Based
-
-SynthDef(\sampSt, {
-    var sig, env;
-    sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:0);
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1)), doneAction: 2);
-    sig = Compander.ar(sig, sig, \thr.kr(0.55), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-    sig = BPF.ar(sig, \bpf1.kr(100), \bpfQ.kr(0.3));
-    sig = sig * \amp.kr(0.2) * \fade.kr(1);
-
-    Out.ar(\out.kr(0), sig) ;
-}).add;
-
-SynthDef(\sampMon, {
-    var sig, env, pos;
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1)), doneAction: 2);
-	sig = 4.collect({
-		var lag = {ExpRand(0.0001, \lag.kr(0.0002) )};
-		PlayBuf.ar(1, \buf.kr(0), \rate.kr(1) * BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0) + lag, \loop.kr(0.0));
-	}).sum;
-	sig = Compander.ar(sig, sig, \thr.kr(0.75), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-	pos = LFNoise1.kr(\zit1.kr(100)).bipolar(\zit2.kr(0.5));
-	sig = PanAz.ar(2, sig, pos, width:\w.kr(2.0));
-	//sig = Pan2.ar(sig, \pan.kr(0));
-	sig = sig * env *  \amp.kr(0.2) * \fade.kr(1);
-    Out.ar(\out.kr(0), sig) ;
-}).add;
-
-SynthDef(\uttSampler, {
-    arg buf, rate=1, start, end;
-    var sig, ptr, env;
-    ptr = Phasor.ar(0, BufRateScale.kr(buf)*rate, start, end);
-	env = EnvGen.kr(
-		Env.new(levels: [0, 1, 1, 0], times: [0.01, (end-start)/BufSampleRate.kr(buf)-0.02, 0.01, 0], curve: [-5, 0, 5])
-		, doneAction: 2);
-	sig = BufRd.ar(1, buf, ptr, 0.0);
-    sig = sig * env * \amp.kr(0.3);
-    Out.ar(\out.kr(0), sig!2);
-}).add;
-
-SynthDef(\brPhsr, {
-    arg buf, rate=1, start, end;
-    var sig, ptr, env;
-    ptr = Phasor.ar(0, BufRateScale.kr(buf)* rate, start, end, 0);
-    env = EnvGen.kr(Env.perc(\atk.kr(0.01), \rls.kr(1), curve: \crv.kr(-3)), doneAction:2);
-    sig = 4.collect({
-		var lag = LFNoise1.kr(\lg1.kr(0)).bipolar(\lg2.kr(0.0));
-		lag = lag * s.sampleRate;
-		BufRd.ar(1, buf, ptr + lag);
-	}).sum ;
-    sig = sig * env * \amp.kr(0.3);
-    Out.ar(\out.kr(0), sig!2);
-}).add;
-
-// record stuff with mic
-SynthDef(\rec, {
-	var sig;
-	sig = In.ar(\in.kr(2));
-	Out.ar(0, sig!2 * \amp.kr(0.5));
-}).add;
 
 // Granular Synth
 
@@ -276,71 +205,3 @@ SynthDef.new(\oscfm, {
 }).add;
 
 
-// building Effect Instruments
-// http://www.dewdrop-world.net/sc3/tutorials/index.php?id=5
-//Spec.specs.asSortedArray.do(_.postcs)
-
-Instr(#[\busfx, \ring1], { arg bus, numChan, freq, mod_amp, xfade;
-   var sig, new;
-   sig = In.ar(bus, numChan);
-   new = sig * SinOsc.ar(freq, 0, mod_amp);
-   XFade2.ar(sig, new, xfade * 2 - 1)
-}, [\audiobus, ObjectSpec(2), \freq, \amp, \amp]
-);
-
-Instr(#[\busfx, \chorus], { arg bus, numChan, predelay, speed, depth, ph_diff, xfade;
-   var in, sig;
-   in = In.ar(bus, numChan);
-   in.isKindOf(Collection).if({
-      sig = in.collect({ arg ch, i;   // ch is one channel
-         DelayL.ar(ch, 0.5, SinOsc.kr(speed, ph_diff * i, depth, predelay));
-      });
-   }, {
-      sig = DelayL.ar(in, 0.5, SinOsc.kr(speed, ph_diff, depth, predelay));
-   });
-   XFade2.ar(in, sig, xfade * 2 - 1);
-//   xf.value(in, sig, xfade)      // when felix has XOut working, this can be better
-}, [\audiobus, ObjectSpec(1), #[0.0001, 0.4, \linear, 0, 0.1],
-   #[0.001, 20, \exponential], #[0.0001, 0.25, \exponential], #[0, 2pi], #[0, 1]]);
-
-
-Instr(#[\busfx, \companderd], { arg bus, numChannels, thresh, slopeBelow, slopeAbove,
-      clampTime, relaxTime, postGain;
-   var sig;
-   sig = In.ar(bus, numChannels);
-   CompanderD.ar(sig, thresh, slopeBelow, slopeAbove, clampTime, relaxTime, postGain);
-}, [\audiobus, ObjectSpec(2), #[0, 1, \linear, 0, 0.5], #[0.1, 10, \exponential, 0, 1],
-   #[0.1, 10, \exponential, 0, 1], #[0.001, 5, \exponential], #[0.001, 5, \exponential],
-   #[0.1, 10, \exponential, 0, 1]]);
-
-Instr(#[\busfx, \singleDelay], { arg bus, numChan, delayClass, maxTime, time, mul, add;
-   delayClass.ar(In.ar(bus, numChan), maxTime, time, mul, add)
-}, [\audiobus, ObjectSpec(1), ObjectSpec(DelayL), #[0.25, 20], #[0.0001, 20]]
-);
-
-//more a delay than reverb
-Instr(#[\busfx, \rvb_allpass], { arg bus, numChan, maxDelay, preDelay, decay,
-      numRefl, random;
-   var sig, new;
-   sig = In.ar(bus, numChan);
-   new = sig;
-   numRefl.do({
-      new = AllpassN.ar(new, maxDelay, Array.fill(numChan, { random.rand }) + preDelay, decay);
-   });
-   new
-}, [\audiobus, ObjectSpec(2), #[0.25, 2], #[0.4, 1.5, \exponential, 0, 0.05],
-   #[0.01, 10, \exponential, 0, 0.25], ObjectSpec(4), #[0.001, 1, \exponential, 0, 0.03]]
-);
- // specifications are ControlSpecs, which can be defined in a shortcut syntax using an array: [low value, high value, warp style, step size, default]
-Instr(#[\busfx, \vrb1], { arg bus, numChan, room, damp, mult;
-   var sig, new;
-   sig = In.ar(bus, numChan);
-   sig = FreeVerb.ar(sig, 1, room, damp, mult);
-}, [\audiobus, ObjectSpec(2), #[0.1, 1.0, \linear, 0, 0.85], #[0.1, 1.0, \exponential, 0, 0.5],  #[1, 10, \exponential, 0, 7.5]]
-);
-
-Instr(#[\busfx, \limiter], { arg bus, numChannels, level, lookAhead, gain;
-   Limiter.ar(In.ar(bus, numChannels), level, lookAhead) * gain;
-}, [\mybuf, ObjectSpec(2), #[0, 1, \linear, 0, 1], #[0.001, 0.2],
-   #[0.1, 4, \exponential, 0, 1]]
-);
