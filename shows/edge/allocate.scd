@@ -11,13 +11,12 @@
     c = case
 	{count < 5}{
 		in_count = count;
-		patName = (catName.asString ++ "1").asSymbol;
+		patName = (catName.asString ++ "0").asSymbol;
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 		Pbindef(\bass, *~states[\bass].asPairs).quant_(4);
 		Pbindef(\bass, \rls, Pif(count.even, 0.2, 0.9), \fmVol, Pif((count%3==0), 120, 200) );
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).quant_(4);
 	    Pbindef(\sn01).stop;
-		Pbindef(\hh01).stop;
 		status = "state 00 layered chords";
 	}
     {(count >= 5) && (count <= 10)} {

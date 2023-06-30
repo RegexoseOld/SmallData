@@ -8,7 +8,7 @@ melo: (
     pr05: Pseq([Pn(60, 4), Pn(63, 4), Pn(63, 4), 60, \, \, \], inf),
     ins05: Pseq([Pn(63, 4), Pn( 66, 4), Pn( 66, 4), 65, \, \, \], inf),
     con05:  Pseq([Pn( 65, 4), Pn(70, 4), Pn(69, 4), 65, \, \, \], inf),
-    lec05: Pseq([Pn(72, 4), Pn(75, 4), Pn(75, 4), 72, \, \, \], inf),
+    lec05: Pseq([Pn(72, 4), Pn(75, 4 ), Pn(75, 4), 72, \, \, \], inf),
     dis05: Pseq([Pn(77, 4), Pn(76, 4), Pn(77, 4), 76, \, \, \], inf),
     pr10: Pseq([60, 63, 63, 60], inf),
     ins10: Pseq([63, 66, 66, 65], inf),
@@ -52,10 +52,23 @@ meloPoporgan: (
 ),
 
 meloEdge: (
+	dis00: Pseq([66, \, 59, \, 63, \, 66, \, 71, \, Pn(\, 22)], inf),
 	pr00: Pseq([Pn(\, 24), 66, 63, Pn(\, 6)], inf),
+	ins00: Pseq([60, \,  60, \, 61, \, 61, \, 62, Pn(\, 7), 62, \, 62,  \, 61, \, 61, \, 60, Pn(\, 7)], inf),
+	con00:  Pseq([66, 66, 66, \, 66, \, \, 66, 66, 66, 65, \, 65, \, \, 66, 66, 65, 66, 65, 66, 60,  Pn(\, 10)], inf),
+	lec00:  Pseq([54, 55, 50, \, 55, 54, 48, \], inf),
 	kik01: Pseq([60, Pn(\, 7), 60, Pn(\, 7), 60, Pn(\, 6), 60, 60, Pn(\, 7) ], inf),
 
 ),
+ratesEdge:(
+    dis: 0.midiratio,
+	pr: 0.midiratio,
+    ins: 0.midiratio,
+    con: 0.midiratio,
+    lec: 0.midiratio
+
+),
+
 meloBase: (
 	pr11: Pseq([Pn(72, 6), Prand([60, 72, 48], 8)], inf),
 	ins11: Pseq([Pn(75, 6), Prand([63, 75, 87], 8)], inf),

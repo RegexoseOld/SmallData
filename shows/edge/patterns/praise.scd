@@ -22,11 +22,11 @@ patterns: (
 
 	pr1: (
 		instrument: 'fm',
-		midinote: ~melos.melo.pr,
+		midinote: ~melos.meloEdge.pr00,
 		amp: Pfunc({~melos.amps.pr}),
 		fade: 0.8,
-		detune:0,
-		modRate: 0.1,
+		detune: 0,
+		modRate: 0.4,
 		fmVol: 10,
 		devMin: 0.999,
 		devMax: 1.0001,

@@ -53,7 +53,7 @@ SynthDef(\fm, {
 }).add;
 
 SynthDef.new(\bass, {
-    |gate = 1|
+    |gate = 1, freq=100|
     var  sig, env, mod;
     env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(1.0), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 2);
     mod = SinOsc.kr(\modRate.kr(1.2));
@@ -61,7 +61,7 @@ SynthDef.new(\bass, {
 		var fm, dev;
 		dev = {ExpRand(\devMin.kr(0.9), \devMax.kr(1.1))};
 		fm = SinOsc.ar(\fmFreq.kr(2000) * mod, mul:\fmVol.kr(20));
-		VarSaw.ar((\freq.kr(100) * dev) + fm, 0, \filTime.kr(0.1), 1);
+		VarSaw.ar((freq * dev) + fm, 0, \filTime.kr(0.1), 1);
 	}).sum;
     sig = (sig * \distort.kr(1.5)).tanh;
     sig = sig * env;

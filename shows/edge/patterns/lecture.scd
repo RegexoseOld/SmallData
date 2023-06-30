@@ -1,43 +1,43 @@
 (
 patterns: (
 		lec0: (
-		instrument: 'fm',
-		midinote: ~melos.melo.lec,
+		instrument: 'bass',
+		midinote: ~melos.meloEdge.lec00,
+		amp: Pfunc({~melos.amps.lec}),
+		fade: 0.6,
 		detune: 0,
 		modRate: 0.4,
-		fmVol: 10,
+		fmVol: 80,
 		devMin: 0.999,
 		devMax: 1.0001,
 		distort: 1.5,
 		thr: 0.99,
 		cgain: 1.0,
 		atk: 0.02,
-		rls: 0.17,
+		rls: 1.17,
 		crv: -5,
-		dur: 0.25,
-		amp: Pfunc({~melos.amps.lec}),
-		fade: 0.8,
-		out: ~ch4.inbus
+		dur: 2,
+		out: ~ch5.inbus
 
 	),
 
 	lec1: (
-		instrument: 'fm',
-		midinote: ~melos.melo.lec,
+		instrument: 'bass',
+		midinote: ~melos.meloEdge.lec00,
 		amp: Pfunc({~melos.amps.lec}),
-		fade: 0.8,
+		fade: 0.6,
 		detune: 0,
 		modRate: 0.4,
-		fmVol: 10,
+		fmVol: 80,
 		devMin: 0.999,
 		devMax: 1.0001,
 		distort: 1.5,
 		thr: 0.99,
 		cgain: 1.0,
 		atk: 0.02,
-		rls: 0.27,
+		rls: 1.17,
 		crv: -5,
-		dur: 0.25,
+		dur: 2,
 	),
 
 	lec05: (

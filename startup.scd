@@ -35,9 +35,6 @@ s.waitForBoot({
 	// Wait until boot is done and then begin launching the rest of the prograam
 	s.sync;
 
-	Window.closeAll;
-	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/sequencer_gui.scd");
-	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/mc_gui.scd");
 
 	// Load song specific files
 	~allocate = (~showFolder +/+ "allocate.scd").load;
@@ -52,6 +49,9 @@ s.waitForBoot({
 	 ~makeWaveTable.(4096); // for WaveTable Synth
 	s.sync;
 
+	Window.closeAll;
+	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/sequencer_gui.scd");
+	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/mc_gui.scd");
 	//make Dictionary with effekt Patches
 	~patches = (~resourcePath ++ "fx_patches.scd").load;
 	//make all other Dictionaries, that can't be made in constants
@@ -152,13 +152,13 @@ s.waitForBoot({
 ~uttSamples["dissent".asSymbol]
 
 ~slider_buttons[1]["dissent"]
-Pbindef(\sn01, \ampdecay, 1)
+Pbindef(\kik, \ampdecay, 1)
 Pbindef(\ins).play
 Pbindef(\con).play
 Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
 
 ~mock.()
-~allocate.(\dis, 7)
+~allocate.(\dis, 1)
 ~allocate.(\dis, 17)
 ~allocate.(\ins, 4)
 ~allocate.(\lec, 13)
@@ -169,7 +169,12 @@ Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
 (
 Pbindef(\kik02).play(~t);
 Pbindef(\hh01).play(~t);
-Pbindef(\pr).play(~t)
+Pbindef(\pr).play(~t);
+Pbindef(\dis).play(~t);
+Pbindef(\con).play(~t);
+Pbindef(\con, \rls, 0.05)
+Pbindef(\ins).play(~t);
+Pbindef(\lec).play(~t);
 
 
 )
@@ -178,7 +183,7 @@ Pbindef(\pr).play(~t)
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 ~t.tempo = 120/60
-~cat2Channel
-~ch1.level
+~melos.ratesEdge.pr=  -14.midiratio
+~melos.ratesEdge.lec=  20.midiratio
 
 
