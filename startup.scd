@@ -21,7 +21,6 @@ s.waitForBoot({
 	~midiOut = MIDIOut.new(0);
 	~midiIn = MIDIIn.new(0);
 
-
 	/// load SynthDefs, Constants, Functions
 	(~resourcePath ++ "synths.scd").load;
 	(~resourcePath ++ "story.scd").load;
@@ -170,6 +169,7 @@ Pbindef(\pr).play(~t)
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 ~t.tempo = 120/60
-~cat2Channel[\dis]
+~cat2Channel
+~ch1.level
 
 

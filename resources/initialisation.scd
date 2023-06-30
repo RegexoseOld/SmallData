@@ -12,17 +12,8 @@
 		\lecture: \lec,
 		\concession: \con
 	);
-~cat2Channel = (
-		\pr: ~ch1,
-		\dis: ~ch2,
-		\con: ~ch3,
-		\lec: ~ch4,
-		\ins: ~ch5,
-		\kik01: ~perc,
-		\sn01 : ~perc,
-		\h01: ~perc,
-		\bass: ~bass
-	);
+
+
 ~lastUtterances = Array.with("one", "two", "three");
 ~lastCategories = Array.with("praise", "dissent", "insinuation");
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
@@ -96,5 +87,16 @@ PathName(~samplesPath).entries.do({
 		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
 		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
 		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
+		~cat2Channel = (
+		\pr: ~ch1,
+		\dis: ~ch2,
+		\con: ~ch3,
+		\lec: ~ch4,
+		\ins: ~ch5,
+		\kik01: ~perc,
+		\sn01 : ~perc,
+		\h01: ~perc,
+		\bass: ~bass
+	);
 
 )};
