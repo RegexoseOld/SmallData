@@ -5,7 +5,7 @@ patterns: (
 		midinote: ~melos.meloEdge.ins00,
 		amp: Pfunc({~melos.amps.ins}),
 		fade: 0.6,
-		dur: 0.5,
+		dur: 0.25,
 		detune:  Prand([-1, -3, 0, 3, 1],inf),
 		modRate: 0.4,
 		fmFreq: 750,
@@ -18,7 +18,7 @@ patterns: (
 		cgain: 1.0,
 		atk: 0.02,
 		rls: 1.2,
-		crv: -3,
+		crv: -8,
 		out: ~ch3.inbus
 
 	),
@@ -27,7 +27,7 @@ patterns: (
 		midinote: ~melos.meloEdge.ins00,
 		amp: Pfunc({~melos.amps.ins}),
 		fade: 0.6,
-		dur: 0.5,
+		dur: 0.25,
 		detune:  Prand([-1, -3, 0, 3, 1],inf),
 		modRate: 0.4,
 		fmFreq: 750,

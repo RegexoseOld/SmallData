@@ -202,7 +202,7 @@ SynthDef(\uttSampler, {
     var sig, ptr, env;
     ptr = Phasor.ar(0, BufRateScale.kr(buf)*rate, start, end);
 	env = EnvGen.kr(
-		Env.new(levels: [0, 1, 1, 0], times: [0.01, (((end-start)/BufSampleRate.kr(buf)*rate.reciprocal)-0.02).poll, 0.01], curve: [-5, 0, 5])
+		Env.new(levels: [0, 1, 1, 0], times: [0.01, ((end-start)/BufSampleRate.kr(buf)*rate.reciprocal)-0.02, 0.01], curve: [-5, 0, 5])
 		, doneAction: 2);
 	sig = BufRd.ar(1, buf, ptr, 0.0);
 	sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));

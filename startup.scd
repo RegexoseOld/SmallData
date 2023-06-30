@@ -162,7 +162,7 @@ Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
 ~allocate.(\dis, 17)
 ~allocate.(\ins, 4)
 ~allocate.(\lec, 13)
-~allocate.(\pr, 6)
+~allocate.(\pr, 3)
 ~allocate.(\con, 2)
 
 )
@@ -183,7 +183,10 @@ Pbindef(\lec).play(~t);
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 ~t.tempo = 120/60
-~melos.ratesEdge.pr=  -14.midiratio
-~melos.ratesEdge.lec=  20.midiratio
+~melos.ratesEdge.pr=  -8.midiratio
+~melos.ratesEdge.lec =  5.midiratio
+~melos.ratesEdge.con =  4.midiratio
+~melos.ratesEdge.dis =  3.midiratio
+~melos.ratesEdge.ins =  -13.midiratio
 
 

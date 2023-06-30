@@ -13,11 +13,12 @@
 		in_count = count;
 		patName = (catName.asString ++ "0").asSymbol;
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
+		Pbindef(catName, \rls, 0.05 * in_count);
 		Pbindef(\bass, *~states[\bass].asPairs).quant_(4);
 		Pbindef(\bass, \rls, Pif(count.even, 0.2, 0.9), \fmVol, Pif((count%3==0), 120, 200) );
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).quant_(4);
 	    Pbindef(\sn01).stop;
-		status = "state 00 layered chords";
+		status = "state 00 dotted notes";
 	}
     {(count >= 5) && (count <= 10)} {
         in_count = count-4;

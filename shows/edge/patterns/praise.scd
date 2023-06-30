@@ -12,7 +12,7 @@ patterns: (
 		devMax: 1.0001,
 		distort: 1.5,
 		thr: 0.99,
-		cgain: 1.5,
+		cgain: 1.3,
 		atk: 0.02,
 		rls: 0.27,
 		crv: -7,
