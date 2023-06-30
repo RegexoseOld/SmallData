@@ -153,17 +153,17 @@ s.waitForBoot({
 
 ~slider_buttons[1]["dissent"]
 Pbindef(\sn01, \ampdecay, 1)
-Pbindef(\pr).play
+Pbindef(\ins).play
 Pbindef(\con).play
 Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
 
 ~mock.()
 ~allocate.(\dis, 7)
 ~allocate.(\dis, 17)
-~allocate.(\ins, 12)
+~allocate.(\ins, 4)
 ~allocate.(\lec, 13)
-~allocate.(\pr, 17)
-~allocate.(\con, 12)
+~allocate.(\pr, 6)
+~allocate.(\con, 2)
 
 )
 (

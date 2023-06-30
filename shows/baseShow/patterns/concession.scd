@@ -12,7 +12,7 @@ patterns: (
 		atk: 0.5,
 		rls: 6,
 		frqOff: Pseq( [Pseq([0, -300, 0, 800, -100, 0, 0, -500],4)], inf),
-		out:~ch3.inbus
+		out:~ch4.inbus
 	),
 	con1: (
 	    instrument: 'percImp',

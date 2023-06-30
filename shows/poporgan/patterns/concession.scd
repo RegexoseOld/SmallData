@@ -17,7 +17,7 @@ patterns: (
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.con}),
 		fade: 0.5,
-		out: ~ch3.inbus
+		out: ~ch4.inbus
 
 	),
 	con1: (

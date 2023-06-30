@@ -23,7 +23,7 @@ patterns: (
 		mRatio: 0.8,
 		cRatio: 1.05,
 		fmDur: 4,
-		ot: ~ch5.inbus
+		out: ~ch3.inbus
 
     ),
 
