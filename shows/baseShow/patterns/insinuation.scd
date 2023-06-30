@@ -23,8 +23,10 @@ patterns: (
 		mRatio: 0.8,
 		cRatio: 1.05,
 		fmDur: 4,
+		out: ~ch3.inbus
 
     ),
+
 	 ins1: (
 	   instrument: 'bellFm',
         midinote: ~melos.melo.ins,

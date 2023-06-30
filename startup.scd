@@ -100,7 +100,6 @@ s.waitForBoot({
 		default = (name ++ "0").asSymbol;
 		default.postln;
 		Pbindef(name, *~states[name][default].asPairs);
-	    //Pbindef(name, \out, ~cat2Channel[name].inbus); //assign to channel input
 	};
 
 	// Send Objekte machen
@@ -140,7 +139,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5, 8, 16].choose.wait;
+        [5,3].choose.wait;
 		//"mocked" .po stln;
         }
 ) }).play;
@@ -148,13 +147,23 @@ s.waitForBoot({
 ~sim.stop
 
 ~t.beatsPerBar
+~cat2Channel[\perc]
+~samplePaths["dissent".asSymbol]
+~uttSamples["dissent".asSymbol]
+
+~slider_buttons[1]["dissent"]
+Pbindef(\sn01, \ampdecay, 1)
+Pbindef(\ins).play
+Pbindef(\con).play
+Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
+
 ~mock.()
 ~allocate.(\dis, 7)
 ~allocate.(\dis, 17)
-~allocate.(\ins, 12)
+~allocate.(\ins, 4)
 ~allocate.(\lec, 13)
-~allocate.(\pr, 17)
-~allocate.(\con, 12)
+~allocate.(\pr, 6)
+~allocate.(\con, 2)
 
 )
 (

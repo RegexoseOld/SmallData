@@ -23,6 +23,7 @@ patterns: (
 		mRatio: 0.8,
 		cRatio: 1.05,
 		fmDur: 4,
+		out: ~ch2.inbus
 
     ),
 
