@@ -199,7 +199,7 @@ SynthDef(\sampMon, {
 
 SynthDef(\uttSampler, {
     arg buf, rate=1, start, end;
-    var sig, ptr, env;
+    var  sig, ptr, env;
     ptr = Phasor.ar(0, BufRateScale.kr(buf)*rate, start, end);
 	env = EnvGen.kr(
 		Env.new(levels: [0, 1, 1, 0], times: [0.01, ((end-start)/BufSampleRate.kr(buf)*rate.reciprocal)-0.02, 0.01], curve: [-5, 0, 5])

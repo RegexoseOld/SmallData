@@ -146,6 +146,7 @@ s.waitForBoot({
 )
 ~sim.stop
 
+
 ~t.beatsPerBar
 ~cat2Channel[\perc]
 ~samplePaths["dissent".asSymbol]
@@ -183,10 +184,26 @@ Pbindef(\lec).play(~t);
 ~t.schedAbs(~t.nextBar, {~postBeats.value})
 )
 ~t.tempo = 120/60
-~melos.ratesEdge.pr=  -8.midiratio
+~melos.ratesEdge.pr=  12.midiratio
 ~melos.ratesEdge.lec =  5.midiratio
 ~melos.ratesEdge.con =  4.midiratio
-~melos.ratesEdge.dis =  3.midiratio
+~melos.ratesEdge.dis =  12.midiratio
 ~melos.ratesEdge.ins =  -13.midiratio
+~t.beatsPerBar
+MIDIFunc.trace(true)
+MIDIFunc.trace(false)
 
-
+(
+var p, q;
+p = Pbind(
+	\instrument, \uttSampler,
+	\buf, ~uttSamples[\insinuation][0],
+	\dur, 0.25,
+	\start, 0,
+	\rate, Pfunc({~melos.ratesEdge.ins.midiratio}),
+	\end,  ~uttSamples[\insinuation][0].numFrames,
+	\amp, 0.4,
+	\out, 0,
+);
+q = p.play(~t)
+)

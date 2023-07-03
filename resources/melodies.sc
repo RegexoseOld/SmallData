@@ -66,11 +66,11 @@ meloEdge: (
 
 ),
 ratesEdge:(
-    dis: 0.midiratio,
-	pr: 0.midiratio,
-    ins: 0.midiratio,
-    con: 0.midiratio,
-    lec: 0.midiratio
+    dis: 0,
+	pr: 0,
+    ins: 0,
+    con: 0,
+    lec: 0
 
 ),
 

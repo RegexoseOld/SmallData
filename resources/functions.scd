@@ -114,7 +114,8 @@
 			i = i+1;
 		})
 	});
-	~faderControl.do{|chan, it| ~activateVolume.(chan, it)}
+	~fadingSynths.do{|chan, idx| ~activatePitch.(chan, idx, 97)};
+	~faderControl.do{|chan, it| ~activateVolume.(chan, it)};
 };
 
 ~checkFadeVols = {
@@ -207,7 +208,7 @@
 		~runFx.();
 		~activateFaders.();
 		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
-		Pdefn(\melody).play(~t, quant:1);
+		Pdefn(\melody).play(~t, quant:0);
 		[\kik02, \hh01, \bass].do{|n| Pbindef(n).play(~t, quant:4)};
     }
     {true} {"end of global settings".postln};
