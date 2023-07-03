@@ -2,19 +2,20 @@ from argparse import ArgumentParser
 import pandas as pd
 import threading
 import datetime
+from pythonosc.udp_client import SimpleUDPClient
 
-parser = ArgumentParser(
-                    prog='PlayCsv',
-                    description='plays the content of a csv as if it was a live show (send to supercollider)')
-
-parser.add_argument('filename')
+COLLIDER_IP = '127.0.0.1'
+COLLIDER_PORT = 57120
+COLLIDER_ROUTE = '/interpreter_input'
+collider_client = SimpleUDPClient(COLLIDER_IP, COLLIDER_PORT)
 
 
 def send_data(index, time):
     row = df.iloc[index]
     text = row['Utterance']
     category = row['Category']
-    print(text, category)
+    print("sending", text, category)
+    collider_client.send_message(COLLIDER_ROUTE, [text, category])
 
     index += 1
     if index < len(df):
@@ -32,6 +33,11 @@ def set_timer(prev_time, index):
 
 
 if __name__ == '__main__':
+    parser = ArgumentParser(
+        prog='PlayCsv',
+        description='plays the content of a csv as if it was a live show (send to supercollider)')
+
+    parser.add_argument('filename')
     args = parser.parse_args()
     df = pd.read_csv(args.filename)
     first_row = df.iloc[0]
