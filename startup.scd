@@ -105,7 +105,7 @@ s.waitForBoot({
 	// Send Objekte machen
 	~sends = ~sends ? ();
 
-	[~ch1, ~ch2, ~ch3, ~ch4, ~ch5].do{
+	[~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~utt, ~perc, ~bass].do{
 		|ch, i|
 		var sendName;
 		//postf("channel %\t i %\n", ch, i);
@@ -152,6 +152,7 @@ s.waitForBoot({
 ~uttSamples["dissent".asSymbol]
 
 ~slider_buttons[1]["dissent"]
+Pbindef.all.do(_.stop)
 Pbindef(\sn01, \ampdecay, 1)
 Pbindef(\ins).play
 Pbindef(\con).play
@@ -176,8 +177,5 @@ Pbindef(\kik01).pause
 Pbindef(\con, \dur, 1, \rls, 2.3)
 Pbindef(\kik02, \timb1, -6, \timb2, -4, \amp, 0.2, \dist, 1)
 )
-(
-~postBeats = {~t.beats.postln; 4};
-~t.schedAbs(~t.nextBar, {~postBeats.value})
-)
-~t.tempo = 120/60
+~uttSamples[\dissent][0]
+~fadingSynths
