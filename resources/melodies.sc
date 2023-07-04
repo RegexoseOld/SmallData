@@ -123,6 +123,14 @@ amps:(
 
 ),
 
+seqRates:(
+    dis: 0,
+	pr: 0,
+    ins: 0,
+    con: 0,
+    lec: 0
+),
+
 pauses: (
     lecture: 2,
     dissent: 3,

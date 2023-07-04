@@ -24,7 +24,7 @@
 ~activateReverb = {
 	|ch, i, offset|
 	var value, sendNum;
-	"making reverb send   % and i %".format(ch, i).postln;
+	//"making reverb send   % and i %".format(ch, i).postln;
 	sendNum = i + offset;
 	value = MIDIFunc.cc(
 		{arg ...args;
@@ -49,8 +49,5 @@
 			~melos.seqRates[ch] = args[0].linlin(0, 127, -20, 20);
 		},
 		sendNum,
-		1
-	);
-
+		1)
 };
-

@@ -105,7 +105,7 @@ s.waitForBoot({
 	// Send Objekte machen
 	~sends = ~sends ? ();
 
-	[~ch1, ~ch2, ~ch3, ~ch4, ~ch5].do{
+	[~ch1, ~ch2, ~ch3, ~ch4, ~ch5, ~utt, ~perc, ~bass].do{
 		|ch, i|
 		var sendName;
 		//postf("channel %\t i %\n", ch, i);
@@ -153,7 +153,9 @@ s.waitForBoot({
 ~uttSamples["dissent".asSymbol]
 
 ~slider_buttons[1]["dissent"]
-Pbindef(\kik, \ampdecay, 1)
+
+Pbindef.all.do(_.stop)
+Pbindef(\sn01, \ampdecay, 1)
 Pbindef(\ins).play
 Pbindef(\con).play
 Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
@@ -179,31 +181,4 @@ Pbindef(\lec).play(~t);
 
 
 )
-(
-~postBeats = {~t.beats.postln; 4};
-~t.schedAbs(~t.nextBar, {~postBeats.value})
-)
-~t.tempo = 120/60
-~melos.ratesEdge.pr=  12.midiratio
-~melos.ratesEdge.lec =  5.midiratio
-~melos.ratesEdge.con =  4.midiratio
-~melos.ratesEdge.dis =  12.midiratio
-~melos.ratesEdge.ins =  -13.midiratio
-~t.beatsPerBar
-MIDIFunc.trace(true)
-MIDIFunc.trace(false)
 
-(
-var p, q;
-p = Pbind(
-	\instrument, \uttSampler,
-	\buf, ~uttSamples[\insinuation][0],
-	\dur, 0.25,
-	\start, 0,
-	\rate, Pfunc({~melos.ratesEdge.ins.midiratio}),
-	\end,  ~uttSamples[\insinuation][0].numFrames,
-	\amp, 0.4,
-	\out, 0,
-);
-q = p.play(~t)
-)
