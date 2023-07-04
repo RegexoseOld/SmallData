@@ -65,7 +65,7 @@ meloEdge: (
 	kik01: Pseq([60, Pn(\, 7), 60, Pn(\, 7), 60, Pn(\, 6), 60, 60, Pn(\, 7) ], inf),
 
 ),
-ratesEdge:(
+seqRates:(
     dis: 0,
 	pr: 0,
     ins: 0,

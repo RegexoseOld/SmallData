@@ -46,7 +46,7 @@
 	value = MIDIFunc.cc(
 		{arg ...args;
 			"pitch wheel for  % :    %".format(ch, args[..2]).postln;
-			~melos.ratesEdge[ch] = args[0].linlin(0, 127, -20, 20);
+			~melos.seqRates[ch] = args[0].linlin(0, 127, -20, 20);
 		},
 		sendNum,
 		1

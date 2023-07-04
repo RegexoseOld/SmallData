@@ -43,7 +43,7 @@ Pdefn(\melody, Ppar(
 			\delta, delta,
 			\sustain, sustain,
 			\amp,  Pif(Pseq(sequencerButtons[1][r], inf).coin, currentVol, \rest),
-			\rate, Pfunc({~melos.ratesEdge[~fadingSynths[r]].midiratio}),
+			\rate, Pfunc({~melos.seqRates[~fadingSynths[r]].midiratio}),
 		    \cgain, 1.3,
 			\out, ~utt.inbus,
 			\start, Pfunc({~uttSamples[~categories[r]][1]}),
