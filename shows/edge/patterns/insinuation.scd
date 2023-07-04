@@ -1,7 +1,7 @@
 (
 patterns: (
 	ins0: (
-		instrument: 'bass',
+		instrument: 'fm',
 		midinote: ~melos.meloEdge.ins00,
 		amp: Pfunc({~melos.amps.ins}),
 		fade: 0.6,
@@ -23,7 +23,7 @@ patterns: (
 
 	),
 	ins1: (
-		instrument: 'bass',
+		instrument: 'fm',
 		midinote: ~melos.meloEdge.ins00,
 		amp: Pfunc({~melos.amps.ins}),
 		fade: 0.6,

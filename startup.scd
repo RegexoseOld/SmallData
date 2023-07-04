@@ -158,7 +158,7 @@ Pbindef.all.do(_.stop)
 Pbindef(\sn01, \ampdecay, 1)
 Pbindef(\ins).play
 Pbindef(\con).play
-Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
+Pbindef(\bass, \oscVol, 0.4, \oscFB, 0.4, \cleanVol, 1.0, \rls2, 1.4, \crv2, -2, \dist, 3)
 
 ~mock.()
 ~allocate.(\dis, 1)
