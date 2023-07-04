@@ -41,13 +41,12 @@ Pdefn(\melody, Ppar(
 			\instrument, \uttSampler,
 			\buf, Pfunc({~uttSamples[~categories[r]][0]}),
 			\delta, delta,
-			\sustain, Pdefn(\p_melody_sus, sustain),
+			\sustain, sustain,
 			\amp,  Pif(Pseq(sequencerButtons[1][r], inf).coin, currentVol, \rest),
 			\start, Pfunc({~uttSamples[~categories[r]][1]}),
 			\end, Pfunc({~uttSamples[~categories[r]][2]}),
+		    \rate, Pfunc({~melos.seqRates[~fadingSynths[r]].midiratio}),
 			\out, 0,
-			\start, Pfunc({~uttSamples[~categories[r]][1]}),
-			\end, Pfunc({~uttSamples[~categories[r]][2]}),
 			\track_index, Pseq((0..15), inf),
 			\track_func, Pfunc({|ev| ~update_track_seq.value(ev.track_index, track)});
 )}), inf));
