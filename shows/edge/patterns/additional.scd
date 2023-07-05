@@ -125,17 +125,19 @@ patterns: (
 	),
 	bass: (
 		instrument:'bass',
-		midinote:  ~melos.meloPoporgan.bass0,
+		midinote:  ~melos.meloEdge.bass00,
 		dur: 0.25,
 		amp: 0.33,
 		atk: 0.02,
-		rls: 0.2,
+		rls: 0.15,
 		crv: -1.0,
 		oscVol: 0.4,
-		rls2: 1.4,
+		oscFB: 0.6,
+		rls2: 0.7,
 		crv2: -2,
 		modRate: 1,
-		oscFB: 0.4,
+		dev1: 0.99,
+		dev2: 1.01,
 		slide1: 1.0, // pitch slide begin
 		slide2: 1.1, // pitch slide end
 		slide3: 1.0, // pitch slide dur

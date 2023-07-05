@@ -157,11 +157,11 @@ s.waitForBoot({
 Pbindef.all.do(_.stop)
 Pbindef(\sn01, \ampdecay, 1)
 Pbindef(\ins).play
-Pbindef(\con).play
+Pbindef(\bass, \oscFB, 0.7)
 
 
 ~mock.()
-~allocate.(\dis, 1)
+~allocate.(\dis, 5)
 ~allocate.(\dis, 17)
 ~allocate.(\ins, 4)
 ~allocate.(\lec, 13)
