@@ -48,7 +48,7 @@ patterns: (
 	metronom: (
 		instrument: 'percImp',
 		dur: 0.25,
-		amp: 0.1,
+		amp: Pseq([0.8, 0.1, 0.1, 0.1], inf),
 		minfrq: 800,
 		maxfrq: 900,
 		accent: Pseq([4, 1, 1, 1], inf),
@@ -122,6 +122,8 @@ patterns: (
 		atk: 0.02,
 		rls: 0.2,
 		crv: -1.0,
+		dev1:0.99,
+		dev2: 1.01,
 		modRate: 1,
 		filTime: 0.2,
 		thr: 0.6,

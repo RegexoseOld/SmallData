@@ -60,9 +60,10 @@ SynthDef.new(\bass, {
     mod = SinOsc.kr(\modRate.kr(1.2));
 	clean = SinOsc.ar(freq, 0, \cleanVol.kr(1.0)) * cleanEnv;
     sig = 4.collect({
-		var dev;
+		var dev, slide;
 		dev = {ExpRand(\devMin.kr(0.9), \devMax.kr(1.1))};
-		SinOscFB.ar((freq * dev), \oscFB.kr(0.1), \oscVol.kr(1.0));
+		slide = XLine.kr(\slide1.kr(1.0), \slide2.kr(1.5), \slide3.kr(1.0), \slide4.kr(1.0));
+		SinOscFB.ar((freq * dev * slide), \oscFB.kr(0.1), \oscVol.kr(1.0));
 	}).sum;
     sig = sig * env;
     sig = (sig + clean) * \distort.kr(1.5).tanh;
