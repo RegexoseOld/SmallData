@@ -178,6 +178,7 @@
 };
 
 ~makeMIDIPattern = {
+	//returns Pseqs for notes and durs, derived from MIDIfiles in the MIDI folder
 	|key, path|
 	var midi, notes=[].asList, durs=[].asList, c;
 	midi = SimpleMIDIFile.read(path);

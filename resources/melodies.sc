@@ -101,9 +101,11 @@ feedbacks: (
     dis: 65,
 ),
 
+
 edgeDurs:(
-	bass01: ~makeMIDIPattern.("dur", "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/shows/edge/MIDI/EdgeBass01.mid"),
+
 ),
+
 
 duras:(
     pr: Array.fill(~numSlots, {4}),
@@ -116,6 +118,9 @@ duras:(
 	lec21: Pseq([Pn(1, 8), Pn(0.25, 32)], inf),
     dis: Array.fill(~numSlots, {4}),
 	dis21: 0.5,
+),
+
+durPoporgan:(
 ),
 
 amps:(

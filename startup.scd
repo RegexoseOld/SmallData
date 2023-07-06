@@ -55,15 +55,6 @@ s.waitForBoot({
 	//make Dictionary with effekt Patches
 	~patches = (~resourcePath ++ "fx_patches.scd").load;
 	//make all other Dictionaries, that can't be made in constants
-
-
-	//load melodies
-	~melPath = ~resourcePath ++ "melodies.sc";
-	//~melos = ~melos ? ();
-	~melos = ();
-	~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
-
-
 	// load state patterns into a Dictionary with different states for the 5 categories
 	//~states = ~states ? ();
 	~states = ();
@@ -145,7 +136,6 @@ s.waitForBoot({
 ) }).play;
 )
 ~sim.stop
-
 
 ~t.beatsPerBar
 ~cat2Channel[\perc]
