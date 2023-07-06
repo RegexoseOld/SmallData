@@ -136,12 +136,12 @@ patterns: (
 		rls2: 0.7,
 		crv2: -2,
 		modRate: 1,
-		dev1: 0.99,
+		dev1: 1,
 		dev2: 1.01,
 		slide1: 1.0, // pitch slide begin
 		slide2: 1.1, // pitch slide end
 		slide3: 1.0, // pitch slide dur
-		slide4: 1.0, // pitch slide intensity
+		slide4: 0, // pitch slide intensity
 		thr: 0.6,
 		cgain: 1.4,
 		distort: 2.0,
