@@ -53,6 +53,26 @@ PathName(~samplesPath).entries.do({
 		)
 	});
 
+//load melodies
+~melPath = ~resourcePath ++ "melodies.sc";
+//~melos = ~melos ? ();
+~melos = ();
+~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
+
+// make Patterns out of MIDIFolder
+~midiFolder = ~showFolder +/+ "MIDI";
+PathName(~midiFolder).entries.do({
+	|path|
+	var noteEntry, durEntry, midiKey;
+	"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
+	noteEntry = ("melo" ++ ~showName).asSymbol;
+	durEntry = ("dur" ++ ~showName).asSymbol;
+	midiKey = path.fileNameWithoutExtension.asSymbol;
+	~melos[noteEntry].add(midiKey -> ~makeMIDIPattern.("note", path.fullPath));
+	~melos[durEntry].add(midiKey -> ~makeMIDIPattern.("dur", path.fullPath));
+});
+
+
 
 ~makeWaveTable = {
 	|size|
