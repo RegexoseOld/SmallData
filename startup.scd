@@ -57,11 +57,7 @@ s.waitForBoot({
 	//make all other Dictionaries, that can't be made in constants
 
 
-	//load melodies
-	~melPath = ~resourcePath ++ "melodies.sc";
-	//~melos = ~melos ? ();
-	~melos = ();
-	~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
+
 
 
 	// load state patterns into a Dictionary with different states for the 5 categories
@@ -146,36 +142,5 @@ s.waitForBoot({
 )
 ~sim.stop
 
-~t.beatsPerBar
-~cat2Channel[\perc]
-~samplePaths["dissent".asSymbol]
-~uttSamples["dissent".asSymbol]
-
-~slider_buttons[1]["dissent"]
-Pbindef.all.do(_.stop)
-Pbindef(\sn01, \ampdecay, 1)
-Pbindef(\ins).play
-Pbindef(\con).play
-Pbindef(\con, \decayScale, 20, \frqOff, 0.1 , \atk, 0.5, \rls, 6)
-
-~mock.()
-~allocate.(\dis, 7)
-~allocate.(\dis, 17)
-~allocate.(\ins, 4)
-~allocate.(\lec, 13)
-~allocate.(\pr, 6)
-~allocate.(\con, 2)
-
-)
-(
-Pbindef(\sn01, \numharm, 100, \ghosts, 100)
-Pbindef(\lec, \atk, 0.001, \rls, 0.01, \sus, 0.4, \filTime, 0.15, \fmFreq, 1500, \fmVol, 20, \modRate, 0.5, \thr, 0.9)
-Pbindef(\pr, \mRatio, 0.8, \cRatio, 1.1, \fmDur, 4, \index, 10, \bpf, 300, \bpf2, 10, \bpf3, 4, \bpfQ, 0.2, \bpfMul, 10, \vibF, 0.002 )
-Pbindef(\con).play
-Pbindef(\con).stop
-Pbindef(\kik01).pause
-Pbindef(\con, \dur, 1, \rls, 2.3)
-Pbindef(\kik02, \timb1, -6, \timb2, -4, \amp, 0.2, \dist, 1)
-)
-~uttSamples[\dissent][0]
-~fadingSynths
+~melos[("melo" ++ ~showName).asSymbol]
+~melos.durPoporgan

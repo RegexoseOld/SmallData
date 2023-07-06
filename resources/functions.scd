@@ -177,6 +177,18 @@
 	})
 };
 
+~makeMIDIPattern = {
+	//returns Pseqs for notes and durs, derived from MIDIfiles in the MIDI folder
+	|key, path|
+	var midi, notes=[].asList, durs=[].asList, c;
+	midi = SimpleMIDIFile.read(path);
+	midi.generatePatternSeqs.flatten(2).pairsDo({|a,b| notes.add(a); durs.add(b.softRound(0.125, 0.001,1))});
+	c = case
+	{key == "note"}{Pseq(notes, inf)}
+	{key == "dur"} {Pseq(durs, inf)}
+	{true}{"end of MIDIPatterns".postln};
+};
+
 ~allocateSynth = {
 		|s_name, count|
 		var c;

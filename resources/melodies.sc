@@ -74,6 +74,8 @@ feedbacks: (
     dis: 65,
 ),
 
+
+
 duras:(
     pr: Array.fill(~numSlots, {4}),
 	pr21: Pseq([Pn(0.25, 8), Pn(0.125, 32)], inf),
@@ -85,6 +87,9 @@ duras:(
 	lec21: Pseq([Pn(1, 8), Pn(0.25, 32)], inf),
     dis: Array.fill(~numSlots, {4}),
 	dis21: 0.5,
+),
+
+durPoporgan:(
 ),
 
 amps:(
