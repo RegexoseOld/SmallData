@@ -26,7 +26,7 @@ patterns: (
 		timb1Sweep: 0.04,
 		timb2: -28,
 		dist: 0.5,
-		rls: 2.2,
+		rls: 1.3,
 		out: ~perc.inbus
 	),
 
@@ -57,7 +57,7 @@ patterns: (
 	metronom: (
 		instrument: 'percImp',
 		dur: 0.25,
-		amp: 0.1,
+		amp: 0.05,
 		minfrq: 800,
 		maxfrq: 900,
 		accent: Pseq([4, 1, 1, 1], inf),
@@ -123,28 +123,31 @@ patterns: (
 		pan:0,
 		amp: 0.3
 	),
+
 	bass: (
-		instrument:'bass',
-		midinote:  ~melos.meloEdge.bass00,
-		dur: 0.25,
-		amp: 0.33,
+		instrument: 'bass',
+		midinote: ~melos.meloEdge.edgeBass00,
+		dur: ~melos.durEdge.edgeBass00,
+		amp: 0.45,
+		sawVol: 2,
 		atk: 0.02,
-		rls: 0.15,
+		rls: 0.45,
+		sus: 0.4,
 		crv: -1.0,
-		oscVol: 0.4,
-		oscFB: 0.6,
-		rls2: 0.7,
+		oscVol: 0.7,
+		oscFB: pi/4,
+		rls2: 1,
 		crv2: -2,
 		modRate: 1,
-		dev1: 1,
-		dev2: 1.01,
+		devMin: 0.99,
+		devMax: 1.01,
 		slide1: 1.0, // pitch slide begin
-		slide2: 1.1, // pitch slide end
-		slide3: 1.0, // pitch slide dur
-		slide4: 0, // pitch slide intensity
+		slide2: 0.95, // pitch slide end
+		slide3: 0.3, // pitch slide dur
+		slide4: 1, // pitch slide intensity
 		thr: 0.6,
-		cgain: 1.4,
-		distort: 2.0,
+		cgain: 1.0,
+		distort: 2.5,
 		fade: 1,
 		out: ~bass.inbus
 	)

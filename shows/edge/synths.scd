@@ -55,22 +55,20 @@ SynthDef(\fm, {
 SynthDef.new(\bass, {
     |gate = 1, freq=100|
     var  sig, env, clean, cleanEnv, mod;
-    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(1.0), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction: 0);
-    cleanEnv = EnvGen.kr(Env.perc(\atk2.kr(0.01), \rls2.kr(1.0), curve:\crv2.kr(-4.0)), doneAction:2);
+    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(1.0), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction:2);
     mod = SinOsc.kr(\modRate.kr(1.2));
-	clean = SinOsc.ar(freq, 0, \cleanVol.kr(1.0)) * cleanEnv;
     sig = 4.collect({
-		var dev, slide;
-		dev = {ExpRand(\devMin.kr(0.9), \devMax.kr(1.1))};
-		slide = XLine.kr(\slide1.kr(1.0), \slide2.kr(1.5), \slide3.kr(1.0), \slide4.kr(1.0));
-		SinOscFB.ar((freq * dev * slide), \oscFB.kr(0.1), \oscVol.kr(1.0));
+		var dev, slide, saw;
+		dev = {ExpRand(\devMin.kr(1.0), \devMax.kr(1.0))};
+		slide = XLine.kr(\slide1.kr(1.0), \slide2.kr(1.0), \slide3.kr(1.0));
+		saw = VarSaw.ar(freq * slide, 0, \width.kr(0.5) * dev, \sawVol.kr(1.0));
+		SinOscFB.ar((freq * dev), \oscFB.kr(pi/4), \oscVol.kr(1.0));
 	}).sum;
     sig = sig * env;
-    sig = (sig + clean) * \distort.kr(1.5).tanh;
+    sig = (sig) * \distort.kr(1.5).tanh;
     sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
     Out.ar(\out.kr(0), sig );
-    //Out.ar(\outfx.kr(~fx1Bus), sig * \send.kr(-30).dbamp);
 }).add;
 
 

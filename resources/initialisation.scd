@@ -64,7 +64,7 @@ PathName(~samplesPath).entries.do({
 PathName(~midiFolder).entries.do({
 	|path|
 	var noteEntry, durEntry, midiKey;
-	"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
+	//"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
 	noteEntry = ("melo" ++ ~showName).asSymbol;
 	durEntry = ("dur" ++ ~showName).asSymbol;
 	midiKey = path.fileNameWithoutExtension.asSymbol;

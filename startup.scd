@@ -131,41 +131,26 @@ s.waitForBoot({
     { loop ( {
         ~mock.();
         [5,3].choose.wait;
-		//"mocked" .po stln;
+		//"mocked" .postln;
         }
 ) }).play;
 )
 ~sim.stop
 
 ~t.beatsPerBar
-~cat2Channel[\perc]
-~samplePaths["dissent".asSymbol]
-~uttSamples["dissent".asSymbol]
+~melos.durEdge
+~melos.meloEdge
 
 ~slider_buttons[1]["dissent"]
 
 Pbindef.all.do(_.stop)
 Pbindef(\sn01, \ampdecay, 1)
-Pbindef(\ins).play
-(
-Pbindef(\bass, \midinote, ~melos.meloEdge.bass01, \dur, ~melos.edgeDurs.bass01).play(~t)
-)
-~t.tempo = 100/60
-a = [0.80208333333333, 0.003, 1.094, 0.75, 0.74, 0.25, 0.26].collect({|e| e.softRound(0.125, 0.001, 1) });
-a
-(
-var notes=[].asList, durs=[].asList;
-~melos.meloEdge.bass03.generatePatternSeqs.flatten(2).pairsDo({|a,b| notes.add(a); durs.add(b)});
+Pbindef(\bass, \slide1, 1.4, \slide2, 0.5, \slide3, 0.2)
 
-"notes : %\n".format(notes).postln;
-"durs : %".format(durs).postln;
-Pbindef(\bass).play(~t);
-Pbindef(\bass2, \instrument, \bass, \midinote, Pseq(notes, inf).trace, \dur, Pseq(durs, inf)).play(~t);
-);
 
 
 ~mock.()
-~allocate.(\dis, 5)
+~allocate.(\dis, 7)
 ~allocate.(\dis, 17)
 ~allocate.(\ins, 4)
 ~allocate.(\lec, 13)

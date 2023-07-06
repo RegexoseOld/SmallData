@@ -115,9 +115,9 @@ patterns: (
 		amp: 0.3
 	),
 	bass: (
-		instrument:'fm',
-		midinote:  ~melos.meloPoporgan.bass0,
-		dur: 0.25,
+		instrument:'bass',
+		midinote:  ~melos.meloEdge.edgeBass00,
+		dur: ~melos.durEdge.edgeBass00,
 		amp: 0.33,
 		atk: 0.02,
 		rls: 0.2,

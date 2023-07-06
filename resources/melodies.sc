@@ -64,8 +64,6 @@ meloEdge: (
 	lec20:  Pseq([54, 55, 50, \, 55, 54, 48, \], inf),
 	kik01: Pseq([60, Pn(\, 7), 60, Pn(\, 7), 60, Pn(\, 6), 60, 60, Pn(\, 7) ], inf),
 	sn05: Pseq([\, \, \, \,  200, \, \, 200], inf),
-	bass00: Pseq([36, Pn(\, 7), 39, Pn(\, 7), 36, \, \, 36, \, \, \, 36, 36, Pn(\, 7) ], inf),
-	bass01: ~makeMIDIPattern.("note", "/Volumes/Macintosh HD 2/projekte/Meinung/SmallData_GitHub/shows/edge/MIDI/EdgeBass01.mid"),
 	bass05: Pseq([36, \, \, 34, \, \, 36, \, 39, Pn(\, 7), 36, \, \, 36, \, \, \, 36, 36, Pn(\, 7) ], inf),
 
 ),
@@ -102,7 +100,7 @@ feedbacks: (
 ),
 
 
-edgeDurs:(
+durEdge:(
 
 ),
 

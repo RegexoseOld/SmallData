@@ -15,6 +15,7 @@
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 		Pbindef(catName, \rls, 0.07 * in_count);
 		Pbindef(\bass, *~states[\bass].asPairs).quant_(4);
+		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass01, ~melos.meloEdge.edgeBass00), \dur, Pif((count%3==0), ~melos.durEdge.edgeBass01, ~melos.durEdge.edgeBass00) ).quant_(4);
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).quant_(4);
 	    Pbindef(\sn01).stop;
 		status = "state 00 dotted notes";
@@ -25,9 +26,9 @@
 		patName.postln;
 		//Pbindef(catName, *~states[catName][patName.asSymbol].asPairs);
 		Pbindef(catName, \dur, Pif((in_count%3 == 0), 1, 0.25, 0.25 )).quant_(4);
-		//Pbindef(\kik02, \freq, ~melos.melo.kik02, \amp, 0.28, \timb1, Pwhite(0.05, 0.2, inf)).quant_(4);
-		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.bass05, ~melos.meloEdge.bass00)).quant_(4);
-		Pbindef(\sn01, \freq,  ~melos.meloEdge.sn05).play(~t, quant:4);
+		Pbindef(\kik02, \freq, ~melos.meloEdge.kik02, \dur, ~melos.durEdge.kik02, \amp, 0.28, \timb1, Pwhite(0.05, 0.2, inf)).quant_(4);
+		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.bass05, ~melos.meloEdge.edgeBass00), \dur, ~melos.durEdge.edgeBass00).quant_(4);
+		Pbindef(\sn01, \freq, ~melos.meloEdge.sn02 *3, \dur, ~melos.durEdge.sn02 ).play(~t, quant:4);
 		//Pbindef(\hh01).stop;
         numNotes = 2;
         status = "state 01 gepunktete Melodie \n switching beats ";
