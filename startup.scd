@@ -142,15 +142,20 @@ s.waitForBoot({
 ~melos.meloEdge
 
 ~slider_buttons[1]["dissent"]
+Synth(\fm)
 
 Pbindef.all.do(_.stop)
-Pbindef(\sn01, \ampdecay, 1)
-Pbindef(\bass, \slide1, 1.4, \slide2, 0.5, \slide3, 0.2)
+Pbindef(\dis, \fratio0, 10, \fratio1, 3, \fratio2, 2, \modInd0, 1,  \modInd1, 4, \ffreq, 400, \rq, 0.9)
+Pbindef(\dis, \fratio0, 3, \fratio1, 4, \fratio2, 2, \modInd0, 1, \modInd1, 4, \modInd2, 4).quant_(1)
+Pbindef(\dis).stop
+Pbindef(\dis, \detune, 120)
+Pbindef(\bass2, \instrument, \fmFine, \midinote, ~melos.meloEdge.con20, \dur, 0.25).play(~t)
+Pbindef(\bass2, \rls, 0.1, \fratio0, 8, \fratio1, Pwhite(5.5, 6.5, inf), \fratio2, 8, \modInd0, 1, \modInd1, 2, \modInd2, 4)
 
 
 
 ~mock.()
-~allocate.(\dis, 7)
+~allocate.(\dis, 4)
 ~allocate.(\dis, 17)
 ~allocate.(\ins, 4)
 ~allocate.(\lec, 13)
@@ -170,4 +175,49 @@ Pbindef(\lec).play(~t);
 
 
 )
+({
 
+	SinOsc.ar(\freq.kr(60) * (1 + (8 * Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1))
+	//(2 * Env.perc(0.0011, 0.2).ar)
+}.play
+)
+
+
+(
+Spec.add(\modInd0, [0, 10]);
+Spec.add(\modInd1, [0, 10]);
+Spec.add(\modInd2, [0, 10]);
+Spec.add(\fratio0, [0, 8, \lin]);
+Spec.add(\fratio1, [0.1, 10, \lin]);
+Spec.add(\fratio2, [0.1, 10, \lin]);
+Spec.add(\amp, [0, 8]);
+Spec.add(\freq, \freq);
+Spec.add(\atk, \delayms);
+Spec.add(\rls, [0, 4]);
+Spec.add(\crv, [-10, 10]);
+
+)
+(
+Ndef(\fmFine, {
+	|vel=0.5|
+	var f, ff0, ff1, ff2,car, mod0, mod1, mod2, env, modInd, osc, sig;
+	f = \freq.kr(1000);
+	env = EnvGen.kr(
+		Env.perc(\atk.kr(0.015) * Rand(0.9, 1.1), \rls.kr(2.02), curve: \crv.kr(-4)),
+		gate: Impulse.kr(0.5)) * vel;
+	ff0 = f * (\fratio0.kr(1));
+	ff1 = f * (\fratio1.kr(1));
+	ff2 = f * (\fratio2.kr(4));
+	mod0 = SinOsc.ar(ff0) * f * \modInd0.kr(1) * env.pow(0.8); // mod indices correlate with env to emulate brightness
+	mod1 = SinOsc.ar(ff1) * f * \modInd1.kr(0.6) * env.pow(1.4);
+	mod2 = SinOsc.ar(ff2) * f * \modInd2.kr(0.3) * env.pow(2.5);
+	car = SinOsc.ar(f + [mod0, mod1, mod2].sum);
+	car = HPF.ar(car * env.pow(0.5), f);
+	sig = car * \amp.kr(0.2);
+	sig = Pan2.ar(sig, \pan.kr(0.0));
+}).play
+
+)
+
+Ndef(\fmFine).gui
+Ndef(\fmFine).stop

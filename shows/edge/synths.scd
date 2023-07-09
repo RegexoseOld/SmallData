@@ -21,19 +21,6 @@ SynthDef.new(\bellFm, {
     Out.ar(\out.kr(0), sig);
 }).add;
 
-SynthDef.new(\quitt, {
-    var sig, gend, env;
-    env = EnvGen.kr(Env.perc(\atk.ir(0.1), \rls.kr(1)), doneAction:2);
-	sig = 3.collect({
-		gend = Gendy1.ar(2, \durDist.kr(1), 1.0, 1.0, {ExpRand(100, \minfreq.kr(300))},{ExpRand(1000, \maxfreq.kr(2000))}, 1.0, 0.05, 5);
-		gend = BPF.ar(gend, \ffreq.kr(300), \rq.kr(0.9), \gendAmp.kr(1));
-		sig = LFPulse.ar(\freq.kr(100).varlag(\lag.kr(0.3), \lagcrv.kr(5.0)), 0.0, \width.kr(0.4),\pulseMul.kr(0.15), \add.kr(0)) +gend;
-	}).sum;
-    sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(3));
-    sig = Pan2.ar(sig * env * (\amp.kr(0.1)), \pan.kr(0.0));
-    Out.ar(\out.kr(0), sig);
-}).add;
-
 SynthDef(\fm, {
     |atk=0.01, rls=1.0|
     var  sig, env, mod;
@@ -41,15 +28,47 @@ SynthDef(\fm, {
     mod = SinOsc.kr(\modRate.kr(1.2));
     sig = 5.collect({
 		var fm, dev;
-		dev = {ExpRand(\devMin.kr(0.95), \devMax.kr(1.05))};
+		dev = {ExpRand(\devMin.kr(0.999), \devMax.kr(1.001))};
 		fm = SinOsc.ar(\fmFreq.kr(2000) * mod, mul:\fmVol.kr(20));
-		VarSaw.ar((\freq.kr(100) * dev) + fm, 0, \filTime.kr(0.1), 1);
+		VarSaw.ar((\freq.kr(100) * dev) + fm, {Rand(0, 2*pi)}, \filTime.kr(0.1), 1);
 	}).sum;
     sig = (sig * \distort.kr(1.5)).tanh;
     sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
     sig = sig * env;
     Out.ar(\out.kr(0), sig);
+}).add;
+
+SynthDef(\fmFine, {
+	|vel=0.5|
+	var f, ff0, ff1, ff2, car, mod0, mod1, mod2, env, sig, noiseLag;
+	f = \freq.kr(1000);
+	env = EnvGen.kr(
+		Env.perc(\atk.kr(0.015) * Rand(0.95, 1.05), \rls.kr(2.02), curve: \crv.kr(-4)),
+		doneAction:2) * vel;
+
+	car = 3.collect({
+		var dev;
+		dev = {ExpRand(\devMin.kr(0.99, \devMax.kr(1.01)))};
+		ff0 = f * (\fratio0.kr(1)) // ffo-ff2 ratios should be integer to keep pitch perception
+		+{ Rand(-3, 3)}.dup;        // However some randomization adds a little nice dirt
+		ff1 = f * (\fratio1.kr(1))
+		+{ Rand(-3, 3)}.dup;
+		ff2 = f * (\fratio2.kr(4))
+		+{ Rand(-3, 3)}.dup;
+		mod0 = SinOsc.ar(ff0) * f * \modInd0.kr(1) * env.pow(0.8) * dev; // mod indices correlate with env to emulate brightness
+		mod1 = SinOsc.ar(ff1) * f * \modInd1.kr(0.6) * env.pow(1.4) * dev;
+		mod2 = SinOsc.ar(ff2) * f * \modInd2.kr(0.3) * env.pow(2.5) * dev;
+		noiseLag = 0.001 * {Rand(0.9, 1.1)};
+		SinOsc.ar(f + [mod0, mod1, mod2].sum
+			+ WhiteNoise.ar(f/8 !2).lag(noiseLag))
+
+	}).sum;
+	car = HPF.ar(car * env.pow(0.5), f);
+	car = RLPF.ar(car, \ffreq.kr(1000), \rq.kr(1.0));
+	sig = car * \amp.kr(0.2) * \distort.kr(1.0).tanh;
+	sig = Pan2.ar(sig, \pan.kr(0.0));
+	Out.ar(\out.kr(0), sig)
 }).add;
 
 SynthDef.new(\bass, {
@@ -203,5 +222,6 @@ SynthDef.new(\oscfm, {
 	sig = sig * env;
 	Out.ar(\out.ir(0), sig);
 }).add;
+
 
 

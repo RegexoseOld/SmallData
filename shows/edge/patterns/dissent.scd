@@ -1,6 +1,6 @@
 (
 patterns:(
-
+/*
 	dis0: (
 		instrument: 'fm',
 		midinote: ~melos.meloEdge.dis00,
@@ -40,6 +40,50 @@ patterns:(
 		fade: 0.8,
 		sustain: 0.14,
 
+	),*/
+
+	dis0: (
+		instrument: 'fmFine',
+		midinote: ~melos.meloEdge.dis00,
+		amp: Pfunc({~melos.amps.dis}),
+		fade: 0.8,
+		detune: Pwhite( -10, 3, inf),
+		fratio0: 1, // Integer values for pitch accuracy
+		fratio1: 1,
+		fratio2: 1,
+		fmVol: 10,
+		devMin: 0.999,
+		devMax: 1.0001,
+		distort: 1.0,
+		thr: 0.65,
+		cgain: 1.3,
+		atk: 0.02,
+		rls: 0.07,
+		crv: -5,
+		dur: 0.25,
+		out: ~ch1.inbus
+	),
+
+	dis1: (
+		instrument: 'fmFine',
+		midinote: ~melos.meloEdge.dis00,
+		amp: Pfunc({~melos.amps.dis}),
+		fade: 0.8,
+		detune: Pwhite( -10, 3, inf),
+		fratio0: 1, // Integer values for pitch accuracy
+		fratio1: 1,
+		fratio2: 1,
+		fmVol: 10,
+		devMin: 0.999,
+		devMax: 1.0001,
+		distort: 1.0,
+		thr: 0.65,
+		cgain: 1.3,
+		atk: 0.02,
+		rls: 0.07,
+		crv: -5,
+		dur: 0.25,
+		out: ~ch1.inbus
 	),
 
 	dis05: (
