@@ -141,6 +141,8 @@ s.waitForBoot({
 ~melos.durEdge
 ~melos.meloEdge
 
+(1 + (2* 0.177)) * [1, 2.3, 3.5, 5.8]
+Synth(\sn2)
 
 ~slider_buttons[1]["dissent"]
 Pbindef(\kik02).play(~t);
@@ -155,17 +157,15 @@ Pbindef(\dis, \fratio0, 10, \fratio1, 3, \fratio2, 2, \modInd0, 1,  \modInd1, 4,
 Pbindef(\dis, \fratio0, 3, \fratio1, 4, \fratio2, 2, \modInd0, 1, \modInd1, 4, \modInd2, 4).quant_(1)
 Pbindef(\dis).stop
 Pbindef(\dis, \detune, 120)
-Pbindef(\bass2, \instrument, \fmFine, \midinote, ~melos.meloEdge.con20, \dur, 0.25).play(~t)
-Pbindef(\bass2, \rls, 0.1, \fratio0, 8, \fratio1, Pwhite(5.5, 6.5, inf), \fratio2, 8, \modInd0, 1, \modInd1, 2, \modInd2, 4)
+Pbindef(\bass, \dec, 0.1, \sus, 1, \rls, 0.6)
 (
-~melos.durEdge.keys.do({|k| k.postln})
 ~mock.()
-~allocate.(\dis, 3)
-~allocate.(\dis, 9)
-~allocate.(\ins, 4)
-~allocate.(\lec, 3)
-~allocate.(\pr, 4)
-~allocate.(\con, 5)
+~allocate.(\dis, 2)
+~allocate.(\dis, 6)
+~allocate.(\ins, 6)
+~allocate.(\lec, 6)
+~allocate.(\pr, 6)
+~allocate.(\con, 6)
 
 )
 (
@@ -180,13 +180,9 @@ Pbindef(\lec).play(~t);
 
 
 )
-({
-
-	SinOsc.ar(\freq.kr(60) * (1 + (8 * Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1))
-	//(2 * Env.perc(0.0011, 0.2).ar)
-}.play
+(
+Pbindef(\oscfmTest, \instrument, \oscfm, \buf, ~buffers[\wt], \freq, 62.midicps, \spread, 1, \dev, [0.2, 0.22], \ffreq, Pwhite(200, 1000, inf).trace, \rq, 0.02).play(~t)
 )
-
 
 (
 Spec.add(\modInd0, [0, 10]);
@@ -224,5 +220,3 @@ Ndef(\fmFine, {
 
 )
 
-Ndef(\fmFine).gui
-Ndef(\fmFine).stop

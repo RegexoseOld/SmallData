@@ -8,16 +8,16 @@ SynthDef.new(\bellFm, {
     trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.5), \varDur.kr(1));
     sig2 =  SinOsc.ar(freq * XLine.kr(mRatio, mRatio * cRatio, \fmDur.kr(0.02)), mul:freq * mRatio * index);
     sig = 3.collect({
-		var spread, temp;
+		var spread, temp, bpf;
 		spread = LFNoise1.kr(\spread.kr(0.05)).bipolar(\dev.ir(0.7)).midiratio;
+		bpf = \bpf1.kr(200);
 		temp = SinOsc.ar(freq * trem * spread + sig2 , mul: volMod);
 		temp = BPF.ar(temp, XLine.kr(bpf, bpf * \bpf2.kr(1) * spread.abs, \bpf3.kr(0.2)), \bpfQ.kr(0.9), \bpfMul.kr(2));
 	}).sum;
-    sig = sig * \fade.kr(1) ;
     sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-
-	//sig = MidEQ.ar(sig, SinOsc.kr(\bpf3.kr(0.2), 0, 24, 84).midicps, \bpfQ.kr(0.9), \bpfMul.kr(2));
-    sig = Pan2.ar(sig * env * \amp.kr(0.1) ,\pan.kr(0.0));
+	//sig = BPF.ar(sig, \ffreq.kr(1000), \rq.kr(1.0));
+    sig = sig * \fade.kr(1) * env * \amp.kr(0.1) ;
+    sig = Pan2.ar(sig,\pan.kr(0.0));
     Out.ar(\out.kr(0), sig);
 }).add;
 
@@ -33,6 +33,7 @@ SynthDef(\fm, {
 		VarSaw.ar((\freq.kr(100) * dev) + fm, {Rand(0, 2*pi)}, \filTime.kr(0.1), 1);
 	}).sum;
     sig = (sig * \distort.kr(1.5)).tanh;
+	sig = RLPF.ar(sig, \ffreq.kr(1000), \rq.kr(1.0));
     sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
     sig = sig * env;
@@ -144,7 +145,7 @@ SynthDef(\sn2, {
 	sig = sig * Env.perc(0.001, 0.25, curve: -4).ar;
 	sig = sig + ( GVerb.ar(sig, 16, 2) * -30.dbamp);
 	sig = sig * Env.perc(0.001, \rls.kr(1.3), curve: -4).ar(Done.freeSelf);
-	sig = sig * \amp.kr(-5.dbamp);
+	sig = sig * \amp.kr(0.75);
 	sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig);
 }).add;
@@ -192,21 +193,21 @@ SynthDef(\tgrains, {
 // wavetable https://www.youtube.com/watch?v=5krJVMxCr8s&t=810s ab 31:00 (für Feedback) und 46:30 für pad sound
 
 SynthDef.new(\oscfm, {
-	var sig, mod, env;
-	//modulator
-	mod = Osc.ar(\buf.ir(0), \modfreq.kr(1000), mul:\modamp.kr(100));
+	var sig, env, f;
+	f = \freq.kr(200);
 	//a chorus of 5 slightly detuned voices
 	sig = 5.collect({
 		var spread;
 		spread = LFNoise1.kr(\spread.kr(0.05)).bipolar(\dev.ir(0.7)).midiratio;
 		//carrier
-		Osc.ar(\buf.ir(0), \freq.kr(200) * spread + mod);
+		Osc.ar(\buf.ir(0), f * spread);
 	}).sum;
 	env = Env(
 		[0,1,0],
 		[\atk.ir(0.02), \rel.ir(0.5)],
 		[\atkcrv.ir(1), \relcrv.ir(-3)]
 	).ar(2);
+	sig = BPF.ar(sig, \ffreq.kr(1000), \rq.kr(1.0));
 	sig = Pan2.ar(sig, \pan.ir(0), \amp.kr(0.2) * \fade.kr(0.5));
 	sig = sig * env;
 	Out.ar(\out.ir(0), sig);
