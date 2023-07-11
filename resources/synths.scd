@@ -178,7 +178,6 @@ SynthDef(\sampSt, {
     sig = Compander.ar(sig, sig, \thr.kr(0.55), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = BPF.ar(sig, \bpf1.kr(100), \bpfQ.kr(0.3));
     sig = sig * \amp.kr(0.2) * \fade.kr(1);
-
     Out.ar(\out.kr(0), sig) ;
 }).add;
 

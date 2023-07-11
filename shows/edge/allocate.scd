@@ -9,29 +9,31 @@
     patName = catName.asString ++ "0";
 
     c = case
-	{count < 8}{
+	{count < 5}{
 		in_count = count;
 		patName = (catName.asString ++ "0").asSymbol;
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
-		Pbindef(catName, \rls, 0.3, \fratio0, in_count *2, \modInd1, in_count, \ffreq, 200 + (300 * in_count));
+		Pbindef(catName, \rls, 0.3, \fratio0, in_count * 2.8, \modInd1, in_count * 1.6, \ffreq, 800 + Pxrand([-300, 0, 300, 1000, 200],inf), \fmVol, Pif(count.odd, 50, 230), \fmFreq, Pkey(\fmVol) * 15 );
 		Pbindef(\bass, *~states[\bass].asPairs).quant_(4);
-		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass01, ~melos.meloEdge.edgeBass00), \dur, Pif((count%3==0), ~melos.durEdge.edgeBass01, ~melos.durEdge.edgeBass00) ).quant_(4);
+		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass01, ~melos.meloEdge.edgeBass00), \dur, Pif((count%3==0), ~melos.durEdge.edgeBass01, ~melos.durEdge.edgeBass00), \oscVol, 0.9, \crv, -9.0 ).quant_(4);
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).quant_(4);
 	    Pbindef(\sn01).stop;
+	    Pbindef(\snip01).stop;
+
 		status = "state 00 dotted notes";
 	}
-    {(count >= 8) && (count <= 10)} {
+    {(count >= 5) && (count <= 10)} {
         in_count = count-4;
         patName = catName.asString ++ "05";
 		patName.postln;
-		//Pbindef(catName, *~states[catName][patName.asSymbol].asPairs);
-		Pbindef(catName, \dur, Pif((in_count%3 == 0), 1, 0.25, 0.25 )).quant_(4);
+		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs);
 		Pbindef(\kik02, \freq, ~melos.meloEdge.kik02, \dur, ~melos.durEdge.kik02, \amp, 0.28, \timb1, Pwhite(0.05, 0.2, inf)).quant_(4);
-		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.bass05, ~melos.meloEdge.edgeBass00), \dur, ~melos.durEdge.edgeBass00).quant_(4);
-		Pbindef(\sn01, \freq, ~melos.meloEdge.sn02 *3, \dur, ~melos.durEdge.sn02 ).play(~t, quant:4);
-		//Pbindef(\hh01).stop;
+		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass03, ~melos.meloEdge.edgeBass00), \dur, Pif((count%3==0), ~melos.durEdge.edgeBass03, ~melos.durEdge.edgeBass00), \oscFB, 3*pi/8).quant_(4);
+		Pbindef(\sn01, \freq, ~melos.meloEdge.sn02 *3, \dur, ~melos.durEdge.sn02).play(~t, quant:4);
+		Pbindef(\hh01, \minRing, Pwhite(0.01, 0.07, inf), \maxRing, Pwhite(0.08, 0.18, inf)).quant_(4);
+	    Pbindef(\snip01).play(~t, quant:4);
         numNotes = 2;
-        status = "state 01 gepunktete Melodie \n switching beats ";
+        status = "state 01 snap groove ";
     }
 	{(count >= 11) && (count <=16)} {
         in_count = count - 10;

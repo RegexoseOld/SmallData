@@ -141,8 +141,14 @@ s.waitForBoot({
 ~melos.durEdge
 ~melos.meloEdge
 
+
 ~slider_buttons[1]["dissent"]
-Synth(\fm)
+Pbindef(\kik02).play(~t);
+Pbindef(\snip01).play(~t)
+Pbindef(\hh01, \amp, 0.1).stop
+Pbindef(\snip01, \w, 1.5, \zit1, 5, \zit2, 0.5,  \atk, 0.001, \rls, 0.1,  \trigger, ~melos.meloEdge.snap01, \dur, ~melos.durEdge.snap01).quant_(4)
+
+Pbindef(\sn01, \sweep, 0.04,  \shaper1, 1, \shaper2, 0.9, \rls, 0.3, \dist1, 1.2, \dist2, 1)
 
 Pbindef.all.do(_.stop)
 Pbindef(\dis, \fratio0, 10, \fratio1, 3, \fratio2, 2, \modInd0, 1,  \modInd1, 4, \ffreq, 400, \rq, 0.9)
@@ -151,16 +157,15 @@ Pbindef(\dis).stop
 Pbindef(\dis, \detune, 120)
 Pbindef(\bass2, \instrument, \fmFine, \midinote, ~melos.meloEdge.con20, \dur, 0.25).play(~t)
 Pbindef(\bass2, \rls, 0.1, \fratio0, 8, \fratio1, Pwhite(5.5, 6.5, inf), \fratio2, 8, \modInd0, 1, \modInd1, 2, \modInd2, 4)
-
-
-
+(
+~melos.durEdge.keys.do({|k| k.postln})
 ~mock.()
-~allocate.(\dis, 4)
-~allocate.(\dis, 17)
+~allocate.(\dis, 3)
+~allocate.(\dis, 9)
 ~allocate.(\ins, 4)
-~allocate.(\lec, 13)
-~allocate.(\pr, 3)
-~allocate.(\con, 2)
+~allocate.(\lec, 3)
+~allocate.(\pr, 4)
+~allocate.(\con, 5)
 
 )
 (

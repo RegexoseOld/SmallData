@@ -88,7 +88,7 @@ patterns:(
 
 	dis05: (
 		instrument: 'fm',
-		midinote: ~melos.melo.dis05,
+		midinote: ~melos.meloEdge.dis05,
 		dur: 0.25,
 		amp: 0.1,
 		fade: 0.8,

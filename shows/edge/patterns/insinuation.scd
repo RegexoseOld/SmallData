@@ -91,7 +91,7 @@ patterns: (
 
 	 ins05: (
         instrument: 'oscfm',
-		midinote: ~melos.melo.ins05,
+		midinote: ~melos.meloEdge.ins05,
 		buf: Pfunc{~buffers[\wt]},
 		amp: Pfunc({~melos.amps.ins}),
 		dur: 0.25,

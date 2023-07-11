@@ -74,16 +74,20 @@ SynthDef(\fmFine, {
 SynthDef.new(\bass, {
     |gate = 1, freq=100|
     var  sig, env, clean, cleanEnv, mod;
-    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), 0.2, \sus.kr(1.0), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction:2);
-    mod = SinOsc.kr(\modRate.kr(1.2));
+    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), \dec.kr(0.2), \sus.kr(1.0), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction:2);
+    mod = SinOsc.kr(\modRate.kr(1.2), \modPhase.kr(pi/2));
     sig = 4.collect({
-		var dev, slide, saw;
+		var dev, slide, fm, fmFreq;
 		dev = {ExpRand(\devMin.kr(1.0), \devMax.kr(1.0))};
-		slide = XLine.kr(\slide1.kr(1.0), \slide2.kr(1.0), \slide3.kr(1.0));
-		saw = VarSaw.ar(freq * slide, 0, \width.kr(0.5) * dev, \sawVol.kr(1.0));
-		SinOscFB.ar((freq * dev), \oscFB.kr(pi/4), \oscVol.kr(1.0));
+	/*	slide1: // adds a growl use multiples of 0.25
+		slide2:  pitch slide dur
+		slide3: pitch slide intensity use Integers to keep Pitch*/
+		slide = XLine.kr(1, \slide1.kr(1.0), \slide2.kr(1.0), \slide3.kr(1));
+		fmFreq = freq * dev;
+		fm = SinOsc.ar(fmFreq * slide, mul:\fmVol.kr(20));
+		SinOscFB.ar((freq * dev) + fm, \oscFB.kr(pi/4), \oscVol.kr(1.0));
 	}).sum;
-    sig = sig * env;
+    sig = sig * env * mod;
     sig = (sig) * \distort.kr(1.5).tanh;
     sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
@@ -115,9 +119,9 @@ SynthDef(\sn1, {
 //https://www.youtube.com/watch?v=xYc7_PbbtuE&t=1579s  ab 5:00
 SynthDef(\kik2, {
 	var sig;
-	sig = SinOsc.ar(\freq.kr(60) * (1 + (8 * Env.perc(0, 0.06, curve:-4).ar)) * XLine.ar(1, 0.5, 1));
-	sig = sig + (SinOsc.ar(XLine.ar(4000, 50, \timb1Sweep.kr(0.01)) * Env.perc(0.0001, \timb1Sweep.kr(0.01)).ar * \timb1.kr(-5).dbamp));
-	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 10120, 0.5) + Env.perc(0.001, 0.03).ar * \timb2.kr(-8).dbamp);
+	sig = SinOsc.ar(\freq.kr(60) * (1 + (8 * Env.perc(0, \sweep.kr(0.06), curve:-4).ar)) * XLine.ar(1, 0.5, 1));
+	sig = sig + (SinOsc.ar(XLine.ar(4000, 50, 0.01) * Env.perc(0.0001, 0.01).ar * \timb1.kr(-5).dbamp)); // punch
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 10120, 0.5) + Env.perc(0.001, 0.03).ar * \timb2.kr(-8).dbamp); // snare
 	sig = sig * (1 + (2 * Env.perc(0.001, 0.2).ar));
 	sig = (sig * \dist.kr(0).dbamp).tanh;
 	sig = sig * Env.perc(0.001, \rls.kr(1.3), curve: -8).ar(Done.freeSelf);
@@ -129,46 +133,31 @@ SynthDef(\kik2, {
 //https://www.youtube.com/watch?v=xYc7_PbbtuE&t=1579s  ab 30:00
 SynthDef(\sn2, {
 	var sig;
-	sig = SinOsc.ar(\freq.kr(200) * (1 + (2* Env.perc(0.001, 0.03).ar)) * [1, 2.3, 3.5, 5.8]); // multichannel
+	sig = SinOsc.ar(\freq.kr(200) * (1 + (2* Env.perc(0.001, \sweep.kr(0.1)).ar)) * [1, 2.3, 3.5, 5.8]); // multichannel
 	sig = sig * Env.perc(0, [2, 0.4, 0.2, 0.1]).ar; // multichannel
 	sig = sig * [0, -20, -12, -24].dbamp; // multichannel
 	sig = sig.sum;
 	sig = sig + (SinOsc.ar(XLine.ar(3000, 100, 0.03)) * Env.perc(0.01, 0.03).ar); // klick
-	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 2120, 0.3) + Env.perc(0.05, 0.1).ar * \shaper1.kr(0.5)); // different timmbres
-	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 4120, 0.6) + Env.perc(0.003, 0.15).ar * \shaper2.kr(0.5));// different timmbres
-	sig = sig + ((sig * 13.dbamp).tanh * -10.dbamp); // paralell distortion
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 2120, 0.3) + Env.perc(0.05, 0.1).ar * \shaper1.kr(0.5)); // pumps from 1.0 on
+	sig = sig + (BPF.ar(Hasher.ar(Sweep.ar), 4120, 0.6) + Env.perc(0.003, 0.15).ar * \shaper2.kr(0.5));// brightness
+	sig = sig + ((sig * \dist1.kr(13).dbamp).tanh * \dist2.kr(-10).dbamp); // paralell distortion
 	sig = sig * Env.perc(0.001, 0.25, curve: -4).ar;
-	sig = sig +( GVerb.ar(sig, 16, 2) * -30.dbamp);
-	sig = sig * Env.perc(0.001, 1, curve: -4).ar(Done.freeSelf);
+	sig = sig + ( GVerb.ar(sig, 16, 2) * -30.dbamp);
+	sig = sig * Env.perc(0.001, \rls.kr(1.3), curve: -4).ar(Done.freeSelf);
 	sig = sig * \amp.kr(-5.dbamp);
 	sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig);
-}).add;
-
-
-SynthDef.new(\impulse, {
-    var channels, temp, env, vol, sig, sweep;
-    env = EnvGen.kr(Env.perc(\atk.kr(0.01), \rls.kr(0.4), 1.0, \crv.kr(-1.0)));
-    vol = \amp.kr(0.1) * \fade.kr(0.5);
-    channels = {
-        temp = Impulse.ar(\dens.kr(1), 0.0, \knk.kr(1.0) );
-        temp = FreqShift.ar(temp, \shift.kr(0));
-        temp = BPF.ar(temp, \eqfr1.kr(2300) , 1.0, \boost.kr(1.6));
-        temp = Compander.ar(temp, temp, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(2.3));
-    }!2 ;
-    sig = Splay.ar(channels, center: \cent.kr(0.0), level:vol);
-    Out.ar(\out.kr(0), sig);
 }).add;
 
 SynthDef(\percImp, { |accent=0, decayScale=1|
 	var env, sig, exc;
     exc = PinkNoise.ar(\carAmp.kr(0.5)) * Decay2.kr(Impulse.kr(0.01), 0.01, 0.05);
     env = EnvGen.kr(Env.perc(\atk.kr(0.01), \rls.kr(1.8), 1.0));
-    sig = 5.collect({
+    sig = 3.collect({
 		Klank.ar(`[
 		{ ExpRand(\freq.kr(80), \maxfrq.kr(1000)) }!2,
         1 !2,
-			{ ExpRand(\minRing.kr(0.1),\maxRing.kr(0.4)) }!2
+		{ ExpRand(\minRing.kr(0.1),\maxRing.kr(0.4)) }!2
     ], exc, accent + 1, \frqOff.kr(0.0), decayScale);// accent ist die höhe, decayScale die Länge des Sounds
 	}).sum;
 	sig = sig * env * \amp.kr(0.1) * \fade.kr(1.0);

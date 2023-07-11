@@ -59,17 +59,45 @@ PathName(~samplesPath).entries.do({
 ~melos = ();
 ~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
 
-// make Patterns out of MIDIFolder
+// define function to get PatternLists out of MIDIFolder
+~makePatternList = {
+	//returns Pseqs for notes and durs, derived from MIDIfiles in the MIDI folder
+	|key, path, make|
+	var midi, notes=[].asList, durs=[].asList, c;
+	if(make==True, {
+	midi = SimpleMIDIFile.read(path.fullPath);
+	//midi.midiEvents.dopostln;
+
+	c = case
+	{key == "note"}{
+		midi.generatePatternSeqs.flatten(2).pairsDo({|a,b|
+			/*"a % is %".format(a, a.class).postln;
+			"a % is %".format(a, (a < 10)).postln;*/
+			if (((a < 10) || (a.isSymbol )), {
+				notes.add(Rest(0).asSymbol)
+			}, {
+				notes.add(a)
+			});
+		})
+	}
+	{key == "dur"} {
+		midi.generatePatternSeqs.flatten(2).pairsDo({|a,b|
+			durs.add(b.softRound(0.125, 0.001,1))})
+	}
+	{true}{"end of MIDIPatterns".postln};
+	"file notes %: % ".format(path.fileNameWithoutExtension, notes).postln;
+	"file durs %: %".format(path.fileNameWithoutExtension, durs).postln;
+	});
+};
+
+// get PatternLists out of MIDIFolder
 ~midiFolder = ~showFolder +/+ "MIDI";
 PathName(~midiFolder).entries.do({
 	|path|
-	var noteEntry, durEntry, midiKey;
-	//"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
-	noteEntry = ("melo" ++ ~showName).asSymbol;
-	durEntry = ("dur" ++ ~showName).asSymbol;
-	midiKey = path.fileNameWithoutExtension.asSymbol;
-	~melos[noteEntry].add(midiKey -> ~makeMIDIPattern.("note", path.fullPath));
-	~melos[durEntry].add(midiKey -> ~makeMIDIPattern.("dur", path.fullPath));
+	"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
+	//midiKey = path.fileNameWithoutExtension.asSymbol;
+	~makePatternList.("note", path, False);
+    ~makePatternList.("dur", path, False);
 });
 
 

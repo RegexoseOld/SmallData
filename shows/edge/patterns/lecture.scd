@@ -85,7 +85,7 @@ patterns: (
 
 	lec05: (
 		instrument: 'bellFm',
-		midinote: ~melos[\melo][\lec05],
+		midinote: ~melos[\meloEdge][\lec05],
 		dur: 0.25,
 		amp:0.1,
 		fade: 0.8,

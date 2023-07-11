@@ -22,8 +22,8 @@ patterns: (
 		freq: ~melos.meloEdge.kik01,
 		amp: 0.65,
 		dur: 0.25,
+		sweep: 0.06,
 		timb1: -12,
-		timb1Sweep: 0.04,
 		timb2: -28,
 		dist: 0.5,
 		rls: 1.3,
@@ -34,14 +34,33 @@ patterns: (
 		instrument: 'sn2',
 		freq: Pfunc({~melos.melo.sn01}),
 		dur: 0.25,
-		atk1: 0.2,
+		sweep: 0.05,
+		shaper1: 1.0, // pumps from 1.0 on
+		shaper2: 0.9, //bright
+		rls: 0.17,
 		amp: 0.35,
+		out: ~perc.inbus
+	),
+
+	snip01: (
+		instrument: 'sampMon',
+		buf: ~buffers[\hi][5],
+		trigger: ~melos.meloEdge.snap01,
+		amp: 0.4,
+		fade: 1,
+		dur: ~melos.durEdge.snap01,
+		rate: 1,
+		atk: 0.01,
+		rls: 0.8,
+		bpf1: 1000,
+		cgain: 1.5,
+		zit: 0,
 		out: ~perc.inbus
 	),
 
 	hh01: (
 		instrument: 'percImp',
-		amp: 0.43,
+		amp: 0.1,
 		dur: 0.25,
 		freq: 870,
 		maxfrq: 950,
@@ -129,26 +148,26 @@ patterns: (
 		midinote: ~melos.meloEdge.edgeBass00,
 		dur: ~melos.durEdge.edgeBass00,
 		amp: 0.45,
-		sawVol: 2,
+		fade: 1,
+		fmVol: 60,
 		atk: 0.02,
-		rls: 0.45,
-		sus: 0.4,
+		dec: 0.3,
+		sus: 0.8,
+		rls: 0.9,
 		crv: -1.0,
 		oscVol: 0.7,
-		oscFB: pi/4,
+		oscFB: pi/4, // adds a snary growl use pi/2 multiples
 		rls2: 1,
 		crv2: -2,
-		modRate: 1,
+		modRate: 0.05,
 		devMin: 0.99,
 		devMax: 1.01,
-		slide1: 1.0, // pitch slide begin
-		slide2: 0.95, // pitch slide end
-		slide3: 0.3, // pitch slide dur
-		slide4: 1, // pitch slide intensity
+		slide1: 1.0, // adds a growl use multiples of 0.25
+		slide2: 0.125, // pitch slide dur
+		slide3: 2, // pitch slide intensity use Integers to keep Pitch
 		thr: 0.6,
 		cgain: 1.0,
 		distort: 2.5,
-		fade: 1,
 		out: ~bass.inbus
 	)
 )

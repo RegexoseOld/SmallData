@@ -87,7 +87,7 @@ patterns: (
 	),
 	con05: (
 		instrument: 'bellFm',
-		midinote: ~melos.melo.con05,
+		midinote: ~melos.meloEdge.con05,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.con}),
 		fade: 0.6,
