@@ -53,12 +53,10 @@
 	var pathToFile, itemlist, itemName, samplesList, indexToRemove, currentValue;
 	pathToFile = PathName(pathString ++ "00_utterance.wav");
 	itemName = pathToFile.folderName;
-	//TODO: rebuild management of samplePaths to only contain 4 files per cat (to mimick utteranceSelectors
-
 	itemlist = ~utteranceSelectors[1][~cat].items;
 	samplesList = ~samplePaths[~cat];
+	// remove last element if itemlist is too long (or the one before if the last one is active) to keep the number of choices fixed. Also make sure that the selected element remains correct and store the paths to the samples in ~samplePaths with the correct index
 	AppClock.sched(0, {
-		// remove last element if itemlist is too long (or the one before if the last one is active) to keep the number of choices fixed. Also make sure that the selected element remains correct and store the paths to the samples in ~samplePaths with the correct index
 		currentValue = ~utteranceSelectors[1][~cat].value;
 		if (itemlist.size >= itemlist.maxSize,
 			{
