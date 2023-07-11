@@ -61,22 +61,23 @@
 		// remove last element if itemlist is too long (or the one before if the last one is active) to keep the number of choices fixed. Also make sure that the selected element remains correct and store the paths to the samples in ~samplePaths with the correct index
 		currentValue = ~utteranceSelectors[1][~cat].value;
 		if (itemlist.size >= itemlist.maxSize,
-			{if (currentValue == (itemlist.maxSize - 1),
-				{indexToRemove = itemlist.maxSize - 2;},
-				{
-					indexToRemove = itemlist.maxSize - 1;
-					currentValue = currentValue + 1;
-				}
-			);},
+			{
+				if (currentValue == (itemlist.maxSize - 1),
+					{indexToRemove = (itemlist.maxSize - 2);},
+					{
+						indexToRemove = (itemlist.maxSize - 1);
+						currentValue = currentValue + 1;
+					}
+				);
+				itemlist.removeAt(indexToRemove);
+				samplesList.removeAt(indexToRemove);
+			},
 			{currentValue = currentValue+1};
 		);
-
-		itemlist.removeAt(indexToRemove);
 		itemlist.addFirst(itemName);
 		~utteranceSelectors[1][~cat].items_(itemlist);
 		~utteranceSelectors[1][~cat].value_(currentValue);
 
-		samplesList.removeAt(indexToRemove);
 		samplesList.addFirst(pathToFile);
 		~samplePaths[~cat] = samplesList;
 	});
