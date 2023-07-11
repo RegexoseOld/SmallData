@@ -25,7 +25,7 @@
 	|menu|
 	var cat, pathToFile;
 	cat = menu.name.asSymbol;
-	pathToFile = ~samplePaths[cat][menu.item.asSymbol];
+	pathToFile = ~samplePaths[cat][menu.value];
 	Buffer.read(s, pathToFile.fullPath, action: {arg buffer;
 		AppClock.sched(0, {
 			~uttSamples.put(cat, [buffer, 0, buffer.numFrames-1]); // update sample
@@ -50,31 +50,38 @@
 // adds incomming audio samples to the selectors and the ~samplePaths-dictionary
 ~addNewSample = {
 	|pathString|
-	var pathToFile, itemlist, itemName, currentValue;
+	var pathToFile, itemlist, itemName, samplesList, indexToRemove, currentValue;
 	pathToFile = PathName(pathString ++ "00_utterance.wav");
 	itemName = pathToFile.folderName;
 	//TODO: rebuild management of samplePaths to only contain 4 files per cat (to mimick utteranceSelectors
-	~samplePaths[~cat].add(itemName.asSymbol -> pathToFile);
 
 	itemlist = ~utteranceSelectors[1][~cat].items;
-
+	samplesList = ~samplePaths[~cat];
 	AppClock.sched(0, {
+		// remove last element if itemlist is too long (or the one before if the last one is active) to keep the number of choices fixed. Also make sure that the selected element remains correct and store the paths to the samples in ~samplePaths with the correct index
 		currentValue = ~utteranceSelectors[1][~cat].value;
-		// remove last element if itemlist is too long (or the one before if the last one is active) to keep the number of choices fixed. Also make sure that the selected element remains correct
 		if (itemlist.size >= itemlist.maxSize,
-			{if (currentValue == (itemlist.maxSize-1),
-				{itemlist.removeAt(itemlist.maxSize-2)},
+			{if (currentValue == (itemlist.maxSize - 1),
+				{indexToRemove = itemlist.maxSize - 2;},
 				{
-					itemlist.removeAt(itemlist.maxSize-1);
-					currentValue = (currentValue+1);
+					indexToRemove = itemlist.maxSize - 1;
+					currentValue = currentValue + 1;
 				}
-			);
-		},{currentValue = (currentValue+1)};);
+			);},
+			{currentValue = currentValue+1};
+		);
+
+		itemlist.removeAt(indexToRemove);
 		itemlist.addFirst(itemName);
 		~utteranceSelectors[1][~cat].items_(itemlist);
 		~utteranceSelectors[1][~cat].value_(currentValue);
+
+		samplesList.removeAt(indexToRemove);
+		samplesList.addFirst(pathToFile);
+		~samplePaths[~cat] = samplesList;
 	});
 };
+
 
 // a helper function to load all samples in the provided path
 ~addSample = {
