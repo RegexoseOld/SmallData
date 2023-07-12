@@ -160,12 +160,11 @@ Pbindef(\dis, \detune, 120)
 Pbindef(\bass, \dec, 0.1, \sus, 1, \rls, 0.6)
 (
 ~mock.()
-~allocate.(\dis, 2)
-~allocate.(\dis, 6)
-~allocate.(\ins, 6)
-~allocate.(\lec, 6)
-~allocate.(\pr, 6)
-~allocate.(\con, 6)
+~allocate.(\dis, 11)
+~allocate.(\ins, 11)
+~allocate.(\lec, 11)
+~allocate.(\pr, 11)
+~allocate.(\con, 11)
 
 )
 (

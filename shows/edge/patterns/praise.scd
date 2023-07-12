@@ -1,45 +1,5 @@
 (
 patterns: (
-/*	pr0: (
-		instrument: 'fm',
-		midinote: ~melos.meloEdge.pr00,
-		amp: Pfunc({~melos.amps.pr}),
-		fade: 0.8,
-		detune: 0,
-		modRate: 0.4,
-		fmFreq: 2000,
-		fmVol: 10,
-		devMin: 0.999,
-		devMax: 1.0001,
-		distort: 1.5,
-		thr: 0.99,
-		cgain: 1.3,
-		atk: 0.02,
-		rls: 0.27,
-		crv: -7,
-		dur: 0.25,
-		out: ~ch2.inbus
-	),
-
-	pr1: (
-		instrument: 'fm',
-		midinote: ~melos.meloEdge.pr00,
-		amp: Pfunc({~melos.amps.pr}),
-		fade: 0.8,
-		detune: 0,
-		modRate: 0.4,
-		fmVol: 10,
-		devMin: 0.999,
-		devMax: 1.0001,
-		distort: 1.5,
-		thr: 0.99,
-		cgain: 1.5,
-		atk: 0.02,
-		rls: 0.27,
-		crv: -7,
-		dur: 0.25,
-
-	),*/
 	pr0: (
 		instrument: 'fmFine',
 		midinote: ~melos.meloEdge.pr00,
@@ -83,7 +43,7 @@ patterns: (
 		crv: -5,
 
 	),
-	    pr05: (
+	pr05: (
         instrument: 'bellFm',
         midinote: ~melos.meloEdge.pr05,
         dur: 0.25,
@@ -107,15 +67,15 @@ patterns: (
 
     pr10: (
         instrument: 'bellFm',
-        midinote: ~melos[\melo][\pr10],
-        dur: 1,
+        midinote: ~melos[\meloEdge][\pr10],
+        dur: ~melos.durEdge.pr10,
         amp: Pfunc({~melos.amps.pr}),
         fade: 0.5,
         thr: 0.5,
         cgain: 1.0,
         pan: 0,
-        atk: 0.8,
-        rls: 2,
+        atk: 0.04,
+        rls: 0.6,
         vibF: Pseq([0.6, 4, 2.0, 0.7],inf),
 		dev: 0.7,
         vibVol: 30,

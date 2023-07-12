@@ -38,15 +38,15 @@
     }
 	{(count >= 11) && (count <=16)} {
         in_count = count - 10;
-        patName = catName ++ "21";
-		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.40).quant_(4);
+        patName = catName ++ "10";
+        Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
+		Pbindef(\kik02, \freq, ~melos.meloEdge.kik10, \dur, ~melos.durEdge.kik10, \amp, 0.40).quant_(4);
+		Pbindef(\sn01, \freq, ~melos.meloEdge.sn10 *3, \dur, ~melos.durEdge.sn10).quant_(4);
 		Pbindef(\hh01, \dur, Pif((count%3==0), 0.0625, 0.25), \decayScale, Pwhite(0.6, 1.2, inf),
 			\carAmp, Pif((count%3==0), ~melos.meloPoporgan.hh02, ~melos.meloPoporgan.hh01)
 		).play(~t, quant:4);
-        Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
-	    Pbindef(\bass, \modRate, 1, \midinote, ~melos.meloPoporgan.bass21, \dur, 1,
-			\rls, 0.3, \fmVol, Pif((count%3==0), 130, 60), \cgain, 2.2, \amp, 0.3,
-		).quant_(4);
+	    Pbindef(\bass, \modRate, 1, \midinote, ~melos.meloEdge.bass10, \dur, ~melos.durEdge.bass10,
+			\rls, 0.3, \fmVol, Pif((count%3==0), 130, 60), \cgain, 2.2, \amp, 0.3).quant_(4);
         numNotes = 4;
         status = "crazy happy melody";
     }

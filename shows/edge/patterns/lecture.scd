@@ -1,44 +1,5 @@
 (
 patterns: (
-/*		lec0: (
-		instrument: 'fm',
-		midinote: ~melos.meloEdge.lec00,
-		amp: Pfunc({~melos.amps.lec}),
-	    fade: 0.8,
-		detune: 0,
-		modRate: 0.4,
-		fmVol: 10,
-		devMin: 0.999,
-		devMax: 1.0001,
-		distort: 1.5,
-		thr: 0.99,
-		cgain: 1.3,
-		atk: 0.02,
-		rls: 0.27,
-		crv: -7,
-		dur: 0.25,
-		out: ~ch5.inbus
-
-	),
-
-	lec1: (
-		instrument: 'fm',
-		midinote: ~melos.meloEdge.lec00,
-		amp: Pfunc({~melos.amps.lec}),
-		fade: 0.6,
-		detune: 0,
-		modRate: 0.4,
-		fmVol: 80,
-		devMin: 0.999,
-		devMax: 1.0001,
-		distort: 1.5,
-		thr: 0.99,
-		cgain: 1.0,
-		atk: 0.02,
-		rls: 1.17,
-		crv: -5,
-		dur: 2,
-	),*/
 	lec0: (
 		instrument: 'fmFine',
 		midinote: ~melos.meloEdge.lec00,
@@ -107,8 +68,8 @@ patterns: (
 	),
 	lec10: (
 		instrument:'fm',
-		midinote: ~melos[\melo][\lec10],
-		dur: 1,
+		midinote: ~melos.meloEdge.lec10,
+		dur: ~melos.durEdge.lec10,
 	    amp:  Pfunc({~melos.amps.lec}),
 		fade: 0.65,
 		atk: 0.002,
