@@ -130,7 +130,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5,3].choose.wait;
+        [5,7].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -139,7 +139,7 @@ s.waitForBoot({
 
 ~t.beatsPerBar
 ~melos.durEdge
-~melos.meloEdge
+~buffers[\atmos][0].play
 
 (1 + (2* 0.177)) * [1, 2.3, 3.5, 5.8]
 Synth(\sn2)

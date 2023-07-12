@@ -50,20 +50,14 @@
 	    Pbindef(\bass, \modRate, 1, \midinote, ~melos.meloEdge.bass10, \dur, ~melos.durEdge.bass10,
 			\rls, 0.3, \fmVol, Pif((count%3==0), 130, 60), \cgain, 2.2, \amp, 0.3).quant_(4);
         numNotes = 4;
-        status = "crazy happy melody";
+        status = "state 02 hectic deadline";
     }
     {(count > 16) && (count <=20)} {
         in_count = count - 15;
-        patName = catName ++ "10";
-		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.43).quant_(4);
-		Pbindef(\hh01, \carAmp, Pwhite(0.32, 0.43, inf), \decayScale, Pwhite(0.1, 0.3, inf), \dur, 0.25).play(~t, quant:1);
+        patName = catName ++ "16";
         Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
-	    Pbindef(\bass, \dur, 0.25, \fmVol, Pif((in_count%3 == 0), 30, 150), \rls, Pif((count%4==0), 0.9, 0.18),
-			\midinote, Pif(in_count.even, ~melos.melo.bass1 +12, ~melos.melo.bass2);
-		).quant_(4);
-		Pbindef(\sn01, \freq, Pif((count%3==0), ~melos.melo.sn03, ~melos.melo.sn01), \shaper1, Pif((counter%3==0), 2.2, 0.7), \shaper2, Pif((counter%3==0), 3.3, 1), \pan, Pif((counter%3==0), Pwhite(-1, 1, inf), Pwhite(-0.3, 0.3, inf))  ).quant_(1);
-        numNotes = 3;
-        status = "state 02 changing bass lines \n longer notes"
+
+        status = "state 03 a quieter part"
 	}
     {(count > 20) && (count <=26)} {
         in_count = count - 15;
