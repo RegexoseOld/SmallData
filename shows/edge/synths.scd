@@ -47,19 +47,18 @@ SynthDef(\fmFine, {
 	env = EnvGen.kr(
 		Env.perc(\atk.kr(0.015) * Rand(0.95, 1.05), \rls.kr(2.02), curve: \crv.kr(-4)),
 		doneAction:2) * vel;
-
 	car = 3.collect({
 		var dev;
-		dev = {ExpRand(\devMin.kr(0.99, \devMax.kr(1.01)))};
+		dev = {ExpRand(\devMin.kr(0.99), \devMax.kr(1.01))};
 		ff0 = f * (\fratio0.kr(1)) // ffo-ff2 ratios should be integer to keep pitch perception
-		+{ Rand(-3, 3)}.dup;        // However some randomization adds a little nice dirt
+		* dev.dup;        // However some randomization adds a little nice dirt
 		ff1 = f * (\fratio1.kr(1))
-		+{ Rand(-3, 3)}.dup;
+		* dev.dup;
 		ff2 = f * (\fratio2.kr(4))
-		+{ Rand(-3, 3)}.dup;
-		mod0 = SinOsc.ar(ff0) * f * \modInd0.kr(1) * env.pow(0.8) * dev; // mod indices correlate with env to emulate brightness
-		mod1 = SinOsc.ar(ff1) * f * \modInd1.kr(0.6) * env.pow(1.4) * dev;
-		mod2 = SinOsc.ar(ff2) * f * \modInd2.kr(0.3) * env.pow(2.5) * dev;
+		* dev.dup;
+		mod0 = SinOsc.ar(ff0) * f * \modInd0.kr(1) * env.pow(0.8); // mod indices correlate with env to emulate brightness
+		mod1 = SinOsc.ar(ff1) * f * \modInd1.kr(0.6) * env.pow(1.4);
+		mod2 = SinOsc.ar(ff2) * f * \modInd2.kr(0.3) * env.pow(2.5);
 		noiseLag = 0.001 * {Rand(0.9, 1.1)};
 		SinOsc.ar(f + [mod0, mod1, mod2].sum
 			+ WhiteNoise.ar(f/8 !2).lag(noiseLag))

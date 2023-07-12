@@ -19,6 +19,7 @@
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).quant_(4);
 	    Pbindef(\sn01).stop;
 	    Pbindef(\snip01).stop;
+		Pbindef(\hh01, *~states[\hh01].asPairs).play(~t, quant:1);
 
 		status = "state 00 dotted notes";
 	}
@@ -40,6 +41,7 @@
         in_count = count - 10;
         patName = catName ++ "10";
         Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
+		Pbindef(catName, \fratio0, in_count * 0.25, \fratio1, in_count * 4, \modInd1, in_count, \modInd1, in_count * 4).quant_(4);
 		Pbindef(\kik02, \freq, ~melos.meloEdge.kik10, \dur, ~melos.durEdge.kik10, \amp, 0.40).quant_(4);
 		Pbindef(\sn01, \freq, ~melos.meloEdge.sn10 *3, \dur, ~melos.durEdge.sn10).quant_(4);
 		Pbindef(\hh01, \dur, Pif((count%3==0), 0.0625, 0.25), \decayScale, Pwhite(0.6, 1.2, inf),
