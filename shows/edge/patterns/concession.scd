@@ -1,45 +1,5 @@
 (
 patterns: (
-	/*
-	con0: (
-		instrument: 'fm',
-		midinote: ~melos.meloEdge.con00,
-		detune: Pwhite( -10, 3, inf),
-		modRate: 0.4,
-		fmVol: 10,
-		devMin: 0.999,
-		devMax: 1.0001,
-		distort: 1.0,
-		thr: 0.65,
-		cgain: 1.3,
-		atk: 0.02,
-		rls: 0.07,
-		crv: -5,
-		dur: 0.25,
-		amp: Pfunc({~melos.amps.con}),
-		fade: 0.7,
-		out: ~ch4.inbus
-
-	),
-	con1: (
-		instrument: 'fm',
-		midinote: ~melos.meloEdge.con00,
-		detune: Pwhite( -10, 3, inf),
-		amp: Pfunc({~melos.amps.con}),
-		fade: 0.7,
-		modRate: 0.4,
-		fmVol: 10,
-		devMin: 0.999,
-		devMax: 1.0001,
-		distort: 1.0,
-		thr: 0.65,
-		cgain: 1.0,
-		atk: 0.02,
-		rls: 0.07,
-		crv: -5,
-		dur: 0.25,
-
-	),*/
 	con0: (
 		instrument: 'fmFine',
 		midinote: ~melos.meloEdge.con00,
@@ -88,7 +48,7 @@ patterns: (
 	con05: (
 		instrument: 'bellFm',
 		midinote: ~melos.meloEdge.con05,
-		dur: 0.25,
+		dur: ~melos.durEdge.con05,
 		amp: Pfunc({~melos.amps.con}),
 		fade: 0.6,
 		thr: 0.5,
@@ -107,24 +67,24 @@ patterns: (
 
 	),
 	con10: (
-		instrument: 'bellFm',
-		midinote: ~melos[\melo][\con10],
+		instrument: 'fmFine',
+		midinote: ~melos.meloEdge.con10,
 		amp: Pfunc({~melos.amps.con}),
-		dur: 1,
+		dur: ~melos.durEdge.con10,
 		fade: 0.7,
-		thr: 0.5,
-		cgain: 1,
-		pan: 0,
-		atk: 0.07,
-		rls: 1.1,
-		vibF: Pseq([0.7, 0.99, 1.4, 2.6], inf),
-		vibVol: 30,
-		dev: 0.04,
-		spread: 0.02,
-		bpf1: 300,
-		bpf2: 5,
-		bpf3: 0.3,
-		bpfQ: 0.9,
+		detune: Pwhite( -10, 3, inf),
+		fratio0: 1, // Integer values for pitch accuracy
+		fratio1: 1,
+		fratio2: 1,
+		fmVol: 10,
+		devMin: 0.9,
+		devMax: 1.1,
+		distort: 1.0,
+		thr: 0.65,
+		cgain: 1.3,
+		atk: 0.02,
+		rls: 0.07,
+		crv: -5,
 	),
 
 	con16: (

@@ -1,47 +1,5 @@
 (
 patterns:(
-/*
-	dis0: (
-		instrument: 'fm',
-		midinote: ~melos.meloEdge.dis00,
-		detune: Pwhite(-15, 15, inf),
-		modRate: 0.4,
-		fmVol: 50,
-		devMin: 0.95,
-		devMax: 1.05,
-		distort: 1.5,
-		thr: 0.65,
-		cgain: 1.2,
-		atk: 0.02,
-		rls: 0.21,
-		crv: -5,
-		dur: 0.25,
-		amp: Pfunc({~melos.amps.dis}),
-		fade: 0.8,
-		out: ~ch1.inbus
-	),
-
-	dis1: (
-		instrument: 'fm',
-		midinote: ~melos.meloEdge.dis00,
-		detune: Pwhite(-15, 15, inf),
-		modRate: 0.4,
-		fmVol: 50,
-		devMin: 0.95,
-		devMax: 1.05,
-		distort: 1.5,
-		thr: 0.65,
-		cgain: 1.2,
-		atk: 0.02,
-		rls: 0.21,
-		crv: -5,
-		dur: 0.25,
-		amp: Pfunc({~melos.amps.dis}),
-		fade: 0.8,
-		sustain: 0.14,
-
-	),*/
-
 	dis0: (
 		instrument: 'fmFine',
 		midinote: ~melos.meloEdge.dis00,
@@ -89,7 +47,7 @@ patterns:(
 	dis05: (
 		instrument: 'fm',
 		midinote: ~melos.meloEdge.dis05,
-		dur: 0.25,
+		dur: ~melos.durEdge.dis05,
 		amp: 0.1,
 		fade: 0.8,
 		thr: 0.5,
@@ -108,21 +66,24 @@ patterns:(
 
 	),
 	dis10: (
-		instrument: 'quitt',
-		midinote: ~melos[\melo][\dis10],
-		dur: 1,
+		instrument: 'fmFine',
+		midinote: ~melos.meloEdge.dis10,
+		dur: ~melos.durEdge.dis10,
 		amp:  Pfunc({~melos.amps.dis}),
-		fade: Pkey(\midinote).lincurve(20, 100, 0.75, 0.25, -4),
-		thr: 0.5,
-		cgain: 2,
-		pan: 0,
-		atk: 0.1,
-		rls: 0.9,
-		minfreq: 100,
-		maxfreq: 1000,
-		ffreq: 600,
-		width: 0.4,
-		pulseMul: 0.15,
+		fade: 0.8,
+		detune: Pwhite( -10, 3, inf),
+		fratio0: 1, // Integer values for pitch accuracy
+		fratio1: 1,
+		fratio2: 1,
+		fmVol: 10,
+		devMin: 0.999,
+		devMax: 1.0001,
+		distort: 1.0,
+		thr: 0.65,
+		cgain: 1.3,
+		atk: 0.02,
+		rls: 0.07,
+		crv: -5,
 
 	),
 	dis16: (

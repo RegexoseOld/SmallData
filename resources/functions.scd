@@ -210,13 +210,28 @@
 ~setGlobal = {
     var c;
     c = case
+	{~totalUtts == 50} {
+			~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 2, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 3]);
+	}
     {~totalUtts == 20}{
         //start a drum pattern
         //Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
+		~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][2], \atk, 2, \sus, 20, \rls, 10,  \amp, 0.4, \thr, 0.5, \cgain, 1]);
 
     }
+	{~totalUtts == 15} {
+		~birds.set(\rate, 0.7)
+	}
+	{~totalUtts == 12} {
+		~birds.set(\rate, 1.5)
+	}
 	{~totalUtts == 10}{
-        //send
+        //bird Atmosphere
+		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][1], \atk, 5, \sus, 45, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
+	}
+	{~totalUtts == 2}{
+        //bird Atmosphere
+		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][1], \atk, 5, \sus, 10, \rls, 5,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
 			"10 utts".postln;
     }
     {(~totalUtts > 1) && (~totalUtts < 10) }{

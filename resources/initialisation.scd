@@ -65,28 +65,28 @@ PathName(~samplesPath).entries.do({
 	|key, path, make|
 	var midi, notes=[].asList, durs=[].asList, c;
 	if(make==True, {
-	midi = SimpleMIDIFile.read(path.fullPath);
-	//midi.midiEvents.dopostln;
+		midi = SimpleMIDIFile.read(path.fullPath);
+		//midi.midiEvents.dopostln;
 
-	c = case
-	{key == "note"}{
-		midi.generatePatternSeqs.flatten(2).pairsDo({|a,b|
-			/*"a % is %".format(a, a.class).postln;
-			"a % is %".format(a, (a < 10)).postln;*/
-			if (((a < 10) || (a.isSymbol )), {
-				notes.add(Rest(0).asSymbol)
-			}, {
-				notes.add(a)
+		c = case
+		{key == "note"}{
+			midi.generatePatternSeqs.flatten(2).pairsDo({|a,b|
+				/*"a % is %".format(a, a.class).postln;
+				"a % is %".format(a, (a < 10)).postln;*/
+				if (((a < 10) || (a.isSymbol )), {
+					notes.add(Rest(0).asSymbol)
+				}, {
+					notes.add(a)
+				});
 			});
-		})
-	}
-	{key == "dur"} {
-		midi.generatePatternSeqs.flatten(2).pairsDo({|a,b|
-			durs.add(b.softRound(0.125, 0.001,1))})
-	}
-	{true}{"end of MIDIPatterns".postln};
-	"file notes %: % ".format(path.fileNameWithoutExtension, notes).postln;
-	"file durs %: %".format(path.fileNameWithoutExtension, durs).postln;
+			"file notes %: % ".format(path.fileNameWithoutExtension, notes).postln;
+		}
+		{key == "dur"} {
+			midi.generatePatternSeqs.flatten(2).pairsDo({|a,b|
+				durs.add(b.softRound(0.125, 0.001,1))});
+			"file durs %: %".format(path.fileNameWithoutExtension, durs).postln;
+		}
+		{true}{"end of MIDIPatterns".postln};
 	});
 };
 

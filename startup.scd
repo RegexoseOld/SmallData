@@ -130,7 +130,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5,3].choose.wait;
+        [5,7, 17, 30 ].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -139,7 +139,7 @@ s.waitForBoot({
 
 ~t.beatsPerBar
 ~melos.durEdge
-~melos.meloEdge
+~buffers[\atmos][0].play
 
 (1 + (2* 0.177)) * [1, 2.3, 3.5, 5.8]
 Synth(\sn2)
@@ -153,24 +153,24 @@ Pbindef(\snip01, \w, 1.5, \zit1, 5, \zit2, 0.5,  \atk, 0.001, \rls, 0.1,  \trigg
 Pbindef(\sn01, \sweep, 0.04,  \shaper1, 1, \shaper2, 0.9, \rls, 0.3, \dist1, 1.2, \dist2, 1)
 
 Pbindef.all.do(_.stop)
-Pbindef(\dis, \fratio0, 10, \fratio1, 3, \fratio2, 2, \modInd0, 1,  \modInd1, 4, \ffreq, 400, \rq, 0.9)
+Pbindef(\dis, \devMin, 0.4, \devMax, 6,  \ffreq, 2000)
 Pbindef(\dis, \fratio0, 3, \fratio1, 4, \fratio2, 2, \modInd0, 1, \modInd1, 4, \modInd2, 4).quant_(1)
 Pbindef(\dis).stop
 Pbindef(\dis, \detune, 120)
-Pbindef(\bass, \dec, 0.1, \sus, 1, \rls, 0.6)
-(
+Pbindef(\bass, \rls, 0.3)
+
 ~mock.()
-~allocate.(\dis, 2)
-~allocate.(\dis, 6)
-~allocate.(\ins, 6)
-~allocate.(\lec, 6)
-~allocate.(\pr, 6)
-~allocate.(\con, 6)
+~allocate.(\dis, 8)
+~allocate.(\ins, 14)
+~allocate.(\lec, 14)
+~allocate.(\pr, 14)
+~allocate.(\con, 15)
 
 )
 (
 Pbindef(\kik02).play(~t);
 Pbindef(\hh01).play(~t);
+Pbindef(\bass).play(~t);
 Pbindef(\pr).play(~t);
 Pbindef(\dis).play(~t);
 Pbindef(\con).play(~t);
@@ -181,7 +181,7 @@ Pbindef(\lec).play(~t);
 
 )
 (
-Pbindef(\oscfmTest, \instrument, \oscfm, \buf, ~buffers[\wt], \freq, 62.midicps, \spread, 1, \dev, [0.2, 0.22], \ffreq, Pwhite(200, 1000, inf).trace, \rq, 0.02).play(~t)
+Pbindef(\pr, \modInd0, 4, \modInd1, 4, \modInd2, 8)
 )
 
 (
