@@ -13,9 +13,13 @@
 		in_count = count;
 		patName = (catName.asString ++ "0").asSymbol;
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
-		Pbindef(catName, \rls, 0.3, \fratio0, in_count * 2.8, \modInd1, in_count * 1.6, \ffreq, 800 + Pxrand([-300, 0, 300, 1000, 200],inf), \fmVol, Pif(count.odd, 50, 230), \fmFreq, Pkey(\fmVol) * 15 ).quant_(4);
+		Pbindef(catName, \rls, 0.3 * count , \fratio0, in_count * 2.8, \modInd0, 0.5 * in_count , \modInd1, in_count , \modInd2, 2* in_count , \ffreq, 800 + Pxrand([-300, 0, 300, 1000, 200],inf), \fmVol, Pif(count.odd, 50, 230), \fmFreq, Pkey(\fmVol) * 15 ).quant_(4);
 		Pbindef(\bass, *~states[\bass].asPairs).quant_(4);
-		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass01, ~melos.meloEdge.edgeBass00), \dur, Pif((count%3==0), ~melos.durEdge.edgeBass01, ~melos.durEdge.edgeBass00), \oscVol, 0.9, \crv, -9.0 ).quant_(4);
+		Pbindef(\bass,
+			\midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass01, ~melos.meloEdge.edgeBass00),
+			\dur, Pif((count%3==0), ~melos.durEdge.edgeBass01, ~melos.durEdge.edgeBass00),
+			\ipeak, 1 + (in_count * 0.5),
+			\fmratio, Pif(count.odd, 1, 2)).quant_(4);
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).quant_(4);
 	    Pbindef(\sn01).stop;
 	    Pbindef(\snip01).stop;
@@ -32,7 +36,7 @@
 		Pbindef(\kik02, \freq, ~melos.meloEdge.kik02, \dur, ~melos.durEdge.kik02, \amp, 0.28, \timb1, Pwhite(0.05, 0.2, inf)).quant_(4);
 		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass03, ~melos.meloEdge.edgeBass00), \dur, Pif((count%3==0), ~melos.durEdge.edgeBass03, ~melos.durEdge.edgeBass00), \oscFB, 3*pi/8).quant_(4);
 		Pbindef(\sn01, \freq, ~melos.meloEdge.sn02 *3, \dur, ~melos.durEdge.sn02).play(~t, quant:4);
-		Pbindef(\hh01, \minRing, Pwhite(0.01, 0.07, inf), \maxRing, Pwhite(0.08, 0.18, inf)).quant_(4);
+		Pbindef(\hh01, \minRing, Pwhite(0.01, 0.07, inf), \maxRing, Pwhite(0.08, 0.18, inf), \dur, 0.25).quant_(4);
 	    Pbindef(\snip01).play(~t, quant:4);
         numNotes = 2;
         status = "state 01 snap groove ";

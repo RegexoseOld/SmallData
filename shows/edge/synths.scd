@@ -56,9 +56,9 @@ SynthDef(\fmFine, {
 		* dev.dup;
 		ff2 = f * (\fratio2.kr(4))
 		* dev.dup;
-		mod0 = SinOsc.ar(ff0) * f * \modInd0.kr(1) * env.pow(0.8); // mod indices correlate with env to emulate brightness
-		mod1 = SinOsc.ar(ff1) * f * \modInd1.kr(0.6) * env.pow(1.4);
-		mod2 = SinOsc.ar(ff2) * f * \modInd2.kr(0.3) * env.pow(2.5);
+		mod0 = SinOsc.ar(ff0, mul: ff0 * \modInd0.kr(1)) * env.pow(0.8); // mod indices correlate with env to emulate brightness
+		mod1 = SinOsc.ar(ff1, mul: ff1 * \modInd1.kr(0.6) ) * env.pow(1.4);
+		mod2 = SinOsc.ar(ff2, mul: ff2 * \modInd2.kr(0.3))  * env.pow(2.5);
 		noiseLag = 0.001 * {Rand(0.9, 1.1)};
 		SinOsc.ar(f + [mod0, mod1, mod2].sum
 			+ WhiteNoise.ar(f/8 !2).lag(noiseLag))
@@ -71,27 +71,26 @@ SynthDef(\fmFine, {
 	Out.ar(\out.kr(0), sig)
 }).add;
 
+// ienv tutorial https://www.youtube.com/watch?v=5vltzRNQnbo&t=2258s   36:50
 SynthDef.new(\bass, {
-    |gate = 1, freq=100|
-    var  sig, env, clean, cleanEnv, mod;
-    env = EnvGen.kr(Env.adsr(\atk.kr(0.01), \dec.kr(0.2), \sus.kr(1.0), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction:2);
-    mod = SinOsc.kr(\modRate.kr(1.2), \modPhase.kr(pi/2));
-    sig = 4.collect({
-		var dev, slide, fm, fmFreq;
+	|gate = 1, freq=100|
+	var  sig, env, ienv, clean, cleanEnv, volMod, fm, fmFreq, slide;
+	env = EnvGen.kr(Env.adsr(\atk.kr(0.01), \dec.kr(0.2), \sus.kr(1.0), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction:2);
+	ienv = Env([1, \ipeak.kr(5, 1)], [\iatk.kr(0.01), \irls.kr(1.0)], [1, \icrv.kr(-4.0)]).ar;
+	volMod = SinOsc.kr(\modRate.kr(1.2), \modPhase.kr(pi/2));
+	slide = XLine.kr(1, \slide1.kr(1.0), \slide2.kr(1.0), \slide3.kr(1));
+	fmFreq = freq * \fmratio.kr(1);
+	fm = SinOsc.ar(fmFreq * slide, mul: fmFreq * ienv);
+	sig = 4.collect({
+		var dev;
 		dev = {ExpRand(\devMin.kr(1.0), \devMax.kr(1.0))};
-	/*	slide1: // adds a growl use multiples of 0.25
-		slide2:  pitch slide dur
-		slide3: pitch slide intensity use Integers to keep Pitch*/
-		slide = XLine.kr(1, \slide1.kr(1.0), \slide2.kr(1.0), \slide3.kr(1));
-		fmFreq = freq * dev;
-		fm = SinOsc.ar(fmFreq * slide, mul:\fmVol.kr(20));
-		SinOscFB.ar((freq * dev) + fm, \oscFB.kr(pi/4), \oscVol.kr(1.0));
+		SinOsc.ar((freq * dev) + fm, \oscFB.kr(pi/4), \oscVol.kr(1.0));
 	}).sum;
-    sig = sig * env * mod;
-    sig = (sig) * \distort.kr(1.5).tanh;
-    sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-    sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
-    Out.ar(\out.kr(0), sig );
+	sig = sig * env * volMod;
+	sig = (sig) * \distort.kr(1.5).tanh;
+	sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
+	sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
+	Out.ar(\out.kr(0), sig );
 }).add;
 
 

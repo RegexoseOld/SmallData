@@ -149,22 +149,25 @@ patterns: (
 		dur: ~melos.durEdge.edgeBass00,
 		amp: 0.45,
 		fade: 1,
-		fmVol: 60,
+		modRate: 0.05,
+		modPhase: pi/4,
 		atk: 0.02,
 		dec: 0.3,
 		sus: 0.8,
-		rls: 0.9,
+		rls: 0.5,
 		crv: -1.0,
+		ipeak: 4,
+		iatk: 0.05,
+		irls: 21,
+		icrv: -7,
+		fmratio: 1,
 		oscVol: 0.7,
-		oscFB: pi/4, // adds a snary growl use pi/2 multiples
-		rls2: 1,
-		crv2: -2,
-		modRate: 0.05,
+		oscFB: pi/4, // adds a snary growl use pi/4 multiples
 		devMin: 0.99,
 		devMax: 1.01,
 		slide1: 1.0, // adds a growl use multiples of 0.25
-		slide2: 0.125, // pitch slide dur
-		slide3: 2, // pitch slide intensity use Integers to keep Pitch
+		slide2: 3, // pitch slide dur
+		slide3: 1, // pitch slide intensity use Integers to keep Pitch
 		thr: 0.6,
 		cgain: 1.0,
 		distort: 2.5,
