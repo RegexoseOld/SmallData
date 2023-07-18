@@ -22,13 +22,13 @@
 ~buffers = Dictionary.new;
 ~uttDict = Dictionary.new;
 ~uttSamples = Dictionary.new;  // dictionary with current audio utterances
-~samplePaths = Dictionary.new; // container for paths of audio-utterance-PopUpMenus. dictionary of dictionaries with paths to all audio utterances, ie ~samplePaths[praise] contains [name1->path1,...] - dictionary to audio-utterances of praise
+~samplePaths = Dictionary.new; // container for paths of audio-utterance-PopUpMenus. dictionary of Arrays with paths to all audio utterances. The order of the elements in e.g. samplePaths[lecture] is linked to the order of the elements in the corresponding popupMenu ~utteranceSelectors[1][lecture].items
 
 
 ~categories.do({
 	|cat|
 	var path = PathName(PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav");
-	~samplePaths.add(cat -> Dictionary[cat.asSymbol -> path]);
+	~samplePaths[cat] = [path];
 	~uttDict.add(cat-> 0);
 
 	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav",
