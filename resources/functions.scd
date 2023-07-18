@@ -51,7 +51,7 @@
 ~addNewSample = {
 	|pathString|
 	var pathToFile, itemlist, itemName, samplesList, indexToRemove, currentValue;
-	pathToFile = PathName(pathString ++ "00_utterance.wav");
+	pathToFile = PathName(pathString ++ "/00_utterance.wav");
 	itemName = pathToFile.folderName;
 	itemlist = ~utteranceSelectors[1][~cat].items;
 	samplesList = ~samplePaths[~cat];

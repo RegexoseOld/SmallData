@@ -117,7 +117,7 @@ s.waitForBoot({
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
 			~blinkSelector.();
-			~addNewSample.(msg[4]);
+            if(msg[4] != nil, {~addNewSample.(msg[4])});
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
