@@ -59,17 +59,45 @@ PathName(~samplesPath).entries.do({
 ~melos = ();
 ~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
 
-// make Patterns out of MIDIFolder
+// define function to get PatternLists out of MIDIFolder
+~makePatternList = {
+	//returns Pseqs for notes and durs, derived from MIDIfiles in the MIDI folder
+	|key, path, make|
+	var midi, notes=[].asList, durs=[].asList, c;
+	if(make==True, {
+		midi = SimpleMIDIFile.read(path.fullPath);
+		//midi.midiEvents.dopostln;
+
+		c = case
+		{key == "note"}{
+			midi.generatePatternSeqs.flatten(2).pairsDo({|a,b|
+				/*"a % is %".format(a, a.class).postln;
+				"a % is %".format(a, (a < 10)).postln;*/
+				if (((a < 10) || (a.isSymbol )), {
+					notes.add(Rest(0).asSymbol)
+				}, {
+					notes.add(a)
+				});
+			});
+			"file notes %: % ".format(path.fileNameWithoutExtension, notes).postln;
+		}
+		{key == "dur"} {
+			midi.generatePatternSeqs.flatten(2).pairsDo({|a,b|
+				durs.add(b.softRound(0.125, 0.001,1))});
+			"file durs %: %".format(path.fileNameWithoutExtension, durs).postln;
+		}
+		{true}{"end of MIDIPatterns".postln};
+	});
+};
+
+// get PatternLists out of MIDIFolder
 ~midiFolder = ~showFolder +/+ "MIDI";
 PathName(~midiFolder).entries.do({
 	|path|
-	var noteEntry, durEntry, midiKey;
 	"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
-	noteEntry = ("melo" ++ ~showName).asSymbol;
-	durEntry = ("dur" ++ ~showName).asSymbol;
-	midiKey = path.fileNameWithoutExtension.asSymbol;
-	~melos[noteEntry].add(midiKey -> ~makeMIDIPattern.("note", path.fullPath));
-	~melos[durEntry].add(midiKey -> ~makeMIDIPattern.("dur", path.fullPath));
+	//midiKey = path.fileNameWithoutExtension.asSymbol;
+	~makePatternList.("note", path, False);
+    ~makePatternList.("dur", path, False);
 });
 
 
@@ -106,6 +134,17 @@ PathName(~midiFolder).entries.do({
 		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
 		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
 		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
+		~cat2Channel = (
+		\pr: ~ch1,
+		\dis: ~ch2,
+		\con: ~ch3,
+		\lec: ~ch4,
+		\ins: ~ch5,
+		\kik01: ~perc,
+		\sn01 : ~perc,
+		\h01: ~perc,
+		\bass: ~bass
+	);
 
 		~cat2Channel = (
 		\dis: ~ch1,

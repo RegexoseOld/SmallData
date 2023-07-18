@@ -1,7 +1,8 @@
+
 SynthDef.new(\bellFm, {
     // Fm so wie https://www.youtube.com/watch?v=dLMSR2Kjq6Y -> 11:30
     //
-    |freq=100, index=1, mRatio=1, cRatio=1, atk=0.4, rls=2, crv= 5, bpf=100|
+    |freq=200, index=1, mRatio=1, cRatio=1, atk=0.4, rls=2, crv= 5, bpf=100|
     var sig, sig2, env, volMod, trem;
     env = EnvGen.kr(Env.perc(atk, rls, curve: crv), doneAction:2);
     volMod = SinOsc.kr(\vibF.kr(0.2), 0, \vibVol.kr(30))  ; // vol modulation
@@ -172,12 +173,11 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
 
 SynthDef(\sampSt, {
     var sig, env;
-    sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:0);
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1)), doneAction: 2);
-    sig = Compander.ar(sig, sig, \thr.kr(0.55), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-    sig = BPF.ar(sig, \bpf1.kr(100), \bpfQ.kr(0.3));
-    sig = sig * \amp.kr(0.2) * \fade.kr(1);
-
+    sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:1);
+	env = EnvGen.kr(Env([0,1,1,0], [\atk.kr(0.01), \sus.kr(1), \rls.kr(1)]), doneAction: 2);
+    sig = Compander.ar(sig, sig, \thr.kr(1), 1, 0.5, 0.01, 0.01, \cgain.kr(1));
+    sig = sig * \amp.kr(0.2) * \fade.kr(1) * env;
+    //sig = LPF.ar(sig, \lpf.kr(1000), \rq.kr(1.0));
     Out.ar(\out.kr(0), sig) ;
 }).add;
 
@@ -188,7 +188,7 @@ SynthDef(\sampMon, {
 		var lag = {ExpRand(0.0001, \lag.kr(0.0002) )};
 		PlayBuf.ar(1, \buf.kr(0), \rate.kr(1) * BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0) + lag, \loop.kr(0.0));
 	}).sum;
-	sig = Compander.ar(sig, sig, \thr.kr(0.75), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
+	sig = Compander.ar(sig, sig, \thr.kr(0.75), 1, 0.5, 0.01, 0.04, \cgain.kr(1));
 	pos = LFNoise1.kr(\zit1.kr(100)).bipolar(\zit2.kr(0.5));
 	sig = PanAz.ar(2, sig, pos, width:\w.kr(2.0));
 	//sig = Pan2.ar(sig, \pan.kr(0));
@@ -198,12 +198,13 @@ SynthDef(\sampMon, {
 
 SynthDef(\uttSampler, {
     arg buf, rate=1, start, end;
-    var sig, ptr, env;
+    var  sig, ptr, env;
     ptr = Phasor.ar(0, BufRateScale.kr(buf)*rate, start, end);
 	env = EnvGen.kr(
 		Env.new(levels: [0, 1, 1, 0], times: [0.01, ((end-start)/BufSampleRate.kr(buf)*rate.reciprocal)-0.02, 0.01], curve: [-5, 0, 5])
 		, doneAction: 2);
 	sig = BufRd.ar(1, buf, ptr, 0.0);
+	sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
     sig = sig * env * \amp.kr(0.3);
     Out.ar(\out.kr(0), sig!2);
 }).add;

@@ -36,17 +36,18 @@ sequencerButtons = ~buildSequencerButtons.value(trackButtonsContainer, buttonFie
 Pdefn(\melody, Ppar(
 	sequencerButtons[1].collect({
 		arg c, r;
-		var delta = 0.25, currentVol = 0.5, sustain = 0.1;
+		var delta = 0.25, currentVol = 0.9, sustain = 0.1;
 		Pbind(
 			\instrument, \uttSampler,
 			\buf, Pfunc({~uttSamples[~categories[r]][0]}),
 			\delta, delta,
 			\sustain, sustain,
 			\amp,  Pif(Pseq(sequencerButtons[1][r], inf).coin, currentVol, \rest),
+			\rate, Pfunc({~melos.seqRates[~fadingSynths[r]].midiratio}),
+		    \cgain, 1.3,
+			\out, ~utt.inbus,
 			\start, Pfunc({~uttSamples[~categories[r]][1]}),
 			\end, Pfunc({~uttSamples[~categories[r]][2]}),
-		    \rate, Pfunc({~melos.seqRates[~fadingSynths[r]].midiratio}),
-			\out, 0,
 			\track_index, Pseq((0..15), inf),
 			\track_func, Pfunc({|ev| ~update_track_seq.value(ev.track_index, track)});
 )}), inf));
