@@ -130,13 +130,13 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5,7, 17, 30 ].choose.wait;
+        [5,7, 11 ].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
 )
 ~sim.stop
-
+~volMin = 0.02
 ~t.beatsPerBar
 ~melos.durEdge
 ~buffers[\atmos][0].play
@@ -153,11 +153,11 @@ Pbindef(\snip01, \w, 1.5, \zit1, 5, \zit2, 0.5,  \atk, 0.001, \rls, 0.1,  \trigg
 Pbindef(\sn01, \sweep, 0.04,  \shaper1, 1, \shaper2, 0.9, \rls, 0.3, \dist1, 1.2, \dist2, 1)
 
 Pbindef.all.do(_.stop)
-Pbindef(\dis, )
+Pbindef(\dis, \fmDur, 2, \trmF, 1, \trmRate, 8, \trmDep, 0.04, \trmDel, 1, \onset, 3, \rateVar, 0.2, \varDur, pi/4 )
 Pbindef(\dis, \fratio0, 3, \fratio1, 4, \fratio2, 2, \modInd0, 1, \modInd1, 4, \modInd2, 4).quant_(1)
-Pbindef(\dis).stop
+Pbindef(\dis).play(~t)
 Pbindef(\dis, \detune, 120)
-Pbindef(\bass, \rls, 0.3)
+Pbindef(\bass, \ipeak, 5, \irls, 0.2)
 
 ~mock.()
 ~allocate.(\dis, 10)
@@ -183,40 +183,3 @@ Pbindef(\lec).play(~t);
 (
 Pbindef(\pr, \modInd0, 4, \modInd1, 4, \modInd2, 8)
 )
-
-(
-Spec.add(\modInd0, [0, 10]);
-Spec.add(\modInd1, [0, 10]);
-Spec.add(\modInd2, [0, 10]);
-Spec.add(\fratio0, [0, 8, \lin]);
-Spec.add(\fratio1, [0.1, 10, \lin]);
-Spec.add(\fratio2, [0.1, 10, \lin]);
-Spec.add(\amp, [0, 8]);
-Spec.add(\freq, \freq);
-Spec.add(\atk, \delayms);
-Spec.add(\rls, [0, 4]);
-Spec.add(\crv, [-10, 10]);
-
-)
-(
-Ndef(\fmFine, {
-	|vel=0.5|
-	var f, ff0, ff1, ff2,car, mod0, mod1, mod2, env, modInd, osc, sig;
-	f = \freq.kr(1000);
-	env = EnvGen.kr(
-		Env.perc(\atk.kr(0.015) * Rand(0.9, 1.1), \rls.kr(2.02), curve: \crv.kr(-4)),
-		gate: Impulse.kr(0.5)) * vel;
-	ff0 = f * (\fratio0.kr(1));
-	ff1 = f * (\fratio1.kr(1));
-	ff2 = f * (\fratio2.kr(4));
-	mod0 = SinOsc.ar(ff0) * f * \modInd0.kr(1) * env.pow(0.8); // mod indices correlate with env to emulate brightness
-	mod1 = SinOsc.ar(ff1) * f * \modInd1.kr(0.6) * env.pow(1.4);
-	mod2 = SinOsc.ar(ff2) * f * \modInd2.kr(0.3) * env.pow(2.5);
-	car = SinOsc.ar(f + [mod0, mod1, mod2].sum);
-	car = HPF.ar(car * env.pow(0.5), f);
-	sig = car * \amp.kr(0.2);
-	sig = Pan2.ar(sig, \pan.kr(0.0));
-}).play
-
-)
-

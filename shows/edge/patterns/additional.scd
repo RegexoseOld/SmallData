@@ -156,13 +156,13 @@ patterns: (
 		sus: 0.8,
 		rls: 0.5,
 		crv: -1.0,
-		ipeak: 4,
+		ipeak: 1,
 		iatk: 0.05,
-		irls: 21,
+		irls: 0.1,
 		icrv: -7,
 		fmratio: 1,
 		oscVol: 0.7,
-		oscFB: pi/4, // adds a snary growl use pi/4 multiples
+		oscFB: pi/8, // adds a snary growl use pi/4 multiples
 		devMin: 0.99,
 		devMax: 1.01,
 		slide1: 1.0, // adds a growl use multiples of 0.25
