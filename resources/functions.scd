@@ -241,9 +241,9 @@
         //"first utt".postln;
 		~runFx.();
 		~activateFaders.();
-		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
+		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:0)};
 		Pdefn(\melody).play(~t, quant:0);
-		[\kik02, \hh01, \bass].do{|n| Pbindef(n).play(~t, quant:4)};
+		//[\kik02, \hh01, \bass].do{|n| Pbindef(n).play(~t, quant:4)};
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);

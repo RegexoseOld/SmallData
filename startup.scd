@@ -153,18 +153,18 @@ Pbindef(\snip01, \w, 1.5, \zit1, 5, \zit2, 0.5,  \atk, 0.001, \rls, 0.1,  \trigg
 Pbindef(\sn01, \sweep, 0.04,  \shaper1, 1, \shaper2, 0.9, \rls, 0.3, \dist1, 1.2, \dist2, 1)
 
 Pbindef.all.do(_.stop)
-Pbindef(\dis, \devMin, 0.4, \devMax, 6,  \ffreq, 2000)
+Pbindef(\dis, )
 Pbindef(\dis, \fratio0, 3, \fratio1, 4, \fratio2, 2, \modInd0, 1, \modInd1, 4, \modInd2, 4).quant_(1)
 Pbindef(\dis).stop
 Pbindef(\dis, \detune, 120)
 Pbindef(\bass, \rls, 0.3)
 
 ~mock.()
-~allocate.(\dis, 8)
-~allocate.(\ins, 14)
-~allocate.(\lec, 14)
-~allocate.(\pr, 14)
-~allocate.(\con, 15)
+~allocate.(\dis, 10)
+~allocate.(\ins, 10)
+~allocate.(\lec, 12)
+~allocate.(\pr, 12)
+~allocate.(\con, 14)
 
 )
 (

@@ -84,7 +84,7 @@ SynthDef.new(\bass, {
 	sig = 4.collect({
 		var dev;
 		dev = {ExpRand(\devMin.kr(1.0), \devMax.kr(1.0))};
-		SinOsc.ar((freq * dev) + fm, \oscFB.kr(pi/4), \oscVol.kr(1.0));
+		SinOscFB.ar((freq * dev) + fm, \oscFB.kr(pi/4), \oscVol.kr(1.0));
 	}).sum;
 	sig = sig * env * volMod;
 	sig = (sig) * \distort.kr(1.5).tanh;

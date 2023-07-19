@@ -1,6 +1,30 @@
 (
 patterns:(
 	dis0: (
+		instrument: 'bellFm',
+		midinote: 65,
+		amp: Pfunc({~melos.amps.dis}),
+		fade: 0.2,
+		dur: 4,
+		index: 1,
+		mRatio: 1,
+		cRatio: 1,
+		atk: 0.5,
+		rls: 3,
+		crv: 5,
+		vibF: 0.2,
+		vibVol: 30,
+		trmF: 1,
+		trmRate: 2,
+		trmDep: 0.3,
+		trmDel: 1,
+		onset: 2,
+		rateVar: 0.5,
+		varDur: 1,
+		spread: 0.05,
+	),
+
+	dis10: (
 		instrument: 'fmFine',
 		midinote: ~melos.meloEdge.dis00,
 		amp: Pfunc({~melos.amps.dis}),
@@ -22,29 +46,9 @@ patterns:(
 		out: ~ch1.inbus
 	),
 
-	dis1: (
-		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.dis00,
-		amp: Pfunc({~melos.amps.dis}),
-		fade: 0.8,
-		detune: Pwhite( -10, 3, inf),
-		fratio0: 1, // Integer values for pitch accuracy
-		fratio1: 1,
-		fratio2: 1,
-		fmVol: 10,
-		devMin: 0.999,
-		devMax: 1.0001,
-		distort: 1.0,
-		thr: 0.65,
-		cgain: 1.3,
-		atk: 0.02,
-		rls: 0.07,
-		crv: -5,
-		dur: 0.25,
-		out: ~ch1.inbus
-	),
 
-	dis05: (
+
+	dis15: (
 		instrument: 'fm',
 		midinote: ~melos.meloEdge.dis05,
 		dur: ~melos.durEdge.dis05,
@@ -65,7 +69,7 @@ patterns:(
 		bpfQ: 0.9,
 
 	),
-	dis10: (
+	dis20: (
 		instrument: 'fmFine',
 		midinote: ~melos.meloEdge.dis10,
 		dur: ~melos.durEdge.dis10,
@@ -86,7 +90,7 @@ patterns:(
 		crv: -5,
 
 	),
-	dis16: (
+	dis25: (
 		instrument: 'quitt',
 		midinote: ~melos.melo.dis20,
 		dur: 0.25,
@@ -107,24 +111,7 @@ patterns:(
 		width: 0.3,
 	),
 
-	dis21: (
-		instrument: 'fm',
-		midinote:~melos.meloPoporgan.dis21,
-		dur: ~melos.duras.dis21,
-		amp: Pfunc({~melos.amps.dis}),
-		modRate: 0.4,
-		fmVol: 10,
-		devMin: 0.999,
-		devMax: 1.0001,
-		distort: 1.5,
-		thr: 0.99,
-		cgain: 1.0,
-		atk: 0.02,
-		rls: 0.1,
-		crv: -5,
-		fade: 0.8,
-		sustain: 0.14
-	),
+
 
 )
 )

@@ -9,27 +9,33 @@
     patName = catName.asString ++ "0";
 
     c = case
-	{count < 5}{
+	{count <9}{
+		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
+
+		status = "soundy beginnings";
+	}
+	{(count <= 10) && (count <= 14)}{
 		in_count = count;
-		patName = (catName.asString ++ "0").asSymbol;
+		patName = (catName.asString ++ "10").asSymbol;
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 		Pbindef(catName, \rls, 0.3 * count , \fratio0, in_count * 2.8, \modInd0, 0.5 * in_count , \modInd1, in_count , \modInd2, 2* in_count , \ffreq, 800 + Pxrand([-300, 0, 300, 1000, 200],inf), \fmVol, Pif(count.odd, 50, 230), \fmFreq, Pkey(\fmVol) * 15 ).quant_(4);
-		Pbindef(\bass, *~states[\bass].asPairs).quant_(4);
+		Pbindef(\bass, *~states[\bass].asPairs).play(~t, quant:4);
 		Pbindef(\bass,
 			\midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass01, ~melos.meloEdge.edgeBass00),
 			\dur, Pif((count%3==0), ~melos.durEdge.edgeBass01, ~melos.durEdge.edgeBass00),
 			\ipeak, 1 + (in_count * 0.5),
 			\fmratio, Pif(count.odd, 1, 2)).quant_(4);
-		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).quant_(4);
+		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).play(~t, quant:4);
+		Pbindef(\hh01).play(~t, quant:4);
 	    Pbindef(\sn01).stop;
 	    Pbindef(\snip01).stop;
 		Pbindef(\hh01, *~states[\hh01].asPairs).play(~t, quant:1);
 
 		status = "state 00 dotted notes";
 	}
-    {(count >= 5) && (count <= 10)} {
+    {(count >= 15) && (count <= 19)} {
         in_count = count-4;
-        patName = catName.asString ++ "05";
+        patName = catName.asString ++ "15";
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs);
 		// patterns should change brightness/sharpness with new counts
 		Pbindef(catName, \ffreq, 200 * in_count, \rq, 0.1).quant_(0);
@@ -41,9 +47,9 @@
         numNotes = 2;
         status = "state 01 snap groove ";
     }
-	{(count >= 11) && (count <=16)} {
+	{(count >= 20) && (count <=25)} {
         in_count = count - 10;
-        patName = catName ++ "10";
+        patName = catName ++ "20";
         Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 		Pbindef(catName, \fratio0, in_count * 0.25, \fratio1, in_count * 4, \modInd1, in_count, \modInd1, in_count * 4).quant_(4);
 		Pbindef(\kik02, \freq, ~melos.meloEdge.kik10, \dur, ~melos.durEdge.kik10, \amp, 0.40).quant_(4);
@@ -56,16 +62,10 @@
         numNotes = 4;
         status = "state 02 hectic deadline";
     }
-    {(count > 16) && (count <=20)} {
-        in_count = count - 15;
-        patName = catName ++ "16";
-        Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 
-        status = "state 03 a quieter part"
-	}
-    {(count > 20) && (count <=26)} {
+    {(count > 25) && (count <=30)} {
         in_count = count - 15;
-        patName = catName ++ "16";
+        patName = catName ++ "25";
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.43).quant_(4);
 		Pbindef(\hh01, \dur, Pif((count%3==0), 0.0625, 0.25), \decayScale, Pwhite(0.6, 1.2, inf),
 			\carAmp, Pif((count%3==0), ~melos.meloPoporgan.hh02, ~melos.meloPoporgan.hh01)
@@ -98,6 +98,6 @@
 
    ~addVolume.value(catName);
 	defer{~status[1].string = catName ++ " : " ++ status};
-   //postf("\nsetting %\to status \t %\n", catName, status);
+   postf("\nsetting %\to status \t %\n", catName, status);
 
 };
