@@ -3,7 +3,7 @@
     var c, dura, patName, status, count, in_count, local_feedbackVol, numNotes;
     count = floor(counter * ~factor).asInteger;
     status = "";
-    local_feedbackVol = 0.4;
+    local_feedbackVol = 0.1;
     numNotes = 1;
     dura = Env.new([1,0], [count], [-2]).asPseg;
     patName = catName.asString ++ "0";
@@ -11,7 +11,7 @@
     c = case
 		{count <= 4}{
 		patName = (catName.asString ++ "0").asSymbol;
-		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(1);
+		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).play(~t, quant:1);
 		Pbindef(catName, \midinote, 60 + [0, 12, -12, 24, -24].choose, \index, Pn(count, inf), \rls, 3 + (count*0.75), \dev, [0.1, 0.4, 1.0, 1.5, 1.9].choose).quant_(1);
 			[\kik02, \hh01, \bass, \snip, \sn01].do{|n| Pbindef(n).stop};
 		status = "friendly beginnings";
@@ -20,23 +20,22 @@
 		in_count = count -4;
 		patName = (catName.asString ++ "05").asSymbol;
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(0);
-		Pbindef(catName, \fmDur, 0.1 * count, \mRatio, count, \cRatio, Pif(count.odd, 1, 4), \index, 9 - count).quant_(1);
+		Pbindef(catName, \fmDur, 0.1 * count, \mRatio, count, \cRatio, Pif(count.odd, 1, 4), \index, 9 - count, \trmDep, 0.02 * in_count).quant_(1);
 		[\kik02, \hh01, \bass, \sn01].do{|n| Pbindef(n).stop};
 		status = "weird developments";
 	}
-	{(count <= 10) && (count <= 14)}{
+	{(count >= 10) && (count <= 14)}{
 		in_count = count -9 ;
 		patName = (catName.asString ++ "10").asSymbol;
-		//Pbindef(catName).clear;
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
-		Pbindef(catName, \rls, 0.3 * count , \fratio0, in_count * 2.8, \modInd0, 0.5 * in_count , \modInd1, in_count , \modInd2, 2* in_count , \ffreq, 800 + Pxrand([-300, 0, 300, 1000, 200],inf), \fmVol, Pif(count.odd, 50, 230), \fmFreq, Pkey(\fmVol) * 15 ).quant_(4);
-		Pbindef(\bass, *~states[\bass].asPairs).play(~t, quant:1);
+		Pbindef(catName, \rls, 0.3 * in_count , \fratio0, in_count * 2.8, \modInd0, 0.5 * in_count , \modInd1, in_count , \modInd2, 2* in_count , \ffreq, 800 + Pxrand([-300, 0, 300, 1000, 200],inf), \fmVol, Pif(count.odd, 50, 230), \fmFreq, Pkey(\fmVol) * 15 ).quant_(4);
+		//Pbindef(\bass, *~states[\bass].asPairs).play(~t, quant:1);
 		Pbindef(\bass,
 			\midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass01, ~melos.meloEdge.edgeBass00),
 			\dur, Pif((count%3==0), ~melos.durEdge.edgeBass01, ~melos.durEdge.edgeBass00),
 			\ipeak, 1 + (in_count * 0.5),
-			\fmratio, Pif(count.odd, 1, 2)).quant_(4);
-		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).play(~t, quant:1);
+			\fmratio, Pif(count.odd, 1, 2)).play(~t, quant:4);
+		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).play(~t, quant:4);
 		Pbindef(\hh01, \fade, 0.1 * in_count).play(~t, quant:4);
 	    Pbindef(\sn01).stop;
 	    Pbindef(\snip01).stop;

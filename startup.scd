@@ -137,6 +137,7 @@ s.waitForBoot({
 )
 ~sim.stop
 ~volMin = 0.02
+ ~maxCatCounter = 30
 ~t.beatsPerBar
 ~melos.durEdge
 ~buffers[\atmos][0].play
@@ -157,14 +158,14 @@ Pbindef(\dis, \fmDur, 2, \trmF, 1, \trmRate, 8, \trmDep, 0.04, \trmDel, 1, \onse
 Pbindef(\dis, \fratio0, 3, \fratio1, 4, \fratio2, 2, \modInd0, 1, \modInd1, 4, \modInd2, 4).quant_(1)
 Pbindef(\dis).play(~t)
 Pbindef(\dis, \detune, 120)
-Pbindef(\bass, \ipeak, 5, \irls, 0.2)
+Pbindef(\bass)
 
 ~mock.()
-~allocate.(\dis, 10)
-~allocate.(\ins, 10)
-~allocate.(\lec, 12)
-~allocate.(\pr, 12)
-~allocate.(\con, 14)
+~allocate.(\dis, 12)
+~allocate.(\ins, 11)
+~allocate.(\lec, 13)
+~allocate.(\pr, 10)
+~allocate.(\con, 10)
 
 )
 (
@@ -177,9 +178,11 @@ Pbindef(\con).play(~t);
 Pbindef(\con, \rls, 0.05)
 Pbindef(\ins).play(~t);
 Pbindef(\lec).play(~t);
-
+~buffers[\atmos][3].play
 
 )
 (
-Pbindef(\pr, \modInd0, 4, \modInd1, 4, \modInd2, 8)
+Synth(\tgrains, [\buf, ~buffers[\catSampEn][3],  \amp, 0.2]  )
+Pbindef(\grainvox).play
+{BrownNoise.ar}.play
 )
