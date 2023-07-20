@@ -12,7 +12,7 @@
 		{count <= 4}{
 		patName = (catName.asString ++ "0").asSymbol;
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(1);
-		Pbindef(catName, \midinote, 60 + Prand([0, 12, -12, 24, -24], count), \index, Pn(count, count), \rls, 3 + (count*0.75), \dev, [0.1, 0.4, 1.0, 1.5, 1.9].choose).quant_(1);
+		Pbindef(catName, \midinote, 60 + [0, 12, -12, 24, -24].choose, \index, Pn(count, inf), \rls, 3 + (count*0.75), \dev, [0.1, 0.4, 1.0, 1.5, 1.9].choose).quant_(1);
 			[\kik02, \hh01, \bass, \snip, \sn01].do{|n| Pbindef(n).stop};
 		status = "friendly beginnings";
 	}
@@ -37,7 +37,7 @@
 			\ipeak, 1 + (in_count * 0.5),
 			\fmratio, Pif(count.odd, 1, 2)).quant_(4);
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39).play(~t, quant:1);
-		Pbindef(\hh01, \fade, 0.1 * in_count)).play(~t, quant:4);
+		Pbindef(\hh01, \fade, 0.1 * in_count).play(~t, quant:4);
 	    Pbindef(\sn01).stop;
 	    Pbindef(\snip01).stop;
 		Pbindef(\hh01, *~states[\hh01].asPairs).play(~t, quant:1);
