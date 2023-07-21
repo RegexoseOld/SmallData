@@ -210,28 +210,26 @@
 ~setGlobal = {
     var c;
     c = case
-	{~totalUtts == 50} {
-			~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 2, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 3]);
+	{~totalUtts == 90} {
+			~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
 	}
-    {~totalUtts == 20}{
-        //start a drum pattern
-        //Pbindef(\drm, \dur, Pseq([4, 4, 4, 8], inf), \bpf1, Prand([80, 100, 300], 24),  \amp, 0.3).play(~t);
-		~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][2], \atk, 2, \sus, 20, \rls, 10,  \amp, 0.4, \thr, 0.5, \cgain, 1]);
+    {~totalUtts == 55}{
+		~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][2], \atk, 12, \sus, 30, \rls, 30,  \amp, 0.25, \thr, 0.5, \cgain, 1]);
 
     }
-	{~totalUtts == 15} {
+	{~totalUtts == 30} {
 		~birds.set(\rate, 0.7)
 	}
-	{~totalUtts == 12} {
+	{~totalUtts == 27} {
 		~birds.set(\rate, 1.5)
 	}
-	{~totalUtts == 10}{
+	{~totalUtts == 25}{
         //bird Atmosphere
-		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][1], \atk, 5, \sus, 45, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
+		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][1], \atk, 10, \sus, 25, \rls, 10, \amp, 0.9, \thr, 0.5, \cgain, 1.5]);
 	}
-	{~totalUtts == 2}{
+	{~totalUtts == 5}{
         //bird Atmosphere
-		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][1], \atk, 5, \sus, 10, \rls, 5,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
+		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][3], \atk, 20, \sus, 10, \rls, 15,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
 			"10 utts".postln;
     }
     {(~totalUtts > 1) && (~totalUtts < 10) }{
@@ -241,9 +239,9 @@
         //"first utt".postln;
 		~runFx.();
 		~activateFaders.();
-		~fadingSynths.do{|name| Pbindef(name).play(~t, quant:4)};
+		//~fadingSynths.do{|name| Pbindef(name).play(~t, quant:0)};
 		Pdefn(\melody).play(~t, quant:0);
-		[\kik02, \hh01, \bass].do{|n| Pbindef(n).play(~t, quant:4)};
+		//[\kik02, \hh01, \bass].do{|n| Pbindef(n).play(~t, quant:4)};
     }
     {true} {"end of global settings".postln};
     ~allocateSynth.(~cat, ~uttDict[~cat]);

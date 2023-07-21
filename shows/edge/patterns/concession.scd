@@ -1,6 +1,56 @@
 (
 patterns: (
 	con0: (
+		instrument: 'bellFm',
+		midinote: 63,
+		amp: Pfunc({~melos.amps.con}),
+		fade: 0.2,
+		dur: 8,
+		index: 1,
+		mRatio: 1,
+		cRatio: 1,
+		atk: 0.5,
+		rls: 3,
+		crv: 5,
+		vibF: 0.2,
+		vibVol: 30,
+		trmF: 1,
+		trmRate: 6,
+		trmDep: 0.0,
+		trmDel: 1,
+		onset: 3,
+		rateVar: 0.5,
+		varDur: pi/4,
+		spread: 0.05,
+		dev: 1.5,
+		out: ~ch4.inbus
+	),
+con05: (
+		instrument: 'bellFm',
+		midinote: 66,
+		amp: Pfunc({~melos.amps.con}),
+		fade: 0.2,
+		dur: 8,
+		index: 1,
+		mRatio: 1,
+		cRatio: 1,
+		atk: 0.5,
+		rls: 3,
+		crv: 5,
+		vibF: 0.2,
+		vibVol: 30,
+		trmF: 1,
+		trmRate: 6,
+		trmDep: 0.0,
+		trmDel: 1,
+		onset: 3,
+		rateVar: 0.5,
+		varDur: pi/4,
+		spread: 0.05,
+		dev: 1.5,
+		out: ~ch4.inbus
+	),
+	con10: (
 		instrument: 'fmFine',
 		midinote: ~melos.meloEdge.con00,
 		amp: Pfunc({~melos.amps.con}),
@@ -22,30 +72,8 @@ patterns: (
 		out: ~ch4.inbus
 
 	),
-	con1: (
-		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.con00,
-		amp: Pfunc({~melos.amps.con}),
-		fade: 0.7,
-		detune: Pwhite( -10, 3, inf),
-		fratio0: 1, // Integer values for pitch accuracy
-		fratio1: 1,
-		fratio2: 1,
-		fmVol: 10,
-		devMin: 0.999,
-		devMax: 1.0001,
-		distort: 1.0,
-		thr: 0.65,
-		cgain: 1.3,
-		atk: 0.02,
-		rls: 0.07,
-		crv: -5,
-		dur: 0.25,
-		out: ~ch4.inbus
 
-
-	),
-	con05: (
+	con15: (
 		instrument: 'bellFm',
 		midinote: ~melos.meloEdge.con05,
 		dur: ~melos.durEdge.con05,
@@ -66,7 +94,7 @@ patterns: (
 		bpfQ: 0.9,
 
 	),
-	con10: (
+	con20: (
 		instrument: 'fmFine',
 		midinote: ~melos.meloEdge.con10,
 		amp: Pfunc({~melos.amps.con}),
@@ -87,7 +115,7 @@ patterns: (
 		crv: -5,
 	),
 
-	con16: (
+	con25: (
 		instrument: 'bellFm',
 		midinote: ~melos[\melo][\con20],
 		detune: Pn(Pgeom(20, 0.84, 16), inf),
@@ -109,25 +137,6 @@ patterns: (
 		bpfQ: 0.9,
 	),
 
-	con21: (
-		instrument: 'bellFm',
-		midinote: ~melos.meloPoporgan.con21,
-		dur: ~melos.duras.con21,
-		amp:  Pfunc({~melos.amps.con}),
-		fade: 0.7,
-		thr: 0.5,
-		cgain: 3,
-		pan: 0,
-		atk: 0.03,
-		rls: 0.13,
-		vibF: 0.7,
-		vibVol: 35,
-		dev: 0.04,
-		spread: 0.02,
-		bpf1: Pn(Pgeom(3000, 0.73, 16), inf),
-		bpf2: 5,
-		bpf3: 0.3,
-		bpfQ: 0.9,
-	),
+
 )
 )

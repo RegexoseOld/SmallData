@@ -183,7 +183,7 @@ SynthDef(\sampSt, {
 
 SynthDef(\sampMon, {
     var sig, env, pos;
-    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1)), doneAction: 2);
+    env = EnvGen.kr(Env.linen(\atk.kr(0.01), \sus.kr(1), \rls.kr(1), curve: 4), doneAction: 2);
 	sig = 4.collect({
 		var lag = {ExpRand(0.0001, \lag.kr(0.0002) )};
 		PlayBuf.ar(1, \buf.kr(0), \rate.kr(1) * BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0) + lag, \loop.kr(0.0));

@@ -5,13 +5,13 @@ SynthDef.new(\bellFm, {
     var sig, sig2, env, volMod, trem;
     env = EnvGen.kr(Env.perc(atk, rls, curve: crv), doneAction:2);
     volMod = SinOsc.kr(\vibF.kr(0.2), 0, \vibVol.kr(30))  ; // vol modulation
-    trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.5), \varDur.kr(1));
+    trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.0), \varDur.kr(0));
     sig2 =  SinOsc.ar(freq * XLine.kr(mRatio, mRatio * cRatio, \fmDur.kr(0.02)), mul:freq * mRatio * index);
     sig = 3.collect({
 		var spread, temp, bpf;
 		spread = LFNoise1.kr(\spread.kr(0.05)).bipolar(\dev.ir(0.7)).midiratio;
 		bpf = \bpf1.kr(200);
-		temp = SinOsc.ar(freq * trem * spread + sig2 , mul: volMod);
+		temp = SinOsc.ar(freq * trem * spread + sig2, mul: 0.5 + volMod);
 		temp = BPF.ar(temp, XLine.kr(bpf, bpf * \bpf2.kr(1) * spread.abs, \bpf3.kr(0.2)), \bpfQ.kr(0.9), \bpfMul.kr(2));
 	}).sum;
     sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
@@ -66,7 +66,8 @@ SynthDef(\fmFine, {
 	}).sum;
 	car = HPF.ar(car * env.pow(0.5), f);
 	car = RLPF.ar(car, \ffreq.kr(1000), \rq.kr(1.0));
-	sig = car * \amp.kr(0.2) * \distort.kr(1.0).tanh;
+	sig = car * \distort.kr(1.0).tanh;
+	sig = sig * \amp.kr(0.3) * \fade.kr(1);
 	sig = Pan2.ar(sig, \pan.kr(0.0));
 	Out.ar(\out.kr(0), sig)
 }).add;
@@ -76,7 +77,7 @@ SynthDef.new(\bass, {
 	|gate = 1, freq=100|
 	var  sig, env, ienv, clean, cleanEnv, volMod, fm, fmFreq, slide;
 	env = EnvGen.kr(Env.adsr(\atk.kr(0.01), \dec.kr(0.2), \sus.kr(1.0), \rls.kr(1.0), curve:\crv.kr(-4.0)), gate, doneAction:2);
-	ienv = Env([1, \ipeak.kr(5, 1)], [\iatk.kr(0.01), \irls.kr(1.0)], [1, \icrv.kr(-4.0)]).ar;
+	ienv = Env([1, \ipeak.kr(5), 1], [\iatk.kr(0.01), \irls.kr(1.0)], [1, \icrv.kr(-4.0)]).ar;
 	volMod = SinOsc.kr(\modRate.kr(1.2), \modPhase.kr(pi/2));
 	slide = XLine.kr(1, \slide1.kr(1.0), \slide2.kr(1.0), \slide3.kr(1));
 	fmFreq = freq * \fmratio.kr(1);
@@ -84,10 +85,10 @@ SynthDef.new(\bass, {
 	sig = 4.collect({
 		var dev;
 		dev = {ExpRand(\devMin.kr(1.0), \devMax.kr(1.0))};
-		SinOsc.ar((freq * dev) + fm, \oscFB.kr(pi/4), \oscVol.kr(1.0));
+		SinOscFB.ar((freq * dev) +fm , \oscFB.kr(pi/4), \oscVol.kr(1.0));
 	}).sum;
-	sig = sig * env * volMod;
-	sig = (sig) * \distort.kr(1.5).tanh;
+	sig = (sig) * env * volMod;
+	sig = sig * \distort.kr(1.5).tanh;
 	sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
 	sig = Pan2.ar(sig * (\amp.kr(0.1) * \fade.kr(1)), \pan.kr(1));
 	Out.ar(\out.kr(0), sig );
@@ -111,7 +112,7 @@ SynthDef(\sn1, {
 	sig = WhiteNoise.ar(1) * snEnv;
 	sig = RHPF.ar(sig, \ffreq.kr(1000), 0.4);
 	sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-	sig = [sig + ghost] * \amp.kr(0.3);
+	sig = [sig + ghost] * \amp.kr(0.3) * \fade.kr(1);
    Out.ar(out, sig!2);
 }).add;
 
@@ -124,7 +125,7 @@ SynthDef(\kik2, {
 	sig = sig * (1 + (2 * Env.perc(0.001, 0.2).ar));
 	sig = (sig * \dist.kr(0).dbamp).tanh;
 	sig = sig * Env.perc(0.001, \rls.kr(1.3), curve: -8).ar(Done.freeSelf);
-	sig = sig * \amp.kr(0.3);
+	sig = sig * \amp.kr(0.3) * \fade.kr(1);
 	sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig);
 }).add;
@@ -143,7 +144,7 @@ SynthDef(\sn2, {
 	sig = sig * Env.perc(0.001, 0.25, curve: -4).ar;
 	sig = sig + ( GVerb.ar(sig, 16, 2) * -30.dbamp);
 	sig = sig * Env.perc(0.001, \rls.kr(1.3), curve: -4).ar(Done.freeSelf);
-	sig = sig * \amp.kr(0.75);
+	sig = sig * \amp.kr(0.75) * \fade.kr(1);
 	sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig);
 }).add;
