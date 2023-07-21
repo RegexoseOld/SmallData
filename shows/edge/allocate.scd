@@ -43,7 +43,7 @@
 	    Pbindef(\sn01).stop;
 	    Pbindef(\snip01).stop;
 
-		status = "state 00 dotted notes";
+		status = "state 03 dotted notes";
 	}
     {(count >= 15) && (count <= 19)} {
         in_count = count-14;
@@ -56,11 +56,14 @@
 		Pbindef(\hh01, \minRing, Pwhite(0.01, 0.07, inf), \maxRing, Pwhite(0.08, 0.18, inf), \dur, 0.25, \fade, 1).quant_(4);
 	    Pbindef(\snip01, \fade, 1).play(~t, quant:4);
         numNotes = 2;
-        status = "state 01 snap groove ";
+        status = "state 04 snap groove ";
     }
 	{(count >= 20) && (count <=23)} {
         in_count = count - 19;
         patName = catName ++ "20";
+        [\kik02, \hh01, \bass, \snip, \sn01].do{|n|
+			//Pbindef(n).isPlaying.postln;
+			if (Pbindef(n).isPlaying == false, {Pbindef(n).play(~t, quant:4)})};
         Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(0);
 		Pbindef(catName, \fratio0, in_count * 0.25, \fratio1, in_count * 4, \modInd1, in_count, \modInd1, in_count * 4).quant_(4);
 		Pbindef(\kik02, \freq, ~melos.meloEdge.kik10, \dur, ~melos.durEdge.kik10, \amp, 0.40, \fade, 0.9).quant_(4);
@@ -71,7 +74,7 @@
 	    Pbindef(\bass, \modRate, 1, \midinote, ~melos.meloEdge.bass10, \dur, ~melos.durEdge.bass10,
 			\rls, 0.3, \fmVol, Pif((count%3==0), 130, 60), \cgain, 2.2, \amp, 0.3, \fade, 0.8).quant_(4);
         numNotes = 3;
-        status = "state 02 hectic deadline";
+        status = "state 05 hectic deadline";
     }
 
     {(count > 23) && (count <=25)} {
@@ -79,8 +82,8 @@
         patName = catName ++ "25";
         Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
 		[\kik02, \hh01, \bass, \snip, \sn01].do{|n|
-			Pbindef(n).isPlaying.postln;
-			if (Pbindef(n).isPlaying == False, {Pbindef(n).play(~t, quant:4)})};
+			//Pbindef(n).isPlaying.postln;
+			if (Pbindef(n).isPlaying == false, {Pbindef(n).play(~t, quant:4)})};
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.43, \fade, 1).quant_(4);
 		Pbindef(\hh01, \dur, Pif((count%3==0), 0.0625, 0.25), \decayScale, Pwhite(0.6, 1.2, inf),
 			\carAmp, Pif((count%3==0), ~melos.meloPoporgan.hh02, ~melos.meloPoporgan.hh01), \fade, 1
@@ -90,7 +93,7 @@
 			\rls, 2, \fmVol, Pif((count%3==0), 130, 60), \cgain, 2.2, \fade, 1
 ).quant_(4);
         numNotes = 2;
-        status = "state 03 one-notes with downward glissando";
+        status = "state 06 one-notes with downward glissando";
     }
 
     {true} { "end of attCat reached".postln};

@@ -130,7 +130,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5,4 ].choose.wait;
+        [5, 4].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -138,27 +138,23 @@ s.waitForBoot({
 ~sim.stop
 ~volMin = 0.02
  ~maxCatCounter = 30
-~t.beatsPerBar
-~melos.durEdge
+~t.tempo = 90/60;
+
 ~buffers[\atmos][0].play
 
-(1 + (2* 0.177)) * [1, 2.3, 3.5, 5.8]
-Synth(\sn2)
 
-~slider_buttons[1]["dissent"]
-Pbindef(\kik02).play(~t);
-Pbindef(\snip01).play(~t)
-Pbindef(\hh01, \amp, 0.1).stop
-Pbindef(\snip01, \w, 1.5, \zit1, 5, \zit2, 0.5,  \atk, 0.001, \rls, 0.1,  \trigger, ~melos.meloEdge.snap01, \dur, ~melos.durEdge.snap01).quant_(4)
+(
+Pbindef(\kik02);
+Pbindef(\hh01);
+Pbindef(\bass);
+Pbindef(\pr);
+Pbindef(\dis);
+Pbindef(\con);
+Pbindef(\con);
+Pbindef(\ins);
+Pbindef(\lec);
 
-Pbindef(\sn01, \sweep, 0.04,  \shaper1, 1, \shaper2, 0.9, \rls, 0.3, \dist1, 1.2, \dist2, 1)
-
-Pbindef.all.do(_.stop)
-Pbindef(\dis, \fmDur, 2, \trmF, 1, \trmRate, 8, \trmDep, 0.04, \trmDel, 1, \onset, 3, \rateVar, 0.2, \varDur, pi/4 )
-Pbindef(\dis, \fratio0, 3, \fratio1, 4, \fratio2, 2, \modInd0, 1, \modInd1, 4, \modInd2, 4).quant_(1)
-Pbindef(\dis).play(~t)
-Pbindef(\dis, \detune, 120)
-Pbindef(\bass)
+)
 (
 var n = 1;
 ~mock.();
@@ -168,11 +164,11 @@ var n = 1;
 ~allocate.(\pr, n);
 ~allocate.(\con, n);
 
-~allocate.(\dis, 16);
-~allocate.(\ins, 13);
-~allocate.(\lec, 14);
-~allocate.(\pr, 13);
-~allocate.(\con, 9);
+~allocate.(\dis, 24);
+~allocate.(\ins, 8);
+~allocate.(\lec, 4);
+~allocate.(\pr, 25);
+~allocate.(\con, 24);
 
 )
 (
@@ -182,10 +178,9 @@ Pbindef(\bass).play(~t);
 Pbindef(\pr).play(~t);
 Pbindef(\dis).play(~t);
 Pbindef(\con).play(~t);
-Pbindef(\con, \rls, 0.05)
+Pbindef(\con).play(~t);
 Pbindef(\ins).play(~t);
 Pbindef(\lec).play(~t);
-~buffers[\atmos][3].play
 
 )
 (
