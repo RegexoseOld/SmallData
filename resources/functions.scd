@@ -210,20 +210,20 @@
 ~setGlobal = {
     var c;
     c = case
-	{~totalUtts == 70} {
+	{~totalUtts == 90} {
 			~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
 	}
-    {~totalUtts == 45}{
-		~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][2], \atk, 12, \sus, 30, \rls, 30,  \amp, 0.4, \thr, 0.5, \cgain, 1]);
+    {~totalUtts == 55}{
+		~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][2], \atk, 12, \sus, 30, \rls, 30,  \amp, 0.25, \thr, 0.5, \cgain, 1]);
 
     }
-	{~totalUtts == 20} {
+	{~totalUtts == 30} {
 		~birds.set(\rate, 0.7)
 	}
-	{~totalUtts == 17} {
+	{~totalUtts == 27} {
 		~birds.set(\rate, 1.5)
 	}
-	{~totalUtts == 15}{
+	{~totalUtts == 25}{
         //bird Atmosphere
 		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][1], \atk, 10, \sus, 25, \rls, 10, \amp, 0.9, \thr, 0.5, \cgain, 1.5]);
 	}

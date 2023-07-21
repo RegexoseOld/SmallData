@@ -66,7 +66,8 @@ SynthDef(\fmFine, {
 	}).sum;
 	car = HPF.ar(car * env.pow(0.5), f);
 	car = RLPF.ar(car, \ffreq.kr(1000), \rq.kr(1.0));
-	sig = car * \amp.kr(0.2) * \distort.kr(1.0).tanh;
+	sig = car * \distort.kr(1.0).tanh;
+	sig = sig * \amp.kr(0.3) * \fade.kr(1);
 	sig = Pan2.ar(sig, \pan.kr(0.0));
 	Out.ar(\out.kr(0), sig)
 }).add;
@@ -111,7 +112,7 @@ SynthDef(\sn1, {
 	sig = WhiteNoise.ar(1) * snEnv;
 	sig = RHPF.ar(sig, \ffreq.kr(1000), 0.4);
 	sig = Compander.ar(sig, sig, \thr.kr(0.35), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
-	sig = [sig + ghost] * \amp.kr(0.3);
+	sig = [sig + ghost] * \amp.kr(0.3) * \fade.kr(1);
    Out.ar(out, sig!2);
 }).add;
 
@@ -124,7 +125,7 @@ SynthDef(\kik2, {
 	sig = sig * (1 + (2 * Env.perc(0.001, 0.2).ar));
 	sig = (sig * \dist.kr(0).dbamp).tanh;
 	sig = sig * Env.perc(0.001, \rls.kr(1.3), curve: -8).ar(Done.freeSelf);
-	sig = sig * \amp.kr(0.3);
+	sig = sig * \amp.kr(0.3) * \fade.kr(1);
 	sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig);
 }).add;
@@ -143,7 +144,7 @@ SynthDef(\sn2, {
 	sig = sig * Env.perc(0.001, 0.25, curve: -4).ar;
 	sig = sig + ( GVerb.ar(sig, 16, 2) * -30.dbamp);
 	sig = sig * Env.perc(0.001, \rls.kr(1.3), curve: -4).ar(Done.freeSelf);
-	sig = sig * \amp.kr(0.75);
+	sig = sig * \amp.kr(0.75) * \fade.kr(1);
 	sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig);
 }).add;
