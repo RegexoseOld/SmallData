@@ -36,10 +36,10 @@
 			\dur, Pif((count%3==0), ~melos.durEdge.edgeBass01, ~melos.durEdge.edgeBass00),
 			\ipeak, 1 + (in_count * 0.5),
 			\fmratio, Pif(count.odd, 1, 2),
-			\fade, 1).quant_(4);
+			\fade, 1).quant_(8);
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.39, \fade, 1).play(~t, quant:4);
-		Pbindef(\hh01, *~states[\hh01].asPairs).play(~t, quant:1);
-		Pbindef(\hh01, \fade, 0.1 * in_count).quant_(4);
+		Pbindef(\hh01, *~states[\hh01].asPairs).play(~t, quant:4);
+		Pbindef(\hh01, \fade, 0.1 * in_count).quant_(0);
 	    Pbindef(\sn01).stop;
 	    Pbindef(\snip01).stop;
 
@@ -51,7 +51,7 @@
 		Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(0);
 		Pbindef(catName, \ffreq, 200 * in_count, \rq, 0.1).quant_(4);
 		Pbindef(\kik02, \freq, ~melos.meloEdge.kik02, \dur, ~melos.durEdge.kik02, \amp, 0.28, \timb1, Pwhite(0.05, 0.2, inf), \fade, 1).quant_(4);
-		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass03, ~melos.meloEdge.edgeBass00), \dur, Pif((count%3==0), ~melos.durEdge.edgeBass03, ~melos.durEdge.edgeBass00), \oscFB, 3*pi/8).quant_(4);
+		Pbindef(\bass, \midinote, Pif((count%3==0), ~melos.meloEdge.edgeBass03, ~melos.meloEdge.edgeBass00), \dur, Pif((count%3==0), ~melos.durEdge.edgeBass03, ~melos.durEdge.edgeBass00), \oscFB, 3*pi/8).quant_(8);
 		Pbindef(\sn01, \freq, ~melos.meloEdge.sn02 *3, \dur, ~melos.durEdge.sn02, \fade, 1).play(~t, quant:4);
 		Pbindef(\hh01, \minRing, Pwhite(0.01, 0.07, inf), \maxRing, Pwhite(0.08, 0.18, inf), \dur, 0.25, \fade, 1).quant_(4);
 	    Pbindef(\snip01, \fade, 1).play(~t, quant:4);
@@ -78,6 +78,9 @@
         in_count = count - 22;
         patName = catName ++ "25";
         Pbindef(catName, *~states[catName][patName.asSymbol].asPairs).quant_(4);
+		[\kik02, \hh01, \bass, \snip, \sn01].do{|n|
+			Pbindef(n).isPlaying.postln;
+			if (Pbindef(n).isPlaying == False, {Pbindef(n).play(~t, quant:4)})};
 		Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.43, \fade, 1).quant_(4);
 		Pbindef(\hh01, \dur, Pif((count%3==0), 0.0625, 0.25), \decayScale, Pwhite(0.6, 1.2, inf),
 			\carAmp, Pif((count%3==0), ~melos.meloPoporgan.hh02, ~melos.meloPoporgan.hh01), \fade, 1
@@ -101,7 +104,7 @@
             \dur, Prand([0.25, 0.31], numNotes),
 			\buf, ~melos[\slots][catName],
             \amp, ~fbVol * local_feedbackVol, \pan, 0,
-			\rate, Prand([[1, 1.03], [1, 1.08], [0.97, 1.001], [0.83, 0.91]], numNotes),
+			\rate, Prand([[1, 1.03], [1, 1.18], [0.97, 1.101], [0.83, 0.91]], numNotes),
             \atk, 0.05, \rls, Pkey(\dur), \crv, -4,
 			\cgain, 1.5,
 			\out, ~utt.inbus

@@ -130,7 +130,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5,7, 11 ].choose.wait;
+        [5,4 ].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -159,13 +159,20 @@ Pbindef(\dis, \fratio0, 3, \fratio1, 4, \fratio2, 2, \modInd0, 1, \modInd1, 4, \
 Pbindef(\dis).play(~t)
 Pbindef(\dis, \detune, 120)
 Pbindef(\bass)
+(
+var n = 1;
+~mock.();
+~allocate.(\dis, n);
+~allocate.(\ins, n);
+~allocate.(\lec, n);
+~allocate.(\pr, n);
+~allocate.(\con, n);
 
-~mock.()
-~allocate.(\dis, 24)
-~allocate.(\ins, 24)
-~allocate.(\lec, 24)
-~allocate.(\pr, 24)
-~allocate.(\con, 24)
+~allocate.(\dis, 16);
+~allocate.(\ins, 13);
+~allocate.(\lec, 14);
+~allocate.(\pr, 13);
+~allocate.(\con, 9);
 
 )
 (
