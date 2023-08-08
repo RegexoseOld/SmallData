@@ -52,6 +52,7 @@ s.waitForBoot({
 	Window.closeAll;
 	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/sequencer_gui.scd");
 	thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/mc_gui.scd");
+
 	//make Dictionary with effekt Patches
 	~patches = (~resourcePath ++ "fx_patches.scd").load;
 	//make all other Dictionaries, that can't be made in constants
@@ -130,29 +131,36 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [5, 4].choose.wait;
+        [0.8, 1.1, 1.4].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
 )
 ~sim.stop
+
 ~volMin = 0.02
  ~maxCatCounter = 30
-~t.tempo = 90/60;
 
 ~buffers[\atmos][0].play
-
+~t.findKeyForValue(~t.pr)
 
 (
 Pbindef(\kik02);
 Pbindef(\hh01);
 Pbindef(\bass);
-Pbindef(\pr);
-Pbindef(\dis);
+Pbindef(\pr).play(~t.pr);
+Pbindef(\dis).play(~t.dis);
+Pbindef(\con).play(~t.con);
 Pbindef(\con);
-Pbindef(\con);
-Pbindef(\ins);
-Pbindef(\lec);
+Pbindef(\ins).play(~t.ins);
+Pbindef(\lec).play(~t.lec);
+
+)
+(
+	~t.values.do({
+		|k|
+		"clock  %  has size  %  queue  %".format(~t.findKeyForValue(k), k.queue.size, k.queue).postln;
+	});
 
 )
 (
@@ -170,21 +178,4 @@ var n = 1;
 ~allocate.(\pr, 25);
 ~allocate.(\con, 24);
 
-)
-(
-Pbindef(\kik02).play(~t);
-Pbindef(\hh01).play(~t);
-Pbindef(\bass).play(~t);
-Pbindef(\pr).play(~t);
-Pbindef(\dis).play(~t);
-Pbindef(\con).play(~t);
-Pbindef(\con).play(~t);
-Pbindef(\ins).play(~t);
-Pbindef(\lec).play(~t);
-
-)
-(
-Synth(\tgrains, [\buf, ~buffers[\catSampEn][3],  \amp, 0.2]  )
-Pbindef(\grainvox).play
-{BrownNoise.ar}.play
 )
