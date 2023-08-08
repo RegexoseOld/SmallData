@@ -3,7 +3,7 @@
 ~activateVolume = {
 	|ch, i|
 	var value;
-	"chan   %    and i   %  current  % ".format(ch, i, ~currentUttPattern.asString).postln;
+	//"chan   %    and i   %  current  % ".format(ch, i, ~currentUttPattern.asString).postln;
 	value = MIDIFunc.cc({
 		arg ...args;
 		args[..2].postln;
@@ -41,11 +41,11 @@
 ~activatePitch = {
 	|ch, i, offset|
 	var value, sendNum;
-	"making pitch wheel for  % and i %".format(ch, i).postln;
+	//"making pitch wheel for  % and i %".format(ch, i).postln;
 	sendNum = i + offset;
 	value = MIDIFunc.cc(
 		{arg ...args;
-			"pitch wheel for  % :    %".format(ch, args[..2]).postln;
+			//"pitch wheel for  % :    %".format(ch, args[..2]).postln;
 			~melos.seqRates[ch] = args[0].linlin(0, 127, -20, 20);
 		},
 		sendNum,

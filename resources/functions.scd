@@ -1,3 +1,4 @@
+
 ~updateUtts = {
     |utt, cat|
     //postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
@@ -17,7 +18,6 @@
     //postf("\nupdating index % to count % ", index, count);
 	~mcLabels[1][index].string = cat ++ "\n" ++ count;
 	~mcLabels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
-
 	}
 };
 
@@ -128,7 +128,7 @@
 	~sends.keys.asList.sort.do({
 		|snd|
 		if ("vrb".matchRegexp(snd.asString), {
-			("found  " ++ snd).postln;
+			//("found  " ++ snd).postln;
 		    ~activateReverb.(snd, i, 89 );
 			i = i+1;
 		})
@@ -158,7 +158,7 @@
 	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~melos[\amps][cat] = editVol + (~volPlus * ~addFac)}
 	{editVol >= ~volMax}{  ~melos[\amps][cat] = ~volMax}
 	{true}{"end of addVolume".postln};
-	//postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
+    //postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
 	defer{var index, height, text;
 	//"updating mc: index % height  % text  %".format(index, height, text);
 	index = ~fadingSynths.detectIndex({|it, i| it == cat});
@@ -191,7 +191,7 @@
 			~mcTrack[1][index].resizeTo(100, height);
 			~mcTrack[1][index].string = text;
 		}
-	})
+	});
 };
 
 ~allocateSynth = {
@@ -204,19 +204,19 @@
     {s_name == 'insinuation'} {~allocate.value(\ins, count)}
     {s_name == 'lecture'} {~allocate.value(\lec, count)}
     {s_name == 'concession'} {~allocate.value(\con, count)}
-		{true}{"end of allocation".postln};
+	{true}{"end of allocation".postln};
 };
 
 ~setGlobal = {
-    var c;
-    c = case
+	var c;
+	c = case
 	{~totalUtts == 90} {
-			~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
+		~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
 	}
-    {~totalUtts == 55}{
+	{~totalUtts == 55}{
 		~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][2], \atk, 12, \sus, 30, \rls, 30,  \amp, 0.25, \thr, 0.5, \cgain, 1]);
 
-    }
+	}
 	{~totalUtts == 30} {
 		~birds.set(\rate, 0.7)
 	}
@@ -224,32 +224,35 @@
 		~birds.set(\rate, 1.5)
 	}
 	{~totalUtts == 25}{
-        //bird Atmosphere
+		//bird Atmosphere
 		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][1], \atk, 10, \sus, 25, \rls, 10, \amp, 0.9, \thr, 0.5, \cgain, 1.5]);
 	}
 	{~totalUtts == 5}{
-        //bird Atmosphere
+		//bird Atmosphere
 		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][3], \atk, 20, \sus, 10, \rls, 15,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
-			"10 utts".postln;
-    }
-    {(~totalUtts > 1) && (~totalUtts < 10) }{
-		//Pbindef(\metronom).play(~t, quant:1);
+		"10 utts".postln;
 	}
-    {(~totalUtts == 1)}{
-        //"first utt".postln;
+	{(~totalUtts > 1) && (~totalUtts < 10) }{
+	}
+	{(~totalUtts == 1)}{
+		//"first utt".postln;
 		~runFx.();
 		~activateFaders.();
 		//~fadingSynths.do{|name| Pbindef(name).play(~t, quant:0)};
 		Pdefn(\melody).play(~t, quant:0);
 		//[\kik02, \hh01, \bass].do{|n| Pbindef(n).play(~t, quant:4)};
-    }
-    {true} {"end of global settings".postln};
-    ~allocateSynth.(~cat, ~uttDict[~cat]);
-    ~t.schedAbs(~t.nextTimeOnGrid, {
-        if(~checkFadeVols.() >= ~thresCont, {
+			~t.schedAbs(~t.nextTimeOnGrid, {
+		if(~checkFadeVols.() >= ~thresCont, {
 			~continuousFadeOut.value(~fadingSynths); 1},
 		{"not fading: fadeVols = %".format(~fadeVols).postln})
-    });
+	});
+	}
+	{true} {"end of global settings".postln};
+	~allocateSynth.(~cat, ~uttDict[~cat]);
+
+	"clock  has size  %  queue  %".format(~t.queue.size, ~t.queue).postln;
+
+
 };
 
 ~mock = {

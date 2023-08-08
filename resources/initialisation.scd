@@ -13,6 +13,16 @@
 		\concession: \con
 	);
 
+~t = TempoClock(80/60, queueSize: 1024).permanent_(true);
+
+// using 5 tempoClocks to avoid full scheduler queue
+//~t = ();
+// (~categorySymbols.values ++ [\seq, \kik02, \hh01, \bass, \snip01, \sn01]).do({
+// 	|k|
+// 	~t.add(k -> TempoClock(80/60, queueSize: 1024).permanent_(true));
+// });
+
+
 ~lastUtterances = Array.with("one", "two", "three");
 ~lastCategories = Array.with("praise", "dissent", "insinuation");
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
@@ -94,7 +104,7 @@ PathName(~samplesPath).entries.do({
 ~midiFolder = ~showFolder +/+ "MIDI";
 PathName(~midiFolder).entries.do({
 	|path|
-	"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
+	//"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
 	//midiKey = path.fileNameWithoutExtension.asSymbol;
 	~makePatternList.("note", path, False);
     ~makePatternList.("dur", path, False);

@@ -7,7 +7,6 @@
 ~currentUttPattern = \mono;
 ~factor = 1;
 ~totalUtts = 0;
-~t = TempoClock(40/60).permanent_(true);
 ///////
 ~fbVol = 0.2; //global Volume of feedback for incoming Utts
 // values for addVolume
