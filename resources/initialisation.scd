@@ -15,14 +15,6 @@
 
 ~t = TempoClock(80/60, queueSize: 1024).permanent_(true);
 
-// using 5 tempoClocks to avoid full scheduler queue
-//~t = ();
-// (~categorySymbols.values ++ [\seq, \kik02, \hh01, \bass, \snip01, \sn01]).do({
-// 	|k|
-// 	~t.add(k -> TempoClock(80/60, queueSize: 1024).permanent_(true));
-// });
-
-
 ~lastUtterances = Array.with("one", "two", "three");
 ~lastCategories = Array.with("praise", "dissent", "insinuation");
 ~samplesPath = PathName(thisProcess.nowExecutingPath).parentPath ++ "samples/";
@@ -33,6 +25,7 @@
 ~uttDict = Dictionary.new;
 ~uttSamples = Dictionary.new;  // dictionary with current audio utterances
 ~samplePaths = Dictionary.new; // container for paths of audio-utterance-PopUpMenus. dictionary of Arrays with paths to all audio utterances. The order of the elements in e.g. samplePaths[lecture] is linked to the order of the elements in the corresponding popupMenu ~utteranceSelectors[1][lecture].items
+~uttsPerMinute = Dictionary.new; // container for timestamps to calculate utterance density
 
 
 ~categories.do({
@@ -40,6 +33,7 @@
 	var path = PathName(PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav");
 	~samplePaths[cat] = [path];
 	~uttDict.add(cat-> 0);
+	~uttsPerMinute.add(cat-> List.new);
 
 	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav",
 		action: {arg buffer;

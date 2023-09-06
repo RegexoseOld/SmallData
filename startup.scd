@@ -113,8 +113,8 @@ s.waitForBoot({
 		\interpreter,
 		{ arg msg;
 			//postf("\nmessage?: %\n", msg);
-			postf("\nnew utt: %", msg[1]);
-			postf("\nnew cat: %\n", msg[2]);
+		/*	postf("\nnew utt: %", msg[1]);
+			postf("\nnew cat: %\n", msg[2]);*/
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
 			~blinkSelector.();
@@ -131,7 +131,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [0.8, 1.1, 1.4].choose.wait;
+        [1.0, 1.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -156,13 +156,7 @@ Pbindef(\ins).play(~t.ins);
 Pbindef(\lec).play(~t.lec);
 
 )
-(
-	~t.values.do({
-		|k|
-		"clock  %  has size  %  queue  %".format(~t.findKeyForValue(k), k.queue.size, k.queue).postln;
-	});
 
-)
 (
 var n = 1;
 ~mock.();
