@@ -12,6 +12,7 @@
 	~lastCategories = lastCats;
     ~totalUtts = ~totalUtts + 1;
     if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
+	~uttsPerMinute[cat].add(~t.beats/~t.tempo); // add a timestamp to calculate utterances per minute
 	defer{var index, count;
 	index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
 	count =  ~uttDict[~cat].asString;
@@ -208,7 +209,7 @@
 };
 
 ~setGlobal = {
-	var c;
+	var c, lastMinute=0, elapsed=0, secondsCounter=0;
 	c = case
 	{~totalUtts == 90} {
 		~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
@@ -241,16 +242,35 @@
 		//~fadingSynths.do{|name| Pbindef(name).play(~t, quant:0)};
 		Pdefn(\melody).play(~t, quant:0);
 		//[\kik02, \hh01, \bass].do{|n| Pbindef(n).play(~t, quant:4)};
-			~t.schedAbs(~t.nextTimeOnGrid, {
+
+		//init continuous Fadeout Function
+		~t.schedAbs(~t.nextTimeOnGrid, {
 		if(~checkFadeVols.() >= ~thresCont, {
 			~continuousFadeOut.value(~fadingSynths); 1},
 		{"not fading: fadeVols = %".format(~fadeVols).postln})
 	});
+
+		//initiate catPerMinute functionality
+		~t.schedAbs(~t.nextTimeOnGrid, {
+			secondsCounter = secondsCounter + ((~t.beats - elapsed)/~t.tempo);
+			if (secondsCounter >= 60.0, {
+				lastMinute = (~t.beats/~t.tempo) - 60.0;
+				//scan all timestamp lists and only keep timestamps that are larger than lastMinute
+				~uttsPerMinute.keysValuesDo({|k,v|
+					v = v.select({|ts| ts >= lastMinute});
+					//"new opm % in %".format(v.size, k).postln;
+					~uttsPerMinute[k] = v;
+				})
+			});
+
+			elapsed = ~t.elapsedBeats;
+			1;
+		});
 	}
 	{true} {"end of global settings".postln};
 	~allocateSynth.(~cat, ~uttDict[~cat]);
 
-	"clock  has size  %  queue  %".format(~t.queue.size, ~t.queue).postln;
+	//"clock  has size  %  queue  %".format(~t.queue.size, ~t.queue).postln;
 
 
 };

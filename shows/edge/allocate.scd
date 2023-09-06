@@ -117,6 +117,6 @@
 
    ~addVolume.value(catName);
 	defer{~status[1].string = catName ++ " : " ++ status};
-    postf("\nsetting %\to status \t %\n ", catName, status);
+    //postf("\nsetting %\to status \t %\n ", catName, status);
 
 };
