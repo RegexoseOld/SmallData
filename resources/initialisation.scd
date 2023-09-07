@@ -104,8 +104,7 @@ PathName(~midiFolder).entries.do({
     ~makePatternList.("dur", path, False);
 });
 
-
-
+// for oscfm Synth
 ~makeWaveTable = {
 	|size|
 	var sig, wt, buf;
@@ -138,29 +137,16 @@ PathName(~midiFolder).entries.do({
 		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
 		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
 		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
+
 		~cat2Channel = (
 		\pr: ~ch1,
 		\dis: ~ch2,
 		\con: ~ch3,
 		\lec: ~ch4,
 		\ins: ~ch5,
-		\kik01: ~perc,
+		\kik02: ~perc,
 		\sn01 : ~perc,
 		\h01: ~perc,
-		\bass: ~bass
-	);
-
-		~cat2Channel = (
-		\dis: ~ch1,
-		\pr: ~ch2,
-		\ins: ~ch3,
-		\con: ~ch4,
-		\lec: ~ch5,
-		\utt: ~utt,
-		\perc: ~perc,
-		\kik02 : ~perc,
-		\sn01 : ~perc,
-		\hh01: ~perc,
 		\bass: ~bass
 	);
 

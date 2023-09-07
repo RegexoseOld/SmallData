@@ -9,14 +9,6 @@ patterns: (
 		amp: 0.13
 	),
 
-	kik01: (
-		instrument:'kik1',
-		freq: ~melos.melo.kik01,
-		ampdecay: 2,
-		dur: 0.25,
-		out: ~perc.inbus
-	),
-
 	kik02: (
 		instrument:'kik2',
 		freq: ~melos.meloEdge.kik01,
