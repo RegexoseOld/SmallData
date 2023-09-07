@@ -209,7 +209,7 @@
 };
 
 ~setGlobal = {
-	var c, lastMinute=0, elapsed=0, secondsCounter=0;
+	var c, lastMinute=0, elapsed=0;
 	c = case
 	{~totalUtts == 90} {
 		~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
@@ -247,27 +247,27 @@
 		~t.schedAbs(~t.nextTimeOnGrid, {
 		if(~checkFadeVols.() >= ~thresCont, {
 			~continuousFadeOut.value(~fadingSynths); 1},
-		{"not fading: fadeVols = %".format(~fadeVols).postln})
-	});
+		{"not fading: fadeVols = %".format(~fadeVols).postln});
 
+	});
 		//initiate catPerMinute functionality
 		~t.schedAbs(~t.nextTimeOnGrid, {
-			secondsCounter = secondsCounter + ((~t.beats - elapsed)/~t.tempo);
-			if (secondsCounter >= 60.0, {
+			//"after % ".format((~t.beats/~t.tempo)).postln;
+			if ((~t.beats/~t.tempo) >= 60.0, {
 				lastMinute = (~t.beats/~t.tempo) - 60.0;
 				//scan all timestamp lists and only keep timestamps that are larger than lastMinute
 				~uttsPerMinute.keysValuesDo({|k,v|
 					v = v.select({|ts| ts >= lastMinute});
 					//"new opm % in %".format(v.size, k).postln;
 					~uttsPerMinute[k] = v;
-				})
+				});
+				1;
 			});
-
-			elapsed = ~t.elapsedBeats;
 			1;
 		});
 	}
 	{true} {"end of global settings".postln};
+	~uttsPerMinute[~categorySymbols[~cat]].add((~t.beats/~t.tempo));
 	~allocateSynth.(~cat, ~uttDict[~cat]);
 
 	//"clock  has size  %  queue  %".format(~t.queue.size, ~t.queue).postln;

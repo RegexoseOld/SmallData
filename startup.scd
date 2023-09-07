@@ -119,7 +119,7 @@ s.waitForBoot({
 			~updateUtts.(msg[1], msg[2]);
 			~blinkSelector.();
             if(msg[4] != nil, {~addNewSample.(msg[4])});
-			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
+			//~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
 		'/interpreter_input'
@@ -131,18 +131,30 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [1.0, 1.5].choose.wait;
+        [2.0, 1.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
 )
 ~sim.stop
+(
+//Zugriff auf Synths
+var synthArgs;
+SynthDescLib.global.browse;
+SynthDescLib.global.synthDescs.at(\bellFm)
+SynthDescLib.at(~states.pr.pr0.instrument).controlNames;
+SynthDescLib.global.synthDescs.at(~states.pr.pr0.instrument);
+synthArgs = SynthDescLib.at(~states.pr.pr0.instrument).controlDict.collect(_.defaultValue);
+synthArgs.postln;
+Synth(~states.pr.pr0.instrument, [\freq, 100]);
+)
 
-~volMin = 0.02
+
  ~maxCatCounter = 30
 
 ~buffers[\atmos][0].play
-~t.findKeyForValue(~t.pr)
+~uttsPerMinute[\pr].postln
+(~t.beats)/~t.tempo
 
 (
 Pbindef(\kik02);
@@ -156,6 +168,7 @@ Pbindef(\ins).play(~t.ins);
 Pbindef(\lec).play(~t.lec);
 
 )
+
 
 (
 var n = 1;

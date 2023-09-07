@@ -33,7 +33,7 @@
 	var path = PathName(PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav");
 	~samplePaths[cat] = [path];
 	~uttDict.add(cat-> 0);
-	~uttsPerMinute.add(cat-> List.new);
+	~uttsPerMinute.add(~categorySymbols[cat] -> List.new);
 
 	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav",
 		action: {arg buffer;
