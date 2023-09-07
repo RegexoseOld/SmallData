@@ -13,13 +13,12 @@ ServerTree.removeAll; // löscht alle funktionen
 
 s.waitForBoot({
 	s.freeAll;
+	s.sync;
 	Buffer.freeAll;
 	Pbindef.all.do(_.clear);
 	s.sync;
 	MIDIClient.init;
 	MIDIIn.connectAll;
-	~midiOut = MIDIOut.new(0);
-	~midiIn = MIDIIn.new(0);
 
 	/// load SynthDefs, Constants, Functions
 	(~resourcePath ++ "synths.scd").load;
@@ -131,7 +130,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [1.0, 1.5].choose.wait;
+        [5.0, 8.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;

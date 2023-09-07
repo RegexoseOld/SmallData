@@ -247,7 +247,7 @@
 		~t.schedAbs(~t.nextTimeOnGrid, {
 		if(~checkFadeVols.() >= ~thresCont, {
 			~continuousFadeOut.value(~fadingSynths); 1},
-		{"not fading: fadeVols = %".format(~fadeVols).postln})
+		{"not fading: fadeVols = %".format(~checkFadeVols.()).postln})
 	});
 
 		//initiate catPerMinute functionality

@@ -16,7 +16,6 @@
 ~volThres = 0.35; // Threshold managed by ~addVolume and ~continuousFade
 ~volStep = 0.004; //vol reduction in continuous FadeOut
 ~volMax = 0.45; // max Volume should be less than 1.0/5
-~fadeVols = 0; //the volumes of all fading Patterns
 ~thresCont = 0.15; // threshold from which to continuously fade Out
 ~maxCatCounter = 15; // max value of categoryCounter (counter is reset if this value is reached)
 
