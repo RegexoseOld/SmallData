@@ -119,7 +119,6 @@ s.waitForBoot({
 			~updateUtts.(msg[1], msg[2]);
 			~blinkSelector.();
             if(msg[4] != nil, {~addNewSample.(msg[4])});
-			//~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
 		'/interpreter_input'
@@ -143,18 +142,13 @@ var synthArgs;
 SynthDescLib.global.browse;
 SynthDescLib.global.synthDescs.at(\bellFm)
 SynthDescLib.at(~states.pr.pr0.instrument).controlNames;
-SynthDescLib.global.synthDescs.at(~states.pr.pr0.instrument);
+SynthDescLib.global.synthDescs.at(~states.pr.pr10.instrument);
 synthArgs = SynthDescLib.at(~states.pr.pr0.instrument).controlDict.collect(_.defaultValue);
 synthArgs.postln;
-Synth(~states.pr.pr0.instrument, [\freq, 100]);
+Synth(~states.pr.pr0.instrument, [\freq, 300]);
 )
 
 
- ~maxCatCounter = 30
-
-~buffers[\atmos][0].play
-~uttsPerMinute[\pr].postln
-(~t.beats)/~t.tempo
 
 (
 Pbindef(\kik02);

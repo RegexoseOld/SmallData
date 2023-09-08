@@ -195,22 +195,20 @@
 	});
 };
 
-~allocateSynth = {
-		|s_name, count|
-		var c;
-    //postf("\nallocating % with count %\n", s_name, count);
-		c = case
-    {s_name == 'praise'} {~allocate.value(\pr, count)} // reverb
-    {s_name == 'dissent'} {~allocate.value(\dis, count)}
-    {s_name == 'insinuation'} {~allocate.value(\ins, count)}
-    {s_name == 'lecture'} {~allocate.value(\lec, count)}
-    {s_name == 'concession'} {~allocate.value(\con, count)}
-	{true}{"end of allocation".postln};
-};
-
 ~setGlobal = {
-	var c, lastMinute=0, elapsed=0;
+	var c, opm=0, lastMinute=0, elapsed=0;
+	~uttsPerMinute.values.do({|l| opm = opm + l.size});
 	c = case
+	{opm >= ~upmMax}{
+		"upmMax reached".postln;
+		Pbindef.all.do({|p| p.stop});
+		~fadingSynths.do({
+			|name|
+			var stateName = (name ++ "0").asSymbol;
+			Synth(~states[name][stateName].instrument, [\freq, rrand(300, 800), \vibVol, 120, \atk, 10, \rls, 20, \crv, -7, \amp, 0.2, \fade, 0.3])
+		})
+
+	}
 	{~totalUtts == 90} {
 		~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
 	}
@@ -268,7 +266,7 @@
 	}
 	{true} {"end of global settings".postln};
 	~uttsPerMinute[~categorySymbols[~cat]].add((~t.beats/~t.tempo));
-	~allocateSynth.(~cat, ~uttDict[~cat]);
+	~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
 
 	//"clock  has size  %  queue  %".format(~t.queue.size, ~t.queue).postln;
 
