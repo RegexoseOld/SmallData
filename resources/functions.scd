@@ -1,7 +1,7 @@
 
 ~updateUtts = {
-    |utt, cat|
-    //postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
+	|utt, cat|
+	//postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
 	var lastUtts = ~lastUtterances.rotate(1), lastCats = ~lastCategories.rotate(1);
 	lastUtts.put(0, utt);
 	lastCats.put(0, cat);
@@ -10,15 +10,15 @@
 	}};
 	~lastUtterances = lastUtts;
 	~lastCategories = lastCats;
-    ~totalUtts = ~totalUtts + 1;
-    if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
+	~totalUtts = ~totalUtts + 1;
+	if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
 	~uttsPerMinute[cat].add(~t.beats/~t.tempo); // add a timestamp to calculate utterances per minute
 	defer{var index, count;
-	index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
-	count =  ~uttDict[~cat].asString;
-    //postf("\nupdating index % to count % ", index, count);
-	~mcLabels[1][index].string = cat ++ "\n" ++ count;
-	~mcLabels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
+		index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
+		count =  ~uttDict[~cat].asString;
+		//postf("\nupdating index % to count % ", index, count);
+		~mcLabels[1][index].string = cat ++ "\n" ++ count;
+		~mcLabels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
 	}
 };
 
@@ -93,7 +93,7 @@
 			PathName(path).entries.size,
 			{
 				|i|
-				 PathName(path).entries[i].postln;
+				PathName(path).entries[i].postln;
 				Buffer.read(s, PathName(path).entries[i].fullPath);
 			}
 		)
@@ -103,20 +103,20 @@
 };
 
 ~runFx = {
-~fx = (
-	\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
-	\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
-	\chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
-	\mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
-    \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_02])),
-	\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
-	\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	\utt_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
-	\perc_cmp : ~perc.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
-	\bass_cmp : ~bass.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat]))
-)
+	~fx = (
+		\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
+		\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
+		\chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
+		\mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
+		\ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+		\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_02])),
+		\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
+		\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+		\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
+		\utt_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
+		\perc_cmp : ~perc.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
+		\bass_cmp : ~bass.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat]))
+	)
 };
 
 ~bypass = {
@@ -130,7 +130,7 @@
 		|snd|
 		if ("vrb".matchRegexp(snd.asString), {
 			//("found  " ++ snd).postln;
-		    ~activateReverb.(snd, i, 89 );
+			~activateReverb.(snd, i, 89 );
 			i = i+1;
 		})
 	});
@@ -140,10 +140,10 @@
 
 ~checkFadeVols = {
 	var allVolumes=List.new;
-	   ~fadingSynths.do{
-        |n|
-        allVolumes.add(~melos.amps[n]);
-    };
+	~fadingSynths.do{
+		|n|
+		allVolumes.add(~melos.amps[n]);
+	};
 	//"FadeVolumes Sum    %".format(allVolumes.sum).postln;
 	~fadeVols = allVolumes.sum;
 	allVolumes.sum;
@@ -159,14 +159,14 @@
 	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~melos[\amps][cat] = editVol + (~volPlus * ~addFac)}
 	{editVol >= ~volMax}{  ~melos[\amps][cat] = ~volMax}
 	{true}{"end of addVolume".postln};
-    //postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
+	//postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
 	defer{var index, height, text;
-	//"updating mc: index % height  % text  %".format(index, height, text);
-	index = ~fadingSynths.detectIndex({|it, i| it == cat});
-	height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
-	text =  ~melos[\amps][cat].trunc(0.001).asString;
-	~mcTrack[1][index].resizeTo(100, height);
-	~mcTrack[1][index].string = text;
+		//"updating mc: index % height  % text  %".format(index, height, text);
+		index = ~fadingSynths.detectIndex({|it, i| it == cat});
+		height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
+		text =  ~melos[\amps][cat].trunc(0.001).asString;
+		~mcTrack[1][index].resizeTo(100, height);
+		~mcTrack[1][index].string = text;
 	}
 };
 
@@ -195,20 +195,23 @@
 	});
 };
 
+
 ~setGlobal = {
 	var c, opm=0, lastMinute=0, elapsed=0;
 	~uttsPerMinute.values.do({|l| opm = opm + l.size});
-	c = case
-	{opm >= ~upmMax}{
-		"upmMax reached".postln;
-		Pbindef.all.do({|p| p.stop});
-		~fadingSynths.do({
-			|name|
-			var stateName = (name ++ "0").asSymbol;
-			Synth(~states[name][stateName].instrument, [\freq, rrand(300, 800), \vibVol, 120, \atk, 10, \rls, 20, \crv, -7, \amp, 0.2, \fade, 0.3])
-		})
 
-	}
+	if (opm >= ~upmMax, {
+		var syn, buf, start, end, dur;
+		"upmMax reached opm %". format(opm).postln;
+		Pbindef.all.do({|p| p.stop});
+		buf = ~buffers[\catSampDe][0];
+		start = opm.linlin(0, ~upmMax, 0, buf.numFrames-1);
+		dur = opm.linlin(0, ~upmMax, 1000, buf.numFrames/2);
+		syn = Synth(\brPhsr, [\buf, buf, start, start + dur]);
+	}, {
+			~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
+	});
+	c = case
 	{~totalUtts == 90} {
 		~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
 	}
@@ -243,11 +246,11 @@
 
 		//init continuous Fadeout Function
 		~t.schedAbs(~t.nextTimeOnGrid, {
-		if(~checkFadeVols.() >= ~thresCont, {
-			~continuousFadeOut.value(~fadingSynths); 1},
-		{"not fading: fadeVols = %".format(~fadeVols).postln});
+			if(~checkFadeVols.() >= ~thresCont, {
+				~continuousFadeOut.value(~fadingSynths); 1},
+			{"not fading: fadeVols = %".format(~fadeVols).postln});
 
-	});
+		});
 		//initiate catPerMinute functionality
 		~t.schedAbs(~t.nextTimeOnGrid, {
 			//"after % ".format((~t.beats/~t.tempo)).postln;
@@ -266,7 +269,7 @@
 	}
 	{true} {"end of global settings".postln};
 	~uttsPerMinute[~categorySymbols[~cat]].add((~t.beats/~t.tempo));
-	~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
+
 
 	//"clock  has size  %  queue  %".format(~t.queue.size, ~t.queue).postln;
 
@@ -274,7 +277,7 @@
 };
 
 ~mock = {
-    var cat = ~categories.choose,
+	var cat = ~categories.choose,
 	m = NetAddr("127.0.0.1", 57120);
 	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], ~resourcePath ++ "samples/lec01/");
 	~storyIndex = ~storyIndex +1;

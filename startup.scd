@@ -147,6 +147,14 @@ synthArgs = SynthDescLib.at(~states.pr.pr0.instrument).controlDict.collect(_.def
 synthArgs.postln;
 Synth(~states.pr.pr0.instrument, [\freq, 300]);
 )
+(
+var buf, start, dur, end, opm;
+opm = 10;
+buf = ~buffers[\catSampDe][0];
+start = opm.linlin(0, 10, 0, buf.numFrames-1);
+dur = opm.linlin(0, 10, 1000, buf.numFrames/2);
+x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
+)
 
 
 

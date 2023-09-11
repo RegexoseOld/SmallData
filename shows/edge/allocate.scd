@@ -1,4 +1,4 @@
-~allocate = {
+ {
 	|catName, counter|
 	var c, dura, patName, status, count, in_count, local_feedbackVol, numNotes;
 	count = floor(counter * ~factor).asInteger;
