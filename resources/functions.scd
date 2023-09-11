@@ -204,9 +204,9 @@
 		var syn, buf, start, end, dur;
 		"upmMax reached opm %". format(opm).postln;
 		Pbindef.all.do({|p| p.stop});
-		buf = ~buffers[\catSampDe][0];
+		buf = ~buffers[\catSampDe][~categoryTranslator[~cat]];
 		start = (opm  % ~upmMax).linlin(0, ~upmMax, 0, buf.numFrames-1);
-		dur = (opm % ~upmMax).linlin(0, ~upmMax, 1000, buf.numFrames/2);
+		dur = (opm  % ~upmMax).linlin(0, ~upmMax, buf.numFrames/3, 100);
 		"opm % start % dur %".format(opm, start, dur).postln;
 		syn = Synth(\brPhsr, [\buf, buf, \start, start, \end, start + dur]);
 	}, {
@@ -214,10 +214,10 @@
 	});
 	c = case
 	{~totalUtts == 90} {
-		~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
+		~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][\rain], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
 	}
 	{~totalUtts == 55}{
-		~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][2], \atk, 12, \sus, 30, \rls, 30,  \amp, 0.25, \thr, 0.5, \cgain, 1]);
+		~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][\dickerpott], \atk, 12, \sus, 30, \rls, 30,  \amp, 0.25, \thr, 0.5, \cgain, 1]);
 
 	}
 	{~totalUtts == 30} {
@@ -228,11 +228,11 @@
 	}
 	{~totalUtts == 25}{
 		//bird Atmosphere
-		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][1], \atk, 10, \sus, 25, \rls, 10, \amp, 0.9, \thr, 0.5, \cgain, 1.5]);
+		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][\birds], \atk, 10, \sus, 25, \rls, 10, \amp, 0.9, \thr, 0.5, \cgain, 1.5]);
 	}
 	{~totalUtts == 5}{
 		//bird Atmosphere
-		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][3], \atk, 20, \sus, 10, \rls, 15,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
+		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][\birds], \atk, 20, \sus, 10, \rls, 15,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
 		"10 utts".postln;
 	}
 	{(~totalUtts > 1) && (~totalUtts < 10) }{

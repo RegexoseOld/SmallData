@@ -130,7 +130,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [2.0, 1.5].choose.wait;
+        [4.0, 1.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -150,13 +150,21 @@ Synth(~states.pr.pr0.instrument, [\freq, 300]);
 (
 var buf, start, dur, end, opm;
 opm = 10;
-buf = ~buffers[\catSampDe][0];
+buf = ~buffers[\catSampEn];
 start = opm.linlin(0, 10, 0, buf.numFrames-1);
 dur = opm.linlin(0, 10, 1000, buf.numFrames/2);
 x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
 )
 
+~buffers[\atmos].keys
 
+(.
+
+)
+(
+var a = Array(~categoryTranslator.keys.size);
+
+)
 
 (
 Pbindef(\kik02);

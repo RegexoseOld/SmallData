@@ -12,6 +12,13 @@
 		\lecture: \lec,
 		\concession: \con
 	);
+~categoryTranslator = (
+	'concession': 'zugestaendnis',
+	'praise': 'lob',
+	'dissent': 'widerspruch',
+	'lecture': 'belehrung',
+	'insinuation': 'unterstellung',
+);
 
 ~t = TempoClock(80/60, queueSize: 1024).permanent_(true);
 
@@ -41,7 +48,7 @@
 	});
 });
 
-
+/*
 PathName(~samplesPath).entries.do({
 		arg subfolder;
 	//subfolder.postln;
@@ -55,6 +62,18 @@ PathName(~samplesPath).entries.do({
 				}
 			)
 		)
+	});*/
+
+PathName(~samplesPath).entries.do({
+		arg subfolder;
+	var sampleDict=(), sample;
+	//subfolder.postln;
+	~buffers.add(subfolder.folderName.asSymbol -> sampleDict);
+	subfolder.entries.do({
+		|entry, i|
+		var sampleName = entry.fileNameWithoutExtension.asSymbol;
+		~buffers[subfolder.folderName.asSymbol].put(sampleName, Buffer.read(s, entry.fullPath))
+	});
 	});
 
 //load melodies
