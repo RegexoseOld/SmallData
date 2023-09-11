@@ -205,9 +205,10 @@
 		"upmMax reached opm %". format(opm).postln;
 		Pbindef.all.do({|p| p.stop});
 		buf = ~buffers[\catSampDe][0];
-		start = opm.linlin(0, ~upmMax, 0, buf.numFrames-1);
-		dur = opm.linlin(0, ~upmMax, 1000, buf.numFrames/2);
-		syn = Synth(\brPhsr, [\buf, buf, start, start + dur]);
+		start = (opm  % ~upmMax).linlin(0, ~upmMax, 0, buf.numFrames-1);
+		dur = (opm % ~upmMax).linlin(0, ~upmMax, 1000, buf.numFrames/2);
+		"opm % start % dur %".format(opm, start, dur).postln;
+		syn = Synth(\brPhsr, [\buf, buf, \start, start, \end, start + dur]);
 	}, {
 			~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
 	});
