@@ -41,7 +41,7 @@ s.waitForBoot({
 	(~showFolder +/+ "constants.scd").load;
 	(~showFolder +/+ "synths.scd").load;
 
-    MixerChannel.freeAll;
+
 	s.sync;
 	ServerTree.add(~makeNodes);
 	ServerTree.run;
@@ -118,12 +118,14 @@ s.waitForBoot({
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
 			~blinkSelector.();
+			msg[3].postln;
             if(msg[3] != nil, {~addNewSample.(msg[3])});
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
 		'/interpreter_input'
 	);
+	CmdPeriod.add(~mixClear);
 	"done".postln;
 })
 );
@@ -137,6 +139,7 @@ s.waitForBoot({
 ) }).play;
 )
 ~sim.stop
+
 
 ~volMin = 0.02
  ~maxCatCounter = 30
