@@ -12,6 +12,7 @@
 	~lastCategories = lastCats;
     ~totalUtts = ~totalUtts + 1;
     if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
+	~uttsPerMinute[cat].add(~t.beats/~t.tempo); // add a timestamp to calculate utterances per minute
 	defer{var index, count;
 	index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
 	count =  ~uttDict[~cat].asString;
@@ -107,14 +108,14 @@
 	\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
 	\chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
 	\mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
-    \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_02])),
-	\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
-	\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_01])),
-	\utt_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
+    \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+	\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+	\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+	\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+	\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])), //dieser macht den *** ERROR: SynthDef companderd#7HVwu not found
+	\utt_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
 	\perc_cmp : ~perc.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
-	\bass_cmp : ~bass.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat]))
+	\bass_cmp : ~bass.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander]))
 )
 };
 
@@ -208,7 +209,7 @@
 };
 
 ~setGlobal = {
-	var c;
+	var c, lastMinute=0, elapsed=0, secondsCounter=0;
 	c = case
 	{~totalUtts == 90} {
 		~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
@@ -241,16 +242,35 @@
 		//~fadingSynths.do{|name| Pbindef(name).play(~t, quant:0)};
 		Pdefn(\melody).play(~t, quant:0);
 		//[\kik02, \hh01, \bass].do{|n| Pbindef(n).play(~t, quant:4)};
-			~t.schedAbs(~t.nextTimeOnGrid, {
+
+		//init continuous Fadeout Function
+		~t.schedAbs(~t.nextTimeOnGrid, {
 		if(~checkFadeVols.() >= ~thresCont, {
 			~continuousFadeOut.value(~fadingSynths); 1},
 		{"not fading: fadeVols = %".format(~fadeVols).postln})
 	});
+
+		//initiate catPerMinute functionality
+		~t.schedAbs(~t.nextTimeOnGrid, {
+			secondsCounter = secondsCounter + ((~t.beats - elapsed)/~t.tempo);
+			if (secondsCounter >= 60.0, {
+				lastMinute = (~t.beats/~t.tempo) - 60.0;
+				//scan all timestamp lists and only keep timestamps that are larger than lastMinute
+				~uttsPerMinute.keysValuesDo({|k,v|
+					v = v.select({|ts| ts >= lastMinute});
+					//"new opm % in %".format(v.size, k).postln;
+					~uttsPerMinute[k] = v;
+				})
+			});
+
+			elapsed = ~t.elapsedBeats;
+			1;
+		});
 	}
 	{true} {"end of global settings".postln};
 	~allocateSynth.(~cat, ~uttDict[~cat]);
 
-	"clock  has size  %  queue  %".format(~t.queue.size, ~t.queue).postln;
+	//"clock  has size  %  queue  %".format(~t.queue.size, ~t.queue).postln;
 
 
 };
@@ -258,6 +278,6 @@
 ~mock = {
     var cat = ~categories.choose,
 	m = NetAddr("127.0.0.1", 57120);
-	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~uttDict[cat], ~resourcePath ++ "samples/lec01/");
+	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~resourcePath ++ "samples/lec01/");
 	~storyIndex = ~storyIndex +1;
 };

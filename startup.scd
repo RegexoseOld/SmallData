@@ -41,7 +41,7 @@ s.waitForBoot({
 	(~showFolder +/+ "constants.scd").load;
 	(~showFolder +/+ "synths.scd").load;
 
-    MixerChannel.freeAll;
+
 	s.sync;
 	ServerTree.add(~makeNodes);
 	ServerTree.run;
@@ -113,17 +113,19 @@ s.waitForBoot({
 		\interpreter,
 		{ arg msg;
 			//postf("\nmessage?: %\n", msg);
-			postf("\nnew utt: %", msg[1]);
-			postf("\nnew cat: %\n", msg[2]);
+		/*	postf("\nnew utt: %", msg[1]);
+			postf("\nnew cat: %\n", msg[2]);*/
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
 			~blinkSelector.();
-            if(msg[4] != nil, {~addNewSample.(msg[4])});
+			msg[3].postln;
+            if(msg[3] != nil, {~addNewSample.(msg[3])});
 			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
 		'/interpreter_input'
 	);
+	CmdPeriod.add(~mixClear);
 	"done".postln;
 })
 );
@@ -131,12 +133,13 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [0.8, 1.1, 1.4].choose.wait;
+        [1.0, 1.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
 )
 ~sim.stop
+
 
 ~volMin = 0.02
  ~maxCatCounter = 30
@@ -156,13 +159,7 @@ Pbindef(\ins).play(~t.ins);
 Pbindef(\lec).play(~t.lec);
 
 )
-(
-	~t.values.do({
-		|k|
-		"clock  %  has size  %  queue  %".format(~t.findKeyForValue(k), k.queue.size, k.queue).postln;
-	});
 
-)
 (
 var n = 1;
 ~mock.();
