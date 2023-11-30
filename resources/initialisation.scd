@@ -21,6 +21,7 @@
 );
 
 ~t = TempoClock(80/60, queueSize: 1024).permanent_(true);
+~mixClear = {  MixerChannel.freeAll};
 
 ~lastUtterances = Array.with("one", "two", "three");
 ~lastCategories = Array.with("praise", "dissent", "insinuation");

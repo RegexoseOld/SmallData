@@ -41,7 +41,7 @@ s.waitForBoot({
 	(~showFolder +/+ "constants.scd").load;
 	(~showFolder +/+ "synths.scd").load;
 
-    MixerChannel.freeAll;
+
 	s.sync;
 	ServerTree.add(~makeNodes);
 	ServerTree.run;
@@ -118,11 +118,15 @@ s.waitForBoot({
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
 			~blinkSelector.();
-            if(msg[4] != nil, {~addNewSample.(msg[4])});
+
+			msg[3].postln;
+            if(msg[3] != nil, {~addNewSample.(msg[3])});
+			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
 			~setGlobal.value();
 		},
 		'/interpreter_input'
 	);
+	CmdPeriod.add(~mixClear);
 	"done".postln;
 })
 );
@@ -156,9 +160,7 @@ dur = opm.linlin(0, 10, 1000, buf.numFrames/2);
 x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
 )
 
-~buffers[\atmos].keys
 
-(.
 
 )
 (
