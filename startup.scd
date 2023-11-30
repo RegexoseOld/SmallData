@@ -160,11 +160,20 @@ dur = opm.linlin(0, 10, 1000, buf.numFrames/2);
 x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
 )
 
-
-
+~fadingSynths.do({|cat|	~mum.(cat)})
 )
 (
-var a = Array(~categoryTranslator.keys.size);
+~mum = {
+	|cat|
+	var key = ("mumble_" ++ cat.asString).asSymbol;
+	Routine({
+	~buffers[key].values.do({
+		|buf|
+		Synth(\brPhsr, [\buf, buf, \start, 0, \end, buf.numFrames-1]);
+		0.3.wait;
+	})
+}).play
+}
 
 )
 

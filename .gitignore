@@ -121,4 +121,7 @@ config.scd
 # ignore samples directory
 SuperCollider/BaseData/samples/
 SmallData_GitHub/resources/samples
+
+*.wav
+*.aif
 	
