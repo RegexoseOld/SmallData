@@ -7,6 +7,7 @@
 ~currentUttPattern = \mono;
 ~factor = 1;
 ~totalUtts = 0;
+~upm = 0; // utts per Minute
 ///////
 ~fbVol = 0.2; //global Volume of feedback for incoming Utts
 // values for addVolume
@@ -22,4 +23,4 @@
 ~fadeVols = 0; //the volumes of all fading Patterns
 ~thresCont = 0.15; // threshold from which to continuously fade Out
 ~maxCatCounter = 15; // max value of categoryCounter (counter is reset if this value is reached
-~upmMax = 8;
+~upmMax = 25;

@@ -118,10 +118,8 @@ s.waitForBoot({
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
 			~blinkSelector.();
-
-			msg[3].postln;
             if(msg[3] != nil, {~addNewSample.(msg[3])});
-			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
+			//~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
 			~setGlobal.value();
 		},
 		'/interpreter_input'

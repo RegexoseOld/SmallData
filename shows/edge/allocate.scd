@@ -1,4 +1,4 @@
- {
+{
 	|catName, counter|
 	var c, dura, patName, status, count, in_count, local_feedbackVol, numNotes;
 	count = floor(counter * ~factor).asInteger;
@@ -7,25 +7,20 @@
 	numNotes = 1;
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	patName = (catName.asString ++ "0").asSymbol;
-	if(~uttsPerMinute[catName].size >= ~upmMax, {"upmMax reached".postln; Pbindef(catName).stop;
-		Synth(~states[catName][patName].instrument, [\freq, counter.linexp(0, 30, 1000, 80)]);
-	},{
-		// feedback sound
-		2.do{
-			|n|
-			Pbind(
-				\instrument, \sampMon,
-				\dur, Prand([0.25, 0.31], numNotes),
-				\buf, ~melos[\slots][catName],
-				\amp, ~fbVol * local_feedbackVol, \pan, 0,
-				\rate, Prand([[1, 1.03], [1, 1.18], [0.97, 1.101], [0.83, 0.91]], numNotes),
-				\atk, 0.05, \rls, Pkey(\dur), \crv, -4,
-				\cgain, 1.5,
-				\out, ~utt.inbus
-			).play;
-		};
-
-	});
+	// feedback sound
+	2.do{
+		|n|
+		Pbind(
+			\instrument, \sampMon,
+			\dur, Prand([0.25, 0.31], numNotes),
+			\buf, ~melos[\slots][catName],
+			\amp, ~fbVol * local_feedbackVol, \pan, 0,
+			\rate, Prand([[1, 1.03], [1, 1.18], [0.97, 1.101], [0.83, 0.91]], numNotes),
+			\atk, 0.05, \rls, Pkey(\dur), \crv, -4,
+			\cgain, 1.5,
+			\out, ~utt.inbus
+		).play;
+	};
 
 	c = case
 	{count <= 4}{
@@ -121,6 +116,5 @@
 
 	~addVolume.value(catName);
 	defer{~status[1].string = catName ++ " : " ++ status};
-	postf("\nsetting %\to status \t %\nuttsPerMinute %\n", catName, status, ~uttsPerMinute[catName]);
-
+	postf("\nsetting %\to status \t %\n", catName, status);
 };

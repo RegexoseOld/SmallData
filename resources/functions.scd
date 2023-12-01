@@ -104,20 +104,20 @@
 
 ~runFx = {
 
-~fx = (
-	\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
-	\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
-	\chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
-	\mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
-    \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
-	\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
-	\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
-	\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
-	\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])), //dieser macht den *** ERROR: SynthDef companderd#7HVwu not found
-	\utt_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
-	\perc_cmp : ~perc.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
-	\bass_cmp : ~bass.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander]))
-)
+	~fx = (
+		\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
+		\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
+		\chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
+		\mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
+		\ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+		\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+		\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+		\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+		\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])), //dieser macht den *** ERROR: SynthDef companderd#7HVwu not found
+		\utt_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+		\perc_cmp : ~perc.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
+		\bass_cmp : ~bass.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander]))
+	)
 };
 
 ~bypass = {
@@ -199,33 +199,26 @@
 ~mum = {
 	|cat, numGrains, waitTime|
 	var key = ("mumble_" ++ cat.asString).asSymbol;
-	key.postln;
 	Pbind(
 		\instrument, \brPhsr,
 		\buf, Prand(~buffers[key].values, numGrains),
 		\start, 0, \end, Pfunc({|ev| var b= ev.buf; b.numFrames.postln; b.numFrames-1}),
 		\dur, waitTime, \amp, 0.4,
-		).play;
-	};
+	).play;
+};
+
 
 ~setGlobal = {
-	var c, opm=0, lastMinute=0, elapsed=0;
-	//calculate opm by summing list lengths of ~uttsPerMinute
-	~uttsPerMinute.values.do({|l| opm = opm + l.size});
-
-	if (opm >= ~upmMax, {
-		var cat, syn, buf, start, end, dur;
-		"upmMax reached opm %". format(opm).postln;
+	var lastMinute=0, elapsed=0;
+	if (~upm >= ~upmMax, {
+		var cat;
+		"upmMax reached upm %, switching to Mumbels".format(~upm).postln;
 		Pbindef.all.do({|p| p.stop});
 		cat = ~categorySymbols[~cat];
-	    ~mum.(cat, ~uttsPerMinute[cat].size, 0.1);
-	/*	buf = ~buffers[\catSampDe][~categoryTranslator[~cat]];
-		start = (opm  % ~upmMax).linlin(0, ~upmMax, 0, buf.numFrames-1);
-		dur = (opm  % ~upmMax).linlin(0, ~upmMax, buf.numFrames/3, 100);
-		"opm % start % dur %".format(opm, start, dur).postln;
-		syn = Synth(\brPhsr, [\buf, buf, \start, start, \end, start + dur]);*/
+		~mum.(cat, ~uttsPerMinute[cat].size, 0.1);
 	}, {
-			~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
+		"below upm %, switching to Patterns".format(~upm).postln;
+		~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
 	});
 	c = case
 	{~totalUtts == 90} {
@@ -269,6 +262,7 @@
 		});
 		//initiate catPerMinute functionality
 		~t.schedAbs(~t.nextTimeOnGrid, {
+			var upm=0;
 			//"after % ".format((~t.beats/~t.tempo)).postln;
 			if ((~t.beats/~t.tempo) >= 60.0, {
 				lastMinute = (~t.beats/~t.tempo) - 60.0;
@@ -280,16 +274,16 @@
 				});
 				1;
 			});
+			~uttsPerMinute.values.do({|l| upm = upm + l.size});
+			~upm = upm; // update ~upm
+			//"updated upm %".format(upm).postln;
 			1;
 		});
 	}
 	{true} {"end of global settings".postln};
+
+	//add new timestamp in respective category list
 	~uttsPerMinute[~categorySymbols[~cat]].add((~t.beats/~t.tempo));
-
-
-	//"clock  has size  %  queue  %".format(~t.queue.size, ~t.queue).postln;
-
-
 };
 
 ~mock = {
