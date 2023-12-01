@@ -196,20 +196,34 @@
 	});
 };
 
+~mum = {
+	|cat, numGrains, waitTime|
+	var key = ("mumble_" ++ cat.asString).asSymbol;
+	key.postln;
+	Pbind(
+		\instrument, \brPhsr,
+		\buf, Prand(~buffers[key].values, numGrains),
+		\start, 0, \end, Pfunc({|ev| var b= ev.buf; b.numFrames.postln; b.numFrames-1}),
+		\dur, waitTime, \amp, 0.4,
+		).play;
+	};
 
 ~setGlobal = {
 	var c, opm=0, lastMinute=0, elapsed=0;
+	//calculate opm by summing list lengths of ~uttsPerMinute
 	~uttsPerMinute.values.do({|l| opm = opm + l.size});
 
 	if (opm >= ~upmMax, {
-		var syn, buf, start, end, dur;
+		var cat, syn, buf, start, end, dur;
 		"upmMax reached opm %". format(opm).postln;
 		Pbindef.all.do({|p| p.stop});
-		buf = ~buffers[\catSampDe][~categoryTranslator[~cat]];
+		cat = ~categorySymbols[~cat];
+	    ~mum.(cat, ~uttsPerMinute[cat].size, 0.1);
+	/*	buf = ~buffers[\catSampDe][~categoryTranslator[~cat]];
 		start = (opm  % ~upmMax).linlin(0, ~upmMax, 0, buf.numFrames-1);
 		dur = (opm  % ~upmMax).linlin(0, ~upmMax, buf.numFrames/3, 100);
 		"opm % start % dur %".format(opm, start, dur).postln;
-		syn = Synth(\brPhsr, [\buf, buf, \start, start, \end, start + dur]);
+		syn = Synth(\brPhsr, [\buf, buf, \start, start, \end, start + dur]);*/
 	}, {
 			~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
 	});

@@ -210,7 +210,7 @@ SynthDef(\uttSampler, {
 }).add;
 
 SynthDef(\brPhsr, {
-	arg buf, rate=1, start, end;
+	arg buf=0, rate=1, start, end=(buf.numFrames-1);
 	var sig, ptr, env;
 	ptr = Phasor.ar(0, BufRateScale.kr(buf)* rate, start, end, 0);
 	env = EnvGen.kr(Env.perc(\atk.kr(0.01), \rls.kr(1), curve: \crv.kr(-3)), doneAction:2);

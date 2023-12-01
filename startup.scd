@@ -130,11 +130,12 @@ s.waitForBoot({
 	"done".postln;
 })
 );
+
 (
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [4.0, 1.5].choose.wait;
+        [0.1, 0.3, 1.9, 1.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -160,22 +161,9 @@ dur = opm.linlin(0, 10, 1000, buf.numFrames/2);
 x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
 )
 
-~fadingSynths.do({|cat|	~mum.(cat)})
-)
-(
-~mum = {
-	|cat|
-	var key = ("mumble_" ++ cat.asString).asSymbol;
-	Routine({
-	~buffers[key].values.do({
-		|buf|
-		Synth(\brPhsr, [\buf, buf, \start, 0, \end, buf.numFrames-1]);
-		0.3.wait;
-	})
-}).play
-}
 
 )
+
 
 (
 Pbindef(\kik02);
