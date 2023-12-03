@@ -157,7 +157,7 @@
 	//postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
 	c = case
 	{editVol <= ~volThres}{ ~melos[\amps][cat]= editVol + (~volPlus * ~addFac) }// double enhance when pattern is very quiet
-	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~melos[\amps][cat] = editVol + (~volPlus * ~addFac)}
+	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~melos[\amps][cat] = editVol + ~volPlus}
 	{editVol >= ~volMax}{  ~melos[\amps][cat] = ~volMax}
 	{true}{"end of addVolume".postln};
 	//postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
@@ -211,14 +211,20 @@
 ~setGlobal = {
 	var lastMinute=0, elapsed=0;
 	if (~upm >= ~upmMax, {
-		var cat;
+		var cat, buf;
 		"upmMax reached upm %, switching to Mumbels".format(~upm).postln;
-		Pbindef.all.do({|p| p.stop});
+		(Pbindef.all.keys - Set[\hit]).do({|p| p.stop});
 		cat = ~categorySymbols[~cat];
 		~mum.(cat, ~uttsPerMinute[cat].size, 0.1);
+		if (~hitIsPlaying == false, {Pbindef(\hit).play},{"hit already playing".postln});
+		~hitIsPlaying = true ;
+
 	}, {
 		"below upm %, switching to Patterns".format(~upm).postln;
-		~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
+	/*	Pbindef(\hit).stop;
+		~hitIsPlaying = false;*/
+		~allocate.(~categorySymbols[~cat], ~uttDict[~cat]);
+
 	});
 	c = case
 	{~totalUtts == 90} {
@@ -276,7 +282,8 @@
 			});
 			~uttsPerMinute.values.do({|l| upm = upm + l.size});
 			~upm = upm; // update ~upm
-			//"updated upm %".format(upm).postln;
+			if (~upm < ~upmMax, {~hitIsPlaying = false; Pbindef(\hit).stop;  }, {"keep playing".postln });
+			"updated upm %".format(upm).postln;
 			1;
 		});
 	}

@@ -8,19 +8,19 @@
 ~factor = 1;
 ~totalUtts = 0;
 ~upm = 0; // utts per Minute
+~hitIsPlaying = false;
 ///////
 ~fbVol = 0.2; //global Volume of feedback for incoming Utts
 // values for addVolume
 ~volPlus = 0.06; // this much volume is added each time a category comes in
-~addFac = 1.2; // factor of volPlus with vols below the threshold
+~addFac = 1.0; // factor of volPlus with vols below the threshold
 ~subFac = 1.8; // factor of volStep with vols above the threshold
-~volMax = 0.55; // max Volume should be less than 1.0/5
 //~volMin = 0.0002; // the min Volume for a faded Pattern
 ~volMin = 0.002; // the min Volume for a faded Pattern
-~volThres = 0.35; // Threshold managed by ~addVolume and ~continuousFade
+~volThres = 0.15; // Threshold managed by ~addVolume and ~continuousFade
 ~volStep = 0.004; //vol reduction in continuous FadeOut
-~volMax = 0.45; // max Volume should be less than 1.0/5
+~volMax = 0.25; // max Volume should be less than 1.0/5
 ~fadeVols = 0; //the volumes of all fading Patterns
 ~thresCont = 0.15; // threshold from which to continuously fade Out
 ~maxCatCounter = 15; // max value of categoryCounter (counter is reset if this value is reached
-~upmMax = 25;
+~upmMax = 15;

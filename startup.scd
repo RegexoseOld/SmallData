@@ -160,9 +160,13 @@ x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
 )
 
 
+(
+~b = ~buffers[\hits][\SnoopSetsUp];
+
+Pbindef(\hit).stop
+
+
 )
-
-
 (
 Pbindef(\kik02);
 Pbindef(\hh01);
@@ -178,7 +182,7 @@ Pbindef(\lec).play(~t.lec);
 
 
 (
-var n = 1;
+var n = 15;
 ~mock.();
 ~allocate.(\dis, n);
 ~allocate.(\ins, n);

@@ -43,7 +43,7 @@ patterns: (
 	),
 
 	snip01: (
-		instrument: 'sampMon',
+		instrument: 'sampSt',
 		buf: ~buffers[\hi][\snap_stereo],
 		trigger: ~melos.meloEdge.snap01,
 		amp: 0.4,
