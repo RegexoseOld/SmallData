@@ -194,13 +194,13 @@ pauses: (
 
 slots:(
 	// sample Slots
-	zahlen: ~numSlots.collect({|n| var i = n%8; ~buffers[\zahlen][i]}),
-	utt: ~numSlots.collect({|n| var i = n+1; ~buffers[\lec01][i]}),
-	con: ~buffers[\catSampEn][0],
-	dis: ~buffers[\catSampEn][1],
-	ins: ~buffers[\catSampEn][2],
-	lec: ~buffers[\catSampEn][3],
-	pr: ~buffers[\catSampEn][4],
+	zahlen: ~numSlots.collect({|n| var name = ~buffers[\zahlen].keys.asArray.sort[(n%8)]; ~buffers[\zahlen][name]}),
+	utt: ~numSlots.collect({|n| var name =~buffers[\lec01].keys.asArray.sort[n+1]; ~buffers[\lec01][i]}),
+	con: ~buffers[\catSampEn][\concession],
+	dis: ~buffers[\catSampEn][\dissent],
+	ins: ~buffers[\catSampEn][\insinuation],
+	lec: ~buffers[\catSampEn][\lecture],
+	pr: ~buffers[\catSampEn][\praise],
 
 ),
 

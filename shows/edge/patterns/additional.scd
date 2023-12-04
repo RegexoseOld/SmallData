@@ -3,7 +3,7 @@
 patterns: (
 	drm: (
 		instrument:'sampSt',
-		buf: ~buffers[\bd][7],
+		buf: ~buffers[\bd][\BD2],
 		cgain: 1,
 		fade: 0.5,
 		amp: 0.13
@@ -43,8 +43,8 @@ patterns: (
 	),
 
 	snip01: (
-		instrument: 'sampMon',
-		buf: ~buffers[\hi][5],
+		instrument: 'sampSt',
+		buf: ~buffers[\hi][\snap_stereo],
 		trigger: ~melos.meloEdge.snap01,
 		amp: 0.4,
 		fade: 1,

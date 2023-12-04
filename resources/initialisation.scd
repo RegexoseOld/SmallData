@@ -12,6 +12,13 @@
 		\lecture: \lec,
 		\concession: \con
 	);
+~categoryTranslator = (
+	'concession': 'zugestaendnis',
+	'praise': 'lob',
+	'dissent': 'widerspruch',
+	'lecture': 'belehrung',
+	'insinuation': 'unterstellung',
+);
 
 ~t = TempoClock(80/60, queueSize: 1024).permanent_(true);
 ~mixClear = {  MixerChannel.freeAll};
@@ -34,7 +41,7 @@
 	var path = PathName(PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav");
 	~samplePaths[cat] = [path];
 	~uttDict.add(cat-> 0);
-	~uttsPerMinute.add(cat-> List.new);
+	~uttsPerMinute.add(~categorySymbols[cat] -> List.new);
 
 	Buffer.read(s, PathName(~samplesPath).parentPath ++ "uttSamples/" ++ cat +/+ "00_utterance.wav",
 		action: {arg buffer;
@@ -42,6 +49,8 @@
 	});
 });
 
+/*
+alte Art, Samples als Listen zu laden
 
 PathName(~samplesPath).entries.do({
 		arg subfolder;
@@ -56,7 +65,35 @@ PathName(~samplesPath).entries.do({
 				}
 			)
 		)
+	});*/
+
+// Samples mit Titel laden
+PathName(~samplesPath).entries.do({
+		arg subfolder;
+	var sampleDict=(), sample;
+	//subfolder.postln;
+	~buffers.add(subfolder.folderName.asSymbol -> sampleDict);
+	subfolder.entries.do({
+		|entry, i|
+		var sampleName = entry.fileNameWithoutExtension.asSymbol;
+		~buffers[subfolder.folderName.asSymbol].put(sampleName, Buffer.read(s, entry.fullPath))
 	});
+	});
+
+s.sync;
+
+~hitSample = ~buffers[\hits][\SnoopSetsUp];
+
+
+Pbindef(\hit,
+	\instrument, \sampSt,
+	\buf, ~hitSample,
+	\amp, 0.6,
+	\sus, Pseq([~hitSample.numFrames / s.sampleRate], inf),
+	\rls, 1,
+	\dur, Pseq([~hitSample.numFrames / s.sampleRate], inf),
+);
+
 
 //load melodies
 ~melPath = ~resourcePath ++ "melodies.sc";
@@ -125,7 +162,6 @@ PathName(~midiFolder).entries.do({
 ~makeNodes = {
 	//~channels.do{|c| if (c.active, {postf("free channel %\n", c.asString); c.free;})};
 	s.bind(
-		//
 		// Mixer Channels, you have to install dewdrop_lib and ddwMixerChannel with Quarks.gui
 		~master = MixerChannel(\master, s, 2, 2);
 		~ch1 = MixerChannel(\ch1, s, 2, 2, outbus: ~master);
@@ -149,20 +185,7 @@ PathName(~midiFolder).entries.do({
 		\sn01 : ~perc,
 		\h01: ~perc,
 		\bass: ~bass
-	);
+	)
+);
 
-		~cat2Channel = (
-		\dis: ~ch1,
-		\pr: ~ch2,
-		\ins: ~ch3,
-		\con: ~ch4,
-		\lec: ~ch5,
-		\utt: ~utt,
-		\perc: ~perc,
-		\kik02 : ~perc,
-		\sn01 : ~perc,
-		\hh01: ~perc,
-		\bass: ~bass
-	);
-
-)};
+};

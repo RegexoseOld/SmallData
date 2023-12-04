@@ -1,7 +1,7 @@
 
 ~updateUtts = {
-    |utt, cat|
-    //postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
+	|utt, cat|
+	//postf("\n \n+++ ++++ ++++ \n\nnew UTT %\t \n", cat);
 	var lastUtts = ~lastUtterances.rotate(1), lastCats = ~lastCategories.rotate(1);
 	lastUtts.put(0, utt);
 	lastCats.put(0, cat);
@@ -10,15 +10,15 @@
 	}};
 	~lastUtterances = lastUtts;
 	~lastCategories = lastCats;
-    ~totalUtts = ~totalUtts + 1;
-    if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
+	~totalUtts = ~totalUtts + 1;
+	if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
 	~uttsPerMinute[cat].add(~t.beats/~t.tempo); // add a timestamp to calculate utterances per minute
 	defer{var index, count;
-	index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
-	count =  ~uttDict[~cat].asString;
-    //postf("\nupdating index % to count % ", index, count);
-	~mcLabels[1][index].string = cat ++ "\n" ++ count;
-	~mcLabels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
+		index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
+		count =  ~uttDict[~cat].asString;
+		//postf("\nupdating index % to count % ", index, count);
+		~mcLabels[1][index].string = cat ++ "\n" ++ count;
+		~mcLabels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
 	}
 };
 
@@ -93,7 +93,7 @@
 			PathName(path).entries.size,
 			{
 				|i|
-				 PathName(path).entries[i].postln;
+				PathName(path).entries[i].postln;
 				Buffer.read(s, PathName(path).entries[i].fullPath);
 			}
 		)
@@ -103,20 +103,21 @@
 };
 
 ~runFx = {
-~fx = (
-	\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
-	\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
-	\chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
-	\mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
-    \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
-	\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
-	\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
-	\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
-	\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])), //dieser macht den *** ERROR: SynthDef companderd#7HVwu not found
-	\utt_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
-	\perc_cmp : ~perc.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
-	\bass_cmp : ~bass.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander]))
-)
+
+	~fx = (
+		\rev: ~reverb.playfx(FxPatch(#[ \busfx, \vrb1 ], ~patches[\reverb2])),
+		\ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
+		\chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
+		\mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
+		\ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+		\ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+		\ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+		\ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+		\ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])), //dieser macht den *** ERROR: SynthDef companderd#7HVwu not found
+		\utt_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+		\perc_cmp : ~perc.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
+		\bass_cmp : ~bass.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander]))
+	)
 };
 
 ~bypass = {
@@ -130,7 +131,7 @@
 		|snd|
 		if ("vrb".matchRegexp(snd.asString), {
 			//("found  " ++ snd).postln;
-		    ~activateReverb.(snd, i, 89 );
+			~activateReverb.(snd, i, 89 );
 			i = i+1;
 		})
 	});
@@ -140,10 +141,10 @@
 
 ~checkFadeVols = {
 	var allVolumes=List.new;
-	   ~fadingSynths.do{
-        |n|
-        allVolumes.add(~melos.amps[n]);
-    };
+	~fadingSynths.do{
+		|n|
+		allVolumes.add(~melos.amps[n]);
+	};
 	//"FadeVolumes Sum    %".format(allVolumes.sum).postln;
 	~fadeVols = allVolumes.sum;
 	allVolumes.sum;
@@ -156,17 +157,17 @@
 	//postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
 	c = case
 	{editVol <= ~volThres}{ ~melos[\amps][cat]= editVol + (~volPlus * ~addFac) }// double enhance when pattern is very quiet
-	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~melos[\amps][cat] = editVol + (~volPlus * ~addFac)}
+	{(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~melos[\amps][cat] = editVol + ~volPlus}
 	{editVol >= ~volMax}{  ~melos[\amps][cat] = ~volMax}
 	{true}{"end of addVolume".postln};
-    //postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
+	//postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
 	defer{var index, height, text;
-	//"updating mc: index % height  % text  %".format(index, height, text);
-	index = ~fadingSynths.detectIndex({|it, i| it == cat});
-	height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
-	text =  ~melos[\amps][cat].trunc(0.001).asString;
-	~mcTrack[1][index].resizeTo(100, height);
-	~mcTrack[1][index].string = text;
+		//"updating mc: index % height  % text  %".format(index, height, text);
+		index = ~fadingSynths.detectIndex({|it, i| it == cat});
+		height = ~melos[\amps][cat].linlin(0.001, 1.0, 10, 360);
+		text =  ~melos[\amps][cat].trunc(0.001).asString;
+		~mcTrack[1][index].resizeTo(100, height);
+		~mcTrack[1][index].string = text;
 	}
 };
 
@@ -195,27 +196,42 @@
 	});
 };
 
-~allocateSynth = {
-		|s_name, count|
-		var c;
-    //postf("\nallocating % with count %\n", s_name, count);
-		c = case
-    {s_name == 'praise'} {~allocate.value(\pr, count)} // reverb
-    {s_name == 'dissent'} {~allocate.value(\dis, count)}
-    {s_name == 'insinuation'} {~allocate.value(\ins, count)}
-    {s_name == 'lecture'} {~allocate.value(\lec, count)}
-    {s_name == 'concession'} {~allocate.value(\con, count)}
-	{true}{"end of allocation".postln};
+~mum = {
+	|cat, numGrains, waitTime|
+	var key = ("mumble_" ++ cat.asString).asSymbol;
+	Pbind(
+		\instrument, \brPhsr,
+		\buf, Prand(~buffers[key].values, numGrains),
+		\start, 0, \end, Pfunc({|ev| var b= ev.buf; b.numFrames.postln; b.numFrames-1}),
+		\dur, waitTime, \amp, 0.4,
+	).play;
 };
 
+
 ~setGlobal = {
-	var c, lastMinute=0, elapsed=0, secondsCounter=0;
+	var lastMinute=0, elapsed=0;
+	if (~upm >= ~upmMax, {
+		var cat, buf;
+		"upmMax reached upm %, switching to Mumbels".format(~upm).postln;
+		Pbindef.all.do({|p| p.stop});
+		cat = ~categorySymbols[~cat];
+		~mum.(cat, ~uttsPerMinute[cat].size, 0.1);
+		if (~hitIsPlaying == false, {~hitPlay = Synth(\hitSt, [\buf, ~hitSample, \amp, 0.6, \start, 0, \end, ~hitSample.numFrames ])},{"hit already playing".postln});
+		~hitIsPlaying = true ;
+
+	}, {
+		"below upm %, switching to Patterns".format(~upm).postln;
+	/*	Pbindef(\hit).stop;
+		~hitIsPlaying = false;*/
+		~allocate.(~categorySymbols[~cat], ~uttDict[~cat]);
+
+	});
 	c = case
 	{~totalUtts == 90} {
-		~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][0], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
+		~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][\rain], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
 	}
 	{~totalUtts == 55}{
-		~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][2], \atk, 12, \sus, 30, \rls, 30,  \amp, 0.25, \thr, 0.5, \cgain, 1]);
+		~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][\dickerpott], \atk, 12, \sus, 30, \rls, 30,  \amp, 0.25, \thr, 0.5, \cgain, 1]);
 
 	}
 	{~totalUtts == 30} {
@@ -226,11 +242,11 @@
 	}
 	{~totalUtts == 25}{
 		//bird Atmosphere
-		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][1], \atk, 10, \sus, 25, \rls, 10, \amp, 0.9, \thr, 0.5, \cgain, 1.5]);
+		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][\birds], \atk, 10, \sus, 25, \rls, 10, \amp, 0.9, \thr, 0.5, \cgain, 1.5]);
 	}
 	{~totalUtts == 5}{
 		//bird Atmosphere
-		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][3], \atk, 20, \sus, 10, \rls, 15,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
+		~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][\birds], \atk, 20, \sus, 10, \rls, 15,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
 		"10 utts".postln;
 	}
 	{(~totalUtts > 1) && (~totalUtts < 10) }{
@@ -245,38 +261,40 @@
 
 		//init continuous Fadeout Function
 		~t.schedAbs(~t.nextTimeOnGrid, {
-		if(~checkFadeVols.() >= ~thresCont, {
-			~continuousFadeOut.value(~fadingSynths); 1},
-		{"not fading: fadeVols = %".format(~fadeVols).postln})
-	});
+			if(~checkFadeVols.() >= ~thresCont, {
+				~continuousFadeOut.value(~fadingSynths); 1},
+			{"not fading: fadeVols = %".format(~fadeVols).postln});
 
+		});
 		//initiate catPerMinute functionality
 		~t.schedAbs(~t.nextTimeOnGrid, {
-			secondsCounter = secondsCounter + ((~t.beats - elapsed)/~t.tempo);
-			if (secondsCounter >= 60.0, {
-				lastMinute = (~t.beats/~t.tempo) - 60.0;
+			var upm=0;
+			//"after % ".format((~t.beats/~t.tempo)).postln;
+			if ((~t.beats/~t.tempo) >= 30.0, {
+				lastMinute = (~t.beats/~t.tempo) - 30.0;
 				//scan all timestamp lists and only keep timestamps that are larger than lastMinute
 				~uttsPerMinute.keysValuesDo({|k,v|
 					v = v.select({|ts| ts >= lastMinute});
 					//"new opm % in %".format(v.size, k).postln;
 					~uttsPerMinute[k] = v;
-				})
+				});
+				1;
 			});
-
-			elapsed = ~t.elapsedBeats;
+			~uttsPerMinute.values.do({|l| upm = upm + l.size});
+			~upm = upm; // update ~upm
+			if (~upm < ~upmMax, {~hitIsPlaying = false; ~hitPlay.release(3) }, {"keep playing".postln });
+			"updated upm %".format(upm).postln;
 			1;
 		});
 	}
 	{true} {"end of global settings".postln};
-	~allocateSynth.(~cat, ~uttDict[~cat]);
 
-	//"clock  has size  %  queue  %".format(~t.queue.size, ~t.queue).postln;
-
-
+	//add new timestamp in respective category list
+	~uttsPerMinute[~categorySymbols[~cat]].add((~t.beats/~t.tempo));
 };
 
 ~mock = {
-    var cat = ~categories.choose,
+	var cat = ~categories.choose,
 	m = NetAddr("127.0.0.1", 57120);
 	m.sendMsg("/interpreter_input", ~story[~storyIndex % ~story.size], cat, ~resourcePath ++ "samples/lec01/");
 	~storyIndex = ~storyIndex +1;

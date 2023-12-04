@@ -3,12 +3,11 @@
 patterns: (
 	drm: (
 		instrument:'sampSt',
-		buf: ~buffers[\bd][7],
+		buf: ~buffers[\bd][\BD2],
 		cgain: 1,
 		fade: 0.5,
 		amp: 0.13
 	),
-
 
 	kik01: (
 		instrument:'kik1',

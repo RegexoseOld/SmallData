@@ -118,9 +118,8 @@ s.waitForBoot({
 			~cat = msg[2];
 			~updateUtts.(msg[1], msg[2]);
 			~blinkSelector.();
-			msg[3].postln;
             if(msg[3] != nil, {~addNewSample.(msg[3])});
-			~allocateSynth.value(msg[2], ~uttDict[msg[2]]);
+			//~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
 			~setGlobal.value();
 		},
 		'/interpreter_input'
@@ -129,24 +128,49 @@ s.waitForBoot({
 	"done".postln;
 })
 );
+
 (
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [1.0, 1.5].choose.wait;
+        [0.1, 0.3, 1.9, 1.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
 )
 ~sim.stop
+(
+//Zugriff auf Synths
+var synthArgs;
+SynthDescLib.global.browse;
+SynthDescLib.global.synthDescs.at(\bellFm)
+SynthDescLib.at(~states.pr.pr0.instrument).controlNames;
+SynthDescLib.global.synthDescs.at(~states.pr.pr10.instrument);
+synthArgs = SynthDescLib.at(~states.pr.pr0.instrument).controlDict.collect(_.defaultValue);
+synthArgs.postln;
+Synth(~states.pr.pr0.instrument, [\freq, 300]);
+)
+(
+var buf, start, dur, end, opm;
+opm = 10;
+buf = ~buffers[\catSampEn];
+start = opm.linlin(0, 10, 0, buf.numFrames-1);
+dur = opm.linlin(0, 10, 1000, buf.numFrames/2);
+x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
+)
 
 
-~volMin = 0.02
- ~maxCatCounter = 30
+(
+~b = ~buffers[\hits][\SnoopSetsUp];
+~hitPlay = Synth(\hitSt, [\buf, ~hitSample, \amp, 0.6, \start, 0, \end, ~hitSample.numFrames])
+~hitPlay.set(\amp, 0.5)
+~hitPlay.set(\gate, 1)
+~hitPlay.release(2)
 
-~buffers[\atmos][0].play
-~t.findKeyForValue(~t.pr)
 
+
+
+)
 (
 Pbindef(\kik02);
 Pbindef(\hh01);
@@ -160,8 +184,9 @@ Pbindef(\lec).play(~t.lec);
 
 )
 
+
 (
-var n = 1;
+var n = 15;
 ~mock.();
 ~allocate.(\dis, n);
 ~allocate.(\ins, n);
