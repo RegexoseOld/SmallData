@@ -213,10 +213,10 @@
 	if (~upm >= ~upmMax, {
 		var cat, buf;
 		"upmMax reached upm %, switching to Mumbels".format(~upm).postln;
-		(Pbindef.all.keys - Set[\hit]).do({|p| p.stop});
+		Pbindef.all.do({|p| p.stop});
 		cat = ~categorySymbols[~cat];
 		~mum.(cat, ~uttsPerMinute[cat].size, 0.1);
-		if (~hitIsPlaying == false, {Pbindef(\hit).play},{"hit already playing".postln});
+		if (~hitIsPlaying == false, {~hitPlay = Synth(\hitSt, [\buf, ~hitSample, \amp, 0.6, \start, 0, \end, ~hitSample.numFrames ])},{"hit already playing".postln});
 		~hitIsPlaying = true ;
 
 	}, {
@@ -270,8 +270,8 @@
 		~t.schedAbs(~t.nextTimeOnGrid, {
 			var upm=0;
 			//"after % ".format((~t.beats/~t.tempo)).postln;
-			if ((~t.beats/~t.tempo) >= 60.0, {
-				lastMinute = (~t.beats/~t.tempo) - 60.0;
+			if ((~t.beats/~t.tempo) >= 30.0, {
+				lastMinute = (~t.beats/~t.tempo) - 30.0;
 				//scan all timestamp lists and only keep timestamps that are larger than lastMinute
 				~uttsPerMinute.keysValuesDo({|k,v|
 					v = v.select({|ts| ts >= lastMinute});
@@ -282,7 +282,7 @@
 			});
 			~uttsPerMinute.values.do({|l| upm = upm + l.size});
 			~upm = upm; // update ~upm
-			if (~upm < ~upmMax, {~hitIsPlaying = false; Pbindef(\hit).stop;  }, {"keep playing".postln });
+			if (~upm < ~upmMax, {~hitIsPlaying = false; ~hitPlay.release(3) }, {"keep playing".postln });
 			"updated upm %".format(upm).postln;
 			1;
 		});

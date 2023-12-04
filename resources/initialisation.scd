@@ -84,6 +84,7 @@ s.sync;
 
 ~hitSample = ~buffers[\hits][\SnoopSetsUp];
 
+
 Pbindef(\hit,
 	\instrument, \sampSt,
 	\buf, ~hitSample,

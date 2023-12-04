@@ -162,8 +162,12 @@ x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
 
 (
 ~b = ~buffers[\hits][\SnoopSetsUp];
+~hitPlay = Synth(\hitSt, [\buf, ~hitSample, \amp, 0.6, \start, 0, \end, ~hitSample.numFrames])
+~hitPlay.set(\amp, 0.5)
+~hitPlay.set(\gate, 1)
+~hitPlay.release(2)
 
-Pbindef(\hit).stop
+
 
 
 )
