@@ -133,7 +133,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [0.1, 0.3, 1.9, 1.5].choose.wait;
+        [0.1, 0.3, 1.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -164,9 +164,9 @@ x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
 ~b = ~buffers[\hits][\SnoopSetsUp];
 ~hitPlay = Synth(\hitSt, [\buf, ~hitSample, \amp, 0.6, \start, 0, \end, ~hitSample.numFrames])
 ~hitPlay.set(\amp, 0.5)
+~hitPlay.set(\harm, 5)
 ~hitPlay.set(\gate, 1)
 ~hitPlay.release(2)
-
 
 
 

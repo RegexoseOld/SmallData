@@ -3,7 +3,7 @@
 	var c, dura, patName, status, count, in_count, local_feedbackVol, numNotes;
 	count = floor(counter * ~factor).asInteger;
 	status = "";
-	local_feedbackVol = 0.15;
+	local_feedbackVol = 0.55;
 	numNotes = 1;
 	dura = Env.new([1,0], [count], [-2]).asPseg;
 	patName = (catName.asString ++ "0").asSymbol;
@@ -13,11 +13,11 @@
 		Pbind(
 			\instrument, \sampMon,
 			\dur, Prand([0.25, 0.31], numNotes),
-			\buf, ~melos[\slots][catName],
+			\buf, ~melos[\slots][catName].normalize,
 			\amp, ~fbVol * local_feedbackVol, \pan, 0,
 			\rate, Prand([[1, 1.03], [1, 1.18], [0.97, 1.101], [0.83, 0.91]], numNotes),
 			\atk, 0.05, \rls, Pkey(\dur), \crv, -4,
-			\cgain, 1.5,
+			\cgain, 1,
 			\out, ~utt.inbus
 		).play;
 	};
