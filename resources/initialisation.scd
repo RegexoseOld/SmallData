@@ -84,17 +84,6 @@ s.sync;
 
 ~hitSample = ~buffers[\hits][\SnoopSetsUp];
 
-
-Pbindef(\hit,
-	\instrument, \sampSt,
-	\buf, ~hitSample,
-	\amp, 0.6,
-	\sus, Pseq([~hitSample.numFrames / s.sampleRate], inf),
-	\rls, 1,
-	\dur, Pseq([~hitSample.numFrames / s.sampleRate], inf),
-);
-
-
 //load melodies
 ~melPath = ~resourcePath ++ "melodies.sc";
 //~melos = ~melos ? ();

@@ -197,14 +197,21 @@
 };
 
 ~mum = {
-	|cat, numGrains, waitTime|
+	|cat, timestamps, waitTime|
 	var key = ("mumble_" ++ cat.asString).asSymbol;
-	Pbind(
-		\instrument, \brPhsr,
-		\buf, Prand(~buffers[key].values, numGrains),
-		\start, 0, \end, Pfunc({|ev| var b= ev.buf; b.numFrames.postln; b.numFrames-1}),
-		\dur, waitTime, \amp, 0.4,
-	).play;
+	[cat, timestamps, waitTime, key].postln;
+	Routine({
+		timestamps.do({
+			|gr|
+			var harm = ((gr.floor)%60) / 12;
+			var buf = ~buffers[key].values.choose.normalize;
+			harm = harm.lincurve(0, 5, -12, 12);
+			//"harmonizing % to %".format(gr, harm).postln;
+
+			Synth(\brPhsr, [\buf, buf, \harm, harm, \start, 0, \end, buf.numFrames, \out, ~utt]);
+			waitTime.wait;
+		})
+	}).play;
 };
 
 
@@ -212,17 +219,15 @@
 	var lastMinute=0, elapsed=0;
 	if (~upm >= ~upmMax, {
 		var cat, buf;
-		"upmMax reached upm %, switching to Mumbels".format(~upm).postln;
+		"upmMax reached upm %, switching to Mumbles".format(~upm).postln;
 		Pbindef.all.do({|p| p.stop});
 		cat = ~categorySymbols[~cat];
-		~mum.(cat, ~uttsPerMinute[cat].size, 0.1);
+		~mum.(cat, ~uttsPerMinute[cat], 0.25);
 		if (~hitIsPlaying == false, {~hitPlay = Synth(\hitSt, [\buf, ~hitSample, \amp, 0.6, \start, 0, \end, ~hitSample.numFrames ])},{"hit already playing".postln});
 		~hitIsPlaying = true ;
 
 	}, {
 		"below upm %, switching to Patterns".format(~upm).postln;
-	/*	Pbindef(\hit).stop;
-		~hitIsPlaying = false;*/
 		~allocate.(~categorySymbols[~cat], ~uttDict[~cat]);
 
 	});
@@ -270,8 +275,8 @@
 		~t.schedAbs(~t.nextTimeOnGrid, {
 			var upm=0;
 			//"after % ".format((~t.beats/~t.tempo)).postln;
-			if ((~t.beats/~t.tempo) >= 30.0, {
-				lastMinute = (~t.beats/~t.tempo) - 30.0;
+			if ((~t.beats/~t.tempo) >= ~lastMinute, {
+				lastMinute = (~t.beats/~t.tempo) - ~lastMinute;
 				//scan all timestamp lists and only keep timestamps that are larger than lastMinute
 				~uttsPerMinute.keysValuesDo({|k,v|
 					v = v.select({|ts| ts >= lastMinute});
