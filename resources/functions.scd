@@ -223,10 +223,6 @@
         Pbindef.all.do({|p| p.stop});
         cat = ~categorySymbols[~cat];
         ~mum.(cat, ~uttsPerMinute[cat], 0.25);
-        if (~hitIsPlaying == false, {~hitPlay = Synth(\hitSt, [\buf, ~hitSample, \amp, 0.6, \start, 0, \end,
-            ~hitSample.numFrames ])},{"hit already playing".postln});
-        ~hitIsPlaying = true;
-
     },{
         "below upm %, switching to Patterns".format(~upm).postln;
 
@@ -278,7 +274,7 @@
             var upm=0;
             //"after % ".format((~t.beats/~t.tempo)).postln;
             if ((~t.beats/~t.tempo) >= ~lastMinute, {
-                lastMinute = (~t.beats/~t.tempo) - ~lastMinute;
+                lastMinute = (~t.beats/~t.tempo) -  ;
                 //scan all timestamp lists and only keep timestamps that are larger than lastMinute
                 ~uttsPerMinute.keysValuesDo({|k,v|
                     v = v.select({|ts| ts >= lastMinute});
@@ -289,7 +285,6 @@
             });
             ~uttsPerMinute.values.do({|l| upm = upm + l.size});
             ~upm = upm; // update ~upm
-            if (~upm < ~upmMax, {~hitIsPlaying = false; ~hitPlay.release(3) }, {"keep playing".postln });
             "updated upm %".format(upm).postln;
             1;
         });
