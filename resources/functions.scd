@@ -202,13 +202,15 @@
     [cat, timestamps, waitTime, key].postln;
     Routine({
         timestamps.do({
-            |gr|
-            var harm = ((gr.floor)%60) / 12;
+            |ts, i|
+            var harm = ((ts.floor)%60) / 12;
             var buf = ~buffers[key].values.choose.normalize;
-            harm = harm.lincurve(0, 5, -12, 12);
+            harm = harm.lincurve(0, 5, -3, 5);
+
             //"harmonizing % to %".format(gr, harm).postln;
 
-            Synth(\brPhsr, [\buf, buf, \harm, harm, \start, 0, \end, buf.numFrames, \out, ~utt]);
+            Synth(\brPhsr, [\buf, buf, \harm, harm, \start, 0, \end, buf.numFrames,
+                \amp, harm.linexp(-3, 5, 0.5, 0.15), \pan, harm.linlin(-3, 5, -1, 1), \out, ~utt]);
             waitTime.wait;
         })
     }).play;
@@ -225,7 +227,6 @@
         ~mum.(cat, ~uttsPerMinute[cat], 0.25);
     },{
         "below upm %, switching to Patterns".format(~upm).postln;
-
         ~allocate.(~categorySymbols[~cat], ~uttDict[~cat]);
 
     });
@@ -274,7 +275,7 @@
             var upm=0;
             //"after % ".format((~t.beats/~t.tempo)).postln;
             if ((~t.beats/~t.tempo) >= ~lastMinute, {
-                lastMinute = (~t.beats/~t.tempo) -  ;
+                lastMinute = (~t.beats/~t.tempo) - ~lastMinute ;
                 //scan all timestamp lists and only keep timestamps that are larger than lastMinute
                 ~uttsPerMinute.keysValuesDo({|k,v|
                     v = v.select({|ts| ts >= lastMinute});

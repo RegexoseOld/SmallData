@@ -173,7 +173,7 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
 
 SynthDef(\sampSt, {
 	var sig, env;
-	sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:\lp.kr(1));
+	sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:\lp.kr(0));
 	env = EnvGen.kr(Env([0,1,1,0], [\atk.kr(0.01), \sus.kr(1), \rls.kr(1)]), doneAction: 2);
 	sig = Compander.ar(sig, sig, \thr.kr(1), 1, 0.5, 0.01, 0.01, \cgain.kr(1));
 	sig = sig * \amp.kr(0.2) * \fade.kr(1) * env;
@@ -220,6 +220,7 @@ SynthDef(\brPhsr, {
 		BufRd.ar(1, buf, ptr + lag);
 	}).sum ;
 	sig = sig * env * \amp.kr(0.3);
+    sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig!2);
 }).add;
 

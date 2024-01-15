@@ -133,7 +133,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [0.1, 0.3, 1.5].choose.wait;
+        [0.9, 2, 1.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -194,7 +194,7 @@ var n = 15;
 ~allocate.(\pr, n);
 ~allocate.(\con, n);
 
-~allocate.(\dis, 24);
+~allocate.(\dis, 15);
 ~allocate.(\ins, 8);
 ~allocate.(\lec, 4);
 ~allocate.(\pr, 25);
