@@ -1,8 +1,8 @@
 (
 patterns: (
-	lec0:(
+	lec00:(
 		instrument: 'bellFm',
-		midinote: 63,
+		midinote: 61,
 		amp: Pfunc({~melos.amps.lec}),
 		fade: 0.2,
 		dur: 8,
@@ -22,12 +22,12 @@ patterns: (
 		rateVar: 0.5,
 		varDur: pi/4,
 		spread: 0.05,
-		dev: 1.5,
+		dev: 0,
 		out: ~ch5.inbus
 	),
 	lec05:(
 		instrument: 'bellFm',
-		midinote: 62,
+		midinote: 73,
 		amp: Pfunc({~melos.amps.lec}),
 		fade: 0.2,
 		dur: 8,
@@ -53,7 +53,7 @@ patterns: (
 
 	lec10: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.lec00,
+		midinote: ~melos.melo.lec10,
 		amp: Pfunc({~melos.amps.lec}),
 		fade: 0.8,
 		dur: 0.25,
@@ -77,7 +77,7 @@ patterns: (
 
 	lec15: (
 		instrument: 'bellFm',
-		midinote: ~melos[\meloEdge][\lec05],
+		midinote: ~melos.melo.lec15,
 		dur: 0.25,
 		amp:0.1,
 		fade: 0.8,
@@ -99,8 +99,8 @@ patterns: (
 	),
 	lec20: (
 		instrument:'fmFine',
-		midinote: ~melos.meloEdge.lec10,
-		dur: ~melos.durEdge.lec10,
+		midinote: ~melos.melo.lec20,
+		dur: ~melos.dur.lec20,
 		amp:  Pfunc({~melos.amps.lec}),
 		fade: 0.65,
 		detune: Pwhite( -10, 3, inf),
@@ -118,11 +118,9 @@ patterns: (
 		crv: -5,
 	),
 
-
-
 	lec25: (
 		instrument: 'bass',
-		midinote: ~melos.meloEdge.lec20,
+		midinote: ~melos.melo.lec25,
 		amp: Pfunc({~melos.amps.lec}),
 		fade: 0.6,
 		detune: 0,

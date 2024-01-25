@@ -1,6 +1,6 @@
 (
 patterns:(
-	dis0: (
+	dis00: (
 		instrument: 'bellFm',
 		midinote: 63,
 		amp: Pfunc({~melos.amps.dis}),
@@ -22,12 +22,12 @@ patterns:(
 		rateVar: 0.5,
 		varDur: pi/4,
 		spread: 0.05,
-		dev: 1.5,
+		dev: 0,
 		out: ~ch1.inbus
 	),
 	dis05: (
 		instrument: 'bellFm',
-		midinote: 65,
+		midinote: 75,
 		amp: Pfunc({~melos.amps.dis}),
 		fade: 0.2,
 		dur: 8,
@@ -53,7 +53,7 @@ patterns:(
 
 	dis10: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.dis00,
+		midinote: ~melos.melo.dis10,
 		amp: Pfunc({~melos.amps.dis}),
 		fade: 0.8,
 		detune: Pwhite( -10, 3, inf),
@@ -77,8 +77,8 @@ patterns:(
 
 	dis15: (
 		instrument: 'fm',
-		midinote: ~melos.meloEdge.dis05,
-		dur: ~melos.durEdge.dis05,
+		midinote: ~melos.melo.dis15,
+		dur: ~melos.dur.dis15,
 		amp: 0.1,
 		fade: 0.8,
 		thr: 0.5,
@@ -98,8 +98,8 @@ patterns:(
 	),
 	dis20: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.dis10,
-		dur: ~melos.durEdge.dis10,
+		midinote: ~melos.melo.dis20,
+		dur: ~melos.dur.dis20,
 		amp:  Pfunc({~melos.amps.dis}),
 		fade: 0.8,
 		detune: Pwhite( -10, 3, inf),
@@ -119,7 +119,7 @@ patterns:(
 	),
 	dis25: (
 		instrument: 'quitt',
-		midinote: ~melos.melo.dis20,
+		midinote: ~melos.melo.dis25,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.dis}),
 		fade: 0.9,

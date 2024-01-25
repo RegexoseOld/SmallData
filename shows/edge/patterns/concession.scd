@@ -1,8 +1,8 @@
 (
 patterns: (
-	con0: (
+	con00: (
 		instrument: 'bellFm',
-		midinote: 63,
+		midinote: 60,
 		amp: Pfunc({~melos.amps.con}),
 		fade: 0.2,
 		dur: 8,
@@ -22,12 +22,12 @@ patterns: (
 		rateVar: 0.5,
 		varDur: pi/4,
 		spread: 0.05,
-		dev: 1.5,
+		dev: 0,
 		out: ~ch4.inbus
 	),
 con05: (
 		instrument: 'bellFm',
-		midinote: 66,
+		midinote: 72,
 		amp: Pfunc({~melos.amps.con}),
 		fade: 0.2,
 		dur: 8,
@@ -52,7 +52,7 @@ con05: (
 	),
 	con10: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.con00,
+		midinote: ~melos.melo.con10,
 		amp: Pfunc({~melos.amps.con}),
 		fade: 0.7,
 		detune: Pwhite( -10, 3, inf),
@@ -75,8 +75,8 @@ con05: (
 
 	con15: (
 		instrument: 'bellFm',
-		midinote: ~melos.meloEdge.con05,
-		dur: ~melos.durEdge.con05,
+		midinote: ~melos.melo.con15,
+		dur: ~melos.dur.con15,
 		amp: Pfunc({~melos.amps.con}),
 		fade: 0.6,
 		thr: 0.5,
@@ -96,9 +96,9 @@ con05: (
 	),
 	con20: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.con10,
+		midinote: ~melos.melo.con20,
 		amp: Pfunc({~melos.amps.con}),
-		dur: ~melos.durEdge.con10,
+		dur: ~melos.dur.con20,
 		fade: 0.7,
 		detune: Pwhite( -10, 3, inf),
 		fratio0: 1, // Integer values for pitch accuracy
@@ -117,7 +117,7 @@ con05: (
 
 	con25: (
 		instrument: 'bellFm',
-		midinote: ~melos[\melo][\con20],
+		midinote: ~melos[\melo][\con25],
 		detune: Pn(Pgeom(20, 0.84, 16), inf),
 		amp: Pfunc({~melos.amps.con}),
 		dur: 0.25,

@@ -109,14 +109,14 @@
         \ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
         \chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
         \mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
-        \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+       \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
         \ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
         \ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
         \ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
         \ch5_cmp : ~ch5.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])), //dieser macht den *** ERROR: SynthDef companderd#7HVwu not found
         \utt_cmp : ~utt.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
         \perc_cmp : ~perc.playfx(FxPatch(#[\busfx, \companderd], ~patches[\companderd_beat])),
-        \bass_cmp : ~bass.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander]))
+        \bass_cmp : ~bass.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander_bass]))
     )
 };
 
@@ -141,6 +141,7 @@
 
 ~checkFadeVols = {
     var allVolumes=List.new;
+     "check Fade line 144".postln;
     ~fadingSynths.do{
         |n|
         allVolumes.add(~melos.amps[n]);
@@ -154,13 +155,12 @@
     |cat|
     var c, editVol, allVolumes=List.new;
     editVol =  ~melos[\amps][cat];
-    //postf("\n updating volume of %  from %  add %   max %   thres % \n ", cat, editVol, add, max, thres );
+    //postf("\n updating volume of %  from % \n ", cat, editVol );
     c = case
     {editVol <= ~volThres}{ ~melos[\amps][cat]= editVol + (~volPlus * ~addFac) }// double enhance when pattern is very quiet
     {(editVol<= ~volMax) && (editVol>= ~volThres)}{ ~melos[\amps][cat] = editVol + ~volPlus}
     {editVol >= ~volMax}{  ~melos[\amps][cat] = ~volMax}
     {true}{"end of addVolume".postln};
-    //postf("new vol of %  is % \n", cat, ~fadePatterns[cat][\vol]);
     defer{var index, height, text;
         //"updating mc: index % height  % text  %".format(index, height, text);
         index = ~fadingSynths.detectIndex({|it, i| it == cat});
@@ -168,7 +168,8 @@
         text =  ~melos[\amps][cat].trunc(0.001).asString;
         ~mcTrack[1][index].resizeTo(100, height);
         ~mcTrack[1][index].string = text;
-    }
+    };
+    //"debug addVolume: editVol %".format(editVol).postln;
 };
 
 ~continuousFadeOut = {
@@ -238,6 +239,21 @@
         ~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][\dickerpott], \atk, 12, \sus, 30, \rls, 30,  \amp, 0.25, \thr, 0.5, \cgain, 1]);
 
     }
+      {(~totalUtts >= 35) && (~uttDict[~cat] >= 10)}{
+        var count = ~uttDict[~cat];
+        var case_count = count -9;
+        var bassmelo = ("bass" ++ count.asString).asSymbol;
+        /* Bass und Beat auslagern, damit es sich nicht dauernd ändert.
+        das sollte erst getriggert werden, wenn eine Kategorie 10 counts hat*/
+     Pbindef(\bass, *~states[\bass].asPairs).play(~t, quant:8);
+		Pbindef(\bass,
+            \midinote, Pif((count%15==0), ~melos.melo.bass15, ~melos.melo.at(bassmelo)),
+			\dur, Pif((count%15==0), ~melos.dur.bass15, ~melos.dur.bass10),
+			\ipeak, 1 + (case_count * 0.5),
+			\fmratio, Pif(count.odd, 1, 2),
+			\fade, 1).quant_(8);
+
+    }
     {~totalUtts == 30} {
         ~birds.set(\rate, 0.7)
     }
@@ -259,10 +275,9 @@
         //"first utt".postln;
         ~runFx.();
         ~activateFaders.();
-        //~fadingSynths.do{|name| Pbindef(name).play(~t, quant:0)};
+
         Pdefn(\melody).play(~t, quant:0);
         //[\kik02, \hh01, \bass].do{|n| Pbindef(n).play(~t, quant:4)};
-
         //init continuous Fadeout Function
         ~t.schedAbs(~t.nextTimeOnGrid, {
             if(~checkFadeVols.() >= ~thresCont, {
@@ -271,6 +286,7 @@
 
         });
         //initiate CategoriesPerMinute Counter EINMALIG, das funktioniert UNABHÄNGIG von einkommenden Utts
+        "line 273".postln;
         ~t.schedAbs(~t.nextTimeOnGrid, {
             var upm=0;
             //"after % ".format((~t.beats/~t.tempo)).postln;

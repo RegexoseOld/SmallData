@@ -89,7 +89,7 @@ s.waitForBoot({
 	~fadingSynths.do{
 		|name|
 		var default, c;
-		default = (name ++ "0").asSymbol;
+		default = (name ++ "00").asSymbol;
 		default.postln;
 		Pbindef(name, *~states[name][default].asPairs);
 	};
@@ -121,6 +121,7 @@ s.waitForBoot({
             if(msg[3] != nil, {~addNewSample.(msg[3])});
 			//~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
 			~setGlobal.value();
+            //"debug OSC: cat %".format(msg[2]).postln;
 		},
 		'/interpreter_input'
 	);
@@ -133,7 +134,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [0.9, 2, 1.5].choose.wait;
+        [2.9, 2, 1.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -172,9 +173,10 @@ x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
 
 )
 (
-Pbindef(\kik02);
-Pbindef(\hh01);
-Pbindef(\bass);
+Pbindef(\hh01, \decayScale, 8, \freq, 200, \maxfrq, 800, \minRing, 0.1, \maxRing, 1, \dur, 2, \accent, 3);
+Pbindef(\con);
+Pbindef(\bass, \midinote, ~melos.melo.bass10, \dur, ~melos.dur.bass10).play(~t);
+Pbindef(\bass, \midinote, Pseq([36, 39, 36, 36, 36, 36, 36, \ ], inf), \dur,  Pseq([0.5, 0.5, 0.5, 0.75, 0.75, 0.25, 0.75, 0.25], inf));
 Pbindef(\pr).play(~t.pr);
 Pbindef(\dis).play(~t.dis);
 Pbindef(\con).play(~t.con);
@@ -186,7 +188,7 @@ Pbindef(\lec).play(~t.lec);
 
 
 (
-var n = 15;
+var n = 23;
 ~mock.();
 ~allocate.(\dis, n);
 ~allocate.(\ins, n);
@@ -194,10 +196,24 @@ var n = 15;
 ~allocate.(\pr, n);
 ~allocate.(\con, n);
 
-~allocate.(\dis, 15);
-~allocate.(\ins, 8);
-~allocate.(\lec, 4);
-~allocate.(\pr, 25);
-~allocate.(\con, 24);
+~allocate.(\dis, 16);
+~allocate.(\ins, 12);
+~allocate.(\lec, 13);
+~allocate.(\pr, 15);
+~allocate.(\con, 14)
+)
+~melos.melo.dis00
+~states.dis.dis00
+~states.ins.keys.do{|k| ~states.ins[k][\midinote].postln}
+
+(
+var melo = ~melos.melo.bass10.asStream;
+var dur =  ~melos.dur.bass10.asStream;
+"pattern 00: ".postln;
+30.do{
+    "melo %  \t dur %".format(melo.next, dur.next).postln;
+
+};
+
 
 )

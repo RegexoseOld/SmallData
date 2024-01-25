@@ -85,7 +85,7 @@ s.sync;
 ~hitSample = ~buffers[\hits][\SnoopSetsUp];
 
 //load melodies
-~melPath = ~resourcePath ++ "melodies.sc";
+~melPath = ~showFolder ++ "/melodies.sc";
 //~melos = ~melos ? ();
 ~melos = ();
 ~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
@@ -165,11 +165,11 @@ PathName(~midiFolder).entries.do({
 		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
 		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
 		~cat2Channel = (
-		\pr: ~ch1,
-		\dis: ~ch2,
-		\con: ~ch3,
-		\lec: ~ch4,
-		\ins: ~ch5,
+		\pr: ~ch2,
+		\dis: ~ch1,
+		\con: ~ch4,
+		\lec: ~ch5,
+		\ins: ~ch3,
 		\kik01: ~perc,
 		\sn01 : ~perc,
 		\h01: ~perc,

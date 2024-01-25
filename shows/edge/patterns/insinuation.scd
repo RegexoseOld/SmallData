@@ -1,8 +1,8 @@
 (
 patterns: (
-	ins0: (
+	ins00: (
 		instrument: 'bellFm',
-		midinote: 63,
+		midinote: 57,
 		amp: Pfunc({~melos.amps.ins}),
 		fade: 0.2,
 		dur: 8,
@@ -22,12 +22,12 @@ patterns: (
 		rateVar: 0.5,
 		varDur: pi/4,
 		spread: 0.05,
-		dev: 1.5,
+		dev: 01,
 		out: ~ch3.inbus
 	),
 	ins05: (
 		instrument: 'bellFm',
-		midinote: 64,
+		midinote: 69,
 		amp: Pfunc({~melos.amps.ins}),
 		fade: 0.2,
 		dur: 8,
@@ -52,7 +52,7 @@ patterns: (
 	),
 	ins10: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.ins00,
+		midinote: ~melos.melo.ins10,
 		amp: Pfunc({~melos.amps.ins}),
 		fade: 0.6,
 		dur: 0.25,
@@ -76,10 +76,10 @@ patterns: (
 
 	ins15: (
 		instrument: 'oscfm',
-		midinote: ~melos.meloEdge.ins05,
+		midinote: ~melos.melo.ins15,
 		buf: Pfunc{~buffers[\wt]},
 		amp: Pfunc({~melos.amps.ins}),
-		dur: ~melos.durEdge.ins05,
+		dur: ~melos.dur.ins15,
 		fade: 0.8,
 		atk: 0.02,
 		atkcrv: 0,
@@ -93,8 +93,8 @@ patterns: (
 	),
 	ins20: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.ins10,
-		dur: ~melos.durEdge.ins10,
+		midinote: ~melos.melo.ins20,
+		dur: ~melos.dur.ins20,
 		amp: Pfunc({~melos.amps.ins}),
 		fade: 0.5,
 		detune: Pwhite( -10, 3, inf),
@@ -117,7 +117,7 @@ patterns: (
 	ins25: (
 		instrument: 'oscfm',
 		buf: Pfunc{~buffers[\wt]},
-		midinote: ~melos[\melo][\ins20],
+		midinote: ~melos[\melo][\ins25],
 		detune: Pn(Pgeom(30, 0.89, 16),inf),
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.ins}),
