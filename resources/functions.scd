@@ -141,7 +141,6 @@
 
 ~checkFadeVols = {
     var allVolumes=List.new;
-     "check Fade line 144".postln;
     ~fadingSynths.do{
         |n|
         allVolumes.add(~melos.amps[n]);
@@ -211,7 +210,7 @@
             //"harmonizing % to %".format(gr, harm).postln;
 
             Synth(\brPhsr, [\buf, buf, \harm, harm, \start, 0, \end, buf.numFrames,
-                \amp, harm.linexp(-3, 5, 0.5, 0.15), \pan, harm.linlin(-3, 5, -1, 1), \out, ~utt]);
+                \amp, harm.linexp(-3, 5, 0.1, 0.04), \pan, harm.linlin(-3, 5, -1, 1), \out, ~utt]);
             waitTime.wait;
         })
     }).play;
@@ -226,17 +225,20 @@
         Pbindef.all.do({|p| p.stop});
         cat = ~categorySymbols[~cat];
         ~mum.(cat, ~uttsPerMinute[cat], 0.25);
+         if (~hitIsPlaying == false, {~hitPlay = Synth(\hitSt, [\buf, ~hitSample.normalize, \amp, 0.5, \start, 0, \end, 5 * s.sampleRate, \atk, 1, \rls, 15])},{"hit already playing".postln});
+        ~hitIsPlaying = true;
     },{
         "below upm %, switching to Patterns".format(~upm).postln;
+        ~hitIsPlaying = false;
         ~allocate.(~categorySymbols[~cat], ~uttDict[~cat]);
 
     });
     c = case
     {~totalUtts == 90} {
-        ~rain = Synth(\sampSt, [\buf, ~buffers[\atmos][\rain], \atk, 20, \sus, 30, \rls, 10,  \amp, 0.9, \thr, 0.5, \cgain, 1]);
+        ~hitSample = ~buffers[\atmos][\rain];
     }
     {~totalUtts == 55}{
-        ~pott = Synth(\sampSt, [\buf, ~buffers[\atmos][\dickerpott], \atk, 12, \sus, 30, \rls, 30,  \amp, 0.25, \thr, 0.5, \cgain, 1]);
+        ~hitSample = ~buffers[\atmos][\dickerpott];
 
     }
       {(~totalUtts >= 35) && (~uttDict[~cat] >= 10)}{
@@ -254,25 +256,19 @@
 			\fade, 1).quant_(8);
 
     }
-    {~totalUtts == 30} {
-        ~birds.set(\rate, 0.7)
+    {(~totalUtts > 20) && (~uttDict[~cat] >= 5)}{
+        var count = ~uttDict[~cat];
+        var case_count = count -4;
+        Pbindef(\hh01, \decayScale, 2 + case_count, \maxRing, case_count/2, \accent, 2 +(0.5 * case_count)).quant_(0);
     }
-    {~totalUtts == 27} {
-        ~birds.set(\rate, 1.5)
-    }
-    {~totalUtts == 25}{
-        //bird Atmosphere
-        ~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][\birds], \atk, 10, \sus, 25, \rls, 10, \amp, 0.9, \thr, 0.5, \cgain, 1.5]);
-    }
+    {~totalUtts == 20}{Pbindef(\hh01).play(~t, quant:4)}
     {~totalUtts == 5}{
         //bird Atmosphere
-        ~birds = Synth(\sampSt, [\buf, ~buffers[\atmos][\birds], \atk, 20, \sus, 10, \rls, 15,  \amp, 0.9, \thr, 0.5, \cgain, 4]);
+        ~hitSample = ~buffers[\atmos][\birds];
         "10 utts".postln;
     }
-    {(~totalUtts > 1) && (~totalUtts < 10) }{
-    }
     {(~totalUtts == 1)}{
-        //"first utt".postln;
+        //"first utt".post=n;
         ~runFx.();
         ~activateFaders.();
 

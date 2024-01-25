@@ -82,7 +82,7 @@ PathName(~samplesPath).entries.do({
 
 s.sync;
 
-~hitSample = ~buffers[\hits][\SnoopSetsUp];
+~hitSample = ~buffers[\atmos][\birds];
 
 //load melodies
 ~melPath = ~showFolder ++ "/melodies.sc";

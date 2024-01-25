@@ -29,7 +29,6 @@
         /* hier überschreibe ich den initial status, um einen smootheren Anfang
         zu bekommen, eben mit oktavierten tönen */
         Pbindef(catName, \index, count, \rls, 3 + (count*0.75), \cRatio, count, \mRatio, count).quant_(1);
-		[\kik02, \hh01, \bass, \snip, \sn01].do{|n| Pbindef(n).stop};
 		status = "State 0 notes increasing harmonies";
 	}
 	{(count >=5) && (count <= 9)}{
@@ -37,25 +36,16 @@
 		patName = (catName.asString ++ "05").asSymbol;
 		Pbindef(catName, *~states[catName][patName].asPairs).play(~t, quant:1);
 		Pbindef(catName, \mRatio, case_count, \cRatio, 3, \index, case_count, \trmDep, 0.02 * case_count).quant_(1);
-        Pbindef(\hh01, \decayScale, 2 + case_count, \maxRing, case_count/2, \accent, 2 +(0.5 * case_count)).play(~t, quant:4);
-		[\kik02, \sn01].do{|n| Pbindef(n).stop };
+
 		status = "State1: HH longer decay, Notes increasing harmonies, increasing tremolo";
 	}
 	{(count >= 10) && (count <= 20)}{
-        var bassmelo = ("bass" ++ count.asString).asSymbol;
-        bassmelo.postln;
 		case_count = count -9 ;
 		patName = (catName.asString ++ "10").asSymbol;
 		//Pbindef(catName).clear;
 		Pbindef(catName, *~states[catName][patName].asPairs).play(~t, quant:8);
 		Pbindef(catName, \rls, 0.3 * case_count , \fratio0, case_count, \modInd0, case_count, \ffreq, 800 + (case_count * 100), \fmVol, Pif(count.odd, 50, 230)).quant_(8);
         // bass und beat werden ausgelagert in ~setGlobal
-
-		Pbindef(\hh01, *~states[\hh01].asPairs).play(~t, quant:8);
-		Pbindef(\hh01, \fade, 0.1 * case_count).quant_(0);
-		Pbindef(\sn01).stop;
-		Pbindef(\snip01).stop;
-
 		status = "state 03 dotted notes, increasing harmonies & release, bass but no beat";
 	}
 

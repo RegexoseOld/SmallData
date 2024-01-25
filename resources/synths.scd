@@ -228,7 +228,7 @@ SynthDef(\hitSt, {
 	arg buf=0, rate=1, start=0, end=BufFrames.ir(buf), gate=1;
 	var sig, ptr, env;
 	ptr = Phasor.ar(0, BufRateScale.kr(buf)* rate * \harm.kr(0).midiratio, start, end, 0);
-	env = EnvGen.ar(\adsr.kr(Env.adsr(0.001, 0, 1 ,0.01)), gate, doneAction:2);
+	env = EnvGen.ar(Env.perc(\atk.kr(0.1), \rls.kr(0.1), curve:5), gate, doneAction:2);
 	sig = BufRd.ar(2, buf, ptr);
 	sig = sig * env * \amp.kr(0.3);
 	Out.ar(\out.kr(0), sig);
