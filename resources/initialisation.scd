@@ -121,14 +121,14 @@ s.sync;
 	});
 };
 
-// get PatternLists out of MIDIFolder
+// get PatternLists out of MIDIFolder, pass "true" in function call (line 130/131)
 ~midiFolder = ~showFolder +/+ "MIDI";
 PathName(~midiFolder).entries.do({
 	|path|
-	//"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
+	"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
 	//midiKey = path.fileNameWithoutExtension.asSymbol;
-	~makePatternList.("note", path, False);
-    ~makePatternList.("dur", path, False);
+	~makePatternList.("note", path, false);
+    ~makePatternList.("dur", path, false);
 });
 
 
@@ -170,9 +170,8 @@ PathName(~midiFolder).entries.do({
 		\con: ~ch4,
 		\lec: ~ch5,
 		\ins: ~ch3,
-		\kik01: ~perc,
-		\sn01 : ~perc,
-		\h01: ~perc,
+		\perc: ~perc,
+		\utt : ~perc,
 		\bass: ~bass
 	)
 );

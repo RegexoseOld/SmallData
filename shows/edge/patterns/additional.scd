@@ -70,7 +70,8 @@ patterns: (
 		accent: Pseq([4, Pn(1, 7) ], inf),
 		decayScale: 8,
 		pan: Pwhite(-0.5, 0.5, inf),
-		fade: Pwhite(0.2, 0.7, inf),
+		amp: Pwhite(0.02, 0.07, inf),
+        fade: 0.5,
 		out: ~perc.inbus
 	),
 

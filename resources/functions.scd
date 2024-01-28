@@ -109,7 +109,7 @@
         \ring : ~ringmod.playfx(FxPatch(#[\busfx, \ring1], ~patches[\ring])),
         \chor : ~chorus.playfx(FxPatch(#[\busfx, \chorus], ~patches[\chorus])),
         \mst_lim : ~master.playfx(FxPatch(#[\busfx, \limiter], ~patches[\limiter])),
-       \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
+        \ch1_cmp : ~ch1.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
         \ch2_cmp : ~ch2.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
         \ch3_cmp : ~ch3.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
         \ch4_cmp :~ch4.playfx(FxPatch(#[\busfx, \companderd], ~patches[\compander])),
@@ -222,44 +222,85 @@
     if (~upm >= ~upmMax, {
         var cat, buf;
         "upmMax reached upm %, switching to Mumbles".format(~upm).postln;
-        Pbindef.all.do({|p| p.stop});
+        Pbindef.all.do({|p| p.pause});
         cat = ~categorySymbols[~cat];
         ~mum.(cat, ~uttsPerMinute[cat], 0.25);
-         if (~hitIsPlaying == false, {~hitPlay = Synth(\hitSt, [\buf, ~hitSample.normalize, \amp, 0.5, \start, 0, \end, 5 * s.sampleRate, \atk, 1, \rls, 15])},{"hit already playing".postln});
+        if (~hitIsPlaying == false, {~hitPlay = Synth(\hitSt, [\buf, ~hitSample.normalize, \amp, 0.5, \start, 0, \end, 5 * s.sampleRate, \atk, 3, \rls, 10])},{"hit already playing".postln});
         ~hitIsPlaying = true;
     },{
-        "below upm %, switching to Patterns".format(~upm).postln;
+        "upm %, switching to Patterns".format(~upm).postln;
         ~hitIsPlaying = false;
+        Pbindef.all.do({|p| if (p.isPlaying == false, {p.resume})});
         ~allocate.(~categorySymbols[~cat], ~uttDict[~cat]);
 
     });
     c = case
-    {~totalUtts == 90} {
+    {~totalUtts > 200} {
         ~hitSample = ~buffers[\atmos][\rain];
+        [\kik02, \hh01, \bass, \snip, \sn01].do{|n|
+            //Pbindef(n).isPlaying.postln;
+            if (Pbindef(n).isPlaying == false, {Pbindef(n).play(~t, quant:4)})};
     }
-    {~totalUtts == 55}{
+    {(~totalUtts > 130) && (~uttDict[~cat] >= 40)}{
+        var count, case_count;
+        count = ~uttDict[~cat];
+        case_count = count -39;
+        Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.43, \fade, 1).play(~t, quant:4);
+        Pbindef(\hh01, \dur, Pif((count%3==0), 0.0625, 0.25), \decayScale, Pwhite(0.6, 1.2, inf),
+            \carAmp, Pif((count%3==0), ~melos.melo.hh02, ~melos.melo.hh01), \fade, 1
+        ).play(~t, quant:4);
+        Pbindef(\bass, \dur, Pif( (count%4==0), 0.5, 0.25), \modRate, 1.5,
+            \midinote, Pif(case_count.even, ~melos.melo.bass36, ~melos.melo.bass37),
+            \rls, 1, \fmratio, 2, \slide1, 1.2, \fade, 1).play(~t, quant:8);
+    }
+    {(~totalUtts > 100) && (~uttDict[~cat] >= 25)}{
+        var count, case_count;
+        count = ~uttDict[~cat];
+        case_count = count -19;
+        Pbindef(\kik02, \timb2, -28, \sweep, 0.1).quant_(4);
+        Pbindef(\bass,
+            \midinote, Pif((count%4 == 0), ~melos.melo.bass23, ~melos.melo.bass24),
+            \dur, Pif((count%4 ==0), ~melos.dur.bass23, ~melos.dur.bass24),
+            \oscFB, pi/4,
+        ).quant_(8);
+    }
+    {(~totalUtts > 80) && (~uttDict[~cat] >= 20)}{
+        var count, case_count;
+        count = ~uttDict[~cat];
+        case_count = count -19;
         ~hitSample = ~buffers[\atmos][\dickerpott];
+        Pbindef(\bass,
+            \midinote, Pif((count%4 ==0), ~melos.melo.bass25, ~melos.melo.bass20),
+            \dur, Pif((count%4 ==0), ~melos.dur.bass25, ~melos.dur.bass20)).quant_(8);
+        Pbindef(\kik02, \timb2, -28 + (case_count *2), \sweep, 0.4 - (case_count * 0.05)).quant_(8);
+        Pbindef(\hh01, \freq, 200, \maxFreq, 800 , \decayScale, 1, \maxRing, 1, \fade, 0.6).quant_(4);
 
     }
-      {(~totalUtts >= 35) && (~uttDict[~cat] >= 10)}{
+    {~totalUtts == 70}{
+        Pbindef(\kik02).play(~t, quant:8);
+        Pbindef(\hh01, \decayScale, 1, \maxRing, 0.35, \fade, 0.35 ).quant_(4); }
+    {~totalUtts >= 50}{Pbindef(\hh01, \dur, 0.25, \fade, 0.25, \decayScale, 0.5, \maxRing, 0.25).quant_(4);}
+
+    {(~totalUtts >= 40) && (~uttDict[~cat] >= 10)}{
         var count = ~uttDict[~cat];
         var case_count = count -9;
         var bassmelo = ("bass" ++ count.asString).asSymbol;
         /* Bass und Beat auslagern, damit es sich nicht dauernd ändert.
         das sollte erst getriggert werden, wenn eine Kategorie 10 counts hat*/
-     Pbindef(\bass, *~states[\bass].asPairs).play(~t, quant:8);
-		Pbindef(\bass,
+        Pbindef(\bass, *~states[\bass].asPairs).play(~t, quant:8);
+        Pbindef(\bass,
             \midinote, Pif((count%15==0), ~melos.melo.bass15, ~melos.melo.at(bassmelo)),
-			\dur, Pif((count%15==0), ~melos.dur.bass15, ~melos.dur.bass10),
-			\ipeak, 1 + (case_count * 0.5),
-			\fmratio, Pif(count.odd, 1, 2),
-			\fade, 1).quant_(8);
+            \dur, Pif((count%15==0), ~melos.dur.bass15, ~melos.dur.bass10),
+            \ipeak, 1 + (case_count * 0.3),
+            \fmratio, Pif(count.odd, 1, 2),
+            \fade, 0.8).quant_(8);
+        Pbindef(\hh01, \freq, 900, \maxFreq, 1200, \fade, 0.25).quant_(0);
 
     }
     {(~totalUtts > 20) && (~uttDict[~cat] >= 5)}{
         var count = ~uttDict[~cat];
         var case_count = count -4;
-        Pbindef(\hh01, \decayScale, 2 + case_count, \maxRing, case_count/2, \accent, 2 +(0.5 * case_count)).quant_(0);
+        Pbindef(\hh01, \decayScale, 2 + (case_count * 1.5), \maxRing, case_count/2, \accent, 2 + (0.3 * case_count)).quant_(0);
     }
     {~totalUtts == 20}{Pbindef(\hh01).play(~t, quant:4)}
     {~totalUtts == 5}{
@@ -298,7 +339,7 @@
             });
             ~uttsPerMinute.values.do({|l| upm = upm + l.size});
             ~upm = upm; // update ~upm
-            "updated upm %".format(upm).postln;
+            //"updated upm %".format(upm).postln;
             1;
         });
     }

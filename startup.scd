@@ -123,7 +123,7 @@ s.waitForBoot({
 			~setGlobal.value();
             //"debug OSC: cat %".format(msg[2]).postln;
 		},
-		'/interpreter_input'
+		'/interpreter_input';
 	);
 	CmdPeriod.add(~mixClear);
 	"done".postln;
@@ -134,86 +134,11 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [0.9, 1, 1.5].choose.wait;
+        [1.9, 1, 3.5, 2.5].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
 )
+
 ~sim.stop
-(
-//Zugriff auf Synths
-var synthArgs;
-SynthDescLib.global.browse;
-SynthDescLib.global.synthDescs.at(\bellFm)
-SynthDescLib.at(~states.pr.pr0.instrument).controlNames;
-SynthDescLib.global.synthDescs.at(~states.pr.pr10.instrument);
-synthArgs = SynthDescLib.at(~states.pr.pr0.instrument).controlDict.collect(_.defaultValue);
-synthArgs.postln;
-Synth(~states.pr.pr0.instrument, [\freq, 300]);
-)
-(
-var buf, start, dur, end, opm;
-opm = 10;
-buf = ~buffers[\catSampEn];
-start = opm.linlin(0, 10, 0, buf.numFrames-1);
-dur = opm.linlin(0, 10, 1000, buf.numFrames/2);
-x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
-)
 
-
-(
-~b = ~buffers[\hits][\SnoopSetsUp];
-~hitPlay = Synth(\hitSt, [\buf, ~hitSample.normalize, \amp, 0.6, \start, 0, \end, ~hitSample.numFrames, \rls, 7])
-~hitPlay.set(\amp, 0.5)
-~hitPlay.set(\harm, 5)
-~hitPlay.set(\gate, 1)
-~hitPlay.release(2)
-
-
-
-)
-(
-Pbindef(\hh01, \decayScale, 8, \freq, 200, \maxfrq, 800, \minRing, 0.1, \maxRing, 1, \dur, 2, \accent, 3);
-Pbindef(\con);
-Pbindef(\bass, \midinote, ~melos.melo.bass10, \dur, ~melos.dur.bass10).play(~t);
-Pbindef(\bass, \midinote, Pseq([36, 39, 36, 36, 36, 36, 36, \ ], inf), \dur,  Pseq([0.5, 0.5, 0.5, 0.75, 0.75, 0.25, 0.75, 0.25], inf));
-Pbindef(\pr).play(~t.pr);
-Pbindef(\dis).play(~t.dis);
-Pbindef(\con).play(~t.con);
-Pbindef(\con);
-Pbindef(\ins).play(~t.ins);
-Pbindef(\lec).play(~t.lec);
-
-)
-
-
-(
-var n = 23;
-~mock.();
-~allocate.(\dis, n);
-~allocate.(\ins, n);
-~allocate.(\lec, n);
-~allocate.(\pr, n);
-~allocate.(\con, n);
-
-~allocate.(\dis, 16);
-~allocate.(\ins, 12);
-~allocate.(\lec, 13);
-~allocate.(\pr, 15);
-~allocate.(\con, 14)
-)
-~melos.melo.dis00
-~states.dis.dis00
-~states.ins.keys.do{|k| ~states.ins[k][\midinote].postln}
-
-(
-var melo = ~melos.melo.bass10.asStream;
-var dur =  ~melos.dur.bass10.asStream;
-"pattern 00: ".postln;
-30.do{
-    "melo %  \t dur %".format(melo.next, dur.next).postln;
-
-};
-
-
-)
