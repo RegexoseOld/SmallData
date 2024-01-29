@@ -9,7 +9,7 @@
 ~totalUtts = 0;
 ~upm = 0; // utts per Minute
 ~hitIsPlaying = false;
-~lastMinute = 30.0;
+~uttTimeWindow = 30.0;
 ///////
 ~fbVol = 0.4; //global Volume of feedback for incoming Utts
 // values for addVolume

@@ -10,8 +10,8 @@
     }};
     ~lastUtterances = lastUtts;
     ~lastCategories = lastCats;
-    ~totalUtts = ~totalUtts + 1;
-    if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + 1} );
+    ~totalUtts = ~totalUtts + (1 * ~factor);
+    if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + (1 * ~factor)} );
     ~uttsPerMinute[cat].add(~t.beats/~t.tempo); // add a timestamp to calculate utterances per minute
     defer{var index, count;
         index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
@@ -210,10 +210,10 @@
             //"harmonizing % to %".format(gr, harm).postln;
 
             Synth(\brPhsr, [\buf, buf, \harm, harm, \start, 0, \end, buf.numFrames,
-                \amp, harm.linexp(-3, 5, 0.1, 0.04), \pan, harm.linlin(-3, 5, -1, 1), \out, ~utt]);
+                \amp, harm.linexp(-3, 5, 0.1, 0.03), \pan, harm.linlin(-3, 5, -1, 1), \out, ~utt]);
             waitTime.wait;
         })
-    }).play;
+    }).play
 };
 
 
@@ -235,36 +235,38 @@
 
     });
     c = case
-    {~totalUtts > 200} {
+    {~totalUtts > 300} {
         ~hitSample = ~buffers[\atmos][\rain];
-        [\kik02, \hh01, \bass, \snip, \sn01].do{|n|
-            //Pbindef(n).isPlaying.postln;
-            if (Pbindef(n).isPlaying == false, {Pbindef(n).play(~t, quant:4)})};
+
     }
     {(~totalUtts > 130) && (~uttDict[~cat] >= 40)}{
         var count, case_count;
         count = ~uttDict[~cat];
         case_count = count -39;
-        Pbindef(\kik02, \freq, ~melos.melo.kik01, \amp, 0.43, \fade, 1).play(~t, quant:4);
+        Pbindef(\kik02, \freq, ~melos.melo.kik02, \dist, case_count * 0.75).quant_(8);
+        Pbindef(\sn01, \freq, ~melos.melo.sn02, \dist1, 13, \dist2, -4, \rls, 2 ).quant_(8);
         Pbindef(\hh01, \dur, Pif((count%3==0), 0.0625, 0.25), \decayScale, Pwhite(0.6, 1.2, inf),
             \carAmp, Pif((count%3==0), ~melos.melo.hh02, ~melos.melo.hh01), \fade, 1
-        ).play(~t, quant:4);
-        Pbindef(\bass, \dur, Pif( (count%4==0), 0.5, 0.25), \modRate, 1.5,
+        ).quant_(8);
+        Pbindef(\bass, \dur, Pif(case_count.even, 0.25, 0.5), \modRate, 1.5,
             \midinote, Pif(case_count.even, ~melos.melo.bass36, ~melos.melo.bass37),
-            \rls, 1, \fmratio, 2, \slide1, 1.2, \fade, 1).play(~t, quant:8);
+            \rls, 1.5, \fmratio, 3, \slide1, 0.5, \distort, 1.5).quant_(8);
     }
     {(~totalUtts > 100) && (~uttDict[~cat] >= 25)}{
         var count, case_count;
-        count = ~uttDict[~cat];
+        count = ~uttDict[~cat] ;
         case_count = count -19;
-        Pbindef(\kik02, \timb2, -28, \sweep, 0.1).quant_(4);
+        Pbindef(\kik02, \timb2, -28, \sweep, 0.1, \freq, ~melos.melo.kik02, \dur, ~melos.dur.kik02).quant_(4);
+        Pbindef(\sn01, \freq, ~melos.melo.sn02, \dur, ~melos.dur.sn02).play(~t, quant:8);
         Pbindef(\bass,
             \midinote, Pif((count%4 == 0), ~melos.melo.bass23, ~melos.melo.bass24),
             \dur, Pif((count%4 ==0), ~melos.dur.bass23, ~melos.dur.bass24),
             \oscFB, pi/4,
         ).quant_(8);
     }
-    {(~totalUtts > 80) && (~uttDict[~cat] >= 20)}{
+    {~totalUtts >= 90}{Pbindef(\snip01).play(~t, quant:8);}
+
+    {(~totalUtts >= 80) && (~uttDict[~cat] >= 20)}{
         var count, case_count;
         count = ~uttDict[~cat];
         case_count = count -19;
@@ -276,7 +278,7 @@
         Pbindef(\hh01, \freq, 200, \maxFreq, 800 , \decayScale, 1, \maxRing, 1, \fade, 0.6).quant_(4);
 
     }
-    {~totalUtts == 70}{
+    {~totalUtts >= 70}{
         Pbindef(\kik02).play(~t, quant:8);
         Pbindef(\hh01, \decayScale, 1, \maxRing, 0.35, \fade, 0.35 ).quant_(4); }
     {~totalUtts >= 50}{Pbindef(\hh01, \dur, 0.25, \fade, 0.25, \decayScale, 0.5, \maxRing, 0.25).quant_(4);}
@@ -302,8 +304,8 @@
         var case_count = count -4;
         Pbindef(\hh01, \decayScale, 2 + (case_count * 1.5), \maxRing, case_count/2, \accent, 2 + (0.3 * case_count)).quant_(0);
     }
-    {~totalUtts == 20}{Pbindef(\hh01).play(~t, quant:4)}
-    {~totalUtts == 5}{
+    {~totalUtts >= 18}{Pbindef(\hh01).play(~t, quant:4)}
+    {~totalUtts >= 5}{
         //bird Atmosphere
         ~hitSample = ~buffers[\atmos][\birds];
         "10 utts".postln;
@@ -323,12 +325,11 @@
 
         });
         //initiate CategoriesPerMinute Counter EINMALIG, das funktioniert UNABHÄNGIG von einkommenden Utts
-        "line 273".postln;
         ~t.schedAbs(~t.nextTimeOnGrid, {
             var upm=0;
             //"after % ".format((~t.beats/~t.tempo)).postln;
-            if ((~t.beats/~t.tempo) >= ~lastMinute, {
-                lastMinute = (~t.beats/~t.tempo) - ~lastMinute ;
+            if ((~t.beats/~t.tempo) >= ~uttTimeWindow, {
+                lastMinute = (~t.beats/~t.tempo) - ~uttTimeWindow ;
                 //scan all timestamp lists and only keep timestamps that are larger than lastMinute
                 ~uttsPerMinute.keysValuesDo({|k,v|
                     v = v.select({|ts| ts >= lastMinute});

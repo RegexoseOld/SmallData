@@ -48,7 +48,7 @@ patterns: (
 		trigger: ~melos.melo.snap01,
 		amp: 0.4,
 		fade: 1,
-        lp: 0,
+        	lp: 0,
 		dur: ~melos.dur.snap01,
 		rate: 1,
 		atk: 0.01,

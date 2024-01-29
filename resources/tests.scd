@@ -44,8 +44,12 @@ x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
 )
 (
 Pbindef(\hh01, \dur, 0.25, \freq, 600, \maxFreq, 1300, \fade, 1).play(~t, quant:8);
-Pbindef(\kik02).play(~t, quant:8);
-Pbindef(\bass, \midinote, ~melos.melo.bass23, \dur, ~melos.dur.bass23, \modRate, 0.5, \fmratio, 2).play(~t, quant:8);
+Pbindef(\kik02, \freq, ~melos.melo.kik02 *2, \dur, ~melos.dur.kik02).play(~t, quant:8);
+Pbindef(\sn01, \freq, ~melos.melo.sn02, \dur, ~melos.dur.sn02, \pan, Pwhite(-1, 1, inf)).play(~t, quant:8);
+Pbindef(\hh01, \dur, 0.25, \freq, 600, \maxFreq, 1300, \fade, 1).quant_(8);
+Pbindef(\kik02, \freq, ~melos.melo.kik02, \timb1, -3, \timb2, -16, \sweep, 0.03, \rls, 2, \dist, 2, \amp, 0.65).quant_(8);
+Pbindef(\sn01, \freq, ~melos.melo.sn02, \dist1, 13, \dist2, -4, \rls, 2 ).quant_(8);
+Pbindef(\bass, \midinote, ~melos.melo.bass37, \dur, ~melos.dur.bass37, \dur, 0.5, \modRate, 1.5, \fmratio, 3, \rls, 2, \slide1, 0.9, \slide2, 1).play(~t, quant:8);
 Pbindef(\hh01, \decayScale,1 , \freq, 200, \maxfrq, 800, \minRing, 0.1, \maxRing, 1, \dur, 0.25, \accent, 3);
 Pbindef(\con);
 Pbindef(\bass, \midinote, Pseq([36, 39, 36, 36, 36, 36, 36, \ ], inf), \dur,  Pseq([0.5, 0.5, 0.5, 0.75, 0.75, 0.25, 0.75, 0.25], inf));
@@ -56,12 +60,12 @@ Pbindef(\pr, *~states[\lec][\lec20].asPairs).play(~t);
 Pbindef(\pr, *~states[\pr][\pr20].asPairs).play(~t);
 Pbindef(\pr, *~states[\pr][\pr20].asPairs).play(~t);
 Pbindef(\dis, \rls, 0.2, \vibF, 0.2, \vibVol, 90,  \index, 9);
-Pbindef(\dis, \rls, 0.1  );
-Pbindef(\pr, \rls, 0.2, \vibF, 2, \vibVol, 80, \fmDur, 0.02, \index, 1, \bpf, 200, \bpf2, 3, \crv, 5);
+Pbindef(\dis, \rls, 0.6, \vibF, 3, \vibVol, 10, \fmDur, 0.05, \index, 1, \mRatio, 1, \cRatio, 2, \bpf1, Pn(Pgeom(1500, 0.8, 16), inf), \bpf2, 6, \crv, 5 );
+Pbindef(\pr, \rls, 0.03, \vibF, 1, \vibVol, 20, \fmDur, 0.04, \index, 1, \mRatio, 1, \cRatio, 0.5, \bpf1, Pn(Pgeom(150, 1.05, 16), inf), \bpf2, 1, \crv, -5, \spread, 0.3, \dev, 0.9)
 Pbindef(\con).play(~t.con);
-Pbindef(\con, \trmDep, 3, \trmF, 0.1, \trmRate, 6, \vibF, 4, \vibVol, 100);
-Pbindef(\ins, \rls, 0.2, \vibF, 1, \vibVol, 50,  \index, 1, \cRatio, 3, \trmDep, 3, \trmF, 2);
-Pbindef(\lec, \vibF, 3, \vibVol, 80);
+Pbindef(\con, \rls, 0.6, \vibF, 12, \vibVol, 40, \fmDur, 0.1, \index, 1, \mRatio, 2, \cRatio, 3, \bpf1, Pn(Pgeom(3000, 0.93, 16), inf), \bpf2, 3, \spread, 0.3, \dev, 0.9, \crv, -5);
+Pbindef(\ins, \rls, 1.2, \vibF, 1, \vibVol, 50,  \index, 1, \mRatio, 1, \cRatio, 1, \bpf1, Pn(Pgeom(400, 1.1, 16), inf), \bpf2, 2, \fmDur, 0.04);
+Pbindef(\lec, \rls, 0.5, \vibF, 3, \vibVol, 10, \fmDur, 0.05, \index, 1, \mRatio, 1, \cRatio, 2, \bpf1, Pn(Pgeom(2500, 0.8, 16), inf), \bpf2, 6, \bpf3, 0.06, \crv, 5);
 
 )
 

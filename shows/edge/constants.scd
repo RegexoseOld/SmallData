@@ -15,4 +15,4 @@
 ~volStep = 0.003; //vol reduction in continuous FadeOut
 ~fadeVols = 0; //the volumes of all fading Patterns
 ~thresCont = 0.1; // threshold from which to continuously fade Out
-~maxCatCounter = 40;
+~maxCatCounter = 60;
