@@ -102,25 +102,51 @@
 ~buildRotaryFader = {
 	|top, posx, posy, offset, size, constants, mins, maxes|
 	var knobs, knobView, constant, knobData, newValues;
-	knobView = CompositeView(top, Rect(posx, posy, (size*3) + (4*offset), size*2 + offset))
+	knobView = CompositeView(top, Rect(posx, posy, (size*4) + (5*offset), size*2 + offset))
 	.background_(~style_1.at("bank_frame_color"));
-	knobs = Array.fill(3, {|i|
+	knobs = Array.fill(4, {|i|
 		Knob(knobView, Rect((size+offset) * i + offset, offset, size, size))
 		.background_(~style_1["lightgrey"])
 		.visible_(true)
 		.enabled_(true)
 		.action_({|v|
-			currentEnvironment.put(constants[i], v.value.lincurve(0.0, 1.0, mins[i], maxes[i]));
-			newValues[i].string = constants[i] ++ " : " ++ v.value.lincurve(0.0, 1.0, mins[i], maxes[i]).trunc(0.001);
-		});
+
+			if (i<3) {
+				currentEnvironment.put(constants[i], v.value.lincurve(0.0, 1.0, mins[i], maxes[i]));
+				newValues[i].string = constants[i] ++ " : " ++ v.value.lincurve(0.0, 1.0, mins[i], maxes[i]).trunc(0.001);
+			} { // scaled ~factor properly from 10x slower to 10x faster
+				currentEnvironment.put(constants[i], 10**v.value.linlin(0.0, 1.0, mins[i], maxes[i]));
+				newValues[i].string = "factor : " ++ v.value.linlin(0.0, 1.0, 10*mins[i], 10*maxes[i]).trunc(0.001);
+			}
+		})
 	});
-	newValues = Array.fill(3, {|i|
-		StaticText(knobView, Rect((size+offset) * i + offset, size+(2*offset), size, size))
-		.string_(constants[i] ++ " : " ++ currentEnvironment.at(constants[i]))
-		.background_(~style_1.at("bank_frame_color"))
-		.font_(~style_1.at("text_font"))
-		.align_(\center)
+
+	newValues = Array.fill(4, {|i|
+		if (i<3) {
+			StaticText(knobView, Rect((size+offset) * i + offset, size+(2*offset), size, size))
+			.string_(constants[i] ++ " : " ++ currentEnvironment.at(constants[i]))
+			.background_(~style_1.at("bank_frame_color"))
+			.font_(~style_1.at("text_font"))
+			.align_(\center)
+		} {
+			StaticText(knobView, Rect((size+offset) * i + offset, size+(2*offset), size, size))
+			.string_(constants[i] ++ " : " ++ currentEnvironment.at(constants[i]).log10)
+			.background_(~style_1.at("bank_frame_color"))
+			.font_(~style_1.at("text_font"))
+			.align_(\center)
+		}
 	});
+	knobs[3].valueAction_(0.5);
+	// TODO: set start value of knobs properly
+	// knobs.do({
+	// 	arg knob, i;
+	// 	if (i<3) {
+	// 		knob.valueAction_(currentEnvironment.at(constants[i]));
+	// 	} {
+	// 		knob.valueAction_(0.5);
+	// 	}
+// });
+
 	knobData = [knobView, knobs, newValues];
 };
 
