@@ -10,7 +10,7 @@
     }};
     ~lastUtterances = lastUtts;
     ~lastCategories = lastCats;
-    ~totalUtts = ~totalUtts + (1 * ~factor);
+    ~totalUtts = ~totalUtts + 1;
     if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + (1 * ~factor)} );
     ~uttsPerMinute[cat].add(~t.beats/~t.tempo); // add a timestamp to calculate utterances per minute
     defer{var index, count;
