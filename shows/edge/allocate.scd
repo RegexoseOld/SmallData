@@ -4,7 +4,7 @@
     count = floor(counter * ~factor).asInteger;
     status = "";
     "counter % factor % count %".format(counter, ~factor, count).postln;
-    local_feedbackVol = 0.25;
+    local_feedbackVol = 0.8;
     numNotes = 1;
     dura = Env.new([1,0], [count], [-2]).asPseg;
     patName = (catName.asString ++ "0").asSymbol;

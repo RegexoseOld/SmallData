@@ -210,10 +210,27 @@
             //"harmonizing % to %".format(gr, harm).postln;
 
             Synth(\brPhsr, [\buf, buf, \harm, harm, \start, 0, \end, buf.numFrames,
-                \amp, harm.linexp(-3, 5, 0.1, 0.03), \pan, harm.linlin(-3, 5, -1, 1), \out, ~utt]);
+                \amp, harm.linexp(-3, 5, 0.07, 0.01), \pan, harm.linlin(-3, 5, -1, 1), \out, ~utt]);
             waitTime.wait;
         })
     }).play
+};
+
+~feedBackSounds = {
+    |cat|
+    "feedback sounds solo with %".format(cat).postln;
+    2.do{
+            |n|
+            Pbind(
+                \instrument, \sampMon,
+                \dur, Prand([0.25, 0.31], 1),
+                \buf, ~melos[\slots][cat].normalize,
+                \amp, ~fbVol, \pan, 0,
+                \rate, Prand([[1, 1.03], [1, 1.18], [0.97, 1.101], [0.83, 0.91]], 1),
+                \atk, 0.05, \rls, Pkey(\dur), \crv, -4,
+                \out, ~utt.inbus
+            ).play;
+        }
 };
 
 
