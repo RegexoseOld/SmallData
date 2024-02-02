@@ -203,14 +203,15 @@
     Routine({
         timestamps.do({
             |ts, i|
-            var harm = ((ts.floor)%60) / 12;
+            var amp;
+            var harm = ((ts.floor) % ~uttTimeWindow); // die ts auf einen Wert zwischen 0 und ~uttTimeWindow bringen
             var buf = ~buffers[key].values.choose.normalize;
-            harm = harm.lincurve(0, 5, -3, 5);
-
-            //"harmonizing % to %".format(gr, harm).postln;
+            harm = harm.lincurve(0, 30, -3, 5); //jetzt die harmoniser mappen
+            amp = harm.linlin(-3, 5, 0.05, 0.025); // hohe harmonies sind leiser als tiefe
+            //"harmonizing % to % amp %".format(ts.floor, harm, amp).postln;
 
             Synth(\brPhsr, [\buf, buf, \harm, harm, \start, 0, \end, buf.numFrames,
-                \amp, harm.linexp(-3, 5, 0.07, 0.01), \pan, harm.linlin(-3, 5, -1, 1), \out, ~utt]);
+                \amp, amp, \pan, harm.linlin(-3, 5, -1, 1), \atk, 0.1, \out, ~utt]);
             waitTime.wait;
         })
     }).play
@@ -242,7 +243,7 @@
         Pbindef.all.do({|p| p.pause});
         cat = ~categorySymbols[~cat];
         ~mum.(cat, ~uttsPerMinute[cat], 0.25);
-        if (~hitIsPlaying == false, {~hitPlay = Synth(\hitSt, [\buf, ~hitSample.normalize, \amp, 0.5, \start, 0, \end, 5 * s.sampleRate, \atk, 3, \rls, 10])},{"hit already playing".postln});
+        if (~hitIsPlaying == false, {~hitPlay = Synth(\hitSt, [\buf, ~hitSample.normalize, \amp, 0.22, \start, 0, \end, 5 * s.sampleRate, \atk, 3, \rls, 10])},{"hit already playing".postln});
         ~hitIsPlaying = true;
     },{
         "upm %, switching to Patterns".format(~upm).postln;

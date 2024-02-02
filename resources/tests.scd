@@ -10,8 +10,12 @@
 
 ~sim.stop
 
-~upmMax = 20
+~upmMax = 30
 ~melos[\seqRates]
+~isPrelude = false
+~isPrelude = true
+
+ ~mum.(~cat, ~uttsPerMinute[~cat], 0.25);
 (
 //Zugriff auf Synths
 var synthArgs;

@@ -139,7 +139,7 @@ s.waitForBoot({
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [1.9, 3.5].choose.wait;
+        [3.3, 1, 3.2].choose.wait;
         //"mocked" .postln;
     }
 ) }).play;
