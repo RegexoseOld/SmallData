@@ -1,6 +1,6 @@
 (
 patterns:(
-	dis0: (
+	dis00: (
 		instrument: 'bellFm',
 		midinote: 63,
 		amp: Pfunc({~melos.amps.dis}),
@@ -22,12 +22,12 @@ patterns:(
 		rateVar: 0.5,
 		varDur: pi/4,
 		spread: 0.05,
-		dev: 1.5,
+		dev: 0,
 		out: ~ch1.inbus
 	),
 	dis05: (
 		instrument: 'bellFm',
-		midinote: 65,
+		midinote: 75,
 		amp: Pfunc({~melos.amps.dis}),
 		fade: 0.2,
 		dur: 8,
@@ -53,7 +53,7 @@ patterns:(
 
 	dis10: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.dis00,
+		midinote: ~melos.melo.dis10,
 		amp: Pfunc({~melos.amps.dis}),
 		fade: 0.8,
 		detune: Pwhite( -10, 3, inf),
@@ -77,8 +77,8 @@ patterns:(
 
 	dis15: (
 		instrument: 'fm',
-		midinote: ~melos.meloEdge.dis05,
-		dur: ~melos.durEdge.dis05,
+		midinote: ~melos.melo.dis15,
+		dur: ~melos.dur.dis15,
 		amp: 0.1,
 		fade: 0.8,
 		thr: 0.5,
@@ -98,44 +98,47 @@ patterns:(
 	),
 	dis20: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.dis10,
-		dur: ~melos.durEdge.dis10,
+		midinote: ~melos.melo.dis20 -12,
+		dur: ~melos.dur.dis20,
 		amp:  Pfunc({~melos.amps.dis}),
 		fade: 0.8,
 		detune: Pwhite( -10, 3, inf),
-		fratio0: 1, // Integer values for pitch accuracy
+		modInd1: Pwhite(0.1, 3, inf),
 		fratio1: 1,
+		modInd2: Pwhite(0.1, 3, inf),
 		fratio2: 1,
-		fmVol: 10,
-		devMin: 0.999,
-		devMax: 1.0001,
+        ffreq: 2500,
 		distort: 1.0,
 		thr: 0.65,
 		cgain: 1.3,
+		protorls: 0.01,
 		atk: 0.02,
 		rls: 0.07,
 		crv: -5,
 
 	),
-	dis25: (
-		instrument: 'quitt',
-		midinote: ~melos.melo.dis20,
+	dis40: (
+		instrument: 'bellFm',
+		midinote: ~melos.melo.dis25,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.dis}),
 		fade: 0.9,
-		thr: 0.5,
-		cgain: 3,
-		pan: 0,
-		atk: 0.02,
-		rls: 0.14,
-		width: 0.4,
-		detune: Pn(Pgeom(30, 0.89, 16),inf),
-		gendAmp: 0.9,
-		pulseMul: 0.35,
-		lag: 0,
-		ffreq: 2000,
-		rq: 0.8,
-		width: 0.3,
+		thr: 0.7,
+		cgain: 1.4,
+		pan: Pwhite(-0.7, 0.7, inf),
+		atk: 0.03,
+		rls: 0.5,
+		index: 1,
+		mRatio: 1,
+		cRatio: 2,
+		crv: 5,
+		vibF: 3,
+		vibVol: 11,
+		dev: Pn(Pgeom(1.2, 0.8, 16), inf),
+		bpf1: Pn(Pgeom(1500, 0.85, 16), inf),
+		bpf2: 5,
+		bpf3: 0.06,
+		bpfQ: 0.33,
 	),
 
 

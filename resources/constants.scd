@@ -9,7 +9,7 @@
 ~totalUtts = 0;
 ~upm = 0; // utts per Minute
 ~hitIsPlaying = false;
-~lastMinute = 45.0;
+~uttTimeWindow = 30.0;
 ///////
 ~fbVol = 0.4; //global Volume of feedback for incoming Utts
 // values for addVolume
@@ -24,4 +24,4 @@
 ~fadeVols = 0; //the volumes of all fading Patterns
 ~thresCont = 0.15; // threshold from which to continuously fade Out
 ~maxCatCounter = 15; // max value of categoryCounter (counter is reset if this value is reached
-~upmMax = 15;
+~upmMax = 25;

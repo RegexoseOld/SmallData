@@ -2,7 +2,7 @@
 patterns: (
 	ins0: (
 		instrument: 'fm',
-		midinote: ~melos.melo.ins,
+		midinote: 71,
 		detune: 0,
 		modRate: 0.4,
 		fmVol: 10,

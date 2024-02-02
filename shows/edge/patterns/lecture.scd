@@ -1,8 +1,8 @@
 (
 patterns: (
-	lec0:(
+	lec00:(
 		instrument: 'bellFm',
-		midinote: 63,
+		midinote: 61,
 		amp: Pfunc({~melos.amps.lec}),
 		fade: 0.2,
 		dur: 8,
@@ -22,12 +22,12 @@ patterns: (
 		rateVar: 0.5,
 		varDur: pi/4,
 		spread: 0.05,
-		dev: 1.5,
+		dev: 0,
 		out: ~ch5.inbus
 	),
 	lec05:(
 		instrument: 'bellFm',
-		midinote: 62,
+		midinote: 73,
 		amp: Pfunc({~melos.amps.lec}),
 		fade: 0.2,
 		dur: 8,
@@ -53,7 +53,7 @@ patterns: (
 
 	lec10: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.lec00,
+		midinote: ~melos.melo.lec10,
 		amp: Pfunc({~melos.amps.lec}),
 		fade: 0.8,
 		dur: 0.25,
@@ -77,7 +77,7 @@ patterns: (
 
 	lec15: (
 		instrument: 'bellFm',
-		midinote: ~melos[\meloEdge][\lec05],
+		midinote: ~melos.melo.lec15,
 		dur: 0.25,
 		amp:0.1,
 		fade: 0.8,
@@ -99,44 +99,47 @@ patterns: (
 	),
 	lec20: (
 		instrument:'fmFine',
-		midinote: ~melos.meloEdge.lec10,
-		dur: ~melos.durEdge.lec10,
+		midinote: ~melos.melo.lec20,
+		dur: ~melos.dur.lec20,
 		amp:  Pfunc({~melos.amps.lec}),
 		fade: 0.65,
 		detune: Pwhite( -10, 3, inf),
-		fratio0: 1, // Integer values for pitch accuracy
+		modInd1: Pwhite(0.1, 3, inf),
 		fratio1: 1,
+		modInd2: Pwhite(0.1, 3, inf),
 		fratio2: 1,
-		fmVol: 10,
-		devMin: 0.9,
-		devMax: 1.1,
-		distort: 1.0,
+        ffreq: 3500,
 		thr: 0.65,
 		cgain: 1.3,
+		protorls: 0.02,
 		atk: 0.02,
-		rls: 0.07,
+		rls: 0.02,
 		crv: -5,
 	),
 
-
-
-	lec25: (
-		instrument: 'bass',
-		midinote: ~melos.meloEdge.lec20,
+	lec40: (
+		instrument: 'bellFm',
+		midinote: ~melos.melo.lec25,
 		amp: Pfunc({~melos.amps.lec}),
-		fade: 0.6,
-		detune: 0,
-		modRate: 0.4,
-		fmVol: 80,
-		devMin: 0.999,
-		devMax: 1.0001,
-		distort: 1.5,
-		thr: 0.99,
-		cgain: 1.0,
-		atk: 0.02,
-		rls: 1.17,
-		crv: -5,
-		dur: 2,
+		fade: 0.5,
+		dur: 0.25,
+		thr: 0.7,
+		cgain: 1.4,
+		pan: Pwhite(-0.7, 0.7, inf),
+		atk: 0.03,
+		rls: 0.5,
+		crv: 5, 
+		index: 1,
+		mRatio: 1,
+		cRatio: 2,
+		vibF: 3,
+		vibVol: 15,
+		dev: 0,
+		bpf1: Pn(Pgeom(2500, 0.8, 16), inf),
+		bpf2: 5,
+		bpf3: 0.06,
+		bpfQ: 0.33,
+		fmDur: 0.05,
 		out: ~ch5.inbus
 	),
 

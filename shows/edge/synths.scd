@@ -1,8 +1,8 @@
 SynthDef.new(\bellFm, {
     // Fm so wie https://www.youtube.com/watch?v=dLMSR2Kjq6Y -> 11:30
     //
-    |freq=75, index=1, mRatio=1, cRatio=1, atk=0.4, rls=2, crv= 5, bpf=100|
-    var sig, sig2, env, volMod, trem;
+    |freq=75, index=1, mRatio=1, cRatio=1, atk=0.4, rls=2, crv= 5|
+    var sig, sig2, env, volMod, trem, bpf;
     env = EnvGen.kr(Env.perc(atk, rls, curve: crv), doneAction:2);
     volMod = SinOsc.kr(\vibF.kr(0.2), 0, \vibVol.kr(30))  ; // vol modulation
     trem = Vibrato.kr(\trmF.kr(1), \trmRate.kr(2), \trmDep.kr(0.0), \trmDel.kr(1), \onset.kr(2), \rateVar.kr(0.0), \varDur.kr(0));
@@ -17,7 +17,7 @@ SynthDef.new(\bellFm, {
     sig = Compander.ar(sig, sig, \thr.kr(0.65), 1, 0.3, 0.3, 0.4, \cgain.kr(1));
 	//sig = BPF.ar(sig, \ffreq.kr(1000), \rq.kr(1.0));
     sig = sig * \fade.kr(1) * env * \amp.kr(0.1) ;
-    sig = Pan2.ar(sig,\pan.kr(0.0));
+    sig = Pan2.ar(sig, \pan.kr(0.0));
     Out.ar(\out.kr(0), sig);
 }).add;
 

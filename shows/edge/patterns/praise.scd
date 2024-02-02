@@ -1,8 +1,8 @@
 (
 patterns: (
-	pr0: (
+	pr00: (
 		instrument: 'bellFm',
-		midinote: 63,
+		midinote: 55,
 		amp: Pfunc({~melos.amps.pr}),
 		fade: 0.2,
 		dur: 8,
@@ -22,12 +22,12 @@ patterns: (
 		rateVar: 0.5,
 		varDur: pi/4,
 		spread: 0.05,
-		dev: 1.5,
+		dev: 0,
 		out: ~ch2.inbus
 	),
 	pr05: (
 		instrument: 'bellFm',
-		midinote: 63,
+		midinote: 67,
 		amp: Pfunc({~melos.amps.pr}),
 		fade: 0.2,
 		dur: 8,
@@ -52,7 +52,7 @@ patterns: (
 	),
 	pr10: (
 		instrument: 'fmFine',
-		midinote: ~melos.meloEdge.pr00,
+		midinote: ~melos.melo.pr10,
 		amp: Pfunc({~melos.amps.pr}),
 		fade: 0.8,
 		dur: 0.25,
@@ -74,7 +74,7 @@ patterns: (
 
 	pr15: (
 		instrument: 'bellFm',
-		midinote: ~melos.meloEdge.pr05,
+		midinote: ~melos.melo.pr15,
 		dur: 0.25,
 		amp: Pfunc({~melos.amps.pr}),
 		fade: 0.8,
@@ -96,28 +96,27 @@ patterns: (
 
 	pr20: (
 		instrument: 'fmFine',
-		midinote: ~melos[\meloEdge][\pr10],
-		dur: ~melos.durEdge.pr10,
+		midinote: ~melos.melo.pr20,
+		dur: ~melos.dur.pr20,
 		amp: Pfunc({~melos.amps.pr}),
 		fade: 0.8,
 		detune: Pwhite( -10, 3, inf),
 		fratio0: 1, // Integer values for pitch accuracy
+		modInd1: Pwhite(0.1, 3, inf),
 		fratio1: 1,
+		modInd2: Pwhite(0.1, 3, inf),
 		fratio2: 1,
-		fmVol: 10,
-		devMin: 0.999,
-		devMax: 1.0001,
+		ffreq: 2500,
 		distort: 1.0,
-		thr: 0.65,
-		cgain: 1.3,
 		atk: 0.02,
+		protorls: 0.1,
 		rls: 0.07,
-		crv: -5,
+		crv: 3,
 
 	),
-	pr25: (
+	pr40: (
 		instrument: 'bellFm',
-		midinote: ~melos[\melo][\pr20],
+		midinote: ~melos[\melo][\pr25],
 		detune: Pn(Pgeom(30, 0.89, 16),inf),
 		dur: 0.25,
 		amp:  Pfunc({~melos.amps.pr}),
@@ -126,14 +125,20 @@ patterns: (
 		cgain: 1.4,
 		pan: Pwhite(-0.7, 0.7, inf),
 		atk: 0.03,
-		rls: 0.2,
-		vibF: 0.4,
-		vibVol: 34,
-		dev: Pn(Pgeom(1.2, 0.8, 16), inf),
-		bpf: Pn(Pgeom(1000, 0.9, 16), inf),
-		bpf2: 5,
+		rls: 0.05,
+		crv: -5,
+		vibF: 1,
+		vibVol: 20,
+		spread: 0.3,
+		dev: 0.2,
+		index: 1,
+		mRatio: 1,
+		cRatio: 0.5,
+		bpf1: Pn(Pgeom(150, 1.05, 16), inf),
+		bpf2: 1.5,
 		bpf3: 0.06,
 		bpfQ: 0.33,
+		fmDur: 0.04,
 
 	),
 

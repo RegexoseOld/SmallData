@@ -173,7 +173,7 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
 
 SynthDef(\sampSt, {
 	var sig, env;
-	sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:\lp.kr(1));
+	sig = PlayBuf.ar(2, \buf.kr(0), \rate.kr(1) *BufRateScale.kr(\buf.kr(0)), \trig.kr(1), \spos.kr(0), loop:\lp.kr(0));
 	env = EnvGen.kr(Env([0,1,1,0], [\atk.kr(0.01), \sus.kr(1), \rls.kr(1)]), doneAction: 2);
 	sig = Compander.ar(sig, sig, \thr.kr(1), 1, 0.5, 0.01, 0.01, \cgain.kr(1));
 	sig = sig * \amp.kr(0.2) * \fade.kr(1) * env;
@@ -220,6 +220,7 @@ SynthDef(\brPhsr, {
 		BufRd.ar(1, buf, ptr + lag);
 	}).sum ;
 	sig = sig * env * \amp.kr(0.3);
+    sig = Pan2.ar(sig, \pan.kr(0));
 	Out.ar(\out.kr(0), sig!2);
 }).add;
 
@@ -227,7 +228,7 @@ SynthDef(\hitSt, {
 	arg buf=0, rate=1, start=0, end=BufFrames.ir(buf), gate=1;
 	var sig, ptr, env;
 	ptr = Phasor.ar(0, BufRateScale.kr(buf)* rate * \harm.kr(0).midiratio, start, end, 0);
-	env = EnvGen.ar(\adsr.kr(Env.adsr(0.001, 0, 1 ,0.01)), gate, doneAction:2);
+	env = EnvGen.ar(Env.perc(\atk.kr(0.1), \rls.kr(0.1), curve:5), gate, doneAction:2);
 	sig = BufRd.ar(2, buf, ptr);
 	sig = sig * env * \amp.kr(0.3);
 	Out.ar(\out.kr(0), sig);

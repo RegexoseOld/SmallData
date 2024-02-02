@@ -82,10 +82,10 @@ PathName(~samplesPath).entries.do({
 
 s.sync;
 
-~hitSample = ~buffers[\hits][\SnoopSetsUp];
+~hitSample = ~buffers[\atmos][\birds];
 
 //load melodies
-~melPath = ~resourcePath ++ "melodies.sc";
+~melPath = ~showFolder ++ "/melodies.sc";
 //~melos = ~melos ? ();
 ~melos = ();
 ~melos = thisProcess.interpreter.compileFile(~melPath.absolutePath).value;
@@ -121,14 +121,14 @@ s.sync;
 	});
 };
 
-// get PatternLists out of MIDIFolder
+// get PatternLists out of MIDIFolder, pass "true" in function call (line 130/131)
 ~midiFolder = ~showFolder +/+ "MIDI";
 PathName(~midiFolder).entries.do({
 	|path|
-	//"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
+	"entry: % and %".format(path, path.fileNameWithoutExtension).postln;
 	//midiKey = path.fileNameWithoutExtension.asSymbol;
-	~makePatternList.("note", path, False);
-    ~makePatternList.("dur", path, False);
+	~makePatternList.("note", path, false);
+    ~makePatternList.("dur", path, false);
 });
 
 
@@ -165,14 +165,13 @@ PathName(~midiFolder).entries.do({
 		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
 		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
 		~cat2Channel = (
-		\pr: ~ch1,
-		\dis: ~ch2,
-		\con: ~ch3,
-		\lec: ~ch4,
-		\ins: ~ch5,
-		\kik01: ~perc,
-		\sn01 : ~perc,
-		\h01: ~perc,
+		\pr: ~ch2,
+		\dis: ~ch1,
+		\con: ~ch4,
+		\lec: ~ch5,
+		\ins: ~ch3,
+		\perc: ~perc,
+		\utt : ~perc,
 		\bass: ~bass
 	)
 );

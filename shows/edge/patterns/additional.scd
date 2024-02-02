@@ -19,7 +19,7 @@ patterns: (
 
 	kik02: (
 		instrument:'kik2',
-		freq: ~melos.meloEdge.kik01,
+		freq: ~melos.melo.kik01,
 		amp: 0.65,
 		dur: 0.25,
 		sweep: 0.06,
@@ -45,10 +45,11 @@ patterns: (
 	snip01: (
 		instrument: 'sampSt',
 		buf: ~buffers[\hi][\snap_stereo],
-		trigger: ~melos.meloEdge.snap01,
+		trigger: ~melos.melo.snap01,
 		amp: 0.4,
 		fade: 1,
-		dur: ~melos.durEdge.snap01,
+        	lp: 0,
+		dur: ~melos.dur.snap01,
 		rate: 1,
 		atk: 0.01,
 		rls: 0.8,
@@ -61,15 +62,16 @@ patterns: (
 	hh01: (
 		instrument: 'percImp',
 		amp: 0.1,
-		dur: 0.25,
-		freq: 870,
-		maxfrq: 950,
-		minRing: 0.01,
+		dur: 2,
+		freq: 200,
+		maxfrq: 800,
+		minRing: 0.1,
 		maxRing: 0.08,
-		accent:  Pwhite(4.0, 4.1, inf),
-		decayScale: 7,
+		accent: Pseq([4, Pn(1, 7) ], inf),
+		decayScale: 8,
 		pan: Pwhite(-0.5, 0.5, inf),
-		fade: Pwhite(0.2, 0.7, inf),
+		amp: Pwhite(0.02, 0.07, inf),
+        fade: 0.5,
 		out: ~perc.inbus
 	),
 
@@ -145,8 +147,8 @@ patterns: (
 
 	bass: (
 		instrument: 'bass',
-		midinote: ~melos.meloEdge.edgeBass00,
-		dur: ~melos.durEdge.edgeBass00,
+		midinote: ~melos.melo.bass10,
+		dur: ~melos.dur.bass10,
 		amp: 0.45,
 		fade: 1,
 		modRate: 0.05,
