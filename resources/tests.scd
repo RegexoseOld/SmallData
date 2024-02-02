@@ -2,7 +2,7 @@
 ~sim = Routine(
     { loop ( {
         ~mock.();
-        [1.9, 1, 0.5, 2.5].choose.wait;
+        [4.9, 1].choose.wait;
 		//"mocked" .postln;
         }
 ) }).play;
@@ -10,12 +10,15 @@
 
 ~sim.stop
 
-~upmMax = 30
+~upmMax = 19
 ~melos[\seqRates]
 ~isPrelude = false
 ~isPrelude = true
 
  ~mum.(~cat, ~uttsPerMinute[~cat], 0.25);
+
+
+
 (
 //Zugriff auf Synths
 var synthArgs;

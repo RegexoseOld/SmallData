@@ -10,7 +10,7 @@
     }};
     ~lastUtterances = lastUtts;
     ~lastCategories = lastCats;
-    ~totalUtts = ~totalUtts + 1;
+    ~totalUtts = ~totalUtts + (1 * ~factor);
     if(~uttDict[cat] >= ~maxCatCounter, {~uttDict[cat] = 1}, {~uttDict[cat] = ~uttDict[cat] + (1 * ~factor)} );
     ~uttsPerMinute[cat].add(~t.beats/~t.tempo); // add a timestamp to calculate utterances per minute
     defer{var index, count;
@@ -199,7 +199,7 @@
 ~mum = {
     |cat, timestamps, waitTime|
     var key = ("mumble_" ++ cat.asString).asSymbol;
-    [cat, timestamps, waitTime, key].postln;
+    //[cat, timestamps, waitTime, key].postln;
     Routine({
         timestamps.do({
             |ts, i|
@@ -302,7 +302,7 @@
     {~totalUtts >= 50}{Pbindef(\hh01, \dur, 0.25, \fade, 0.25, \decayScale, 0.5, \maxRing, 0.25).quant_(4);}
 
     {(~totalUtts >= 40) && (~uttDict[~cat] >= 10)}{
-        var count = ~uttDict[~cat];
+        var count = ~uttDict[~cat].asInteger;
         var case_count = count -9;
         var bassmelo = ("bass" ++ count.asString).asSymbol;
         /* Bass und Beat auslagern, damit es sich nicht dauernd ändert.

@@ -5,7 +5,7 @@
 ~totalUtts = 0;
 ~isPrelude = true;
 ///////
-~fbVol = 0.2; //global Volume of feedback for incoming Utts
+~fbVol = 0.1; //global Volume of feedback for incoming Utts
 // values for addVolume
 ~volPlus = 0.06; // this much volume is added each time a category comes in
 ~addFac = 1.0; // factor of volPlus with vols below the threshold

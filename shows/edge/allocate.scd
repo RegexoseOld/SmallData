@@ -1,7 +1,8 @@
 {
     |catName, counter|
     var c, dura, patName, status, count, case_count, local_feedbackVol, numNotes;
-    count = floor(counter * ~factor).asInteger;
+    //count = floor(counter * ~factor).asInteger;
+    count = counter.floor.asInteger;
     status = "";
     "counter % factor % count %".format(counter, ~factor, count).postln;
     local_feedbackVol = 0.45;
@@ -11,7 +12,7 @@
 
     c = case
     {count <= 4}{
-        patName = (catName.asString ++ "00").asSymbol;
+        patName = (catName. asString ++ "00").asSymbol;
         Pbindef(catName, *~states[catName][patName].asPairs).play(~t, quant:1);
         /* hier überschreibe ich den initial status, um einen smootheren Anfang
         zu bekommen, eben mit oktavierten tönen */
@@ -65,7 +66,7 @@
                 \instrument, \sampMon,
                 \dur, Prand([0.25, 0.31], numNotes),
                 \buf, ~melos[\slots][catName].normalize,
-                \amp, ~fbVol * local_feedbackVol, \pan, 0,
+                \amp, ~fbVol, \pan, 0,
                 \rate, Prand([[1, 1.03], [1, 1.18], [0.97, 1.101], [0.83, 0.91]], numNotes),
                 \atk, 0.05, \rls, Pkey(\dur), \crv, -4,
                 \cgain, 1,
