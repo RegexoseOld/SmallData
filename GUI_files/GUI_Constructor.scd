@@ -137,6 +137,8 @@
 		}
 	});
 	knobs[3].valueAction_(0.5);
+	knobs[3].mode_(\vert);
+	knobs[3].step_(1.0/20);
 	// TODO: set start value of knobs properly
 	// knobs.do({
 	// 	arg knob, i;
