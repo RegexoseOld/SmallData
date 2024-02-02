@@ -1,6 +1,6 @@
 // Sequencer
 (
-var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300, selectorWidth=200, rotarywidth=200, rotarysize=55;
+var buttonsize=40, columns=16, rows=5, offset=10, labelwidth=100, headerheight=100, sliderwidth=300, selectorWidth=200, rotarywidth=200, rotarysize=70;
 
 var window, topLevel, trackButtonsContainer, labels, header, buttons, track, sequencerButtons, densityKnobs, pattern;
 var buttonFieldWidth = buttonsize*columns, buttonFieldHeight=buttonsize*rows;
@@ -14,7 +14,8 @@ window = ~buildWindow.value("Sequencer", 10, 550,  labelwidth+buttonFieldWidth+s
 topLevel = ~buildTopLevel.value(window, 10, 10, buttonFieldWidth+labelwidth+sliderwidth+selectorWidth+(6*offset), buttonsize+offset+buttonFieldHeight+headerheight+(4*offset));
 header = ~buildSequencerHeader.value(topLevel, buttonFieldWidth+labelwidth, headerheight, "Sequencer");
 
-densityKnobs = ~buildRotaryFader.(window, labelwidth+(buttonsize *columns)+(4*offset), offset, offset, rotarysize, [\thresCont, \addFac, \subFac], [0.005, 0.5, 0.1], [0.4, 1.7, 2.0]);
+densityKnobs = ~buildRotaryFader.(window, labelwidth+(buttonsize *columns)+(5*offset), offset, offset, rotarysize, [\thresCont, \addFac, \subFac, \factor], [0.005, 0.5, 0.1, -1.0], [0.4, 1.7, 2.0, 1.0]);
+~upmView = ~buildUpmIndicator.(window, labelwidth+(buttonsize *columns)+(5*offset) + densityKnobs[0].bounds.width + offset, offset, 5*offset);
 
 // Build Track
 labels = ~buildCategoryLabels.value(topLevel, labelwidth, buttonsize+buttonFieldHeight+(2*offset), buttonsize, offset);
