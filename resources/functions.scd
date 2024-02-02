@@ -15,10 +15,10 @@
     ~uttsPerMinute[cat].add(~t.beats/~t.tempo); // add a timestamp to calculate utterances per minute
     defer{var index, count;
         index = ~fadingSynths.detectIndex({|it, i| it == ~categorySymbols[cat.asSymbol]});
-        count =  ~uttDict[~cat].asString;
+        count =  ~uttDict[~cat].trunc(0.01).asString;
         //postf("\nupdating index % to count % ", index, count);
-        ~mcLabels[1][index].string = cat ++ "\n" ++ count;
-        ~mcLabels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts ;
+		~mcLabels[1][index].string = cat ++ "\n" ++ count;
+        ~mcLabels[1][5].string = "total utts" ++ "\n" ++ ~totalUtts.trunc(0.01) ;
     }
 };
 
@@ -340,6 +340,10 @@
             });
             ~uttsPerMinute.values.do({|l| upm = upm + l.size});
             ~upm = upm; // update ~upm
+			defer{
+				~upmView[1].string_("UPM : " ++ ~upm);
+			};
+
             //"updated upm %".format(upm).postln;
             1;
         });

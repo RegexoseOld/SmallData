@@ -146,8 +146,19 @@
 	// 		knob.valueAction_(0.5);
 	// 	}
 // });
-
 	knobData = [knobView, knobs, newValues];
+};
+
+~buildUpmIndicator = {
+	arg top, posx, posy, width;
+	var upmView, upmString, upmData;
+	upmView = CompositeView(top, Rect(posx, posy, width, 2*width))
+	.background_(~style_1["bank_frame_color"]);
+	upmString = StaticText(upmView, Rect(5, 5 , width-10, 2*width-10))
+	.background_(~style_1["bank_frame_color"]) //
+	.font_(~style_1.at("subheader_font"))
+	.string_("UPM : " ++ ~upm);
+	upmData = [upmView, upmString] ;
 };
 
 ~buildSequencerButtons = {

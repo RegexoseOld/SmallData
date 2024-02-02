@@ -15,6 +15,7 @@ topLevel = ~buildTopLevel.value(window, 10, 10, buttonFieldWidth+labelwidth+slid
 header = ~buildSequencerHeader.value(topLevel, buttonFieldWidth+labelwidth, headerheight, "Sequencer");
 
 densityKnobs = ~buildRotaryFader.(window, labelwidth+(buttonsize *columns)+(5*offset), offset, offset, rotarysize, [\thresCont, \addFac, \subFac, \factor], [0.005, 0.5, 0.1, -1.0], [0.4, 1.7, 2.0, 1.0]);
+~upmView = ~buildUpmIndicator.(window, labelwidth+(buttonsize *columns)+(5*offset) + densityKnobs[0].bounds.width + offset, offset, 5*offset);
 
 // Build Track
 labels = ~buildCategoryLabels.value(topLevel, labelwidth, buttonsize+buttonFieldHeight+(2*offset), buttonsize, offset);
