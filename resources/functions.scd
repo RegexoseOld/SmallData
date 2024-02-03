@@ -254,12 +254,18 @@
     });
     c = case
     {~totalUtts > 300} {
+        var count = ~uttDict[~cat].floor.asInteger;
         ~hitSample = ~buffers[\atmos][\rain];
+   [\kik02, \sn01].do{|n| Pbindef(n).pause};
+           Pbindef(\bass, \dur, Pif(count.even, 0.25, 0.5),
+            \modRate, Pif(count.even, 3, 1.5),
+            \midinote, Pif(count.even, ~melos.melo.bass37, ~melos.melo.bass36),
+            \rls, 1.5, \fmratio, 3, \slide1, 0.5, \distort, 1.5).quant_(8);
 
     }
-    {(~totalUtts > 130) && (~uttDict[~cat] >= 40)}{
+    {(~totalUtts > 150) && (~uttDict[~cat] >= 40)}{
         var count, case_count;
-        count = ~uttDict[~cat];
+        count = ~uttDict[~cat].floor.asInteger;
         case_count = count -39;
         Pbindef(\kik02, \freq, ~melos.melo.kik02, \dist, case_count * 0.75).quant_(8);
         Pbindef(\sn01, \freq, ~melos.melo.sn02, \dist1, 13, \dist2, -4, \rls, 2 ).quant_(8);
@@ -270,23 +276,24 @@
             \midinote, Pif(case_count.even, ~melos.melo.bass36, ~melos.melo.bass37),
             \rls, 1.5, \fmratio, 3, \slide1, 0.5, \distort, 1.5).quant_(8);
     }
-    {(~totalUtts > 100) && (~uttDict[~cat] >= 25)}{
+    {(~totalUtts > 120) && (~uttDict[~cat] >= 25)}{
         var count, case_count;
-        count = ~uttDict[~cat] ;
+        count = ~uttDict[~cat].floor.asInteger ;
         case_count = count -19;
         Pbindef(\kik02, \timb2, -28, \sweep, 0.1, \freq, ~melos.melo.kik02, \dur, ~melos.dur.kik02).quant_(4);
-        Pbindef(\sn01, \freq, ~melos.melo.sn02, \dur, ~melos.dur.sn02).play(~t, quant:8);
+
         Pbindef(\bass,
             \midinote, Pif((count%4 == 0), ~melos.melo.bass23, ~melos.melo.bass24),
             \dur, Pif((count%4 ==0), ~melos.dur.bass23, ~melos.dur.bass24),
             \oscFB, pi/4,
         ).quant_(8);
     }
+    {~totalUtts >= 100}{ Pbindef(\sn01, \freq, ~melos.melo.sn02, \dur, ~melos.dur.sn02).play(~t, quant:8);}
     {~totalUtts >= 90}{Pbindef(\snip01).play(~t, quant:8);}
 
     {(~totalUtts >= 80) && (~uttDict[~cat] >= 20)}{
         var count, case_count;
-        count = ~uttDict[~cat];
+        count = ~uttDict[~cat].floor.asInteger;
         case_count = count -19;
         ~hitSample = ~buffers[\atmos][\dickerpott];
         Pbindef(\bass,
@@ -302,7 +309,7 @@
     {~totalUtts >= 50}{Pbindef(\hh01, \dur, 0.25, \fade, 0.25, \decayScale, 0.5, \maxRing, 0.25).quant_(4);}
 
     {(~totalUtts >= 40) && (~uttDict[~cat] >= 10)}{
-        var count = ~uttDict[~cat].asInteger;
+        var count = ~uttDict[~cat].floor.asInteger;
         var case_count = count -9;
         var bassmelo = ("bass" ++ count.asString).asSymbol;
         /* Bass und Beat auslagern, damit es sich nicht dauernd ändert.
