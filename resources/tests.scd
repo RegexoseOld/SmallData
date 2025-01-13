@@ -35,10 +35,13 @@ Synth(~states.pr.pr0.instrument, [\freq, 300]);
     Synth(\modelGrains, [\freq, Array.fill(4, {exprand(base, base * 3)}),
         \ring, [0.2, 0.1, 0.5, 0.1] * 5 ,
         \levels, rrand(0.1, 0.6) !4,
-        \pan, -1 + (i*0.4), \dec, i * 0.1, \trg, rrand(2, 10), \rls, rrand(4, 10),
-        \decayScale, 1 - (i* rrand(0.01, 0.1)), \freqOffset, 20 - (i * rrand(2,5)),
+        \pan, -1 + (i*0.4), \dec, i * 0.1, \trg, rrand(2, 10), \rls, rrand(4, 10), \punch, rrand(0.08, 0.7), \amp, rrand(0.02, 0.5),
+        \decayScale, 1 - (i* rrand(0.01, 0.15)), \freqScale, 1 - (i * rrand(0.2, 0.5)),
         \ffreq, 1500 - (i* rrand(110, 330)), \rq, 0.2
     ], ~g);
+    Synth(\percImp, [
+         \decayScale, 2, \rls, 2, \freq, base, \maxfrq, base *2, \pan, -1 + (i*0.4), \amp, 0.14
+    ], ~g)
 });
 )
 ~g.free
