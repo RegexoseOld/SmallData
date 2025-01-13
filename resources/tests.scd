@@ -28,12 +28,25 @@ synthArgs.postln;
 Synth(~states.pr.pr0.instrument, [\freq, 300]);
 )
 (
-var buf, start, dur, end, opm;
-opm = 10;
-buf = ~buffers[\catSampEn];
-start = opm.linlin(0, 10, 0, buf.numFrames-1);
-dur = opm.linlin(0, 10, 1000, buf.numFrames/2);
-x = Synth(\brPhsr, [\buf, buf, \start, start, \end, start+dur]);
+// Versuch für MBS, wie die Kategoriezonen unterschiedlich nachklingen
+~g = Group.new;
+[80, 200, 450, 720, 810].scramble.do({
+    |base, i|
+    Synth(\modelGrains, [\freq, Array.fill(4, {exprand(base, base * 3)}),
+        \ring, [0.2, 0.1, 0.5, 0.1] * 5 ,
+        \levels, rrand(0.1, 0.6) !4,
+        \pan, -1 + (i*0.4), \dec, i * 0.1, \trg, rrand(2, 10), \rls, rrand(4, 10),
+        \decayScale, 1 - (i* rrand(0.01, 0.1)), \freqOffset, 20 - (i * rrand(2,5)),
+        \ffreq, 1500 - (i* rrand(110, 330)), \rq, 0.2
+    ], ~g);
+});
+)
+~g.free
+
+x = Synth(\modelGrains, [\freq, Array.fill(4, {exprand(80, 1010)})]);
+x.set(\ring, [0.2, 0.1, 0.5, 0.1] *4, \levels, Array.fill(4, {|n| n+1 * 0.2}))
+x.set(\dec)
+x.free
 )
 
 ~ch3.level

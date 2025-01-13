@@ -169,6 +169,28 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
 	Out.ar(\out.kr(0), sig);
 }).add;
 
+SynthDef(\modelGrains, {
+    var exc, freqs, rings, amps, sig, env, trig, freqMod;
+    var freqArray = NamedControl.kr(\freq, [80, 120, 350, 1010]);
+    var ampArray = NamedControl.kr(\levels, [0.5, 0.24, 0.14, 0.423]);
+    var ringArray = NamedControl.kr(\ring, [0.1, 0.04, 0.04, 0.023]);
+    env = Env.perc(\atk.kr(0.01), \rls.kr(0.08), curve: \crv.kr(-4.0)).kr(2);
+    freqs = freqArray;
+    trig = Dust.kr(\trg.kr(4));
+    SendTrig.kr(trig);
+    freqMod = TRand.kr( 1, 5, trig)  ;
+    exc = WhiteNoise.ar(\punch.kr(0.1)) * Decay2.kr(trig, 0.001, \dec.kr(0.9));
+    sig = DynKlank.ar(`[
+        freqs ,
+        ampArray.ampdb.normalizeSum,
+        ringArray
+    ], exc, \freqScale.kr(1), \freqOffset.kr(0), \decayScale.kr(0.1));
+    sig = sig * \amp.kr(0.3) * env ;
+    sig = Pan2.ar(BPF.ar(sig, \ffreq.kr(1000), \rq.kr(1.0)), \pan.kr(0.0));
+    Out.ar(\out.kr, sig);
+}).add;
+
+
 // Sample Based
 
 SynthDef(\sampSt, {

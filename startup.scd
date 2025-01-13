@@ -30,8 +30,8 @@ s.waitForBoot({
     (~resourcePath ++ "organist.scd").load;
 
     // LOAD GUI FILES
-    thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/GUI_Styles.scd");
-    thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/GUI_Constructor.scd");
+/*    thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/GUI_Styles.scd");
+    thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/GUI_Constructor.scd");*/
     // Wait until boot is done and then begin launching the rest of the prograam
     s.sync;
 
@@ -50,8 +50,8 @@ s.waitForBoot({
     s.sync;
 
     Window.closeAll;
-    thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/sequencer_gui.scd");
-    thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/mc_gui.scd");
+   /* thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/sequencer_gui.scd");
+    thisProcess.interpreter.executeFile(~projectRoot +/+ "GUI_files/mc_gui.scd");*/
 
     //make Dictionary with effekt Patches
     ~patches = (~resourcePath ++ "fx_patches.scd").load;
