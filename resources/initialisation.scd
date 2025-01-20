@@ -49,24 +49,6 @@
 	});
 });
 
-/*
-alte Art, Samples als Listen zu laden
-
-PathName(~samplesPath).entries.do({
-		arg subfolder;
-	//subfolder.postln;
-		~buffers.add(
-			subfolder.folderName.asSymbol ->
-			Array.fill(
-				subfolder.entries.size,
-				{
-					arg i;
-					Buffer.read(s, subfolder.entries[i].fullPath);
-				}
-			)
-		)
-	});*/
-
 // Samples mit Titel laden
 PathName(~samplesPath).entries.do({
 		arg subfolder;
@@ -164,6 +146,7 @@ PathName(~midiFolder).entries.do({
 		~ringmod = MixerChannel(\ring, s, 2, 2, outbus: ~master);
 		~chorus = MixerChannel(\chrs, s, 2, 2, outbus: ~master);
 		~reverb = MixerChannel(\vrb1, s, 2, 2, outbus: ~master);
+
 		~cat2Channel = (
 		\pr: ~ch2,
 		\dis: ~ch1,

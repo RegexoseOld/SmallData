@@ -8,6 +8,10 @@
     numNotes = 1;
     dura = Env.new([1,0], [count], [-2]).asPseg;
     patName = (catName.asString ++ "0").asSymbol;
+   /* ~vbapDissent.(-30, 0, 2, 400, 0.5, 0.1, 10, 0.2, 1, 1, 1, 0.5);
+    ~vbapDissent.set(\azi, 130);*/
+  ~modelKlank.(catName);
+
 
     c = case
     {count <= 4}{
@@ -75,8 +79,7 @@
     );
 
 
-
-    ~addVolume.value(catName);
-    defer{~status[1].string = catName ++ " : " ++ status};
+    //~addVolume.value(catName);
+    //defer{~status[1].string = catName ++ " : " ++ status};
     postf("\nsetting %  to status \t % with patname % \n", catName, status, patName);
 };

@@ -27,41 +27,94 @@ synthArgs = SynthDescLib.at(~states.pr.pr0.instrument).controlDict.collect(_.def
 synthArgs.postln;
 Synth(~states.pr.pr0.instrument, [\freq, 300]);
 )
+
 (
 // Versuch für MBS, wie die Kategoriezonen unterschiedlich nachklingen
 ~g = Group.new;
-[80, 200, 450, 720, 810].scramble.do({
+[80, 200, 450, 720, 810].do({
     |base, i|
-    Synth(\modelGrains, [\freq, Array.fill(4, {exprand(base, base * 3)}),
+    var dur = rrand(1, 4);
+    var pan = [0.0, 0.5, 1.0, 1.5].choose;
+    Synth(\modelGrains, [\freq, Array.fill(4, {exprand(base, base * 2)}),
         \ring, [0.2, 0.1, 0.5, 0.1] * 5 ,
-        \levels, rrand(0.1, 0.6) !4,
-        \pan, -1 + (i*0.4), \dec, i * 0.1, \trg, rrand(2, 10), \rls, rrand(4, 10), \punch, rrand(0.08, 0.7), \amp, rrand(0.02, 0.5),
-        \decayScale, 1 - (i* rrand(0.01, 0.15)), \freqScale, 1 - (i * rrand(0.2, 0.5)),
-        \ffreq, 1500 - (i* rrand(110, 330)), \rq, 0.2
+        \levels, rrand(0.1, 0.5) !4,
+        \azi, pan, \level, 0.5,
+        \dec, dur/4, \trg, rrand(2, 10),
+        \rls, dur, \punch, rrand(0.08, 0.3), \amp, rrand(0.02, 0.4),
+        \decayScale, 2 - (i* rrand(0.01, 0.15)), \freqScale, 1 - (i * rrand(0.2, 0.5)),
+        \ffreq, 4500 - (i* rrand(110, 330)), \rq, 0.2
     ], ~g);
-    Synth(\percImp, [
-         \decayScale, 2, \rls, 2, \freq, base, \maxfrq, base *2, \pan, -1 + (i*0.4), \amp, 0.14
+   Synth(\percImp, [
+         \decayScale, 2, \rls, dur, \freq, base, \maxfrq, base *2, \pan, -1 + (i*0.4), \amp, 0.14
     ], ~g)
 });
 )
 ~g.free
 
-x = Synth(\modelGrains, [\freq, Array.fill(4, {exprand(80, 1010)})]);
-x.set(\ring, [0.2, 0.1, 0.5, 0.1] *4, \levels, Array.fill(4, {|n| n+1 * 0.2}))
-x.set(\dec)
+
+x = { |azi = 0, ele = 0, spr = 0|
+    var exc, sig, env, trig, freqMod;
+    var freqs = [80, 120, 350, 1010];
+    var amps = [0.5, 0.24, 0.14, 0.423];
+    var rings = [0.1, 0.04, 0.04, 0.023];
+    trig = Dust.kr(4);
+    freqMod = TRand.kr( 1, 5, trig)  ;
+    exc = WhiteNoise.ar(0.2) * Decay2.kr(trig, 0.001, 2);
+    sig = DynKlank.ar(`[
+        freqs,
+        amps.ampdb.normalizeSum,
+        rings
+    ], exc, 1, 0, 1);
+    sig = sig * 0.3 ;
+VBAP.ar(4, sig,  ~panbuf, azi, ele, spr);
+}.scope;
+
+x.set(\azi, 112)
+x.set(\freq, Array.fill(4, {exprand(200, 1000)}), \ring, exprand(0.08, 0.5)!4  * 3,
+    \levels, rrand(0.1, 0.6) !4, \trg, 12, )
 x.free
+
+
+
+(// vbap synthdef..
+
+v = Synth(\vbap, [\in, ~vbapIn, \panbuf, ~panbuf]);
+//x = Synth(\modelGrains, [\out, ~vbapIn]);
+
+Pbindef(\mg,
+    \instrument, \modelGrains,
+    \dur, 0.5,
+    \freq, Array.fill(4, {exprand(200, 1000)}),
+    \ring, exprand(0.08, 0.5)!4  * 5,
+    \levels, rrand(0.1, 0.6) !4,
+    \rls, 2,
+    \out, ~vbapIn).play
+v.set(\azi, 30)
+v.free
 )
 
-~ch3.level
+
+
 (
-~b = ~buffers[\hits][\SnoopSetsUp];
-~hitPlay = Synth(\hitSt, [\buf, ~hitSample.normalize, \amp, 0.6, \start, 0, \end, ~hitSample.numFrames, \rls, 7])
-~hitPlay.set(\amp, 0.5)
-~hitPlay.set(\harm, 5)
-~hitPlay.set(\gate, 1)
-~hitPlay.release(2)
+v = Routine({
+    loop{
+        [-40, 40, -130, 130].do({|ang| x.set(\azi, ang); 1.wait; }.fork) ;
+    }
+}).play
+)
+
+
+// test them out
+loop{[-40, 40, -130, 130].do({|ang| x.set(\azi, ang); 1.wait; }) }.fork;
+
+// try the spread
+x.set(\spr, 20);
+x.set(\spr, 100); // all speakers
+
+x.free; b.free;
 
 )
+
 (
 Pbindef(\hh01, \dur, 0.25, \freq, 600, \maxFreq, 1300, \fade, 1).play(~t, quant:8);
 Pbindef(\kik02, \freq, ~melos.melo.kik02 *2, \dur, ~melos.dur.kik02).play(~t, quant:8);
@@ -100,11 +153,11 @@ var n = 23;
 ~allocate.(\pr, n);
 ~allocate.(\con, n);*/
 
-~allocate.(\dis, 41);
-~allocate.(\ins, 40);
+~allocate.(\dis, 42);
+~allocate.(\ins, 41);
 ~allocate.(\lec, 43);
 ~allocate.(\pr, 40);
-~allocate.(\con, 40)
+~allocate.(\con, 41)
 
 ~melos.melo.dis00
 ~states.dis.dis00

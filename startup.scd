@@ -6,6 +6,7 @@
 ~resourcePath = ~projectRoot ++ "resources/";
 
 Server.default.options.numInputBusChannels_(0);
+Server.default.options.numOutputBusChannels_(4);
 Server.default.options.outDevice_(~audioInterface);
 //Server.default.options.inDevice_(~audioInterface);
 s.newBusAllocators;
@@ -20,13 +21,20 @@ s.waitForBoot({
     MIDIIn.connectAll;
     ~midiOut = MIDIOut.new(0);
     ~midiIn = MIDIIn.new(0);
+    ~vbapIn = Bus.audio(s, 1);
+    //~vbapOut = Bus.audio(s, 4);
+    ~speaker = VBAPSpeakerArray.new(2, [-30, 30, -110, 110]); // 4 channel ring
+    ~panbuf = ~speaker.loadToBuffer;
+
 
     /// load SynthDefs, Constants, Functions
     (~resourcePath ++ "synths.scd").load;
+    (~resourcePath ++ "mbs.scd").load;
     (~resourcePath ++ "story.scd").load;
     (~resourcePath ++ "constants.scd").load;
     (~resourcePath ++ "initialisation.scd").load;
     (~resourcePath ++ "functions.scd").load;
+    (~resourcePath ++ "setGlobal.scd").load;
     (~resourcePath ++ "organist.scd").load;
 
     // LOAD GUI FILES
@@ -123,8 +131,8 @@ s.waitForBoot({
                 ~updateUtts.(msg[1], msg[2]);
                 ~blinkSelector.();
                 if(msg[3] != nil, {~addNewSample.(msg[3])});
-                //~allocate.(~categorySymbols[~cat], ~uttDict[~cat])
-                ~setGlobal.value();
+                ~allocate.(~categorySymbols[~cat], ~uttDict[~cat]);
+                ~setGlobal.();
                 //"debug OSC: cat %".format(msg[2]).postln;
             }
         },

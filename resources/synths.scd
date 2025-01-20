@@ -169,6 +169,8 @@ SynthDef(\percImp, { |accent=0, decayScale=1|
 	Out.ar(\out.kr(0), sig);
 }).add;
 
+
+//////// MBS /////////
 SynthDef(\modelGrains, {
     var exc, freqs, rings, amps, sig, env, trig, freqMod;
     var freqArray = NamedControl.kr(\freq, [80, 120, 350, 1010]);
@@ -185,9 +187,10 @@ SynthDef(\modelGrains, {
         ampArray.ampdb.normalizeSum,
         ringArray
     ], exc, \freqScale.kr(1), \freqOffset.kr(0), \decayScale.kr(0.1));
-    sig = sig * \amp.kr(0.3) * env ;
-    sig = Pan2.ar(BPF.ar(sig, \ffreq.kr(1000), \rq.kr(1.0)), \pan.kr(0.0));
-    Out.ar(\out.kr, sig);
+    sig = sig * \amp.kr(0.3) * env;
+    sig = RLPF.ar(sig, \ffreq.kr(1000), \rq.kr(0.2));
+    sig = PanAz.ar(4, sig, \azi.kr(0.0), \level.kr(1.0), 2, 0.5);
+    Out.ar(\out.kr(0), sig);
 }).add;
 
 
@@ -261,6 +264,15 @@ SynthDef(\rec, {
 	var sig;
 	sig = In.ar(\in.kr(2));
 	Out.ar(0, sig!2 * \amp.kr(0.5));
+}).add;
+
+//vector based panning
+SynthDef(\vbap, {
+    |in, panbuf|
+    var  sig;
+    sig = In.ar(in);
+    VBAP.ar(4, sig, panbuf, \azi.kr(0.0), \ele.kr(1.0), \spread.kr(0.0) );
+    Out.ar(\out.kr([0, 1, 2, 3]), sig);
 }).add;
 
 // Granular Synth
